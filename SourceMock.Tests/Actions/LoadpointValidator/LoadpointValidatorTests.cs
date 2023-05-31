@@ -61,6 +61,11 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             Assert.AreEqual(1, errCount);
         }
 
+        /// <summary>
+        /// Validates an object against the restrictions set in its annotations.
+        /// </summary>
+        /// <param name="obj">The object to validate.</param>
+        /// <returns>The number of errors in the object, therefore zero if valid.</returns>
         private int ValidateObject(object obj)
         {
             var validationContext = new ValidationContext(obj, null, null);

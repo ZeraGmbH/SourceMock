@@ -13,6 +13,23 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
     internal class LoadpointValidatorTests
     {
         [Test]
+        public void TestValidPhaseAngleVoltage()
+        {
+            // Arrange       
+            Loadpoint loadpoint1 = new Loadpoint()
+            {
+                PhaseAngleVoltage = 180
+            };
+
+            // Act
+            var errCount = ValidateObject(loadpoint1);
+
+            // Assert
+            Assert.AreEqual(0, errCount);
+        }
+
+
+        [Test]
         public void TestInvalidPhaseAngleVoltageTooLow()
         {
             // Arrange       
@@ -22,13 +39,34 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             };
 
             // Act
-            var validationContext = new ValidationContext(loadpoint1, null, null);
-            var validationResults = new List<ValidationResult>();
-            bool actual = Validator.TryValidateObject(loadpoint1, validationContext, validationResults, true);
+            var errCount = ValidateObject(loadpoint1);
    
             // Assert
-            Assert.IsFalse(actual);
-            Assert.AreEqual(1, validationResults.Count);
+            Assert.AreEqual(1, errCount);
+        }
+
+        [Test]
+        public void TestInvalidPhaseAngleVoltageTooHigh()
+        {
+            // Arrange       
+            Loadpoint loadpoint1 = new Loadpoint()
+            {
+                PhaseAngleVoltage = 361
+            };
+
+            // Act
+            var errCount = ValidateObject(loadpoint1);
+
+            // Assert
+            Assert.AreEqual(1, errCount);
+        }
+
+        private int ValidateObject(object obj)
+        {
+            var validationContext = new ValidationContext(obj, null, null);
+            var validationResults = new List<ValidationResult>();
+            Validator.TryValidateObject(obj, validationContext, validationResults, true);
+            return validationResults.Count;
         }
     }
 }

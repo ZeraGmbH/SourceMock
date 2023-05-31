@@ -4,10 +4,10 @@ namespace SourceMock.Model
 {
     public class Loadpoint
     {
-        private const Double MINIMUM_ANGLE = 0;
-        private const Double MAXIMUM_ANGLE = 360;
+        private const double MINIMUM_ANGLE = 0;
+        private const double MAXIMUM_ANGLE = 360;
 
         [Range(MINIMUM_ANGLE, MAXIMUM_ANGLE)]
-        public Double PhaseAngleVoltage { get; set; }
+        public double PhaseAngleVoltage { get; set; }
     }
 }

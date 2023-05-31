@@ -7,6 +7,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddApiVersioning();
+builder.Services.AddVersionedApiExplorer(options =>
+{
+    // the default is ToString(), but we want "'v'major[.minor][-status]"
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

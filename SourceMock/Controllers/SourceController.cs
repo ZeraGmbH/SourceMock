@@ -32,9 +32,11 @@ namespace SourceMock.Controllers
         /// <returns>The result of the operation, see responses.</returns>
         /// <response code="200">If the loadpoint was set successfully.</response>
         /// <response code="409">If the loadpoint could not be set successfully.</response>
+        /// <response code="424">If no loadpoint is currently set.</response>
         [HttpPost("TurnOn")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status424FailedDependency)]
         public IActionResult TurnOn()
         {
             return Ok();

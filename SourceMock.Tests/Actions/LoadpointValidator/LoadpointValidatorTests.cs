@@ -1,12 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization.Formatters.Binary;
+using SourceMock.Actions.LoadpointValidator;
 using SourceMock.Model;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SourceMock.Controllers;
+using SourceMock.Extensions;
+
 
 namespace SourceMock.Tests.Actions.LoadpointValidator
 {
@@ -16,10 +13,9 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         [Test]
         public void TestValidPhaseAngleVoltage()
         {
-            // Arrange       
-            Loadpoint loadpoint1 = new Loadpoint();
-            loadpoint1.PhaseAnglesVoltage = loadpoint1.PhaseAnglesVoltage.Append(180d);
-            
+            // Arrange
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001.Copy();
+            loadpoint1.PhaseAnglesVoltage = new[] { 0d, 0d, 180d };            
 
             // Act
             var errCount = ValidateObject(loadpoint1);
@@ -33,8 +29,8 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestInvalidPhaseAngleVoltageTooLow()
         {
             // Arrange       
-            Loadpoint loadpoint1 = new Loadpoint();
-            loadpoint1.PhaseAnglesVoltage = loadpoint1.PhaseAnglesVoltage.Append(-0.1);
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001.Copy();
+            loadpoint1.PhaseAnglesVoltage = new[] { 0d, 0d, -0.1d };
 
             // Act
             var errCount = ValidateObject(loadpoint1);
@@ -47,8 +43,8 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestInvalidPhaseAngleVoltageTooHigh()
         {
             // Arrange       
-            Loadpoint loadpoint1 = new Loadpoint();
-            loadpoint1.PhaseAnglesVoltage = loadpoint1.PhaseAnglesVoltage.Append(360.1);
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001.Copy();
+            loadpoint1.PhaseAnglesVoltage = new[] { 0d, 0d, 360.1d };
 
             // Act
             var errCount = ValidateObject(loadpoint1);
@@ -62,10 +58,9 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         [Test]
         public void TestValidPhaseAngleCurrent()
         {
-            // Arrange       
-            Loadpoint loadpoint1 = new Loadpoint();
-            loadpoint1.PhaseAnglesCurrent = loadpoint1.PhaseAnglesCurrent.Append(180d);
-
+            // Arrange
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001.Copy();
+            loadpoint1.PhaseAnglesCurrent = new[] { 0d, 0d, 180d };
 
             // Act
             var errCount = ValidateObject(loadpoint1);
@@ -79,8 +74,8 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestInvalidPhaseAngleCurrentTooLow()
         {
             // Arrange       
-            Loadpoint loadpoint1 = new Loadpoint();
-            loadpoint1.PhaseAnglesCurrent = loadpoint1.PhaseAnglesCurrent.Append(-0.1);
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001.Copy();
+            loadpoint1.PhaseAnglesCurrent = new[] { 0d, 0d, -0.1d };
 
             // Act
             var errCount = ValidateObject(loadpoint1);
@@ -93,7 +88,9 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestInvalidPhaseAngleCurrentTooHigh()
         {
             // Arrange       
-            Loadpoint loadpoint1 = new Loadpoint();
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001.Copy();
+            loadpoint1.PhaseAnglesCurrent = new[] { 0d, 0d, 360.1d };
+
             loadpoint1.PhaseAnglesCurrent = loadpoint1.PhaseAnglesCurrent.Append(360.1);
 
             // Act

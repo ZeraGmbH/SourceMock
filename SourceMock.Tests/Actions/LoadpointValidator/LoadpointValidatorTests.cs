@@ -99,6 +99,40 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             // Assert
             Assert.AreEqual(1, errCount);
         }
+        #endregion
+
+        #region TestSameAmountOfPhases
+        [Test]
+        public void TestSameNumberOfPhases()
+        {
+            // Arrange
+            Loadpoint loadpoint = LoadpointValidatorTestData.loadpoint001.Copy();
+
+            // Act
+            var actual = SourceMock.Actions.LoadpointValidator.LoadpointValidator.Validate(loadpoint);
+
+            // Assert
+            Assert.AreEqual(
+                SourceMock.Actions.LoadpointValidator.LoadpointValidator.ValidationResult.OK, 
+                actual);
+        }
+
+        [Test]
+        [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.InvalidLoadPoints_MissingPhase))]
+        public void TestDifferentNumberOfPhases(Loadpoint loadpoint)
+        {
+            // Arrange
+            // loadpoint set in parameter
+
+            // Act
+            var actual = SourceMock.Actions.LoadpointValidator.LoadpointValidator.Validate(loadpoint);
+
+            // Assert
+            Assert.AreEqual(
+                SourceMock.Actions.LoadpointValidator.LoadpointValidator.ValidationResult.NUMBER_OF_PHASES_DO_NOT_MATCH,
+                actual);
+        }
+        #endregion
 
         /// <summary>
         /// Validates an object against the restrictions set in its annotations.
@@ -112,6 +146,5 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             Validator.TryValidateObject(obj, validationContext, validationResults, true);
             return validationResults.Count;
         }
-        #endregion
     }
 }

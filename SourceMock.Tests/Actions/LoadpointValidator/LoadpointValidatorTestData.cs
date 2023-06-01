@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace SourceMock.Tests.Actions.LoadpointValidator
 {
+// Can't be constant as there are non-constant members, must be public as it is used in the TestClass
+#pragma warning disable CA2211 // Non-constant fields should not be visible
     public static class LoadpointValidatorTestData
     {
         #region ValidLoadpoints
@@ -19,7 +21,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             }
         }
         
-        public static Loadpoint loadpoint001 = new Loadpoint()
+        public static Loadpoint loadpoint001 = new()
         {
             Voltages = new[] { 230d, 230d, 230d },
             Currents = new[] { 60d, 60d, 60d },
@@ -28,7 +30,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             PhaseAnglesCurrent = new[] { 5d, 125d, 245d }
         };
 
-        public static Loadpoint loadpoint002 = new Loadpoint()
+        public static Loadpoint loadpoint002 = new()
         {
             Voltages = new[] { 110d, 110d },
             Currents = new[] { 60d, 60d },
@@ -50,7 +52,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             }
         }
 
-        public static Loadpoint loadpoint101_invalid = new Loadpoint()
+        public static Loadpoint loadpoint101_invalid = new()
         {
             Voltages = new[] { 230d, 230d },
             Currents = new[] { 60d, 60d, 60d },
@@ -59,7 +61,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             PhaseAnglesCurrent = new[] { 5d, 125d, 245d }
         };
 
-        public static Loadpoint loadpoint102_invalid = new Loadpoint()
+        public static Loadpoint loadpoint102_invalid = new()
         {
             Voltages = new[] { 230d, 230d, 230d },
             Currents = new[] { 60d, 60d },
@@ -68,7 +70,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             PhaseAnglesCurrent = new[] { 5d, 125d, 245d }
         };
 
-        public static Loadpoint loadpoint103_invalid = new Loadpoint()
+        public static Loadpoint loadpoint103_invalid = new()
         {
             Voltages = new[] { 230d, 230d, 230d },
             Currents = new[] { 60d, 60d, 60d },
@@ -77,7 +79,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             PhaseAnglesCurrent = new[] { 5d, 125d, 245d }
         };
 
-        public static Loadpoint loadpoint104_invalid = new Loadpoint()
+        public static Loadpoint loadpoint104_invalid = new()
         {
             Voltages = new[] { 230d, 230d, 230d },
             Currents = new[] { 60d, 60d, 60d },
@@ -87,4 +89,5 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         };
         #endregion
     }
+#pragma warning restore CA2211 // Non-constant fields should not be visible
 }

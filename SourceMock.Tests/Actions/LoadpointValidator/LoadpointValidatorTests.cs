@@ -139,7 +139,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         /// </summary>
         /// <param name="obj">The object to validate.</param>
         /// <returns>The number of errors in the object, therefore zero if valid.</returns>
-        private int ValidateObject(object obj)
+        private static int ValidateObject(object obj)
         {
             var validationContext = new ValidationContext(obj, null, null);
             var validationResults = new List<ValidationResult>();

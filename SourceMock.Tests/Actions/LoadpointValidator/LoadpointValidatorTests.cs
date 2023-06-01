@@ -56,6 +56,50 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             Assert.AreEqual(1, errCount);
         }
 
+        [Test]
+        public void TestValidPhaseAngleCurrent()
+        {
+            // Arrange       
+            Loadpoint loadpoint1 = new Loadpoint();
+            loadpoint1.PhaseAnglesCurrent = loadpoint1.PhaseAnglesCurrent.Append(180d);
+
+
+            // Act
+            var errCount = ValidateObject(loadpoint1);
+
+            // Assert
+            Assert.AreEqual(0, errCount);
+        }
+
+
+        [Test]
+        public void TestInvalidPhaseAngleCurrentTooLow()
+        {
+            // Arrange       
+            Loadpoint loadpoint1 = new Loadpoint();
+            loadpoint1.PhaseAnglesCurrent = loadpoint1.PhaseAnglesCurrent.Append(-0.1);
+
+            // Act
+            var errCount = ValidateObject(loadpoint1);
+
+            // Assert
+            Assert.AreEqual(1, errCount);
+        }
+
+        [Test]
+        public void TestInvalidPhaseAngleCurrentTooHigh()
+        {
+            // Arrange       
+            Loadpoint loadpoint1 = new Loadpoint();
+            loadpoint1.PhaseAnglesCurrent = loadpoint1.PhaseAnglesCurrent.Append(360.1);
+
+            // Act
+            var errCount = ValidateObject(loadpoint1);
+
+            // Assert
+            Assert.AreEqual(1, errCount);
+        }
+
         /// <summary>
         /// Validates an object against the restrictions set in its annotations.
         /// </summary>

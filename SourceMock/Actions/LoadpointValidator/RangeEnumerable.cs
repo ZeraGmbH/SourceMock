@@ -7,6 +7,7 @@ namespace SourceMock.Actions.LoadpointValidator
 {
     public class RangeEnumerable : RangeAttribute
     {
+        #region InheritedConstructors
         /// <inheritdoc/>
         public RangeEnumerable(double minimum, double maximum) : base(minimum, maximum)
         {
@@ -21,6 +22,7 @@ namespace SourceMock.Actions.LoadpointValidator
         public RangeEnumerable([DynamicallyAccessedMembers((DynamicallyAccessedMemberTypes)(-1))] Type type, string minimum, string maximum) : base(type, minimum, maximum)
         {
         }
+        #endregion
 
         /// <inheritdoc/>
         public override bool IsValid(object? value)

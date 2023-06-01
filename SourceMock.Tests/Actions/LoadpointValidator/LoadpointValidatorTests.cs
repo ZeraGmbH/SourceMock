@@ -12,6 +12,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
 {
     internal class LoadpointValidatorTests
     {
+        #region TestPhaseAngleVoltageValidation
         [Test]
         public void TestValidPhaseAngleVoltage()
         {
@@ -55,7 +56,9 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             // Assert
             Assert.AreEqual(1, errCount);
         }
+        #endregion
 
+        #region TestPhaseAngleCurrentValidation
         [Test]
         public void TestValidPhaseAngleCurrent()
         {
@@ -112,5 +115,6 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             Validator.TryValidateObject(obj, validationContext, validationResults, true);
             return validationResults.Count;
         }
+        #endregion
     }
 }

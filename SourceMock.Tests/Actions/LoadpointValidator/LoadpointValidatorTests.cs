@@ -34,7 +34,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestInvalidPhaseAngleVoltageTooLow()
         {
             // Arrange       
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001_3AC_valid;
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
             loadpoint1.PhaseAnglesVoltage = new[] { 0d, 0d, -0.1d };
 
             // Act
@@ -48,7 +48,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestInvalidPhaseAngleVoltageTooHigh()
         {
             // Arrange       
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001_3AC_valid;
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
             loadpoint1.PhaseAnglesVoltage = new[] { 0d, 0d, 360.1d };
 
             // Act
@@ -64,7 +64,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestValidPhaseAngleCurrent()
         {
             // Arrange
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001_3AC_valid;
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
             loadpoint1.PhaseAnglesCurrent = new[] { 0d, 0d, 180d };
 
             // Act
@@ -79,7 +79,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestInvalidPhaseAngleCurrentTooLow()
         {
             // Arrange       
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001_3AC_valid;
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
             loadpoint1.PhaseAnglesCurrent = new[] { 0d, 0d, -0.1d };
 
             // Act
@@ -93,7 +93,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestInvalidPhaseAngleCurrentTooHigh()
         {
             // Arrange       
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001_3AC_valid;
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
             loadpoint1.PhaseAnglesCurrent = new[] { 0d, 0d, 360.1d };
 
             loadpoint1.PhaseAnglesCurrent = loadpoint1.PhaseAnglesCurrent.Append(360.1);

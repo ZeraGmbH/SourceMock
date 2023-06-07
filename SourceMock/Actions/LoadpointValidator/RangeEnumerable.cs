@@ -5,6 +5,9 @@ using System.Transactions;
 
 namespace SourceMock.Actions.LoadpointValidator
 {
+    /// <summary>
+    /// Specicifies the numeric range constraints for the values in an <see cref="IEnumerable"/>.
+    /// </summary>
     public class RangeEnumerable : RangeAttribute
     {
         #region InheritedConstructors

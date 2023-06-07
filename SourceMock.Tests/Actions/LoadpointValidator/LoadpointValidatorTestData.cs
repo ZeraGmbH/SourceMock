@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 namespace SourceMock.Tests.Actions.LoadpointValidator
 {
-// Can't be constant as there are non-constant members, must be public as it is used in the TestClass
-#pragma warning disable CA2211 // Non-constant fields should not be visible
     public static class LoadpointValidatorTestData
     {
         #region ValidLoadpoints
@@ -16,13 +14,13 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         {
             get
             {
-                yield return new TestCaseData(loadpoint001_3AC_valid);
-                yield return new TestCaseData(loadpoint002_2AC_valid);
-                yield return new TestCaseData(loadpoint003_1AC_valid);
+                yield return new TestCaseData(Loadpoint001_3AC_valid);
+                yield return new TestCaseData(Loadpoint002_2AC_valid);
+                yield return new TestCaseData(Loadpoint003_1AC_valid);
             }
         }
         
-        public static Loadpoint loadpoint001_3AC_valid
+        public static Loadpoint Loadpoint001_3AC_valid
         {
             get
             {
@@ -37,7 +35,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             }
         }
 
-        public static Loadpoint loadpoint002_2AC_valid
+        public static Loadpoint Loadpoint002_2AC_valid
         {
             get
             {
@@ -52,7 +50,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             }
         }
 
-        public static Loadpoint loadpoint003_1AC_valid
+        public static Loadpoint Loadpoint003_1AC_valid
         {
             get { 
                 return new()
@@ -72,54 +70,53 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         {
             get
             {
-                yield return new TestCaseData(loadpoint101_invalid_tooFewVoltages);
-                yield return new TestCaseData(loadpoint102_invalid_tooFewCurrents);
-                yield return new TestCaseData(loadpoint103_invalid_tooFewPhaseAnglesVoltage);
-                yield return new TestCaseData(loadpoint104_invalid_tooFewPhaseAnglesCurrent);
+                yield return new TestCaseData(Loadpoint101_invalid_tooFewVoltages);
+                yield return new TestCaseData(Loadpoint102_invalid_tooFewCurrents);
+                yield return new TestCaseData(Loadpoint103_invalid_tooFewPhaseAnglesVoltage);
+                yield return new TestCaseData(Loadpoint104_invalid_tooFewPhaseAnglesCurrent);
             }
         }
 
-        public static Loadpoint loadpoint101_invalid_tooFewVoltages
+        public static Loadpoint Loadpoint101_invalid_tooFewVoltages
         {
             get
             {
-                var ret = loadpoint001_3AC_valid;
+                var ret = Loadpoint001_3AC_valid;
                 ret.Voltages = new[] { 230d, 230d };
                 return ret;
             }
         }
 
-        public static Loadpoint loadpoint102_invalid_tooFewCurrents
+        public static Loadpoint Loadpoint102_invalid_tooFewCurrents
         {
             get
             {
-                var ret = loadpoint001_3AC_valid;
+                var ret = Loadpoint001_3AC_valid;
                 ret.Currents = new[] { 60d, 60d };
                 return ret;
 
             }
         }
 
-        public static Loadpoint loadpoint103_invalid_tooFewPhaseAnglesVoltage
+        public static Loadpoint Loadpoint103_invalid_tooFewPhaseAnglesVoltage
         {
             get
             {
-                var ret = loadpoint001_3AC_valid;
+                var ret = Loadpoint001_3AC_valid;
                 ret.PhaseAnglesVoltage = new[] { 0d, 120d };
                 return ret;
             }
         }
 
-        public static Loadpoint loadpoint104_invalid_tooFewPhaseAnglesCurrent
+        public static Loadpoint Loadpoint104_invalid_tooFewPhaseAnglesCurrent
         {
             get
             {
-                var ret = loadpoint001_3AC_valid;
+                var ret = Loadpoint001_3AC_valid;
                 ret.PhaseAnglesCurrent = new[] { 5d, 125d };
                 return ret;
             }
         }
         #endregion
     }
-#pragma warning restore CA2211 // Non-constant fields should not be visible
 }

@@ -1,5 +1,4 @@
-﻿using SourceMock.Extensions;
-using SourceMock.Model;
+﻿using SourceMock.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;

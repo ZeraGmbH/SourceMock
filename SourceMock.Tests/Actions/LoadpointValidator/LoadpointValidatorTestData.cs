@@ -1,4 +1,5 @@
-﻿using SourceMock.Model;
+﻿using SourceMock.Extensions;
+using SourceMock.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,28 +17,55 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         {
             get
             {
-                yield return new TestCaseData(loadpoint001);
-                yield return new TestCaseData(loadpoint002);
+                yield return new TestCaseData(loadpoint001_3AC_valid);
+                yield return new TestCaseData(loadpoint002_2AC_valid);
+                yield return new TestCaseData(loadpoint003_1AC_valid);
             }
         }
         
-        public static Loadpoint loadpoint001 = new()
+        public static Loadpoint loadpoint001_3AC_valid
         {
-            Voltages = new[] { 230d, 230d, 230d },
-            Currents = new[] { 60d, 60d, 60d },
-            Frequency = 50,
-            PhaseAnglesVoltage = new[] { 0d, 120d, 240d },
-            PhaseAnglesCurrent = new[] { 5d, 125d, 245d }
-        };
+            get
+            {
+                return new()
+                {
+                    Voltages = new[] { 230d, 230d, 230d },
+                    Currents = new[] { 60d, 60d, 60d },
+                    Frequency = 50,
+                    PhaseAnglesVoltage = new[] { 0d, 120d, 240d },
+                    PhaseAnglesCurrent = new[] { 5d, 125d, 245d }
+                };
+            }
+        }
 
-        public static Loadpoint loadpoint002 = new()
+        public static Loadpoint loadpoint002_2AC_valid
         {
-            Voltages = new[] { 110d, 110d },
-            Currents = new[] { 60d, 60d },
-            Frequency = 50,
-            PhaseAnglesVoltage = new[] { 0d, 180d },
-            PhaseAnglesCurrent = new[] { 5d, 185d }
-        };
+            get
+            {
+                return new()
+                {
+                    Voltages = new[] { 110d, 110d },
+                    Currents = new[] { 60d, 60d },
+                    Frequency = 50,
+                    PhaseAnglesVoltage = new[] { 0d, 180d },
+                    PhaseAnglesCurrent = new[] { 5d, 185d }
+                };
+            }
+        }
+
+        public static Loadpoint loadpoint003_1AC_valid
+        {
+            get { 
+                return new()
+                {
+                    Voltages = new[] { 110d },
+                    Currents = new[] { 60d },
+                    Frequency = 50,
+                    PhaseAnglesVoltage = new[] { 0d },
+                    PhaseAnglesCurrent = new[] { 5d }
+                };
+            }
+        }
         #endregion
 
         #region InvalidLoadpoints_MissingPhase
@@ -52,41 +80,46 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             }
         }
 
-        public static Loadpoint loadpoint101_invalid = new()
+        public static Loadpoint loadpoint101_invalid
         {
-            Voltages = new[] { 230d, 230d },
-            Currents = new[] { 60d, 60d, 60d },
-            Frequency = 50,
-            PhaseAnglesVoltage = new[] { 0d, 120d, 240d },
-            PhaseAnglesCurrent = new[] { 5d, 125d, 245d }
-        };
+            get
+            {
+                var ret = loadpoint001_3AC_valid;
+                ret.Voltages = new[] { 230d, 230d };
+                return ret;
+            }
+        }
 
-        public static Loadpoint loadpoint102_invalid = new()
+        public static Loadpoint loadpoint102_invalid
         {
-            Voltages = new[] { 230d, 230d, 230d },
-            Currents = new[] { 60d, 60d },
-            Frequency = 50,
-            PhaseAnglesVoltage = new[] { 0d, 120d, 240d },
-            PhaseAnglesCurrent = new[] { 5d, 125d, 245d }
-        };
+            get
+            {
+                var ret = loadpoint001_3AC_valid;
+                ret.Currents = new[] { 60d, 60d };
+                return ret;
 
-        public static Loadpoint loadpoint103_invalid = new()
-        {
-            Voltages = new[] { 230d, 230d, 230d },
-            Currents = new[] { 60d, 60d, 60d },
-            Frequency = 50,
-            PhaseAnglesVoltage = new[] { 0d, 120d },
-            PhaseAnglesCurrent = new[] { 5d, 125d, 245d }
-        };
+            }
+        }
 
-        public static Loadpoint loadpoint104_invalid = new()
+        public static Loadpoint loadpoint103_invalid
         {
-            Voltages = new[] { 230d, 230d, 230d },
-            Currents = new[] { 60d, 60d, 60d },
-            Frequency = 50,
-            PhaseAnglesVoltage = new[] { 0d, 120d, 240d },
-            PhaseAnglesCurrent = new[] { 5d, 125d }
-        };
+            get
+            {
+                var ret = loadpoint001_3AC_valid;
+                ret.PhaseAnglesVoltage = new[] { 0d, 120d };
+                return ret;
+            }
+        }
+
+        public static Loadpoint loadpoint104_invalid
+        {
+            get
+            {
+                var ret = loadpoint001_3AC_valid;
+                ret.PhaseAnglesCurrent = new[] { 5d, 125d };
+                return ret;
+            }
+        }
         #endregion
     }
 #pragma warning restore CA2211 // Non-constant fields should not be visible

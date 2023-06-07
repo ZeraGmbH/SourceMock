@@ -3,7 +3,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using SourceMock.Actions.LoadpointValidator;
 using SourceMock.Model;
 using SourceMock.Extensions;
-
+using NUnit.Framework;
 
 namespace SourceMock.Tests.Actions.LoadpointValidator
 {
@@ -14,7 +14,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestValidPhaseAngleVoltage()
         {
             // Arrange
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001.Copy();
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001_3AC_valid.Copy();
             loadpoint1.PhaseAnglesVoltage = new[] { 0d, 0d, 180d };            
 
             // Act
@@ -29,7 +29,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestInvalidPhaseAngleVoltageTooLow()
         {
             // Arrange       
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001.Copy();
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001_3AC_valid.Copy();
             loadpoint1.PhaseAnglesVoltage = new[] { 0d, 0d, -0.1d };
 
             // Act
@@ -43,7 +43,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestInvalidPhaseAngleVoltageTooHigh()
         {
             // Arrange       
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001.Copy();
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001_3AC_valid.Copy();
             loadpoint1.PhaseAnglesVoltage = new[] { 0d, 0d, 360.1d };
 
             // Act
@@ -59,7 +59,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestValidPhaseAngleCurrent()
         {
             // Arrange
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001.Copy();
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001_3AC_valid.Copy();
             loadpoint1.PhaseAnglesCurrent = new[] { 0d, 0d, 180d };
 
             // Act
@@ -74,7 +74,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestInvalidPhaseAngleCurrentTooLow()
         {
             // Arrange       
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001.Copy();
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001_3AC_valid.Copy();
             loadpoint1.PhaseAnglesCurrent = new[] { 0d, 0d, -0.1d };
 
             // Act
@@ -88,7 +88,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         public void TestInvalidPhaseAngleCurrentTooHigh()
         {
             // Arrange       
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001.Copy();
+            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001_3AC_valid.Copy();
             loadpoint1.PhaseAnglesCurrent = new[] { 0d, 0d, 360.1d };
 
             loadpoint1.PhaseAnglesCurrent = loadpoint1.PhaseAnglesCurrent.Append(360.1);
@@ -103,10 +103,11 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
 
         #region TestSameAmountOfPhases
         [Test]
-        public void TestSameNumberOfPhases()
+        [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.ValidLoadpoints))]
+        public void TestSameNumberOfPhases(Loadpoint loadpoint)
         {
             // Arrange
-            Loadpoint loadpoint = LoadpointValidatorTestData.loadpoint001.Copy();
+            // loadpoint set in parameter
 
             // Act
             var actual = SourceMock.Actions.LoadpointValidator.LoadpointValidator.Validate(loadpoint);

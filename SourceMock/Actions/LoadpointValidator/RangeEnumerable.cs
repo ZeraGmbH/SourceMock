@@ -30,7 +30,7 @@ namespace SourceMock.Actions.LoadpointValidator
             if (null == value) { return true; } 
 
             IEnumerable<object> list = ((IEnumerable)value).Cast<object>();
-            
+                        
             foreach (object item in list)
             {
                 if (!base.IsValid(item))

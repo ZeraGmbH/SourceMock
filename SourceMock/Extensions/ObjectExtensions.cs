@@ -4,7 +4,9 @@ using System.Reflection;
 
 namespace SourceMock.Extensions
 {
+#pragma warning disable CS1591 // Fehledes XML-Kommentar für öffentlich sichtbaren Typ oder Element
     public static class ObjectExtensions
+
     {
         private static readonly MethodInfo CloneMethod = typeof(Object).GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -51,7 +53,7 @@ namespace SourceMock.Extensions
             }
         }
 
-        private static void CopyFields(object originalObject, IDictionary<object, object> visited, object cloneObject, Type typeToReflect, BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy, Func<FieldInfo, bool> filter = null)
+        private static void CopyFields(object originalObject, IDictionary<object, object> visited, object cloneObject, Type typeToReflect, BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy, Func<FieldInfo, bool>? filter = null)
         {
             foreach (FieldInfo fieldInfo in typeToReflect.GetFields(bindingFlags))
             {
@@ -70,11 +72,11 @@ namespace SourceMock.Extensions
 
     public class ReferenceEqualityComparer : EqualityComparer<Object>
     {
-        public override bool Equals(object x, object y)
+        public override bool Equals(object? x, object? y)
         {
             return ReferenceEquals(x, y);
         }
-        public override int GetHashCode(object obj)
+        public override int GetHashCode(object? obj)
         {
             if (obj == null) return 0;
             return obj.GetHashCode();
@@ -88,7 +90,7 @@ namespace SourceMock.Extensions
             public static void ForEach(this Array array, Action<Array, int[]> action)
             {
                 if (array.LongLength == 0) return;
-                ArrayTraverse walker = new ArrayTraverse(array);
+                ArrayTraverse walker = new(array);
                 do action(array, walker.Position);
                 while (walker.Step());
             }
@@ -97,7 +99,7 @@ namespace SourceMock.Extensions
         internal class ArrayTraverse
         {
             public int[] Position;
-            private int[] maxLengths;
+            private readonly int[] maxLengths;
 
             public ArrayTraverse(Array array)
             {
@@ -127,5 +129,5 @@ namespace SourceMock.Extensions
             }
         }
     }
-
+#pragma warning restore CS1591 // Fehledes XML-Kommentar für öffentlich sichtbaren Typ oder Element
 }

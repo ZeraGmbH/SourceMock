@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SourceMock.Actions.LoadpointValidator;
 using SourceMock.Model;
 
 namespace SourceMock.Controllers
@@ -23,11 +24,13 @@ namespace SourceMock.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-// Reserved for future use
-#pragma warning disable IDE0060 // Nicht verwendete Parameter entfernen
         public IActionResult SetValues([FromBody] Loadpoint loadpoint)
-#pragma warning restore IDE0060 // Nicht verwendete Parameter entfernen
         {
+            if (LoadpointValidator.Validate(loadpoint) != LoadpointValidator.ValidationResult.OK)
+            {
+                return UnprocessableEntity();
+            }
+
             return Ok();
         }
 

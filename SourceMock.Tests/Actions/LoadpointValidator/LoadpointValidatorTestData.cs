@@ -73,14 +73,14 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         {
             get
             {
-                yield return new TestCaseData(loadpoint101_invalid);
-                yield return new TestCaseData(loadpoint102_invalid);
-                yield return new TestCaseData(loadpoint103_invalid);
-                yield return new TestCaseData(loadpoint104_invalid);
+                yield return new TestCaseData(loadpoint101_invalid_tooFewVoltages);
+                yield return new TestCaseData(loadpoint102_invalid_tooFewCurrents);
+                yield return new TestCaseData(loadpoint103_invalid_tooFewPhaseAnglesVoltage);
+                yield return new TestCaseData(loadpoint104_invalid_tooFewPhaseAnglesCurrent);
             }
         }
 
-        public static Loadpoint loadpoint101_invalid
+        public static Loadpoint loadpoint101_invalid_tooFewVoltages
         {
             get
             {
@@ -90,7 +90,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             }
         }
 
-        public static Loadpoint loadpoint102_invalid
+        public static Loadpoint loadpoint102_invalid_tooFewCurrents
         {
             get
             {
@@ -101,7 +101,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             }
         }
 
-        public static Loadpoint loadpoint103_invalid
+        public static Loadpoint loadpoint103_invalid_tooFewPhaseAnglesVoltage
         {
             get
             {
@@ -111,7 +111,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             }
         }
 
-        public static Loadpoint loadpoint104_invalid
+        public static Loadpoint loadpoint104_invalid_tooFewPhaseAnglesCurrent
         {
             get
             {

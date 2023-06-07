@@ -3,27 +3,33 @@ using System.Runtime.Serialization.Formatters.Binary;
 using SourceMock.Actions.LoadpointValidator;
 using SourceMock.Model;
 using NUnit.Framework;
+using System.Runtime.CompilerServices;
 
 namespace SourceMock.Tests.Actions.LoadpointValidator
 {
     internal class LoadpointValidatorTests
     {
-        #region TestPhaseAngleVoltageValidation
+        #region TestValidLoadpoints
         [Test]
-        public void TestValidPhaseAngleVoltage()
+        [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.ValidLoadpoints))]
+        public void TestValidLoadpoints(Loadpoint loadpoint)
         {
             // Arrange
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.loadpoint001_3AC_valid;
-            loadpoint1.PhaseAnglesVoltage = new[] { 0d, 0d, 180d };            
+            // loadpoint set in parameter
 
             // Act
-            var errCount = ValidateObject(loadpoint1);
+            var errCount = ValidateObject(loadpoint);
+            var validationResult = SourceMock.Actions.LoadpointValidator.LoadpointValidator.Validate(loadpoint);
 
             // Assert
             Assert.AreEqual(0, errCount);
+            Assert.AreEqual(
+                SourceMock.Actions.LoadpointValidator.LoadpointValidator.ValidationResult.OK,
+                validationResult);
         }
+        #endregion
 
-
+        #region TestPhaseAngleVoltageValidation
         [Test]
         public void TestInvalidPhaseAngleVoltageTooLow()
         {
@@ -101,22 +107,6 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         #endregion
 
         #region TestSameAmountOfPhases
-        [Test]
-        [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.ValidLoadpoints))]
-        public void TestSameNumberOfPhases(Loadpoint loadpoint)
-        {
-            // Arrange
-            // loadpoint set in parameter
-
-            // Act
-            var actual = SourceMock.Actions.LoadpointValidator.LoadpointValidator.Validate(loadpoint);
-
-            // Assert
-            Assert.AreEqual(
-                SourceMock.Actions.LoadpointValidator.LoadpointValidator.ValidationResult.OK, 
-                actual);
-        }
-
         [Test]
         [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.InvalidLoadPoints_MissingPhase))]
         public void TestDifferentNumberOfPhases(Loadpoint loadpoint)

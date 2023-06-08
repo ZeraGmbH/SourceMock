@@ -13,6 +13,16 @@ namespace SourceMock.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     public class SourceController : Controller
     {
+        private ILogger logger;
+        /// <summary>
+        /// Constructor for a SouceController.
+        /// </summary>
+        /// <param name="logger">Injected logger.</param>
+        public SourceController(ILogger<SourceController> logger)
+        {
+            this.logger = logger;
+        }
+
         /// <summary>
         /// Sets a loadpoint without turning on the source.
         /// </summary>
@@ -27,8 +37,10 @@ namespace SourceMock.Controllers
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public IActionResult SetValues([FromBody] Loadpoint loadpoint)
         {
-            if (LoadpointValidator.Validate(loadpoint) != LoadpointValidator.ValidationResult.OK)
+            var validationResult = LoadpointValidator.Validate(loadpoint);
+            if (validationResult != LoadpointValidator.ValidationResult.OK)
             {
+                logger.LogDebug($"Loadpoint validation failed with: {validationResult.ToString()}");
                 return UnprocessableEntity();
             }
 

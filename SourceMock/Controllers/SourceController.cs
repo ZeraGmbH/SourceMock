@@ -35,7 +35,7 @@ namespace SourceMock.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public IActionResult SetValues([FromBody] Loadpoint loadpoint)
+        public ActionResult SetValues([FromBody] Loadpoint loadpoint)
         {
             var validationResult = LoadpointValidator.Validate(loadpoint);
             if (validationResult != LoadpointValidator.ValidationResult.OK)
@@ -58,7 +58,7 @@ namespace SourceMock.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status424FailedDependency)]
-        public IActionResult TurnOn()
+        public ActionResult TurnOn()
         {
             return Ok();
         }
@@ -72,7 +72,7 @@ namespace SourceMock.Controllers
         [HttpPost("TurnOff")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public IActionResult TurnOff()
+        public ActionResult TurnOff()
         {
             return Ok();
         }

@@ -3,6 +3,7 @@
         "ms-dotnettools.csharp",
         "editorconfig.editorconfig",
         "formulahendry.dotnet-test-explorer",
-        "jmrog.vscode-nuget-package-manager"
+        "jmrog.vscode-nuget-package-manager",
+        "k--kato.docomment"
     ]
 }

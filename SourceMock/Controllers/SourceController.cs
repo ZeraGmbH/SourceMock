@@ -41,7 +41,7 @@ namespace SourceMock.Controllers
             if (validationResult != LoadpointValidator.ValidationResult.OK)
             {
                 logger.LogDebug($"Loadpoint validation failed with: {validationResult.ToString()}");
-                return UnprocessableEntity();
+                return Problem(detail: validationResult.ToString(), statusCode: StatusCodes.Status422UnprocessableEntity);
             }
 
             return Ok();

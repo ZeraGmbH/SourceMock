@@ -21,7 +21,7 @@ namespace SourceMock.Actions.LoadpointValidator
             /// </summary>
             NUMBER_OF_PHASES_DO_NOT_MATCH
         }
-        
+
         /// <summary>
         /// Conducts the dynamic validation of a loadpoint object.
         /// </summary>
@@ -36,8 +36,8 @@ namespace SourceMock.Actions.LoadpointValidator
 
         private static bool CheckNumberOfPhases(Loadpoint loadpoint)
         {
-            var phaseSpecificFields = new[] {loadpoint.Voltages, loadpoint.Currents, loadpoint.PhaseAnglesVoltage, loadpoint.PhaseAnglesCurrent };
-            
+            var phaseSpecificFields = new[] { loadpoint.Voltages, loadpoint.Currents, loadpoint.PhaseAnglesVoltage, loadpoint.PhaseAnglesCurrent };
+
             var numberOfPhases = phaseSpecificFields.First().Count();
             foreach (var phaseSpecificField in phaseSpecificFields)
             {

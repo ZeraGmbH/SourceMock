@@ -30,16 +30,16 @@ namespace SourceMock.Actions.LoadpointValidator
         /// <inheritdoc/>
         public override bool IsValid(object? value)
         {
-            if (null == value) { return true; } 
+            if (null == value) { return true; }
 
             IEnumerable<object> list = ((IEnumerable)value).Cast<object>();
-                        
+
             foreach (object item in list)
             {
                 if (!base.IsValid(item))
                 {
                     return false;
-                }                
+                }
             }
 
             return true;

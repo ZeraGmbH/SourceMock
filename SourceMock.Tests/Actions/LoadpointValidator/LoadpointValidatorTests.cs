@@ -39,7 +39,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
 
             // Act
             var errCount = ValidateObject(loadpoint1);
-   
+
             // Assert
             Assert.AreEqual(1, errCount);
         }

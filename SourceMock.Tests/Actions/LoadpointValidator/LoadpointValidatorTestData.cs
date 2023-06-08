@@ -1,4 +1,5 @@
 ﻿using SourceMock.Model;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
                 yield return new TestCaseData(Loadpoint003_1AC_valid);
             }
         }
-        
+
         public static Loadpoint Loadpoint001_3AC_valid
         {
             get
@@ -52,7 +53,8 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
 
         public static Loadpoint Loadpoint003_1AC_valid
         {
-            get { 
+            get
+            {
                 return new()
                 {
                     Voltages = new[] { 110d },

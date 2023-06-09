@@ -5,18 +5,32 @@ using Microsoft.Extensions.Logging;
 using Moq;
 
 using SourceMock.Actions.Source;
+using SourceMock.Model;
+using SourceMock.Tests.Actions.LoadpointValidator;
 
 namespace SourceMock.Tests.Actions.Source
 {
     internal class SimulatedSourceTests
     {
+        const string CONFIG_KEY_NUMBER_OF_PHASES = "SourceProperties:NumberOfPhases";
+
         #region PositiveTestCases
         [Test]
-        public void TestValidTurnOn()
+        [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.ValidLoadpoints))]
+        public void TestValidTurnOn(Loadpoint loadpoint)
         {
             // Arrange
-            ISource source = GenerateSimulatedSourceWithStandardMocks();
-            source.SetLoadpoint(LoadpointValidator.LoadpointValidatorTestData.Loadpoint001_3AC_valid);
+            var inMemorySettings = new Dictionary<string, string> {
+                {CONFIG_KEY_NUMBER_OF_PHASES, loadpoint.Currents.Count().ToString()}
+            };
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
+            Mock<ILogger<SimulatedSource>>? loggerMock = new();
+
+            ISource source = new SimulatedSource(loggerMock.Object, configuration);
+
+            source.SetLoadpoint(loadpoint);
 
             // Act
             var result = source.TurnOn();
@@ -26,12 +40,21 @@ namespace SourceMock.Tests.Actions.Source
         }
 
         [Test]
-        public void TestValidTurnOff()
+        [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.ValidLoadpoints))]
+        public void TestValidTurnOff(Loadpoint loadpoint)
         {
             // Arrange
-            ISource source = GenerateSimulatedSourceWithStandardMocks();
+            var inMemorySettings = new Dictionary<string, string> {
+                {CONFIG_KEY_NUMBER_OF_PHASES, loadpoint.Currents.Count().ToString()}
+            };
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
+            Mock<ILogger<SimulatedSource>>? loggerMock = new();
 
-            source.SetLoadpoint(LoadpointValidator.LoadpointValidatorTestData.Loadpoint001_3AC_valid);
+            ISource source = new SimulatedSource(loggerMock.Object, configuration);
+
+            source.SetLoadpoint(loadpoint);
             var result = source.TurnOn();
 
             // Act
@@ -47,7 +70,7 @@ namespace SourceMock.Tests.Actions.Source
         public void TestTurnOnWithoutLoadpoint()
         {
             // Arrange
-            ISource source = GenerateSimulatedSourceWithStandardMocks();
+            ISource source = GenerateSimulatedSource();
 
             // Act
             var result = source.TurnOn();
@@ -56,16 +79,35 @@ namespace SourceMock.Tests.Actions.Source
             Assert.AreEqual(SourceResult.NO_LOADPOINT_SET, result);
         }
 
-        public void TestTurnOnWithInvalidLoadpoint()
+        [Test]
+        [TestCaseSource(typeof(SimulatedSourceTestData), nameof(SimulatedSourceTestData.ValidLoadpointsWithOneOrThreePhases))]
+        public void TestTurnOnWithInvalidLoadpoint(Loadpoint loadpoint)
         {
+            const int NUMBER_OF_PHASES = 2;
 
+            // Arrange
+            var inMemorySettings = new Dictionary<string, string> {
+                {CONFIG_KEY_NUMBER_OF_PHASES, NUMBER_OF_PHASES.ToString()}
+            };
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
+            Mock<ILogger<SimulatedSource>>? loggerMock = new();
+
+            ISource source = new SimulatedSource(loggerMock.Object, configuration);
+
+            // Act
+            var result = source.SetLoadpoint(loadpoint);
+
+            // Assert
+            Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES, result);
         }
         #endregion
 
-        private ISource GenerateSimulatedSourceWithStandardMocks()
+        private ISource GenerateSimulatedSource(Mock<ILogger<SimulatedSource>>? loggerMock = null, Mock<IConfiguration>? configMock = null)
         {
-            Mock<ILogger<SimulatedSource>> loggerMock = new();
-            Mock<IConfiguration> configMock = new();
+            if (loggerMock == null) loggerMock = new();
+            if (configMock == null) configMock = new();
 
             return new SimulatedSource(loggerMock.Object, configMock.Object);
         }

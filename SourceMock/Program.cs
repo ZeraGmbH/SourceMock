@@ -36,7 +36,12 @@ builder.Services.AddVersionedApiExplorer(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
-builder.Services.AddSingleton<ISource, SimulatedSource>();
+var provider = builder.Services.BuildServiceProvider();
+#pragma warning disable CS8604 // have default providers, can't be null
+SimulatedSource source = new(provider.GetService<ILogger<SimulatedSource>>(), provider.GetService<IConfiguration>());
+#pragma warning restore CS8604
+builder.Services.AddSingleton<ISource>(s => source);
+builder.Services.AddSingleton<ISimulatedSource>(s => source);
 
 var app = builder.Build();
 

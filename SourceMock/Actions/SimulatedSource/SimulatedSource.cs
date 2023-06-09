@@ -5,8 +5,9 @@ namespace SourceMock.Actions.Source
     /// <summary>
     /// Simulatetes the behaviour of a ZERA source.
     /// </summary>
-    public class SimulatedSource : ISource
+    public class SimulatedSource : ISimulatedSource
     {
+        #region ContructorAndDependencyInjection
         private ILogger<SimulatedSource> logger;
         private IConfiguration configuration;
 
@@ -20,7 +21,7 @@ namespace SourceMock.Actions.Source
             this.logger = logger;
             this.configuration = configuration;
         }
-
+        #endregion
 
         private Loadpoint? currentLoadpoint, nextLoadpoint;
         private const string CONFIG_KEY_NUMBER_OF_PHASES = "SourceProperties:NumberOfPhases";

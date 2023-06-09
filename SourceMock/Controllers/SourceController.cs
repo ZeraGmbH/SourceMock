@@ -14,8 +14,8 @@ namespace SourceMock.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     public class SourceController : Controller
     {
-        private ILogger logger;
-        private ISource source;
+        private readonly ILogger _logger;
+        private readonly ISource _source;
 
         /// <summary>
         /// Constructor for a SouceController.
@@ -24,8 +24,8 @@ namespace SourceMock.Controllers
         /// <param name="source">Injected source.</param>
         public SourceController(ILogger<SourceController> logger, ISource source)
         {
-            this.logger = logger;
-            this.source = source;
+            _logger = logger;
+            _source = source;
         }
 
         /// <summary>
@@ -47,11 +47,14 @@ namespace SourceMock.Controllers
             var validationResult = LoadpointValidator.Validate(loadpoint);
             if (validationResult != LoadpointValidator.ValidationResult.OK)
             {
-                logger.LogDebug($"Loadpoint validation failed with: {validationResult.ToString()}");
-                return Problem(detail: validationResult.ToString(), statusCode: StatusCodes.Status422UnprocessableEntity);
+                _logger.LogDebug("Loadpoint validation failed with: {result}.", validationResult.ToString());
+                return Problem(
+                    detail: validationResult.ToString(),
+                    statusCode: StatusCodes.Status422UnprocessableEntity);
             }
 
-            switch (source.SetLoadpoint(loadpoint))
+#pragma warning disable IDE0066 // Not all enum values are appicable here
+            switch (_source.SetLoadpoint(loadpoint))
             {
                 case SourceResult.SUCCESS:
                     return Ok();
@@ -64,6 +67,7 @@ namespace SourceMock.Controllers
                         detail: "Unkown Response from source.",
                         statusCode: StatusCodes.Status500InternalServerError);
             }
+#pragma warning restore
         }
 
         /// <summary>
@@ -81,7 +85,8 @@ namespace SourceMock.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult TurnOn()
         {
-            switch (source.TurnOn())
+#pragma warning disable IDE0066 // Not all enum values are appicable here
+            switch (_source.TurnOn())
             {
                 case SourceResult.SUCCESS:
                     return Ok();
@@ -94,6 +99,7 @@ namespace SourceMock.Controllers
                         detail: "Unkown Response from source.",
                         statusCode: StatusCodes.Status500InternalServerError);
             }
+#pragma warning restore
         }
 
         /// <summary>
@@ -109,7 +115,8 @@ namespace SourceMock.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult TurnOff()
         {
-            switch (source.TurnOff())
+#pragma warning disable IDE0066 // Not all enum values are appicable here
+            switch (_source.TurnOff())
             {
                 case SourceResult.SUCCESS:
                     return Ok();
@@ -118,6 +125,7 @@ namespace SourceMock.Controllers
                         detail: "Unkown Response from source.",
                         statusCode: StatusCodes.Status500InternalServerError);
             }
+#pragma warning restore
         }
 
         /// <summary>
@@ -131,11 +139,11 @@ namespace SourceMock.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Loadpoint> GetNextLoadpoint()
         {
-            var loadpoint = source.GetNextLoadpoint();
+            var loadpoint = _source.GetNextLoadpoint();
 
-            if (loadpoint == null) return Problem(detail: "No next loadpoint was set, yet.", statusCode: StatusCodes.Status404NotFound);
-
-            return Ok(loadpoint);
+            return loadpoint == null
+                ? (ActionResult<Loadpoint>)Problem(detail: "No next loadpoint was set, yet.", statusCode: StatusCodes.Status404NotFound)
+                : (ActionResult<Loadpoint>)Ok(loadpoint);
         }
 
         /// <summary>
@@ -149,12 +157,11 @@ namespace SourceMock.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Loadpoint> GetCurrentLoadpoint()
         {
-            var loadpoint = source.GetCurrentLoadpoint();
+            var loadpoint = _source.GetCurrentLoadpoint();
 
-            if (loadpoint == null) return Problem(detail: "The source is currently turned off.", statusCode: StatusCodes.Status404NotFound);
-
-            return Ok(loadpoint);
+            return loadpoint == null
+                ? (ActionResult<Loadpoint>)Problem(detail: "The source is currently turned off.", statusCode: StatusCodes.Status404NotFound)
+                : (ActionResult<Loadpoint>)Ok(loadpoint);
         }
-
     }
 }

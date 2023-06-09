@@ -29,9 +29,9 @@ namespace SourceMock.Actions.LoadpointValidator
         /// <returns>The result of the validation.</returns>
         public static ValidationResult Validate(Loadpoint loadpoint)
         {
-            if (!CheckNumberOfPhases(loadpoint)) return ValidationResult.NUMBER_OF_PHASES_DO_NOT_MATCH;
-
-            return ValidationResult.OK;
+            return !CheckNumberOfPhases(loadpoint)
+                ? ValidationResult.NUMBER_OF_PHASES_DO_NOT_MATCH
+                : ValidationResult.OK;
         }
 
         private static bool CheckNumberOfPhases(Loadpoint loadpoint)

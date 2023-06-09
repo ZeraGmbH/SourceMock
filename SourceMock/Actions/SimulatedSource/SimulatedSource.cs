@@ -8,8 +8,8 @@ namespace SourceMock.Actions.Source
     public class SimulatedSource : ISimulatedSource
     {
         #region ContructorAndDependencyInjection
-        private ILogger<SimulatedSource> logger;
-        private IConfiguration configuration;
+        private readonly ILogger<SimulatedSource> _logger;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Constructor that injects logger and configuration.
@@ -18,55 +18,58 @@ namespace SourceMock.Actions.Source
         /// <param name="configuration">The configuration o be used.</param>
         public SimulatedSource(ILogger<SimulatedSource> logger, IConfiguration configuration)
         {
-            this.logger = logger;
-            this.configuration = configuration;
+            this._logger = logger;
+            this._configuration = configuration;
         }
         #endregion
 
-        private Loadpoint? currentLoadpoint, nextLoadpoint;
+        private Loadpoint? _currentLoadpoint, _nextLoadpoint;
         private const string CONFIG_KEY_NUMBER_OF_PHASES = "SourceProperties:NumberOfPhases";
 
         /// <inheritdoc/>
         public SourceResult SetLoadpoint(Loadpoint loadpoint)
         {
-            if (loadpoint.Currents.Count() != configuration.GetValue<int>(CONFIG_KEY_NUMBER_OF_PHASES))
+            if (loadpoint.Currents.Count() != _configuration.GetValue<int>(CONFIG_KEY_NUMBER_OF_PHASES))
             {
                 return SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES;
             }
 
-            nextLoadpoint = loadpoint;
+            _logger.LogTrace("Loadpoint set.");
+            _nextLoadpoint = loadpoint;
             return SourceResult.SUCCESS;
         }
 
         /// <inheritdoc/>
         public SourceResult TurnOn()
         {
-            if (nextLoadpoint == null)
+            if (_nextLoadpoint == null)
             {
                 return SourceResult.NO_LOADPOINT_SET;
             }
 
-            currentLoadpoint = nextLoadpoint;
+            _logger.LogTrace("Source turned on.");
+            _currentLoadpoint = _nextLoadpoint;
             return SourceResult.SUCCESS;
         }
 
         /// <inheritdoc/>
         public SourceResult TurnOff()
         {
-            currentLoadpoint = null;
+            _logger.LogTrace("Source turned off.");
+            _currentLoadpoint = null;
             return SourceResult.SUCCESS;
         }
 
         /// <inheritdoc/>
         public Loadpoint? GetNextLoadpoint()
         {
-            return nextLoadpoint;
+            return _nextLoadpoint;
         }
 
         /// <inheritdoc/>
         public Loadpoint? GetCurrentLoadpoint()
         {
-            return currentLoadpoint;
+            return _currentLoadpoint;
         }
     }
 }

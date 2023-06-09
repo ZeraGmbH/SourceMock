@@ -76,17 +76,20 @@ namespace SourceMock.Tests.Actions.Source
             var result = source.TurnOn();
 
             // Assert
+            var currentLoadpoint = source.GetCurrentLoadpoint();
+
             Assert.AreEqual(SourceResult.NO_LOADPOINT_SET, result);
+            Assert.AreEqual(null, currentLoadpoint);
         }
 
         [Test]
         [TestCaseSource(typeof(SimulatedSourceTestData), nameof(SimulatedSourceTestData.ValidLoadpointsWithOneOrThreePhases))]
         public void TestTurnOnWithInvalidLoadpoint(Loadpoint loadpoint)
         {
-            const int NUMBER_OF_PHASES = 2;
+            const int numberOfPhases = 2;
 
             // Arrange
-            var configuration = BuildConfig(NUMBER_OF_PHASES);
+            var configuration = BuildConfig(numberOfPhases);
             Mock<ILogger<SimulatedSource>>? loggerMock = new();
 
             ISource source = new SimulatedSource(loggerMock.Object, configuration);
@@ -95,20 +98,23 @@ namespace SourceMock.Tests.Actions.Source
             var result = source.SetLoadpoint(loadpoint);
 
             // Assert
+            var currentLoadpoint = source.GetCurrentLoadpoint();
+
             Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES, result);
+            Assert.AreEqual(null, currentLoadpoint);
         }
         #endregion
 
         #region HelperFunctions
-        private ISource GenerateSimulatedSource(Mock<ILogger<SimulatedSource>>? loggerMock = null, Mock<IConfiguration>? configMock = null)
+        private static ISource GenerateSimulatedSource(Mock<ILogger<SimulatedSource>>? loggerMock = null, Mock<IConfiguration>? configMock = null)
         {
-            if (loggerMock == null) loggerMock = new();
-            if (configMock == null) configMock = new();
+            loggerMock ??= new();
+            configMock ??= new();
 
             return new SimulatedSource(loggerMock.Object, configMock.Object);
         }
 
-        private IConfiguration BuildConfig(int numberOfPhases)
+        private static IConfiguration BuildConfig(int numberOfPhases)
         {
             var inMemorySettings = new Dictionary<string, string> {
                 {CONFIG_KEY_NUMBER_OF_PHASES, numberOfPhases.ToString()}

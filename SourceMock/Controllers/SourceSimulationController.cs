@@ -14,8 +14,8 @@ namespace SourceMock.Controllers
     public class SourceSimulationController : Controller
     {
         #region ConstructorAndDependencyInjection
-        private ILogger logger;
-        private ISimulatedSource source;
+        private readonly ILogger _logger;
+        private readonly ISimulatedSource _source;
 
         /// <summary>
         /// Constructor for a SourceSimulationController.
@@ -24,8 +24,8 @@ namespace SourceMock.Controllers
         /// <param name="source">Injected simulated source.</param>
         public SourceSimulationController(ILogger<SourceController> logger, ISimulatedSource source)
         {
-            this.logger = logger;
-            this.source = source;
+            _logger = logger;
+            _source = source;
         }
         #endregion
 

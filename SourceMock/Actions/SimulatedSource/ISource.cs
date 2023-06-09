@@ -25,6 +25,18 @@ namespace SourceMock.Actions.Source
         /// </summary>
         /// <returns>The corresponding value of <see cref="SourceResult"/> with regard to the success of the operation.</returns>
         public SourceResult TurnOff();
+
+        /// <summary>
+        /// Gets the loadpoint that would be put to action if <see cref="TurnOn"/> would be called.
+        /// </summary>
+        /// <returns>The loadpoint, null if none was set.</returns>
+        public Loadpoint? GetNextLoadpoint();
+
+        /// <summary>
+        /// Gets the currently set loadpoint.
+        /// </summary>
+        /// <returns>The loadpoint, null if none was set.</returns>
+        public Loadpoint? GetCurrentLoadpoint();
     }
 
     /// <summary>

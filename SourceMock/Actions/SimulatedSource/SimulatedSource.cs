@@ -52,7 +52,20 @@ namespace SourceMock.Actions.Source
         /// <inheritdoc/>
         public SourceResult TurnOff()
         {
+            currentLoadpoint = null;
             return SourceResult.SUCCESS;
+        }
+
+        /// <inheritdoc/>
+        public Loadpoint? GetNextLoadpoint()
+        {
+            return nextLoadpoint;
+        }
+
+        /// <inheritdoc/>
+        public Loadpoint? GetCurrentLoadpoint()
+        {
+            return currentLoadpoint;
         }
     }
 }

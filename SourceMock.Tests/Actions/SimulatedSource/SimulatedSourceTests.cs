@@ -31,7 +31,12 @@ namespace SourceMock.Tests.Actions.Source
             var result = source.TurnOn();
 
             // Assert
+            var nextLoadpoint = source.GetNextLoadpoint();
+            var currentLoadpoint = source.GetCurrentLoadpoint();
+
             Assert.AreEqual(SourceResult.SUCCESS, result);
+            Assert.AreEqual(loadpoint, nextLoadpoint);
+            Assert.AreEqual(loadpoint, currentLoadpoint);
         }
 
         [Test]
@@ -51,7 +56,12 @@ namespace SourceMock.Tests.Actions.Source
             source.TurnOff();
 
             // Assert
+            var nextLoadpoint = source.GetNextLoadpoint();
+            var currentLoadpoint = source.GetCurrentLoadpoint();
+
             Assert.AreEqual(SourceResult.SUCCESS, result);
+            Assert.AreEqual(loadpoint, nextLoadpoint);
+            Assert.AreEqual(null, currentLoadpoint);
         }
         #endregion
 

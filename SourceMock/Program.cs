@@ -1,5 +1,7 @@
 using Microsoft.OpenApi.Models;
 
+using SourceMock.Actions.Source;
+
 using System.ComponentModel;
 using System.Reflection;
 
@@ -34,6 +36,7 @@ builder.Services.AddVersionedApiExplorer(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
+builder.Services.AddSingleton<ISource, SimulatedSource>();
 
 var app = builder.Build();
 

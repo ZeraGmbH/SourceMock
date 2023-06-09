@@ -20,12 +20,7 @@ namespace SourceMock.Tests.Actions.Source
         public void TestValidTurnOn(Loadpoint loadpoint)
         {
             // Arrange
-            var inMemorySettings = new Dictionary<string, string> {
-                {CONFIG_KEY_NUMBER_OF_PHASES, loadpoint.Currents.Count().ToString()}
-            };
-            IConfiguration configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(inMemorySettings)
-                .Build();
+            var configuration = BuildConfig(loadpoint.Currents.Count());
             Mock<ILogger<SimulatedSource>>? loggerMock = new();
 
             ISource source = new SimulatedSource(loggerMock.Object, configuration);
@@ -44,12 +39,7 @@ namespace SourceMock.Tests.Actions.Source
         public void TestValidTurnOff(Loadpoint loadpoint)
         {
             // Arrange
-            var inMemorySettings = new Dictionary<string, string> {
-                {CONFIG_KEY_NUMBER_OF_PHASES, loadpoint.Currents.Count().ToString()}
-            };
-            IConfiguration configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(inMemorySettings)
-                .Build();
+            var configuration = BuildConfig(loadpoint.Currents.Count());
             Mock<ILogger<SimulatedSource>>? loggerMock = new();
 
             ISource source = new SimulatedSource(loggerMock.Object, configuration);
@@ -86,12 +76,7 @@ namespace SourceMock.Tests.Actions.Source
             const int NUMBER_OF_PHASES = 2;
 
             // Arrange
-            var inMemorySettings = new Dictionary<string, string> {
-                {CONFIG_KEY_NUMBER_OF_PHASES, NUMBER_OF_PHASES.ToString()}
-            };
-            IConfiguration configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(inMemorySettings)
-                .Build();
+            var configuration = BuildConfig(NUMBER_OF_PHASES);
             Mock<ILogger<SimulatedSource>>? loggerMock = new();
 
             ISource source = new SimulatedSource(loggerMock.Object, configuration);
@@ -104,6 +89,7 @@ namespace SourceMock.Tests.Actions.Source
         }
         #endregion
 
+        #region HelperFunctions
         private ISource GenerateSimulatedSource(Mock<ILogger<SimulatedSource>>? loggerMock = null, Mock<IConfiguration>? configMock = null)
         {
             if (loggerMock == null) loggerMock = new();
@@ -111,5 +97,16 @@ namespace SourceMock.Tests.Actions.Source
 
             return new SimulatedSource(loggerMock.Object, configMock.Object);
         }
+
+        private IConfiguration BuildConfig(int numberOfPhases)
+        {
+            var inMemorySettings = new Dictionary<string, string> {
+                {CONFIG_KEY_NUMBER_OF_PHASES, numberOfPhases.ToString()}
+            };
+            return new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
+        }
+        #endregion
     }
 }

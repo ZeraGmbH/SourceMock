@@ -1,4 +1,4 @@
-namespace SourceMock.Tests.Actions.SimulatedSource
+namespace SourceMock.Tests.Actions.Source
 {
     public static class SimulatedSourceTestData
     {

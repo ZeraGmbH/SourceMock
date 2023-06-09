@@ -1,9 +1,11 @@
-namespace SourceMock.Actions.SimulatedSource
+using SourceMock.Model;
+
+namespace SourceMock.Actions.Source
 {
     /// <summary>
     /// Simulatetes the behaviour of a ZERA source.
     /// </summary>
-    public class SimulatedSource : ISimulatedSource
+    public class SimulatedSource : ISource
     {
         private ILogger<SimulatedSource> logger;
         private IConfiguration configuration;
@@ -17,6 +19,24 @@ namespace SourceMock.Actions.SimulatedSource
         {
             this.logger = logger;
             this.configuration = configuration;
+        }
+
+        /// <inheritdoc/>
+        public SourceResult SetLoadpoint(Loadpoint loadpoint)
+        {
+            return SourceResult.SUCCESS;
+        }
+
+        /// <inheritdoc/>
+        public SourceResult TurnOff()
+        {
+            return SourceResult.SUCCESS;
+        }
+
+        /// <inheritdoc/>
+        public SourceResult TurnOn()
+        {
+            return SourceResult.SUCCESS;
         }
     }
 }

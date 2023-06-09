@@ -21,20 +21,30 @@ namespace SourceMock.Actions.Source
             this.configuration = configuration;
         }
 
+
+        private Loadpoint? currentLoadpoint, nextLoadpoint;
+
         /// <inheritdoc/>
         public SourceResult SetLoadpoint(Loadpoint loadpoint)
         {
-            return SourceResult.SUCCESS;
-        }
-
-        /// <inheritdoc/>
-        public SourceResult TurnOff()
-        {
+            nextLoadpoint = loadpoint;
             return SourceResult.SUCCESS;
         }
 
         /// <inheritdoc/>
         public SourceResult TurnOn()
+        {
+            if (nextLoadpoint == null)
+            {
+                return SourceResult.NO_LOADPOINT_SET;
+            }
+
+            currentLoadpoint = nextLoadpoint;
+            return SourceResult.SUCCESS;
+        }
+
+        /// <inheritdoc/>
+        public SourceResult TurnOff()
         {
             return SourceResult.SUCCESS;
         }

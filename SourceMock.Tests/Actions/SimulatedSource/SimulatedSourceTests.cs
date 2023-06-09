@@ -10,15 +10,12 @@ namespace SourceMock.Tests.Actions.Source
 {
     internal class SimulatedSourceTests
     {
+        #region PositiveTestCases
         [Test]
         public void TestValidTurnOn()
         {
             // Arrange
-            Mock<ILogger<SimulatedSource>> loggerMock = new();
-            Mock<IConfiguration> configMock = new();
-
-            ISource source = new SimulatedSource(loggerMock.Object, configMock.Object);
-
+            ISource source = GenerateSimulatedSourceWithStandardMocks();
             source.SetLoadpoint(LoadpointValidator.LoadpointValidatorTestData.Loadpoint001_3AC_valid);
 
             // Act
@@ -32,10 +29,7 @@ namespace SourceMock.Tests.Actions.Source
         public void TestValidTurnOff()
         {
             // Arrange
-            Mock<ILogger<SimulatedSource>> loggerMock = new();
-            Mock<IConfiguration> configMock = new();
-
-            ISource source = new SimulatedSource(loggerMock.Object, configMock.Object);
+            ISource source = GenerateSimulatedSourceWithStandardMocks();
 
             source.SetLoadpoint(LoadpointValidator.LoadpointValidatorTestData.Loadpoint001_3AC_valid);
             var result = source.TurnOn();
@@ -45,7 +39,35 @@ namespace SourceMock.Tests.Actions.Source
 
             // Assert
             Assert.AreEqual(SourceResult.SUCCESS, result);
+        }
+        #endregion
 
+        #region LoadpointIssues
+        [Test]
+        public void TestTurnOnWithoutLoadpoint()
+        {
+            // Arrange
+            ISource source = GenerateSimulatedSourceWithStandardMocks();
+
+            // Act
+            var result = source.TurnOn();
+
+            // Assert
+            Assert.AreEqual(SourceResult.NO_LOADPOINT_SET, result);
+        }
+
+        public void TestTurnOnWithInvalidLoadpoint()
+        {
+
+        }
+        #endregion
+
+        private ISource GenerateSimulatedSourceWithStandardMocks()
+        {
+            Mock<ILogger<SimulatedSource>> loggerMock = new();
+            Mock<IConfiguration> configMock = new();
+
+            return new SimulatedSource(loggerMock.Object, configMock.Object);
         }
     }
 }

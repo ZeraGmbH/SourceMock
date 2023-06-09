@@ -119,5 +119,42 @@ namespace SourceMock.Controllers
                         statusCode: StatusCodes.Status500InternalServerError);
             }
         }
+
+        /// <summary>
+        /// Gets the next loadpoint that would be set if "TurnOn" would be called.
+        /// </summary>
+        /// <returns>The loadpoint. HTTP 404 when no loadpoint is set.</returns>
+        /// <response code="200">If there is a loadpoint to be returned.</response>
+        /// <response code="404">If there is no next loadpoint set, yet.</response>
+        [HttpGet("NextLoadpoint")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<Loadpoint> GetNextLoadpoint()
+        {
+            var loadpoint = source.GetNextLoadpoint();
+
+            if (loadpoint == null) return Problem(detail: "No next loadpoint was set, yet.", statusCode: StatusCodes.Status404NotFound);
+
+            return Ok(loadpoint);
+        }
+
+        /// <summary>
+        /// Gets the currently active loadpoint.
+        /// </summary>
+        /// <returns>The loadpoint. HTTP 404 when the source is turned off.</returns>
+        /// <response code="200">If there is a loadpoint to be returned.</response>
+        /// <response code="404">If the source is turned off.</response>
+        [HttpGet("CurrentLoadpoint")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<Loadpoint> GetCurrentLoadpoint()
+        {
+            var loadpoint = source.GetCurrentLoadpoint();
+
+            if (loadpoint == null) return Problem(detail: "The source is currently turned off.", statusCode: StatusCodes.Status404NotFound);
+
+            return Ok(loadpoint);
+        }
+
     }
 }

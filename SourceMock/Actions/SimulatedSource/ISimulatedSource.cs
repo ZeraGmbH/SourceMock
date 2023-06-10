@@ -17,6 +17,6 @@ namespace SourceMock.Actions.Source
         /// Gets the current state of the simulated source.
         /// </summary>
         /// <returns>The current state.</returns>
-        public SimulatedSourceState GetSimulatedSourceState();
+        public SimulatedSourceState? GetSimulatedSourceState();
     }
 }

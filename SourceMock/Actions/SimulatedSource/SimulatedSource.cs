@@ -80,7 +80,7 @@ namespace SourceMock.Actions.Source
         }
 
         /// <inheritdoc/>
-        public SimulatedSourceState GetSimulatedSourceState()
+        public SimulatedSourceState? GetSimulatedSourceState()
         {
             return _simulatedSourceState;
         }

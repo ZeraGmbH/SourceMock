@@ -142,8 +142,8 @@ namespace SourceMock.Controllers
             var loadpoint = _source.GetNextLoadpoint();
 
             return loadpoint == null
-                ? (ActionResult<Loadpoint>)Problem(detail: "No next loadpoint was set, yet.", statusCode: StatusCodes.Status404NotFound)
-                : (ActionResult<Loadpoint>)Ok(loadpoint);
+                ? Problem(detail: "No next loadpoint was set, yet.", statusCode: StatusCodes.Status404NotFound)
+                : Ok(loadpoint);
         }
 
         /// <summary>
@@ -160,8 +160,8 @@ namespace SourceMock.Controllers
             var loadpoint = _source.GetCurrentLoadpoint();
 
             return loadpoint == null
-                ? (ActionResult<Loadpoint>)Problem(detail: "The source is currently turned off.", statusCode: StatusCodes.Status404NotFound)
-                : (ActionResult<Loadpoint>)Ok(loadpoint);
+                ? Problem(detail: "The source is currently turned off.", statusCode: StatusCodes.Status404NotFound)
+                : Ok(loadpoint);
         }
     }
 }

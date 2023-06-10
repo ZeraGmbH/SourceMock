@@ -30,12 +30,33 @@ namespace SourceMock.Controllers
         #endregion
 
         /// <summary>
-        /// Sets the state of the simulated source.
+        /// Returns the current state of the source.
         /// </summary>
         /// <returns></returns>
-        [HttpPost("SourceState")]
-        public ActionResult SetSourceState()
+        /// <response code="200">If the source state retrieval was successful.</response>
+        /// <response code="404">If no source state was set yet.</response>
+        [HttpGet("SourceState")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<SimulatedSourceState> GetSourceState()
         {
+            var state = _source.GetSimulatedSourceState();
+            return state == null
+                ? Problem(detail: "No state was set yet.", statusCode: StatusCodes.Status404NotFound)
+                : Ok(state);
+        }
+
+        /// <summary>
+        /// Sets the state of the simulated source.
+        /// </summary>
+        /// <param name="simulatedSourceState">The state to be set.</param>
+        /// <returns></returns>
+        /// <response code="200">If the source state was successfully set.</response>
+        [HttpPost("SourceState")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult SetSourceState([FromBody] SimulatedSourceState simulatedSourceState)
+        {
+            _source.SetSimulatedSourceState(simulatedSourceState);
             return Ok();
         }
     }

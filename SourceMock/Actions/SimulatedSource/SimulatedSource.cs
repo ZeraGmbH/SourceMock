@@ -25,6 +25,7 @@ namespace SourceMock.Actions.Source
 
         private Loadpoint? _currentLoadpoint, _nextLoadpoint;
         private const string CONFIG_KEY_NUMBER_OF_PHASES = "SourceProperties:NumberOfPhases";
+        private SimulatedSourceState? _simulatedSourceState;
 
         /// <inheritdoc/>
         public SourceResult SetLoadpoint(Loadpoint loadpoint)
@@ -70,6 +71,18 @@ namespace SourceMock.Actions.Source
         public Loadpoint? GetCurrentLoadpoint()
         {
             return _currentLoadpoint;
+        }
+
+        /// <inheritdoc/>
+        public void SetSimulatedSourceState(SimulatedSourceState simulatedSourceState)
+        {
+            _simulatedSourceState = simulatedSourceState;
+        }
+
+        /// <inheritdoc/>
+        public SimulatedSourceState GetSimulatedSourceState()
+        {
+            return _simulatedSourceState;
         }
     }
 }

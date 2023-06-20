@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 using SourceMock.Actions.LoadpointValidator;
 using SourceMock.Actions.Source;

@@ -1,4 +1,4 @@
-﻿using SourceMock.Actions.LoadpointValidator;
+using SourceMock.Actions.LoadpointValidator;
 
 using System.ComponentModel.DataAnnotations;
 

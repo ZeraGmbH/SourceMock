@@ -1,4 +1,4 @@
-﻿using SourceMock.Model;
+using SourceMock.Model;
 
 namespace SourceMock.Actions.LoadpointValidator
 {

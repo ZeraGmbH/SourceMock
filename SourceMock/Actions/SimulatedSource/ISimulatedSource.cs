@@ -5,7 +5,7 @@ namespace SourceMock.Actions.Source
     /// <summary>
     /// Extends <see cref="ISource"/> by functions to influece the sources behaviour.
     /// </summary>
-    public interface ISimulatedSource : ISource
+    public interface ISimulatedSource
     {
         /// <summary>
         /// Sets the state of the simulated source.

@@ -5,7 +5,7 @@ namespace SourceMock.Actions.Source
     /// <summary>
     /// Simulatetes the behaviour of a ZERA source.
     /// </summary>
-    public class SimulatedSource : ISimulatedSource
+    public class SimulatedSource : ISource, ISimulatedSource
     {
         #region ContructorAndDependencyInjection
         private readonly ILogger<SimulatedSource> _logger;

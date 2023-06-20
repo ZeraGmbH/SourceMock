@@ -133,34 +133,34 @@ namespace SourceMock.Controllers
         /// </summary>
         /// <returns>The loadpoint. HTTP 404 when no loadpoint is set.</returns>
         /// <response code="200">If there is a loadpoint to be returned.</response>
-        /// <response code="404">If there is no next loadpoint set, yet.</response>
+        /// <response code="204">If there is no next loadpoint set, yet.</response>
         [HttpGet("NextLoadpoint")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public ActionResult<Loadpoint> GetNextLoadpoint()
         {
             var loadpoint = _source.GetNextLoadpoint();
 
             return loadpoint == null
-                ? Problem(detail: "No next loadpoint was set, yet.", statusCode: StatusCodes.Status404NotFound)
+                ? Problem(detail: "No next loadpoint was set, yet.", statusCode: StatusCodes.Status204NoContent)
                 : Ok(loadpoint);
         }
 
         /// <summary>
         /// Gets the currently active loadpoint.
         /// </summary>
-        /// <returns>The loadpoint. HTTP 404 when the source is turned off.</returns>
+        /// <returns>The loadpoint. HTTP 204 when the source is turned off.</returns>
         /// <response code="200">If there is a loadpoint to be returned.</response>
-        /// <response code="404">If the source is turned off.</response>
+        /// <response code="204">If the source is turned off.</response>
         [HttpGet("CurrentLoadpoint")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public ActionResult<Loadpoint> GetCurrentLoadpoint()
         {
             var loadpoint = _source.GetCurrentLoadpoint();
 
             return loadpoint == null
-                ? Problem(detail: "The source is currently turned off.", statusCode: StatusCodes.Status404NotFound)
+                ? Problem(detail: "The source is currently turned off.", statusCode: StatusCodes.Status204NoContent)
                 : Ok(loadpoint);
         }
     }

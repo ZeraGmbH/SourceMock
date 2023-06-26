@@ -36,6 +36,19 @@ builder.Services.AddVersionedApiExplorer(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
+#pragma warning disable IDE0053 // body expression looks way more cluttered
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost", builder =>
+    {
+        builder.WithOrigins("localhost",
+                            "127.0.0.1").
+                AllowAnyMethod().
+                AllowAnyHeader();
+    });
+});
+#pragma warning restore IDE0053
+
 builder.Services.AddSingleton<SimulatedSource>();
 builder.Services.AddSingleton<ISource>(x => x.GetRequiredService<SimulatedSource>());
 builder.Services.AddSingleton<ISimulatedSource>(x => x.GetRequiredService<SimulatedSource>());
@@ -48,8 +61,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

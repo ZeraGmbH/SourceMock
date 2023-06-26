@@ -142,7 +142,7 @@ namespace SourceMock.Controllers
             var loadpoint = _source.GetNextLoadpoint();
 
             return loadpoint == null
-                ? Problem(detail: "No next loadpoint was set, yet.", statusCode: StatusCodes.Status204NoContent)
+                ? NoContent()
                 : Ok(loadpoint);
         }
 
@@ -160,7 +160,7 @@ namespace SourceMock.Controllers
             var loadpoint = _source.GetCurrentLoadpoint();
 
             return loadpoint == null
-                ? Problem(detail: "The source is currently turned off.", statusCode: StatusCodes.Status204NoContent)
+                ? NoContent()
                 : Ok(loadpoint);
         }
     }

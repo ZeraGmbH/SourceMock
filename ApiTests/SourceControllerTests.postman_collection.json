@@ -13,9 +13,12 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 204\", function () {",
 							"    pm.response.to.have.status(204);",
-							"});"
+							"});",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -53,6 +56,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 424\", function () {",
 							"    pm.response.to.have.status(424);",
 							"});"
@@ -93,6 +98,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 422\", function () {",
 							"    pm.response.to.have.status(422);",
 							"});",
@@ -146,6 +153,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});"
@@ -168,7 +177,12 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"voltages\": [\n    0,1,2\n  ],\n  \"currents\": [\n    3,4,5\n  ],\n  \"frequency\": 0,\n  \"phaseAnglesVoltage\": [\n    6,7,8\n  ],\n  \"phaseAnglesCurrent\": [\n    9,10,11\n  ]\n}"
+					"raw": "{\n  \"voltages\": [\n    0,1,2\n  ],\n  \"currents\": [\n    3,4,5\n  ],\n  \"frequency\": 0,\n  \"phaseAnglesVoltage\": [\n    6,7,8\n  ],\n  \"phaseAnglesCurrent\": [\n    9,10,11\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
 				},
 				"url": {
 					"raw": "https://localhost:{{httpsPort}}/api/v1/Source/SetLoadpoint",
@@ -194,6 +208,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});"
@@ -234,6 +250,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 204\", function () {",
 							"    pm.response.to.have.status(204);",
 							"});",
@@ -275,6 +293,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});"
@@ -315,6 +335,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});"
@@ -355,6 +377,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});"
@@ -395,6 +419,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 204\", function () {",
 							"    pm.response.to.have.status(204);",
 							"});"

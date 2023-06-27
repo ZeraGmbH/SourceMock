@@ -21,18 +21,14 @@ jobs:
         with:
           dotnet-version: 6.0.x
 
-      - name: Install dependencies
-        run: |
-          dotnet restore SourceMock
-
       - name: Build Windows
         run: |
-          dotnet publish SourceMock -r win-x64 --self-contained false --configuration Release --no-restore
+          dotnet publish SourceMock -r win-x64 --self-contained false --configuration Release
           ls -la
 
       - name: Build Linux
         run: |
-          dotnet publish SourceMock -r linux-x64 --self-contained false --configuration Release --no-restore
+          dotnet publish SourceMock -r linux-x64 --self-contained false --configuration Release
           ls -la
 
       - name: Run Unit-Tests

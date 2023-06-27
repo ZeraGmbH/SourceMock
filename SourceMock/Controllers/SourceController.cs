@@ -44,25 +44,35 @@ namespace SourceMock.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult SetLoadpoint([FromBody] Loadpoint loadpoint)
         {
+            _logger.LogTrace("Loadpoint to be set: ", loadpoint);
+
             var validationResult = LoadpointValidator.Validate(loadpoint);
             if (validationResult != LoadpointValidator.ValidationResult.OK)
             {
-                _logger.LogDebug("Loadpoint validation failed with: {result}.", validationResult.ToString());
+                _logger.LogInformation("Loadpoint validation failed with: {result}.", validationResult.ToString());
                 return Problem(
                     detail: validationResult.ToString(),
                     statusCode: StatusCodes.Status422UnprocessableEntity);
             }
+            else
+            {
+                _logger.LogTrace("Loadpoint validation was successful.");
+            }
 
+            var srcResult = _source.SetLoadpoint(loadpoint);
 #pragma warning disable IDE0066 // Not all enum values are appicable here
-            switch (_source.SetLoadpoint(loadpoint))
+            switch (srcResult)
             {
                 case SourceResult.SUCCESS:
+                    _logger.LogTrace("Loadpoint was successfully set.");
                     return Ok();
                 case SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES:
+                    _logger.LogInformation("The requested loadpoint could not be set because it has a different number of phases than what this source provides.");
                     return Problem(
                         detail: SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES.ToString(),
                         statusCode: StatusCodes.Status422UnprocessableEntity);
                 default:
+                    _logger.LogError($"Unkown response from source: ", srcResult.ToString());
                     return Problem(
                         detail: "Unkown Response from source.",
                         statusCode: StatusCodes.Status500InternalServerError);
@@ -85,16 +95,20 @@ namespace SourceMock.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult TurnOn()
         {
+            var srcResult = _source.TurnOn();
 #pragma warning disable IDE0066 // Not all enum values are appicable here
-            switch (_source.TurnOn())
+            switch (srcResult)
             {
                 case SourceResult.SUCCESS:
+                    _logger.LogTrace("The source was turned on.");
                     return Ok();
                 case SourceResult.NO_LOADPOINT_SET:
+                    _logger.LogInformation("The source could not be turned on because no loadpoint was set prevoiously.");
                     return Problem(
                         detail: SourceResult.NO_LOADPOINT_SET.ToString(),
                         statusCode: StatusCodes.Status424FailedDependency);
                 default:
+                    _logger.LogError($"Unkown response from source: ", srcResult.ToString());
                     return Problem(
                         detail: "Unkown Response from source.",
                         statusCode: StatusCodes.Status500InternalServerError);
@@ -115,12 +129,15 @@ namespace SourceMock.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult TurnOff()
         {
+            var srcResult = _source.TurnOff();
 #pragma warning disable IDE0066 // Not all enum values are appicable here
-            switch (_source.TurnOff())
+            switch (srcResult)
             {
                 case SourceResult.SUCCESS:
+                    _logger.LogTrace("Source was turned off.");
                     return Ok();
                 default:
+                    _logger.LogError($"Unkown response from source: ", srcResult.ToString());
                     return Problem(
                         detail: "Unkown Response from source.",
                         statusCode: StatusCodes.Status500InternalServerError);

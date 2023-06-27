@@ -1,0 +1,419 @@
+{
+	"info": {
+		"_postman_id": "e5ade74c-2de5-4387-b1b1-26644a988ea9",
+		"name": "SourceControllerTests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28193137"
+	},
+	"item": [
+		{
+			"name": "NextLoadpoint without set loadpoint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "text/plain"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7443/api/v1/Source/NextLoadpoint",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7443",
+					"path": [
+						"api",
+						"v1",
+						"Source",
+						"NextLoadpoint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Turn on source without set loadpoint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 424\", function () {",
+							"    pm.response.to.have.status(424);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7443/api/v1/Source/TurnOn",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7443",
+					"path": [
+						"api",
+						"v1",
+						"Source",
+						"TurnOn"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set invalid Loadpoint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 422\", function () {",
+							"    pm.response.to.have.status(422);",
+							"});",
+							"",
+							"pm.test(\"Detial is provided\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.detail).to.eql(\"NUMBER_OF_PHASES_DO_NOT_MATCH\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"voltages\": [\n    0,1,2\n  ],\n  \"currents\": [\n    3,4,5\n  ],\n  \"frequency\": 0,\n  \"phaseAnglesVoltage\": [\n    6,7,8\n  ],\n  \"phaseAnglesCurrent\": [\n    9,10\n  ]\n}"
+				},
+				"url": {
+					"raw": "https://localhost:7443/api/v1/Source/SetLoadpoint",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7443",
+					"path": [
+						"api",
+						"v1",
+						"Source",
+						"SetLoadpoint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set Valid Loadpoint",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"voltages\": [\n    0,1,2\n  ],\n  \"currents\": [\n    3,4,5\n  ],\n  \"frequency\": 0,\n  \"phaseAnglesVoltage\": [\n    6,7,8\n  ],\n  \"phaseAnglesCurrent\": [\n    9,10,11\n  ]\n}"
+				},
+				"url": {
+					"raw": "https://localhost:7443/api/v1/Source/SetLoadpoint",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7443",
+					"path": [
+						"api",
+						"v1",
+						"Source",
+						"SetLoadpoint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get NextLoadpoint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "text/plain"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7443/api/v1/Source/NextLoadpoint",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7443",
+					"path": [
+						"api",
+						"v1",
+						"Source",
+						"NextLoadpoint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get current laodpoint without turning on",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "text/plain"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7443/api/v1/Source/CurrentLoadpoint",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7443",
+					"path": [
+						"api",
+						"v1",
+						"Source",
+						"CurrentLoadpoint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Turn on source",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7443/api/v1/Source/TurnOn",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7443",
+					"path": [
+						"api",
+						"v1",
+						"Source",
+						"TurnOn"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get currnent loadpoint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "text/plain"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7443/api/v1/Source/CurrentLoadpoint",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7443",
+					"path": [
+						"api",
+						"v1",
+						"Source",
+						"CurrentLoadpoint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Turn off source",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7443/api/v1/Source/TurnOff",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7443",
+					"path": [
+						"api",
+						"v1",
+						"Source",
+						"TurnOff"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get currnent loadpoint after turning off",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "text/plain"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7443/api/v1/Source/CurrentLoadpoint",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7443",
+					"path": [
+						"api",
+						"v1",
+						"Source",
+						"CurrentLoadpoint"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

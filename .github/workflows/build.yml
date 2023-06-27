@@ -38,7 +38,7 @@ jobs:
       - name: Start Service for Acceptance Tests
         run: |
           SourceMock/bin/Release/net6.0/linux-x64/publish/SourceMock&
-          SOURCE_MOCK_PID = $!
+          SOURCE_MOCK_PID=$!
 
       - uses: matt-ball/newman-action@master
         with:

@@ -1,0 +1,70 @@
+name: .NET
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Install dependencies
+        run: |
+          dotnet restore SourceMock
+
+      - name: Build Windows
+        run: |
+          dotnet publish SourceMock --os win-x64 --self-contained false --configuration Release --no-restore
+          ls -la
+
+      - name: Build Linux
+        run: |
+          dotnet publish SourceMock --os linux-x64 --self-contained false --configuration Release --no-restore
+          ls -la
+
+      - name: Run Unit-Tests
+        run: |
+          dotnet test SourceMock.Tests --no-build
+
+      - name: Start Service for Acceptance Tests
+        run: |
+          SourceMock/bin/Release/net6.0/linux-x64/publish/SourceMock&
+          SOURCE_MOCK_PID = $!
+
+      - uses: matt-ball/newman-action@master
+        with:
+          collection: ApiTests/SourceControllerTests.postman_collection.json
+          environment: ApiTests/postman_environment.json
+
+      - name: Exit Service
+        run: |
+          kill -9 $SOURCE_MOCK_PID
+
+      - name: Upload Build Artifacts Windows
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-win-x64
+          path: "SourceMock/bin/Release/net6.0/win-x64/publish/"
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Upload Build Artifacts Linux
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-linux-x64
+          path: "SourceMock/bin/Release/net6.0/linux-x64/publish/"
+          if-no-files-found: error
+          retention-days: 1

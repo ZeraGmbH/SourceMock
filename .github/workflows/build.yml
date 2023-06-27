@@ -44,6 +44,7 @@ jobs:
         with:
           collection: ApiTests/SourceControllerTests.postman_collection.json
           environment: ApiTests/postman_environment.json
+          insecure: true
 
       - name: Exit Service
         run: |

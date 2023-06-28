@@ -13,9 +13,12 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 204\", function () {",
 							"    pm.response.to.have.status(204);",
-							"});"
+							"});",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -30,12 +33,12 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:7443/api/v1/Source/NextLoadpoint",
+					"raw": "https://localhost:{{httpsPort}}/api/v1/Source/NextLoadpoint",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "7443",
+					"port": "{{httpsPort}}",
 					"path": [
 						"api",
 						"v1",
@@ -53,6 +56,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 424\", function () {",
 							"    pm.response.to.have.status(424);",
 							"});"
@@ -70,12 +75,12 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:7443/api/v1/Source/TurnOn",
+					"raw": "https://localhost:{{httpsPort}}/api/v1/Source/TurnOn",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "7443",
+					"port": "{{httpsPort}}",
 					"path": [
 						"api",
 						"v1",
@@ -93,6 +98,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 422\", function () {",
 							"    pm.response.to.have.status(422);",
 							"});",
@@ -123,12 +130,12 @@
 					"raw": "{\n  \"voltages\": [\n    0,1,2\n  ],\n  \"currents\": [\n    3,4,5\n  ],\n  \"frequency\": 0,\n  \"phaseAnglesVoltage\": [\n    6,7,8\n  ],\n  \"phaseAnglesCurrent\": [\n    9,10\n  ]\n}"
 				},
 				"url": {
-					"raw": "https://localhost:7443/api/v1/Source/SetLoadpoint",
+					"raw": "https://localhost:{{httpsPort}}/api/v1/Source/SetLoadpoint",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "7443",
+					"port": "{{httpsPort}}",
 					"path": [
 						"api",
 						"v1",
@@ -141,6 +148,21 @@
 		},
 		{
 			"name": "Set Valid Loadpoint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(pm.response);",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
@@ -155,15 +177,20 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"voltages\": [\n    0,1,2\n  ],\n  \"currents\": [\n    3,4,5\n  ],\n  \"frequency\": 0,\n  \"phaseAnglesVoltage\": [\n    6,7,8\n  ],\n  \"phaseAnglesCurrent\": [\n    9,10,11\n  ]\n}"
+					"raw": "{\n  \"voltages\": [\n    0,1,2\n  ],\n  \"currents\": [\n    3,4,5\n  ],\n  \"frequency\": 0,\n  \"phaseAnglesVoltage\": [\n    6,7,8\n  ],\n  \"phaseAnglesCurrent\": [\n    9,10,11\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
 				},
 				"url": {
-					"raw": "https://localhost:7443/api/v1/Source/SetLoadpoint",
+					"raw": "https://localhost:{{httpsPort}}/api/v1/Source/SetLoadpoint",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "7443",
+					"port": "{{httpsPort}}",
 					"path": [
 						"api",
 						"v1",
@@ -181,6 +208,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});"
@@ -198,12 +227,12 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:7443/api/v1/Source/NextLoadpoint",
+					"raw": "https://localhost:{{httpsPort}}/api/v1/Source/NextLoadpoint",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "7443",
+					"port": "{{httpsPort}}",
 					"path": [
 						"api",
 						"v1",
@@ -221,6 +250,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 204\", function () {",
 							"    pm.response.to.have.status(204);",
 							"});",
@@ -239,12 +270,12 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:7443/api/v1/Source/CurrentLoadpoint",
+					"raw": "https://localhost:{{httpsPort}}/api/v1/Source/CurrentLoadpoint",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "7443",
+					"port": "{{httpsPort}}",
 					"path": [
 						"api",
 						"v1",
@@ -262,6 +293,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});"
@@ -279,12 +312,12 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:7443/api/v1/Source/TurnOn",
+					"raw": "https://localhost:{{httpsPort}}/api/v1/Source/TurnOn",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "7443",
+					"port": "{{httpsPort}}",
 					"path": [
 						"api",
 						"v1",
@@ -302,6 +335,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});"
@@ -319,12 +354,12 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:7443/api/v1/Source/CurrentLoadpoint",
+					"raw": "https://localhost:{{httpsPort}}/api/v1/Source/CurrentLoadpoint",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "7443",
+					"port": "{{httpsPort}}",
 					"path": [
 						"api",
 						"v1",
@@ -342,6 +377,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});"
@@ -359,12 +396,12 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:7443/api/v1/Source/TurnOff",
+					"raw": "https://localhost:{{httpsPort}}/api/v1/Source/TurnOff",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "7443",
+					"port": "{{httpsPort}}",
 					"path": [
 						"api",
 						"v1",
@@ -382,6 +419,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(pm.response);",
+							"",
 							"pm.test(\"Status code is 204\", function () {",
 							"    pm.response.to.have.status(204);",
 							"});"
@@ -399,12 +438,12 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:7443/api/v1/Source/CurrentLoadpoint",
+					"raw": "https://localhost:{{httpsPort}}/api/v1/Source/CurrentLoadpoint",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "7443",
+					"port": "{{httpsPort}}",
 					"path": [
 						"api",
 						"v1",

@@ -37,7 +37,8 @@ jobs:
 
       - name: Start Service for Acceptance Tests
         run: |
-          SourceMock/bin/Release/net6.0/linux-x64/publish/SourceMock&
+          cd SourceMock/bin/Release/net6.0/linux-x64/publish
+          ./SourceMock&
           echo "SOURCE_MOCK_PID=$!" >> $GITHUB_ENV
 
       - uses: matt-ball/newman-action@master

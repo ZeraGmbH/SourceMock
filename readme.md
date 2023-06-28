@@ -1,4 +1,4 @@
-# Source Mock
+# Setting up a dev environment 
 
 A mock of a ZERA source, containing an API specification.
 
@@ -17,3 +17,19 @@ Load recommended git settings with `git config --local include.path ../.gitconfi
 ## First start and SSL certificates
 
 The web server uses a self signed SSL certificate. If this certificate is not trusted, some web browsers will not do a propper HTTPS redirection, which may lead to an API call to be blocked because it requires HTTPS. In this case, you need to go manually to the swagger page (chage the port to the one specified in `appsettings.json` and add the `https://`-prefix).
+
+# CI/CD
+
+## Builds
+
+There are builds for MS Windows as well as linux, each in a 64 bit variant. Both builds are made uploaded as build artifacts.
+
+## Tests
+
+### Unit tests
+
+The nunit unit tests are run by the CD-pipeline. 
+
+### Integration tests
+
+The application is started with the default production appsettings and tested using [newman](https://learning.postman.com/docs/collections/using-newman-cli/command-line-integration-with-newman/). New tests can be designed using [postman](https://www.postman.com/).

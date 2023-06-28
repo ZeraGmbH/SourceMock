@@ -29,3 +29,8 @@ The nunit unit tests are run by the CD-pipeline.
 ### Integration tests
 
 The application is started with the default production appsettings and tested using [newman](https://learning.postman.com/docs/collections/using-newman-cli/command-line-integration-with-newman/). New tests can be designed using [postman](https://www.postman.com/).
+
+You can run these tests locally using:
+```console
+newman run ApiTests/SourceControllerTests.postman_collection.json -e ApiTests/postman_environment.json --insecure --verbose
+```

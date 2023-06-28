@@ -1,8 +1,4 @@
-# Setting up a dev environment 
-
-A mock of a ZERA source, containing an API specification.
-
-## Set up project
+# Set up project
 
 ### Recommended extensions for vscode
 

@@ -2,7 +2,6 @@ using Microsoft.OpenApi.Models;
 
 using SourceMock.Actions.Source;
 
-using System.ComponentModel;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);

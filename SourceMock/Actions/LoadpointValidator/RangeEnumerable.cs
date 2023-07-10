@@ -1,7 +1,6 @@
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using System.Transactions;
 
 namespace SourceMock.Actions.LoadpointValidator
 {

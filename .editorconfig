@@ -18,7 +18,7 @@ indent_size = 4
 tab_width = 4
 
 # New line preferences
-end_of_line = crlf
+end_of_line = lf
 insert_final_newline = false
 
 #### .NET Coding Conventions ####
@@ -77,14 +77,25 @@ dotnet_remove_unnecessary_suppression_exclusions = none
 #### C# Coding Conventions ####
 [*.cs]
 
-[*.cs]
-
-# NUnit2005: Consider using Assert.That(actual, Is.EqualTo(expected)) instead of Assert.AreEqual(expected, actual)
+# NUnit2005, 20018: Consider using Assert.That(...) instead of Assert.[...]
+dotnet_diagnostic.NUnit2001.severity = silent
+dotnet_diagnostic.NUnit2002.severity = silent
+dotnet_diagnostic.NUnit2003.severity = silent
+dotnet_diagnostic.NUnit2004.severity = silent
 dotnet_diagnostic.NUnit2005.severity = silent
+dotnet_diagnostic.NUnit2006.severity = silent
+
+dotnet_diagnostic.NUnit2015.severity = silent
+dotnet_diagnostic.NUnit2016.severity = silent
+dotnet_diagnostic.NUnit2017.severity = silent
+dotnet_diagnostic.NUnit2018.severity = silent
+dotnet_diagnostic.NUnit2019.severity = silent
 
 # CS1591: Fehledes XML-Kommentar für öffentlich sichtbaren Typ oder Element
 dotnet_diagnostic.CS1591.severity = suggestion
 
+# IDE005: Entfernen nicht genutzter using-Direktiven
+dotnet_diagnostic.IDE0005.severity = warning
 
 # var preferences
 csharp_style_var_elsewhere = false:silent
@@ -135,12 +146,6 @@ csharp_using_directive_placement = outside_namespace:silent
 
 #### C# Formatting Rules ####
 [*.cs]
-
-# NUnit2005: Consider using Assert.That(actual, Is.EqualTo(expected)) instead of Assert.AreEqual(expected, actual)
-dotnet_diagnostic.NUnit2005.severity = silent
-
-# CS1591: Fehledes XML-Kommentar für öffentlich sichtbaren Typ oder Element
-dotnet_diagnostic.CS1591.severity = suggestion
 
 # New line preferences
 csharp_new_line_before_catch = true

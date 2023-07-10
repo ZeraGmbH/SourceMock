@@ -1,7 +1,5 @@
 using SourceMock.Actions.LoadpointValidator;
 
-using System.ComponentModel.DataAnnotations;
-
 namespace SourceMock.Model
 {
     /// <summary>

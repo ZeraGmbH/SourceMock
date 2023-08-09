@@ -7,6 +7,8 @@ namespace SourceMock.Tests.Actions.VeinSource
 {
     internal class VeinSourceTests
     {
+        const string hostIp = "127.0.0.1";
+        const int hostPort = 8080;
         #region PositiveTestCases
         [Test]
         public async Task MustConnectToVeinAPI()
@@ -27,7 +29,7 @@ namespace SourceMock.Tests.Actions.VeinSource
             var stringContent = new StringContent(payload);
 
             // Act
-            var response = await client.PostAsync("http://127.0.0.1:8080/api/v1/Vein/GetInfo", stringContent);
+            var response = await client.PostAsync($"http://{hostIp}:{hostPort}/api/v1/Vein/GetInfo", stringContent);
 
             var responseContent = JObject.Parse(await response.Content.ReadAsStringAsync());
             var status = responseContent["status"].ToString();

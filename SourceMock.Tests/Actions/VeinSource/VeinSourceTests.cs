@@ -1,20 +1,19 @@
 using System.Net;
 
 using SourceMock.Actions.VeinSource;
+using SourceMock.Tests.Misc;
 
 namespace SourceMock.Tests.Actions.VeinSource
 {
+    [TestFixture]
     internal class VeinSourceTests
     {
         const string HOST_IP = "127.0.0.1";
         const int HOST_PORT = 8080;
         #region PositiveTestCases
-        [Test]
+        [IntegrationTest(IntegrationTestSwitches.DO_VEIN_TESTS)]
         public void GetSystemEntityNameFromVein()
         {
-#pragma warning disable CS0162
-            if (!IntegrationTestSwitches.DO_VEIN_TESTS) Assert.Ignore();
-#pragma warning restore CS0162
             // Arrange
             HttpClient client = new();
             VeinClient veinClient = new(client, HOST_IP, HOST_PORT);
@@ -27,12 +26,9 @@ namespace SourceMock.Tests.Actions.VeinSource
             Assert.AreEqual("_System", result.Value);
         }
 
-        [Test]
+        [IntegrationTest(IntegrationTestSwitches.DO_VEIN_TESTS)]
         public void SetCustomerCityToVein()
         {
-#pragma warning disable CS0162
-            if (!IntegrationTestSwitches.DO_VEIN_TESTS) Assert.Ignore();
-#pragma warning restore CS0162
             // Arrange
             HttpClient client = new();
             VeinClient veinClient = new(client, HOST_IP, HOST_PORT);

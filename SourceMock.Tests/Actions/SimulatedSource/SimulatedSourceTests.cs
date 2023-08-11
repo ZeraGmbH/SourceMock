@@ -7,9 +7,12 @@ using Moq;
 using SourceMock.Actions.Source;
 using SourceMock.Model;
 using SourceMock.Tests.Actions.LoadpointValidator;
+using SourceMock.Tests.Misc;
 
 namespace SourceMock.Tests.Actions.Source
 {
+    [TestFixture]
+    [BenchmarkFixture(typeof(SimulatedSourceTests))]
     internal class SimulatedSourceTests
     {
         const string CONFIG_KEY_NUMBER_OF_PHASES = "SourceProperties:NumberOfPhases";
@@ -17,6 +20,7 @@ namespace SourceMock.Tests.Actions.Source
         #region PositiveTestCases
         [Test]
         [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.ValidLoadpoints))]
+        [Benchmark]
         public void TestValidTurnOn(Loadpoint loadpoint)
         {
             // Arrange
@@ -41,6 +45,7 @@ namespace SourceMock.Tests.Actions.Source
 
         [Test]
         [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.ValidLoadpoints))]
+        [Benchmark]
         public void TestValidTurnOff(Loadpoint loadpoint)
         {
             // Arrange
@@ -67,6 +72,7 @@ namespace SourceMock.Tests.Actions.Source
 
         #region LoadpointIssues
         [Test]
+        [Benchmark]
         public void TestTurnOnWithoutLoadpoint()
         {
             // Arrange
@@ -84,6 +90,7 @@ namespace SourceMock.Tests.Actions.Source
 
         [Test]
         [TestCaseSource(typeof(SimulatedSourceTestData), nameof(SimulatedSourceTestData.ValidLoadpointsWithOneOrThreePhases))]
+        [Benchmark]
         public void TestTurnOnWithInvalidLoadpoint(Loadpoint loadpoint)
         {
             const int numberOfPhases = 2;

@@ -10,9 +10,10 @@ namespace SourceMock.Actions.Source
         #region ContructorAndDependencyInjection
         private readonly ILogger<SimulatedSource> _logger;
         private readonly IConfiguration _configuration;
+        private readonly SourceCapabilities _sourceCapabilities;
 
         /// <summary>
-        /// Constructor that injects logger and configuration.
+        /// Constructor that injects logger and configuration and uses default source capablities.
         /// </summary>
         /// <param name="logger">The logger to be used.</param>
         /// <param name="configuration">The configuration o be used.</param>
@@ -20,24 +21,46 @@ namespace SourceMock.Actions.Source
         {
             this._logger = logger;
             this._configuration = configuration;
+
+            _sourceCapabilities = new()
+            {
+                NumberOfPhases = 3,
+                MaxVoltage = 300,
+                MaxCurrent = 60,
+                MaxHarmonic = 20
+            };
         }
+
+        /// <summary>
+        /// Constructor that injects logger, configuration and capabilities.
+        /// </summary>
+        /// <param name="logger">The logger to be used.</param>
+        /// <param name="configuration">The configuration o be used.</param>
+        /// <param name="sourceCapabilities">The capabilities of the source which should be simulated.</param>
+        public SimulatedSource(ILogger<SimulatedSource> logger, IConfiguration configuration, SourceCapabilities sourceCapabilities)
+        {
+            this._logger = logger;
+            this._configuration = configuration;
+            this._sourceCapabilities = sourceCapabilities;
+        }
+
         #endregion
 
         private Loadpoint? _currentLoadpoint, _nextLoadpoint;
-        private const string CONFIG_KEY_NUMBER_OF_PHASES = "SourceProperties:NumberOfPhases";
         private SimulatedSourceState? _simulatedSourceState;
 
         /// <inheritdoc/>
         public SourceResult SetLoadpoint(Loadpoint loadpoint)
         {
-            if (loadpoint.Currents.Count() != _configuration.GetValue<int>(CONFIG_KEY_NUMBER_OF_PHASES))
+            var isValid = SourceCapabilityValidator.IsValid(loadpoint, _sourceCapabilities);
+
+            if (isValid == SourceResult.SUCCESS)
             {
-                return SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES;
+                _logger.LogTrace("Loadpoint set.");
+                _nextLoadpoint = loadpoint;
             }
 
-            _logger.LogTrace("Loadpoint set.");
-            _nextLoadpoint = loadpoint;
-            return SourceResult.SUCCESS;
+            return isValid;
         }
 
         /// <inheritdoc/>
@@ -83,6 +106,11 @@ namespace SourceMock.Actions.Source
         public SimulatedSourceState? GetSimulatedSourceState()
         {
             return _simulatedSourceState;
+        }
+
+        public SourceCapabilities GetCapabilities()
+        {
+            return _sourceCapabilities;
         }
     }
 }

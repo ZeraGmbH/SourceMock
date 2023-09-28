@@ -8,6 +8,12 @@ namespace SourceMock.Actions.Source
     public interface ISource
     {
         /// <summary>
+        /// Gets the capabilities of this source.
+        /// </summary>
+        /// <returns>The corresponding <see cref="SourceCapabilities"/>-Object for this source.</returns>
+        public SourceCapabilities GetCapabilities();
+
+        /// <summary>
         /// Sets a loadpoint which will be put to action with the next call of <see cref="TurnOn"/>.
         /// </summary>
         /// <param name="loadpoint">The loadpoint to be set.</param>

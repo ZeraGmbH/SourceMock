@@ -20,10 +20,10 @@ namespace SourceMock.Tests.Actions.Source
         public void TestValidTurnOn(Loadpoint loadpoint)
         {
             // Arrange
-            var configuration = BuildConfig(loadpoint.Currents.Count());
-            Mock<ILogger<SimulatedSource>>? loggerMock = new();
+            var capabilities = SimulatedSourceTestData.DefaultThreePhaseSourceCapabilities;
+            capabilities.NumberOfPhases = loadpoint.Currents.Count();
 
-            ISource source = new SimulatedSource(loggerMock.Object, configuration);
+            ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
             source.SetLoadpoint(loadpoint);
 
@@ -44,10 +44,10 @@ namespace SourceMock.Tests.Actions.Source
         public void TestValidTurnOff(Loadpoint loadpoint)
         {
             // Arrange
-            var configuration = BuildConfig(loadpoint.Currents.Count());
-            Mock<ILogger<SimulatedSource>>? loggerMock = new();
+            var capabilities = SimulatedSourceTestData.DefaultThreePhaseSourceCapabilities;
+            capabilities.NumberOfPhases = loadpoint.Currents.Count();
 
-            ISource source = new SimulatedSource(loggerMock.Object, configuration);
+            ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
             source.SetLoadpoint(loadpoint);
             var result = source.TurnOn();
@@ -86,13 +86,11 @@ namespace SourceMock.Tests.Actions.Source
         [TestCaseSource(typeof(SimulatedSourceTestData), nameof(SimulatedSourceTestData.ValidLoadpointsWithOneOrThreePhases))]
         public void TestTurnOnWithInvalidLoadpoint(Loadpoint loadpoint)
         {
-            const int numberOfPhases = 2;
-
             // Arrange
-            var configuration = BuildConfig(numberOfPhases);
-            Mock<ILogger<SimulatedSource>>? loggerMock = new();
+            var capabilities = SimulatedSourceTestData.DefaultThreePhaseSourceCapabilities;
+            capabilities.NumberOfPhases = 2;
 
-            ISource source = new SimulatedSource(loggerMock.Object, configuration);
+            ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
             // Act
             var result = source.SetLoadpoint(loadpoint);
@@ -105,24 +103,77 @@ namespace SourceMock.Tests.Actions.Source
         }
         #endregion
 
+        #region CapabilityIssues
+        [Test]
+        public void TestTooHighVoltage()
+        {
+            // Arrange 
+            ISource source = GenerateSimulatedSource();
+            Loadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
+            lp.Voltages[0].Rms = 500;
+
+            // Act
+            var result = source.SetLoadpoint(lp);
+
+            // Assert
+            var nextLoadpoint = source.GetNextLoadpoint();
+
+            Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_TOO_HIGH, result);
+            Assert.AreEqual(null, nextLoadpoint);
+        }
+
+        [Test]
+        public void TestTooHighCurrent()
+        {
+            // Arrange 
+            ISource source = GenerateSimulatedSource();
+            Loadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
+            lp.Currents[0].Rms = 100;
+
+            // Act
+            var result = source.SetLoadpoint(lp);
+
+            // Assert
+            var nextLoadpoint = source.GetNextLoadpoint();
+
+            Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_TOO_HIGH, result);
+            Assert.AreEqual(null, nextLoadpoint);
+        }
+
+        [Test]
+        public void TestTooManyHarmonics()
+        {
+            // Arrange 
+            ISource source = GenerateSimulatedSource();
+            Loadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
+
+            for (int i = 0; i < 25; ++i)
+            {
+                lp.Voltages[0].Harmonics.Add(0.5);
+            }
+
+            // Act
+            var result = source.SetLoadpoint(lp);
+
+            // Assert
+            var nextLoadpoint = source.GetNextLoadpoint();
+
+            Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS, result);
+            Assert.AreEqual(null, nextLoadpoint);
+        }
+        #endregion
+
         #region HelperFunctions
-        private static ISource GenerateSimulatedSource(Mock<ILogger<SimulatedSource>>? loggerMock = null, Mock<IConfiguration>? configMock = null)
+        private static ISource GenerateSimulatedSource(Mock<ILogger<SimulatedSource>>? loggerMock = null, Mock<IConfiguration>? configMock = null, SourceCapabilities? capabilities = null)
         {
             loggerMock ??= new();
             configMock ??= new();
 
-            return new SimulatedSource(loggerMock.Object, configMock.Object);
-        }
+            if (capabilities == null)
+                return new SimulatedSource(loggerMock.Object, configMock.Object);
 
-        private static IConfiguration BuildConfig(int numberOfPhases)
-        {
-            var inMemorySettings = new Dictionary<string, string> {
-                {CONFIG_KEY_NUMBER_OF_PHASES, numberOfPhases.ToString()}
-            };
-            return new ConfigurationBuilder()
-                .AddInMemoryCollection(inMemorySettings)
-                .Build();
+            return new SimulatedSource(loggerMock.Object, configMock.Object, capabilities);
         }
-        #endregion
     }
+    #endregion
 }

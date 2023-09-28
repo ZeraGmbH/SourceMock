@@ -73,36 +73,24 @@ namespace SourceMock.Controllers
             }
 
             var srcResult = _source.SetLoadpoint(loadpoint);
-#pragma warning disable IDE0066 // Not all enum values are appicable here
+
             switch (srcResult)
             {
                 case SourceResult.SUCCESS:
                     _logger.LogTrace("Loadpoint was successfully set.");
                     return Ok();
                 case SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES:
-                    _logger.LogInformation("The requested loadpoint has a different number of phases than what this source provides.");
-                    return Problem(
-                        detail: SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES.ToString(),
-                        statusCode: StatusCodes.Status422UnprocessableEntity);
                 case SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_TOO_HIGH:
-                    _logger.LogInformation("The requested loadpoint commanded a voltage too high to be supplied by this source.");
-                    return Problem(
-                        detail: SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_TOO_HIGH.ToString(),
-                        statusCode: StatusCodes.Status422UnprocessableEntity);
                 case SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_TOO_HIGH:
-                    _logger.LogInformation("The requested loadpoint commanded a current too high to be supplied by this source.");
-                    return Problem(
-                        detail: SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_TOO_HIGH.ToString(),
-                        statusCode: StatusCodes.Status422UnprocessableEntity);
                 case SourceResult.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS:
-                    _logger.LogInformation("The requested loadpoint has more harmonics than what this source can provide.");
+                    _logger.LogInformation(srcResult.ToString());
                     return Problem(
-                        detail: SourceResult.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS.ToString(),
+                        detail: srcResult.ToUserFriendlyString(),
                         statusCode: StatusCodes.Status422UnprocessableEntity);
                 default:
                     _logger.LogError($"Unkown response from source: ", srcResult.ToString());
                     return Problem(
-                        detail: $"Unkown Response from source: {srcResult}",
+                        detail: $"Unkown Response from source: {srcResult}, {srcResult.ToUserFriendlyString()}",
                         statusCode: StatusCodes.Status500InternalServerError);
             }
 #pragma warning restore

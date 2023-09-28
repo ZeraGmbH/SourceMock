@@ -47,8 +47,8 @@ namespace SourceMock.Controllers
         /// <param name="loadpoint">The loadpoint to be set.</param>
         /// <returns>The result of the operation, see responses.</returns>
         /// <response code="200">If the loadpoint could be set correctly.</response>
-        /// <response code="400">If the loadpoint was (generally) malformed.</response>
-        /// <response code="422">If the loadpoint was wellformed but invalid (for this source).</response>
+        /// <response code="400">If the loadpoint was (generally) malformed. The loadpoint cannot be set with any source.</response>
+        /// <response code="422">If the loadpoint was wellformed but invalid. The loadpoint cannot be set with this source.</response>
         /// <response code="500">If an unexpected error occured.</response>
         [HttpPost("SetLoadpoint")]
         [ProducesResponseType(StatusCodes.Status200OK)]

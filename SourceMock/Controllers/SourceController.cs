@@ -47,7 +47,7 @@ namespace SourceMock.Controllers
         /// <param name="loadpoint">The loadpoint to be set.</param>
         /// <returns>The result of the operation, see responses.</returns>
         /// <response code="200">If the loadpoint could be set correctly.</response>
-        /// <response code="400">If the loadpoint was malformed.</response>
+        /// <response code="400">If the loadpoint was (generally) malformed.</response>
         /// <response code="422">If the loadpoint was wellformed but invalid (for this source).</response>
         /// <response code="500">If an unexpected error occured.</response>
         [HttpPost("SetLoadpoint")]
@@ -65,7 +65,7 @@ namespace SourceMock.Controllers
                 _logger.LogInformation("Loadpoint validation failed with: {result}.", validationResult.ToString());
                 return Problem(
                     detail: validationResult.ToString(),
-                    statusCode: StatusCodes.Status422UnprocessableEntity);
+                    statusCode: StatusCodes.Status400BadRequest);
             }
             else
             {

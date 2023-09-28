@@ -21,11 +21,42 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             {
                 return new()
                 {
-                    Voltages = new[] { 230d, 230d, 230d },
-                    Currents = new[] { 60d, 60d, 60d },
+                    Voltages = new() {
+                        new ElectricalVectorQuantity() {
+                            Rms = 230d,
+                            Angle = 0d,
+                            Harmonics = new()
+                        },
+                        new ElectricalVectorQuantity() {
+                            Rms = 230d,
+                            Angle = 120d,
+                            Harmonics = new()
+                        },
+                        new ElectricalVectorQuantity() {
+                            Rms = 230d,
+                            Angle = 240d,
+                            Harmonics = new()
+                        }
+                    },
+                    Currents = new() {
+                        new ElectricalVectorQuantity() {
+                            Rms = 60d,
+                            Angle = 5d,
+                            Harmonics = new()
+                        },
+                        new ElectricalVectorQuantity() {
+                            Rms = 60d,
+                            Angle = 125d,
+                            Harmonics = new()
+                        },
+                        new ElectricalVectorQuantity() {
+                            Rms = 60d,
+                            Angle = 245d,
+                            Harmonics = new()
+                        }
+                    },
                     Frequency = 50,
-                    PhaseAnglesVoltage = new[] { 0d, 120d, 240d },
-                    PhaseAnglesCurrent = new[] { 5d, 125d, 245d }
+                    AuxilliaryVoltage = null
                 };
             }
         }
@@ -36,11 +67,32 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             {
                 return new()
                 {
-                    Voltages = new[] { 110d, 110d },
-                    Currents = new[] { 60d, 60d },
+                    Voltages = new() {
+                        new ElectricalVectorQuantity() {
+                            Rms = 230d,
+                            Angle = 0d,
+                            Harmonics = new()
+                        },
+                        new ElectricalVectorQuantity() {
+                            Rms = 230d,
+                            Angle = 180d,
+                            Harmonics = new()
+                        }
+                    },
+                    Currents = new() {
+                        new ElectricalVectorQuantity() {
+                            Rms = 60d,
+                            Angle = 5d,
+                            Harmonics = new()
+                        },
+                        new ElectricalVectorQuantity() {
+                            Rms = 60d,
+                            Angle = 185d,
+                            Harmonics = new()
+                        }
+                    },
                     Frequency = 50,
-                    PhaseAnglesVoltage = new[] { 0d, 180d },
-                    PhaseAnglesCurrent = new[] { 5d, 185d }
+                    AuxilliaryVoltage = null
                 };
             }
         }
@@ -51,11 +103,22 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             {
                 return new()
                 {
-                    Voltages = new[] { 110d },
-                    Currents = new[] { 60d },
+                    Voltages = new() {
+                        new ElectricalVectorQuantity() {
+                            Rms = 230d,
+                            Angle = 0d,
+                            Harmonics = new()
+                        }
+                    },
+                    Currents = new() {
+                        new ElectricalVectorQuantity() {
+                            Rms = 60d,
+                            Angle = 5d,
+                            Harmonics = new()
+                        }
+                    },
                     Frequency = 50,
-                    PhaseAnglesVoltage = new[] { 0d },
-                    PhaseAnglesCurrent = new[] { 5d }
+                    AuxilliaryVoltage = null
                 };
             }
         }
@@ -68,8 +131,6 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             {
                 yield return new TestCaseData(Loadpoint101_invalid_tooFewVoltages);
                 yield return new TestCaseData(Loadpoint102_invalid_tooFewCurrents);
-                yield return new TestCaseData(Loadpoint103_invalid_tooFewPhaseAnglesVoltage);
-                yield return new TestCaseData(Loadpoint104_invalid_tooFewPhaseAnglesCurrent);
             }
         }
 
@@ -78,7 +139,18 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             get
             {
                 var ret = Loadpoint001_3AC_valid;
-                ret.Voltages = new[] { 230d, 230d };
+                ret.Voltages = new() {
+                    new ElectricalVectorQuantity() {
+                        Rms = 230d,
+                        Angle = 0d,
+                        Harmonics = new()
+                    },
+                    new ElectricalVectorQuantity() {
+                        Rms = 230d,
+                        Angle = 120d,
+                        Harmonics = new()
+                    }
+                };
                 return ret;
             }
         }
@@ -88,29 +160,20 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             get
             {
                 var ret = Loadpoint001_3AC_valid;
-                ret.Currents = new[] { 60d, 60d };
+                ret.Currents = new() {
+                    new ElectricalVectorQuantity() {
+                        Rms = 60d,
+                        Angle = 0d,
+                        Harmonics = new()
+                    },
+                    new ElectricalVectorQuantity() {
+                        Rms = 60d,
+                        Angle = 120d,
+                        Harmonics = new()
+                    }
+                };
                 return ret;
 
-            }
-        }
-
-        public static Loadpoint Loadpoint103_invalid_tooFewPhaseAnglesVoltage
-        {
-            get
-            {
-                var ret = Loadpoint001_3AC_valid;
-                ret.PhaseAnglesVoltage = new[] { 0d, 120d };
-                return ret;
-            }
-        }
-
-        public static Loadpoint Loadpoint104_invalid_tooFewPhaseAnglesCurrent
-        {
-            get
-            {
-                var ret = Loadpoint001_3AC_valid;
-                ret.PhaseAnglesCurrent = new[] { 5d, 125d };
-                return ret;
             }
         }
         #endregion

@@ -26,77 +26,56 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
         }
         #endregion
 
-        #region TestPhaseAngleVoltageValidation
+        #region TestPhaseAngleValidation
         [Test]
-        public void TestInvalidPhaseAngleVoltageTooLow()
+        public void TestValidPhaseAngle()
         {
             // Arrange       
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
-            loadpoint1.PhaseAnglesVoltage = new[] { 0d, 0d, -0.1d };
+            ElectricalVectorQuantity electricalVectorQuantity = new()
+            {
+                Rms = 0d,
+                Angle = 180d,
+                Harmonics = new()
+            };
 
             // Act
-            var errCount = ValidateObject(loadpoint1);
-
-            // Assert
-            Assert.AreEqual(1, errCount);
-        }
-
-        [Test]
-        public void TestInvalidPhaseAngleVoltageTooHigh()
-        {
-            // Arrange       
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
-            loadpoint1.PhaseAnglesVoltage = new[] { 0d, 0d, 360.1d };
-
-            // Act
-            var errCount = ValidateObject(loadpoint1);
-
-            // Assert
-            Assert.AreEqual(1, errCount);
-        }
-        #endregion
-
-        #region TestPhaseAngleCurrentValidation
-        [Test]
-        public void TestValidPhaseAngleCurrent()
-        {
-            // Arrange
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
-            loadpoint1.PhaseAnglesCurrent = new[] { 0d, 0d, 180d };
-
-            // Act
-            var errCount = ValidateObject(loadpoint1);
+            var errCount = ValidateObject(electricalVectorQuantity);
 
             // Assert
             Assert.AreEqual(0, errCount);
         }
 
-
         [Test]
-        public void TestInvalidPhaseAngleCurrentTooLow()
+        public void TestInvalidPhaseAngleTooLow()
         {
             // Arrange       
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
-            loadpoint1.PhaseAnglesCurrent = new[] { 0d, 0d, -0.1d };
+            ElectricalVectorQuantity electricalVectorQuantity = new()
+            {
+                Rms = 0d,
+                Angle = -0.1d,
+                Harmonics = new()
+            };
 
             // Act
-            var errCount = ValidateObject(loadpoint1);
+            var errCount = ValidateObject(electricalVectorQuantity);
 
             // Assert
             Assert.AreEqual(1, errCount);
         }
 
         [Test]
-        public void TestInvalidPhaseAngleCurrentTooHigh()
+        public void TestInvalidPhaseAngleTooHigh()
         {
             // Arrange       
-            Loadpoint loadpoint1 = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
-            loadpoint1.PhaseAnglesCurrent = new[] { 0d, 0d, 360.1d };
-
-            loadpoint1.PhaseAnglesCurrent = loadpoint1.PhaseAnglesCurrent.Append(360.1);
+            ElectricalVectorQuantity electricalVectorQuantity = new()
+            {
+                Rms = 0d,
+                Angle = 360.1d,
+                Harmonics = new()
+            };
 
             // Act
-            var errCount = ValidateObject(loadpoint1);
+            var errCount = ValidateObject(electricalVectorQuantity);
 
             // Assert
             Assert.AreEqual(1, errCount);

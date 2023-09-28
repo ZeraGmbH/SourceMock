@@ -1,4 +1,4 @@
-using SourceMock.Actions.LoadpointValidator;
+using System.ComponentModel.DataAnnotations;
 
 namespace SourceMock.Model
 {
@@ -14,12 +14,12 @@ namespace SourceMock.Model
         /// <summary>
         /// A list of voltages for the different phases in the order L1, L2, L3.
         /// </summary>
-        public IEnumerable<double> Voltages { get; set; } = new List<double>();
+        public List<ElectricalVectorQuantity> Voltages { get; set; } = new();
 
         /// <summary>
         /// A list of currents for the differnt phases in the order L1, L2, L3.
         /// </summary>
-        public IEnumerable<double> Currents { get; set; } = new List<double>();
+        public List<ElectricalVectorQuantity> Currents { get; set; } = new();
 
         /// <summary>
         /// The frequency.
@@ -27,15 +27,14 @@ namespace SourceMock.Model
         public double Frequency { get; set; }
 
         /// <summary>
-        /// The angles of the voltages in the differnt phases in the order L1, L2, L3.
+        /// The auxilliary voltage, null if none exits.
         /// </summary>
-        [RangeEnumerable(MINIMUM_ANGLE, MAXIMUM_ANGLE)]
-        public IEnumerable<double> PhaseAnglesVoltage { get; set; } = new List<double>();
+        public ElectricalVectorQuantity? AuxilliaryVoltage { get; set; }
 
         /// <summary>
-        /// The angle of the currents in the differnt phases in the order L1, L2, L3.
+        /// The phase angle of the auxilliary voltage.
         /// </summary>
-        [RangeEnumerable(MINIMUM_ANGLE, MAXIMUM_ANGLE)]
-        public IEnumerable<double> PhaseAnglesCurrent { get; set; } = new List<double>();
+        [Range(MINIMUM_ANGLE, MAXIMUM_ANGLE)]
+        public double PhaseAngleAuxilliaryVoltage { get; set; }
     }
 }

@@ -36,7 +36,7 @@ namespace SourceMock.Actions.LoadpointValidator
 
         private static bool CheckNumberOfPhases(Loadpoint loadpoint)
         {
-            var phaseSpecificFields = new[] { loadpoint.Voltages, loadpoint.Currents, loadpoint.PhaseAnglesVoltage, loadpoint.PhaseAnglesCurrent };
+            var phaseSpecificFields = new[] { loadpoint.Voltages, loadpoint.Currents };
 
             var numberOfPhases = phaseSpecificFields.First().Count();
             foreach (var phaseSpecificField in phaseSpecificFields)

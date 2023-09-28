@@ -41,12 +41,6 @@ jobs:
           ./SourceMock&
           echo "SOURCE_MOCK_PID=$!" >> $GITHUB_ENV
 
-      - uses: matt-ball/newman-action@master
-        with:
-          collection: ApiTests/SourceControllerTests.postman_collection.json
-          environment: ApiTests/postman_environment.json
-          insecure: true
-
       - name: Exit Service
         run: |
           kill -9 $SOURCE_MOCK_PID

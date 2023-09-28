@@ -7,21 +7,21 @@ namespace SourceMock.Actions.LoadpointValidator
     /// <summary>
     /// Specicifies the numeric range constraints for the values in an <see cref="IEnumerable"/>.
     /// </summary>
-    public class RangeEnumerable : RangeAttribute
+    public class RangeEnumerableAttribute : RangeAttribute
     {
         #region InheritedConstructors
         /// <inheritdoc/>
-        public RangeEnumerable(double minimum, double maximum) : base(minimum, maximum)
+        public RangeEnumerableAttribute(double minimum, double maximum) : base(minimum, maximum)
         {
         }
 
         /// <inheritdoc/>
-        public RangeEnumerable(int minimum, int maximum) : base(minimum, maximum)
+        public RangeEnumerableAttribute(int minimum, int maximum) : base(minimum, maximum)
         {
         }
 
         /// <inheritdoc/>
-        public RangeEnumerable([DynamicallyAccessedMembers((DynamicallyAccessedMemberTypes)(-1))] Type type, string minimum, string maximum) : base(type, minimum, maximum)
+        public RangeEnumerableAttribute([DynamicallyAccessedMembers((DynamicallyAccessedMemberTypes)(-1))] Type type, string minimum, string maximum) : base(type, minimum, maximum)
         {
         }
         #endregion

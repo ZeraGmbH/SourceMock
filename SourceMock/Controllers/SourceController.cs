@@ -29,6 +29,19 @@ namespace SourceMock.Controllers
         }
 
         /// <summary>
+        /// Gets the capabilities of this source.
+        /// </summary>
+        /// <returns>The corresponding<see cref="SourceCapabilities"/>-Object for this source.</returns>
+        /// /// <response code="200">If the capabilities could be returned successfully.</response>
+        [HttpGet("Capabilities")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+
+        public ActionResult<SourceCapabilities> GetCapablities()
+        {
+            return Ok(_source.GetCapabilities());
+        }
+
+        /// <summary>
         /// Sets a loadpoint without turning on the source.
         /// </summary>
         /// <param name="loadpoint">The loadpoint to be set.</param>

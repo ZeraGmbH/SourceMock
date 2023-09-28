@@ -48,7 +48,7 @@ namespace SourceMock.Controllers
         /// <returns>The result of the operation, see responses.</returns>
         /// <response code="200">If the loadpoint could be set correctly.</response>
         /// <response code="400">If the loadpoint was malformed.</response>
-        /// <response code="422">If the loadpoint was wellformed but invalid.</response>
+        /// <response code="422">If the loadpoint was wellformed but invalid (for this source).</response>
         /// <response code="500">If an unexpected error occured.</response>
         [HttpPost("SetLoadpoint")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -80,14 +80,29 @@ namespace SourceMock.Controllers
                     _logger.LogTrace("Loadpoint was successfully set.");
                     return Ok();
                 case SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES:
-                    _logger.LogInformation("The requested loadpoint could not be set because it has a different number of phases than what this source provides.");
+                    _logger.LogInformation("The requested loadpoint has a different number of phases than what this source provides.");
                     return Problem(
                         detail: SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES.ToString(),
+                        statusCode: StatusCodes.Status422UnprocessableEntity);
+                case SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_TOO_HIGH:
+                    _logger.LogInformation("The requested loadpoint commanded a voltage too high to be supplied by this source.");
+                    return Problem(
+                        detail: SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_TOO_HIGH.ToString(),
+                        statusCode: StatusCodes.Status422UnprocessableEntity);
+                case SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_TOO_HIGH:
+                    _logger.LogInformation("The requested loadpoint commanded a current too high to be supplied by this source.");
+                    return Problem(
+                        detail: SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_TOO_HIGH.ToString(),
+                        statusCode: StatusCodes.Status422UnprocessableEntity);
+                case SourceResult.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS:
+                    _logger.LogInformation("The requested loadpoint has more harmonics than what this source can provide.");
+                    return Problem(
+                        detail: SourceResult.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS.ToString(),
                         statusCode: StatusCodes.Status422UnprocessableEntity);
                 default:
                     _logger.LogError($"Unkown response from source: ", srcResult.ToString());
                     return Problem(
-                        detail: "Unkown Response from source.",
+                        detail: $"Unkown Response from source: {srcResult}",
                         statusCode: StatusCodes.Status500InternalServerError);
             }
 #pragma warning restore

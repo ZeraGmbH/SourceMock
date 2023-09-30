@@ -13,13 +13,13 @@ namespace SourceMock.Model
         private const double MAXIMUM_ANGLE = 360;
 
         /// <summary>
-        /// The root mean square value, based on the fundamental frequency.
+        /// The root mean square value, based on the fundamental frequency. Always without any SI-Prefix, so depending on the quantity descibed in V, A, W, VA, or var.
         /// </summary>
         [Required]
         public double Rms { get; set; }
 
         /// <summary>
-        /// The phase angle of this vector.
+        /// The phase angle of this vector in degrees.
         /// </summary>
         [Required]
         [Range(MINIMUM_ANGLE, MAXIMUM_ANGLE)]

@@ -12,7 +12,7 @@ namespace SourceMock.Model
         private const double MAXIMUM_ANGLE = 360;
 
         /// <summary>
-        /// A list of voltages for the different phases in the order L1, L2, L3.
+        /// A list of voltages for the different phases in ascending order.
         /// </summary>
         public List<ElectricalVectorQuantity> Voltages { get; set; } = new();
 
@@ -22,7 +22,7 @@ namespace SourceMock.Model
         public bool VoltageNeutralConnected { get; set; }
 
         /// <summary>
-        /// A list of currents for the differnt phases in the order L1, L2, L3.
+        /// A list of currents for the differnt phases in ascending order.
         /// </summary>
         public List<ElectricalVectorQuantity> Currents { get; set; } = new();
 

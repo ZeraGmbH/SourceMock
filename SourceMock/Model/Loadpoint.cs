@@ -17,6 +17,11 @@ namespace SourceMock.Model
         public List<ElectricalVectorQuantity> Voltages { get; set; } = new();
 
         /// <summary>
+        /// Determines whether or not the voltages neutral conductor is to be connected.
+        /// </summary>
+        public bool VoltageNeutralConnected { get; set; }
+
+        /// <summary>
         /// A list of currents for the differnt phases in the order L1, L2, L3.
         /// </summary>
         public List<ElectricalVectorQuantity> Currents { get; set; } = new();

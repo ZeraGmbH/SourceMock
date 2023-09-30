@@ -55,7 +55,12 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
                             Harmonics = new()
                         }
                     },
-                    Frequency = 50,
+                    VoltageNeutralConnected = false,
+                    Frequency = new()
+                    {
+                        Mode = FrequencyMode.SYTHETIC,
+                        Value = 50d
+                    },
                     AuxilliaryVoltage = null
                 };
             }
@@ -91,7 +96,12 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
                             Harmonics = new()
                         }
                     },
-                    Frequency = 50,
+                    VoltageNeutralConnected = false,
+                    Frequency = new()
+                    {
+                        Mode = FrequencyMode.SYTHETIC,
+                        Value = 50d
+                    },
                     AuxilliaryVoltage = null
                 };
             }
@@ -117,7 +127,12 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
                             Harmonics = new()
                         }
                     },
-                    Frequency = 50,
+                    VoltageNeutralConnected = false,
+                    Frequency = new()
+                    {
+                        Mode = FrequencyMode.SYTHETIC,
+                        Value = 50d
+                    },
                     AuxilliaryVoltage = null
                 };
             }

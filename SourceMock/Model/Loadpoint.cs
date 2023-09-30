@@ -29,7 +29,7 @@ namespace SourceMock.Model
         /// <summary>
         /// The frequency.
         /// </summary>
-        public double Frequency { get; set; }
+        public Frequency Frequency { get; set; } = new();
 
         /// <summary>
         /// The auxilliary voltage, null if none exits.

@@ -34,7 +34,7 @@ namespace SourceMock.Actions.Source
         {
             foreach (var current in loadpoint.Currents)
             {
-                if (current.Rms > capabilities.MaxCurrent)
+                if (!capabilities.CurrentRanges.IsIncluded(current.Rms))
                     return SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_TOO_HIGH;
 
                 if (current.Harmonics.Count() > capabilities.MaxHarmonic + 2)
@@ -47,9 +47,15 @@ namespace SourceMock.Actions.Source
 
         private static SourceResult CheckVoltages(Loadpoint loadpoint, SourceCapabilities capabilities)
         {
+            if (capabilities.VoltageRanges == null || capabilities.VoltageRanges.Count == 0)
+            {
+                // Is a current-only source
+                return SourceResult.SUCCESS;
+            }
+
             foreach (var voltage in loadpoint.Voltages)
             {
-                if (voltage.Rms > capabilities.MaxVoltage)
+                if (!capabilities.VoltageRanges.IsIncluded(voltage.Rms))
                     return SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_TOO_HIGH;
 
                 if (voltage.Harmonics.Count() > capabilities.MaxHarmonic + 2)

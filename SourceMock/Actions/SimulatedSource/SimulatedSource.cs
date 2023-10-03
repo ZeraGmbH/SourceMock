@@ -25,8 +25,12 @@ namespace SourceMock.Actions.Source
             _sourceCapabilities = new()
             {
                 NumberOfPhases = 3,
-                MaxVoltage = 300,
-                MaxCurrent = 60,
+                VoltageRanges = new() {
+                        new(0, 300)
+                    },
+                CurrentRanges = new() {
+                        new(0, 60)
+                    },
                 MaxHarmonic = 20
             };
         }

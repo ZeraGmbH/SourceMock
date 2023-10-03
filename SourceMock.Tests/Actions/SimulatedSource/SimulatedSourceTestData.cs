@@ -20,8 +20,12 @@ namespace SourceMock.Tests.Actions.Source
                 return new()
                 {
                     NumberOfPhases = 3,
-                    MaxVoltage = 300,
-                    MaxCurrent = 60,
+                    VoltageRanges = new() {
+                        new(0, 300)
+                    },
+                    CurrentRanges = new() {
+                        new(0, 60)
+                    },
                     MaxHarmonic = 20
                 };
             }
@@ -34,8 +38,12 @@ namespace SourceMock.Tests.Actions.Source
                 return new()
                 {
                     NumberOfPhases = 1,
-                    MaxVoltage = 300,
-                    MaxCurrent = 60,
+                    VoltageRanges = new() {
+                        new(0, 300)
+                    },
+                    CurrentRanges = new() {
+                        new(0, 60)
+                    },
                     MaxHarmonic = 20
                 };
             }

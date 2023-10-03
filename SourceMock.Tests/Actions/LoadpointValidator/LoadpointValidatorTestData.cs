@@ -58,7 +58,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
                     VoltageNeutralConnected = false,
                     Frequency = new()
                     {
-                        Mode = FrequencyMode.SYTHETIC,
+                        Mode = FrequencyMode.SYNTHETIC,
                         Value = 50d
                     },
                     AuxilliaryVoltage = null
@@ -99,7 +99,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
                     VoltageNeutralConnected = false,
                     Frequency = new()
                     {
-                        Mode = FrequencyMode.SYTHETIC,
+                        Mode = FrequencyMode.SYNTHETIC,
                         Value = 50d
                     },
                     AuxilliaryVoltage = null
@@ -130,7 +130,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
                     VoltageNeutralConnected = false,
                     Frequency = new()
                     {
-                        Mode = FrequencyMode.SYTHETIC,
+                        Mode = FrequencyMode.SYNTHETIC,
                         Value = 50d
                     },
                     AuxilliaryVoltage = null

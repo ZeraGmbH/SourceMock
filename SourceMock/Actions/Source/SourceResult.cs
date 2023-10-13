@@ -25,9 +25,5 @@ namespace SourceMock.Actions.Source
         /// The number of harmonics given in the loadpoint is higher than what the source can provide.
         /// </summary>
         LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS,
-        /// <summary>
-        /// The source was tried to be turned on without a soadpoint set with <see cref="ISource.SetLoadpoint"/> before.
-        /// </summary>
-        NO_LOADPOINT_SET
     }
 }

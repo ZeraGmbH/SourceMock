@@ -19,8 +19,8 @@ namespace SourceMock.Actions.Source
         /// <param name="configuration">The configuration o be used.</param>
         public SimulatedSource(ILogger<SimulatedSource> logger, IConfiguration configuration)
         {
-            this._logger = logger;
-            this._configuration = configuration;
+            _logger = logger;
+            _configuration = configuration;
 
             _sourceCapabilities = new()
             {
@@ -52,14 +52,14 @@ namespace SourceMock.Actions.Source
         /// <param name="sourceCapabilities">The capabilities of the source which should be simulated.</param>
         public SimulatedSource(ILogger<SimulatedSource> logger, IConfiguration configuration, SourceCapabilities sourceCapabilities)
         {
-            this._logger = logger;
-            this._configuration = configuration;
-            this._sourceCapabilities = sourceCapabilities;
+            _logger = logger;
+            _configuration = configuration;
+            _sourceCapabilities = sourceCapabilities;
         }
 
         #endregion
 
-        private Loadpoint? _currentLoadpoint, _nextLoadpoint;
+        private Loadpoint? _loadpoint;
         private SimulatedSourceState? _simulatedSourceState;
 
         /// <inheritdoc/>
@@ -69,44 +69,25 @@ namespace SourceMock.Actions.Source
 
             if (isValid == SourceResult.SUCCESS)
             {
-                _logger.LogTrace("Loadpoint set.");
-                _nextLoadpoint = loadpoint;
+                _logger.LogTrace("Loadpoint set, source turend on.");
+                _loadpoint = loadpoint;
             }
 
             return isValid;
         }
 
         /// <inheritdoc/>
-        public SourceResult TurnOn()
-        {
-            if (_nextLoadpoint == null)
-            {
-                return SourceResult.NO_LOADPOINT_SET;
-            }
-
-            _logger.LogTrace("Source turned on.");
-            _currentLoadpoint = _nextLoadpoint;
-            return SourceResult.SUCCESS;
-        }
-
-        /// <inheritdoc/>
         public SourceResult TurnOff()
         {
             _logger.LogTrace("Source turned off.");
-            _currentLoadpoint = null;
+            _loadpoint = null;
             return SourceResult.SUCCESS;
-        }
-
-        /// <inheritdoc/>
-        public Loadpoint? GetNextLoadpoint()
-        {
-            return _nextLoadpoint;
         }
 
         /// <inheritdoc/>
         public Loadpoint? GetCurrentLoadpoint()
         {
-            return _currentLoadpoint;
+            return _loadpoint;
         }
 
         /// <inheritdoc/>

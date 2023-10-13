@@ -24,18 +24,14 @@ namespace SourceMock.Tests.Actions.Source
 
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
-            source.SetLoadpoint(loadpoint);
-
             // Act
-            var result = source.TurnOn();
+            var result = source.SetLoadpoint(loadpoint);
 
             // Assert
-            var nextLoadpoint = source.GetNextLoadpoint();
             var currentLoadpoint = source.GetCurrentLoadpoint();
 
             Assert.AreEqual(SourceResult.SUCCESS, result);
-            Assert.AreEqual(loadpoint, nextLoadpoint);
-            Assert.AreEqual(loadpoint, currentLoadpoint);
+            Assert.AreEqual(currentLoadpoint, currentLoadpoint);
         }
 
         [Test]
@@ -48,38 +44,19 @@ namespace SourceMock.Tests.Actions.Source
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
             source.SetLoadpoint(loadpoint);
-            var result = source.TurnOn();
 
             // Act
-            source.TurnOff();
+            var result = source.TurnOff();
 
             // Assert
-            var nextLoadpoint = source.GetNextLoadpoint();
             var currentLoadpoint = source.GetCurrentLoadpoint();
 
             Assert.AreEqual(SourceResult.SUCCESS, result);
-            Assert.AreEqual(loadpoint, nextLoadpoint);
             Assert.AreEqual(null, currentLoadpoint);
         }
         #endregion
 
         #region LoadpointIssues
-        [Test]
-        public void TestTurnOnWithoutLoadpoint()
-        {
-            // Arrange
-            ISource source = GenerateSimulatedSource();
-
-            // Act
-            var result = source.TurnOn();
-
-            // Assert
-            var currentLoadpoint = source.GetCurrentLoadpoint();
-
-            Assert.AreEqual(SourceResult.NO_LOADPOINT_SET, result);
-            Assert.AreEqual(null, currentLoadpoint);
-        }
-
         [Test]
         [TestCaseSource(typeof(SimulatedSourceTestData), nameof(SimulatedSourceTestData.ValidLoadpointsWithOneOrThreePhases))]
         public void TestTurnOnWithInvalidLoadpoint(Loadpoint loadpoint)
@@ -113,10 +90,10 @@ namespace SourceMock.Tests.Actions.Source
             var result = source.SetLoadpoint(lp);
 
             // Assert
-            var nextLoadpoint = source.GetNextLoadpoint();
+            var currentLoadpoint = source.GetCurrentLoadpoint();
 
             Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID, result);
-            Assert.AreEqual(null, nextLoadpoint);
+            Assert.AreEqual(null, currentLoadpoint);
         }
 
         [Test]
@@ -131,10 +108,10 @@ namespace SourceMock.Tests.Actions.Source
             var result = source.SetLoadpoint(lp);
 
             // Assert
-            var nextLoadpoint = source.GetNextLoadpoint();
+            var currentLoadpoint = source.GetCurrentLoadpoint();
 
             Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID, result);
-            Assert.AreEqual(null, nextLoadpoint);
+            Assert.AreEqual(null, currentLoadpoint);
         }
         #endregion
 

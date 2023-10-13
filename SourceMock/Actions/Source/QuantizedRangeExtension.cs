@@ -6,13 +6,13 @@ namespace SourceMock.Actions.Source
     {
         public static bool IsIncluded(this QuantizedRange range, double value)
         {
-            var mod = value % range.QuantisationDistance;
-            var mod2 = Math.Abs(mod - range.QuantisationDistance);
+            var mod = value % range.PrecisionStepSize;
+            var mod2 = Math.Abs(mod - range.PrecisionStepSize);
 
             const double epsilon = 1E-12;
 
             return
-                !(value < range.LowerEndpoint || value > range.UpperEndpoint) &&
+                !(value < range.Min || value > range.Max) &&
                 (mod <= epsilon || mod2 <= epsilon);
         }
 

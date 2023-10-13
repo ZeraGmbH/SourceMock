@@ -2,16 +2,16 @@ namespace SourceMock.Model
 {
     public class QuantizedRange
     {
-        public double LowerEndpoint { get; set; }
-        public double UpperEndpoint { get; set; }
-        public double QuantisationDistance { get; set; }
+        public double Min { get; set; }
+        public double Max { get; set; }
+        public double PrecisionStepSize { get; set; }
 
 
-        public QuantizedRange(double lowerEndpoint, double upperEndpoint, double quantisationDistance)
+        public QuantizedRange(double min, double max, double precisionStepSize)
         {
-            LowerEndpoint = lowerEndpoint;
-            UpperEndpoint = upperEndpoint;
-            QuantisationDistance = quantisationDistance;
+            Min = min;
+            Max = max;
+            PrecisionStepSize = precisionStepSize;
         }
 
         public QuantizedRange() { }

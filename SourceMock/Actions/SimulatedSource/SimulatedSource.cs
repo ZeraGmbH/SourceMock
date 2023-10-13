@@ -24,14 +24,23 @@ namespace SourceMock.Actions.Source
 
             _sourceCapabilities = new()
             {
-                NumberOfPhases = 3,
-                VoltageRanges = new() {
-                        new(0, 300)
+                Phases = new() {
+                    new() {
+                        Voltage = new(10, 300, 0.01),
+                        Current = new(0, 60, 0.01)
                     },
-                CurrentRanges = new() {
-                        new(0, 60)
+                    new() {
+                        Voltage = new(10, 300, 0.01),
+                        Current = new(0, 60, 0.01)
                     },
-                MaxHarmonic = 20
+                    new() {
+                        Voltage = new(10, 300, 0.01),
+                        Current = new(0, 60, 0.01)
+                    }
+                },
+                FrequencyRanges = new() {
+                    new(40, 60, 0.1, FrequencyMode.SYNTHETIC)
+                }
             };
         }
 

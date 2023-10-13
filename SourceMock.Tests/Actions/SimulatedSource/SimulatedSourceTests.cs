@@ -20,8 +20,7 @@ namespace SourceMock.Tests.Actions.Source
         public void TestValidTurnOn(Loadpoint loadpoint)
         {
             // Arrange
-            var capabilities = SimulatedSourceTestData.DefaultThreePhaseSourceCapabilities;
-            capabilities.NumberOfPhases = loadpoint.Currents.Count();
+            var capabilities = SimulatedSourceTestData.GetSourceCapabilitiesForNumberOfPhases(loadpoint.Currents.Count());
 
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
@@ -44,8 +43,7 @@ namespace SourceMock.Tests.Actions.Source
         public void TestValidTurnOff(Loadpoint loadpoint)
         {
             // Arrange
-            var capabilities = SimulatedSourceTestData.DefaultThreePhaseSourceCapabilities;
-            capabilities.NumberOfPhases = loadpoint.Currents.Count();
+            var capabilities = SimulatedSourceTestData.GetSourceCapabilitiesForNumberOfPhases(loadpoint.Currents.Count());
 
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
@@ -87,8 +85,7 @@ namespace SourceMock.Tests.Actions.Source
         public void TestTurnOnWithInvalidLoadpoint(Loadpoint loadpoint)
         {
             // Arrange
-            var capabilities = SimulatedSourceTestData.DefaultThreePhaseSourceCapabilities;
-            capabilities.NumberOfPhases = 2;
+            var capabilities = SimulatedSourceTestData.DefaultTwoPhaseSourceCapabilities;
 
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
@@ -118,7 +115,7 @@ namespace SourceMock.Tests.Actions.Source
             // Assert
             var nextLoadpoint = source.GetNextLoadpoint();
 
-            Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_TOO_HIGH, result);
+            Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID, result);
             Assert.AreEqual(null, nextLoadpoint);
         }
 
@@ -136,29 +133,7 @@ namespace SourceMock.Tests.Actions.Source
             // Assert
             var nextLoadpoint = source.GetNextLoadpoint();
 
-            Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_TOO_HIGH, result);
-            Assert.AreEqual(null, nextLoadpoint);
-        }
-
-        [Test]
-        public void TestTooManyHarmonics()
-        {
-            // Arrange 
-            ISource source = GenerateSimulatedSource();
-            Loadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
-
-            for (int i = 0; i < 25; ++i)
-            {
-                lp.Voltages[0].Harmonics.Add(0.5);
-            }
-
-            // Act
-            var result = source.SetLoadpoint(lp);
-
-            // Assert
-            var nextLoadpoint = source.GetNextLoadpoint();
-
-            Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS, result);
+            Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID, result);
             Assert.AreEqual(null, nextLoadpoint);
         }
         #endregion

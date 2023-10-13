@@ -13,20 +13,67 @@ namespace SourceMock.Tests.Actions.Source
             }
         }
 
+        public static SourceCapabilities GetSourceCapabilitiesForNumberOfPhases(int numberOfPhases)
+        {
+            switch (numberOfPhases)
+            {
+                case 1:
+                    return DefaultSinglePhaseSourceCapabilities;
+                case 2:
+                    return DefaultTwoPhaseSourceCapabilities;
+                case 3:
+                    return DefaultThreePhaseSourceCapabilities;
+                default:
+                    throw new NotImplementedException($"No Source Capablilities with {numberOfPhases} Phases found.");
+            }
+        }
+
         public static SourceCapabilities DefaultThreePhaseSourceCapabilities
         {
             get
             {
                 return new()
                 {
-                    NumberOfPhases = 3,
-                    VoltageRanges = new() {
-                        new(0, 300)
+                    Phases = new() {
+                        new() {
+                            Voltage = new(10, 300, 0.01),
+                            Current = new(0, 60, 0.01)
+                        },
+                        new() {
+                            Voltage = new(10, 300, 0.01),
+                            Current = new(0, 60, 0.01)
+                        },
+                        new() {
+                            Voltage = new(10, 300, 0.01),
+                            Current = new(0, 60, 0.01)
+                        }
                     },
-                    CurrentRanges = new() {
-                        new(0, 60)
+                    FrequencyRanges = new() {
+                        new(40, 60, 0.1, FrequencyMode.SYNTHETIC)
+                    }
+                };
+            }
+        }
+
+        public static SourceCapabilities DefaultTwoPhaseSourceCapabilities
+        {
+            get
+            {
+                return new()
+                {
+                    Phases = new() {
+                        new() {
+                            Voltage = new(10, 300, 0.01),
+                            Current = new(0, 60, 0.01)
+                        },
+                        new() {
+                            Voltage = new(10, 300, 0.01),
+                            Current = new(0, 60, 0.01)
+                        }
                     },
-                    MaxHarmonic = 20
+                    FrequencyRanges = new() {
+                        new(40, 60, 0.1, FrequencyMode.SYNTHETIC)
+                    }
                 };
             }
         }
@@ -37,14 +84,15 @@ namespace SourceMock.Tests.Actions.Source
             {
                 return new()
                 {
-                    NumberOfPhases = 1,
-                    VoltageRanges = new() {
-                        new(0, 300)
+                    Phases = new() {
+                        new() {
+                            Voltage = new(10, 300, 0.01),
+                            Current = new(0, 60, 0.01)
+                        }
                     },
-                    CurrentRanges = new() {
-                        new(0, 60)
-                    },
-                    MaxHarmonic = 20
+                    FrequencyRanges = new() {
+                        new(40, 60, 0.1, FrequencyMode.SYNTHETIC)
+                    }
                 };
             }
         }

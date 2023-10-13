@@ -80,8 +80,8 @@ namespace SourceMock.Controllers
                     _logger.LogTrace("Loadpoint was successfully set.");
                     return Ok();
                 case SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES:
-                case SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_TOO_HIGH:
-                case SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_TOO_HIGH:
+                case SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID:
+                case SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID:
                 case SourceResult.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS:
                     _logger.LogInformation(srcResult.ToString());
                     return Problem(

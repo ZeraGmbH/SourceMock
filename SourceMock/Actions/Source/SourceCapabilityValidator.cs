@@ -26,42 +26,33 @@ namespace SourceMock.Actions.Source
         private static bool CheckNumberOfPhasesAreEqual(Loadpoint loadpoint, SourceCapabilities capabilities)
         {
             return
-                loadpoint.Currents.Count() != capabilities.NumberOfPhases ||
-                loadpoint.Voltages.Count() != capabilities.NumberOfPhases;
+                loadpoint.Currents.Count() != capabilities.Phases.Count ||
+                loadpoint.Voltages.Count() != capabilities.Phases.Count;
         }
 
         private static SourceResult CheckCurrents(Loadpoint loadpoint, SourceCapabilities capabilities)
         {
-            foreach (var current in loadpoint.Currents)
+            for (int i = 0; i < loadpoint.Currents.Count; ++i)
             {
-                if (!capabilities.CurrentRanges.IsIncluded(current.Rms))
-                    return SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_TOO_HIGH;
-
-                if (current.Harmonics.Count() > capabilities.MaxHarmonic + 2)
-                {
-                    return SourceResult.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS;
-                }
+                if (!capabilities.Phases[i].Current.IsIncluded(loadpoint.Currents[i].Rms))
+                    return SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
             }
             return SourceResult.SUCCESS;
         }
 
         private static SourceResult CheckVoltages(Loadpoint loadpoint, SourceCapabilities capabilities)
         {
-            if (capabilities.VoltageRanges == null || capabilities.VoltageRanges.Count == 0)
+            for (int i = 0; i < loadpoint.Voltages.Count; ++i)
             {
-                // Is a current-only source
-                return SourceResult.SUCCESS;
-            }
-
-            foreach (var voltage in loadpoint.Voltages)
-            {
-                if (!capabilities.VoltageRanges.IsIncluded(voltage.Rms))
-                    return SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_TOO_HIGH;
-
-                if (voltage.Harmonics.Count() > capabilities.MaxHarmonic + 2)
+                if (capabilities.Phases[i].Voltage == null)
                 {
-                    return SourceResult.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS;
+                    // Is a current-only source
+                    continue;
                 }
+
+                if (!capabilities.Phases[i].Voltage.IsIncluded(loadpoint.Voltages[i].Rms))
+                    return SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID;
+
             }
             return SourceResult.SUCCESS;
         }

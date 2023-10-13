@@ -38,10 +38,10 @@ namespace SourceMock.Actions.LoadpointValidator
         {
             var phaseSpecificFields = new[] { loadpoint.Voltages, loadpoint.Currents };
 
-            var numberOfPhases = phaseSpecificFields.First().Count();
+            var numberOfPhases = phaseSpecificFields.First().Count;
             foreach (var phaseSpecificField in phaseSpecificFields)
             {
-                if (phaseSpecificField.Count() != numberOfPhases) return false;
+                if (phaseSpecificField.Count != numberOfPhases) return false;
             }
 
             return true;

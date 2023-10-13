@@ -1,4 +1,5 @@
 using SourceMock.Actions.Source;
+using SourceMock.Model;
 
 namespace SourceMock.Tests.Actions.Source
 {
@@ -9,7 +10,7 @@ namespace SourceMock.Tests.Actions.Source
         public void TestLowerViolation()
         {
             // Arrange
-            Model.Range range = new(1, 3);
+            QuantizedRange range = new(1, 3, 0.1);
 
             // Act
             var result = range.IsIncluded(0);
@@ -22,7 +23,7 @@ namespace SourceMock.Tests.Actions.Source
         public void TestUpperViolation()
         {
             // Arrange
-            Model.Range range = new(1, 3);
+            QuantizedRange range = new(1, 3, 0.1);
 
             // Act
             var result = range.IsIncluded(4);
@@ -35,7 +36,7 @@ namespace SourceMock.Tests.Actions.Source
         public void TestBarelyValidUpperLimit()
         {
             // Arrange
-            Model.Range range = new(1, 3);
+            QuantizedRange range = new(1, 3, 0.1);
 
             // Act
             var result = range.IsIncluded(3);
@@ -49,7 +50,7 @@ namespace SourceMock.Tests.Actions.Source
         public void TestBarelyValidLowerLimit()
         {
             // Arrange
-            Model.Range range = new(1, 3);
+            QuantizedRange range = new(1, 3, 0.1);
 
             // Act
             var result = range.IsIncluded(1);
@@ -62,10 +63,10 @@ namespace SourceMock.Tests.Actions.Source
         public void TestValid()
         {
             // Arrange
-            Model.Range range = new(1, 3);
+            QuantizedRange range = new(1, 3, 0.1);
 
             // Act
-            var result = range.IsIncluded(2);
+            var result = range.IsIncluded(2.2);
 
             // Assert
             Assert.IsTrue(result);
@@ -75,9 +76,9 @@ namespace SourceMock.Tests.Actions.Source
         public void TestListInvalid()
         {
             // Arrange
-            List<Model.Range> ranges = new() {
-                new(1, 3),
-                new(5, 7)
+            List<QuantizedRange> ranges = new() {
+                new(1, 3, 0.1),
+                new(5, 7, 0.1)
             };
 
             // Act
@@ -91,9 +92,9 @@ namespace SourceMock.Tests.Actions.Source
         public void TestListValid()
         {
             // Arrange
-            List<Model.Range> ranges = new() {
-                new(1, 3),
-                new(5, 7)
+            List<QuantizedRange> ranges = new() {
+                new(1, 3, 0.1),
+                new(5, 7, 0.1)
             };
 
             // Act

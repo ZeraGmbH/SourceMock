@@ -16,13 +16,9 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
 
             // Act
             var errCount = ValidateObject(loadpoint);
-            var validationResult = SourceMock.Actions.LoadpointValidator.LoadpointValidator.Validate(loadpoint);
 
             // Assert
             Assert.AreEqual(0, errCount);
-            Assert.AreEqual(
-                SourceMock.Actions.LoadpointValidator.LoadpointValidator.ValidationResult.OK,
-                validationResult);
         }
         #endregion
 
@@ -35,7 +31,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             {
                 Rms = 0d,
                 Angle = 180d,
-                Harmonics = new()
+                On = true
             };
 
             // Act
@@ -53,7 +49,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             {
                 Rms = 0d,
                 Angle = -0.1d,
-                Harmonics = new()
+                On = true
             };
 
             // Act
@@ -71,7 +67,7 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
             {
                 Rms = 0d,
                 Angle = 360.1d,
-                Harmonics = new()
+                On = true
             };
 
             // Act
@@ -79,24 +75,6 @@ namespace SourceMock.Tests.Actions.LoadpointValidator
 
             // Assert
             Assert.AreEqual(1, errCount);
-        }
-        #endregion
-
-        #region TestSameAmountOfPhases
-        [Test]
-        [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.InvalidLoadPoints_MissingPhase))]
-        public void TestDifferentNumberOfPhases(Loadpoint loadpoint)
-        {
-            // Arrange
-            // loadpoint set in parameter
-
-            // Act
-            var actual = SourceMock.Actions.LoadpointValidator.LoadpointValidator.Validate(loadpoint);
-
-            // Assert
-            Assert.AreEqual(
-                SourceMock.Actions.LoadpointValidator.LoadpointValidator.ValidationResult.NUMBER_OF_PHASES_DO_NOT_MATCH,
-                actual);
         }
         #endregion
 

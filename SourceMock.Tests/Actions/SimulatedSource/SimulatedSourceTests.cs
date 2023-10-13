@@ -20,7 +20,7 @@ namespace SourceMock.Tests.Actions.Source
         public void TestValidTurnOn(Loadpoint loadpoint)
         {
             // Arrange
-            var capabilities = SimulatedSourceTestData.GetSourceCapabilitiesForNumberOfPhases(loadpoint.Currents.Count());
+            var capabilities = SimulatedSourceTestData.GetSourceCapabilitiesForNumberOfPhases(loadpoint.Phases.Count);
 
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
@@ -43,7 +43,7 @@ namespace SourceMock.Tests.Actions.Source
         public void TestValidTurnOff(Loadpoint loadpoint)
         {
             // Arrange
-            var capabilities = SimulatedSourceTestData.GetSourceCapabilitiesForNumberOfPhases(loadpoint.Currents.Count());
+            var capabilities = SimulatedSourceTestData.GetSourceCapabilitiesForNumberOfPhases(loadpoint.Phases.Count);
 
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
@@ -107,7 +107,7 @@ namespace SourceMock.Tests.Actions.Source
             // Arrange 
             ISource source = GenerateSimulatedSource();
             Loadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
-            lp.Voltages[0].Rms = 500;
+            lp.Phases[0].Voltage.Rms = 500;
 
             // Act
             var result = source.SetLoadpoint(lp);
@@ -125,7 +125,7 @@ namespace SourceMock.Tests.Actions.Source
             // Arrange 
             ISource source = GenerateSimulatedSource();
             Loadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
-            lp.Currents[0].Rms = 100;
+            lp.Phases[0].Current.Rms = 100;
 
             // Act
             var result = source.SetLoadpoint(lp);

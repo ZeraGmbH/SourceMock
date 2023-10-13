@@ -26,15 +26,14 @@ namespace SourceMock.Actions.Source
         private static bool CheckNumberOfPhasesAreEqual(Loadpoint loadpoint, SourceCapabilities capabilities)
         {
             return
-                loadpoint.Currents.Count() != capabilities.Phases.Count ||
-                loadpoint.Voltages.Count() != capabilities.Phases.Count;
+                loadpoint.Phases.Count() != capabilities.Phases.Count;
         }
 
         private static SourceResult CheckCurrents(Loadpoint loadpoint, SourceCapabilities capabilities)
         {
-            for (int i = 0; i < loadpoint.Currents.Count; ++i)
+            for (int i = 0; i < loadpoint.Phases.Count; ++i)
             {
-                if (!capabilities.Phases[i].Current.IsIncluded(loadpoint.Currents[i].Rms))
+                if (!capabilities.Phases[i].Current.IsIncluded(loadpoint.Phases[i].Current.Rms))
                     return SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
             }
             return SourceResult.SUCCESS;
@@ -42,7 +41,7 @@ namespace SourceMock.Actions.Source
 
         private static SourceResult CheckVoltages(Loadpoint loadpoint, SourceCapabilities capabilities)
         {
-            for (int i = 0; i < loadpoint.Voltages.Count; ++i)
+            for (int i = 0; i < loadpoint.Phases.Count; ++i)
             {
                 if (capabilities.Phases[i].Voltage == null)
                 {
@@ -50,7 +49,7 @@ namespace SourceMock.Actions.Source
                     continue;
                 }
 
-                if (!capabilities.Phases[i].Voltage.IsIncluded(loadpoint.Voltages[i].Rms))
+                if (!capabilities.Phases[i].Voltage.IsIncluded(loadpoint.Phases[i].Voltage.Rms))
                     return SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID;
 
             }

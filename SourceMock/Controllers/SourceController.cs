@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 
-using SourceMock.Actions.LoadpointValidator;
 using SourceMock.Actions.Source;
 using SourceMock.Model;
 
@@ -58,19 +57,6 @@ namespace SourceMock.Controllers
         public ActionResult SetLoadpoint([FromBody] Loadpoint loadpoint)
         {
             _logger.LogTrace("Loadpoint to be set: ", loadpoint);
-
-            var validationResult = LoadpointValidator.Validate(loadpoint);
-            if (validationResult != LoadpointValidator.ValidationResult.OK)
-            {
-                _logger.LogInformation("Loadpoint validation failed with: {result}.", validationResult.ToString());
-                return Problem(
-                    detail: validationResult.ToString(),
-                    statusCode: StatusCodes.Status400BadRequest);
-            }
-            else
-            {
-                _logger.LogTrace("Loadpoint validation was successful.");
-            }
 
             var srcResult = _source.SetLoadpoint(loadpoint);
 

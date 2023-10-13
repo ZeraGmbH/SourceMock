@@ -60,6 +60,19 @@ namespace SourceMock.Tests.Actions.Source
         }
 
         [Test]
+        public void TestInvalidQuantisation()
+        {
+            // Arrange
+            QuantizedRange range = new QuantizedRange(0, 10, 0.1);
+
+            // Act
+            var result = range.IsIncluded(1.05);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [Test]
         public void TestValid()
         {
             // Arrange

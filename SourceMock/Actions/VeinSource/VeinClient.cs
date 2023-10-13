@@ -54,6 +54,18 @@ namespace SourceMock.Actions.VeinSource
             return (HttpStatusCode)Int32.Parse(json["status"]?.ToString() ?? "");
         }
 
+        /// <summary>
+        /// Set Loadpoint of Source
+        /// </summary>
+        /// <param name="jsonLoadpoint">Loadpoint formated in zera compatible json</param>
+        /// <returns>HttpStatusCode of Request</returns>
+        public HttpStatusCode SetLoadpoint(string jsonLoadpoint)
+        {
+            JObject json = SetToVein(EntityIds.SOURCE, "PAR_SourceState0", jsonLoadpoint);
+
+            return (HttpStatusCode)Int32.Parse(json["status"]?.ToString() ?? "");
+        }
+
         private JObject GetFromVein(EntityIds entityId, string componentName)
         {
             string payload = $"{{\"EntityID\": {(int)entityId}, \"componentName\": \"{componentName}\"}}";
@@ -66,6 +78,9 @@ namespace SourceMock.Actions.VeinSource
 
         private JObject SetToVein(EntityIds entityId, string componentName, string value)
         {
+            // Escape double quotes inside "newValue" json-object
+            value = value.Replace("\"", "\\\"");
+
             string payload = $"{{\"EntityID\": {(int)entityId}, \"componentName\": \"{componentName}\", \"newValue\": \"{value}\"}}";
             StringContent stringContent = new(payload);
 
@@ -81,7 +96,8 @@ namespace SourceMock.Actions.VeinSource
         private enum EntityIds
         {
             SYSTEM = 0,
-            CUSTOMER_DATA = 200
+            CUSTOMER_DATA = 200,
+            SOURCE = 1300
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 
 using SourceMock.Actions.Source;
+using SourceMock.Actions.VeinSource;
 
 using System.Reflection;
 
@@ -48,9 +49,23 @@ builder.Services.AddCors(options =>
 });
 #pragma warning restore IDE0053
 
-builder.Services.AddSingleton<SimulatedSource>();
-builder.Services.AddSingleton<ISource>(x => x.GetRequiredService<SimulatedSource>());
-builder.Services.AddSingleton<ISimulatedSource>(x => x.GetRequiredService<SimulatedSource>());
+switch (builder.Configuration["SourceType"])
+{
+    case "simulated":
+        builder.Services.AddSingleton<SimulatedSource>();
+        builder.Services.AddSingleton<ISource>(x => x.GetRequiredService<SimulatedSource>());
+        builder.Services.AddSingleton<ISimulatedSource>(x => x.GetRequiredService<SimulatedSource>());
+        break;
+    case "vein":
+        builder.Services.AddSingleton<VeinClient>(new VeinClient(new(), "localhost", 8080));
+        builder.Services.AddSingleton<VeinSource>();
+        builder.Services.AddSingleton<ISource>(x => x.GetRequiredService<VeinSource>());
+        break;
+    default:
+        throw new NotImplementedException($"Unknown SourceType: {builder.Configuration["SourceType"]}");
+}
+
+
 
 var app = builder.Build();
 

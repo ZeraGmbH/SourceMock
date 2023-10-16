@@ -66,6 +66,21 @@ namespace SourceMock.Actions.VeinSource
             return (HttpStatusCode)Int32.Parse(json["status"]?.ToString() ?? "");
         }
 
+        /// <summary>
+        /// Get current Loadpoint of Source
+        /// </summary>
+        /// <returns>String of Current Loadpoint in zera compatible json</returns>
+        public VeinGetResult<string> GetLoadpoint()
+        {
+            JObject json = GetFromVein(EntityIds.SOURCE, "PAR_SourceState0");
+            VeinGetResult<string> result = new()
+            {
+                Status = (HttpStatusCode)Int32.Parse(json["status"]?.ToString() ?? ""),
+                Value = json["ReturnInformation"]?.ToString() ?? ""
+            };
+            return result;
+        }
+
         private JObject GetFromVein(EntityIds entityId, string componentName)
         {
             string payload = $"{{\"EntityID\": {(int)entityId}, \"componentName\": \"{componentName}\"}}";

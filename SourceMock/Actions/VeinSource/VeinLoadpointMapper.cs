@@ -9,8 +9,7 @@ namespace SourceMock.Actions.VeinSource
     /// </summary>
     public static class VeinLoadpointMapper
     {
-
-        public static JObject ConvertToJson(Loadpoint inLoadpoint)
+        public static JObject ConvertToZeraJson(Loadpoint inLoadpoint)
         {
             JObject ret = new();
             JObject frequency = new();
@@ -32,6 +31,36 @@ namespace SourceMock.Actions.VeinSource
             return ret;
         }
 
+        public static Loadpoint ConvertToLoadpoint(string zeraJson)
+        {
+            Loadpoint ret = new();
+            JObject json = JObject.Parse(zeraJson);
+
+            ret.Frequency.Mode = MapFrequencyTypeToMode(json["Frequency"]?["type"]?.ToString() ?? "");
+            ret.Frequency.Value = json["Frequency"]?["val"]?.ToObject<double>() ?? 0;
+
+            int counter = 0;
+            while (json.ContainsKey($"I{counter + 1}"))
+            {
+                if (ret.Phases.Count <= counter) ret.Phases.Add(new PhaseLoadpoint());
+                ret.Phases[counter].Current.Rms = json[$"I{counter + 1}"]?["rms"]?.ToObject<double>() ?? 0;
+                ret.Phases[counter].Current.Angle = json[$"I{counter + 1}"]?["angle"]?.ToObject<double>() ?? 0;
+                ret.Phases[counter].Current.On = json[$"I{counter + 1}"]?["on"]?.ToObject<bool>() ?? false;
+                counter += 1;
+            }
+
+            counter = 0;
+            while (json.ContainsKey($"U{counter + 1}"))
+            {
+                if (ret.Phases.Count <= counter) ret.Phases.Add(new PhaseLoadpoint());
+                ret.Phases[counter].Voltage.Rms = json[$"U{counter + 1}"]?["rms"]?.ToObject<double>() ?? 0;
+                ret.Phases[counter].Voltage.Angle = json[$"U{counter + 1}"]?["angle"]?.ToObject<double>() ?? 0;
+                ret.Phases[counter].Voltage.On = json[$"U{counter + 1}"]?["on"]?.ToObject<bool>() ?? false;
+                counter += 1;
+            }
+            return ret;
+        }
+
         private static JObject MapElectricalVectorQuantityToJObject(ElectricalVectorQuantity evq)
         {
             JObject ret = new();
@@ -50,6 +79,19 @@ namespace SourceMock.Actions.VeinSource
                     return "sync";
                 default:
                     throw new NotImplementedException($"Unrecognized frequency mode: {mode}");
+            }
+        }
+
+        private static FrequencyMode MapFrequencyTypeToMode(string type)
+        {
+            switch (type)
+            {
+                case "var":
+                    return FrequencyMode.SYNTHETIC;
+                case "sync":
+                    return FrequencyMode.GRID_SYNCRONOUS;
+                default:
+                    throw new NotImplementedException($"Unrecognized type: {type}");
             }
         }
     }

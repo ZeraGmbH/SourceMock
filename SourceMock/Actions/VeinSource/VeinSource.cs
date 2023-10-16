@@ -28,12 +28,20 @@ namespace SourceMock.Actions.VeinSource
 
         public Loadpoint? GetCurrentLoadpoint()
         {
-            throw new NotImplementedException();
+            Loadpoint ret = new();
+
+            var veinResponse = _veinClient.GetLoadpoint();
+            // how to act on http statuscode and pass through to api endpoint?
+            string zeraJson = veinResponse.Value;
+
+            ret = VeinLoadpointMapper.ConvertToLoadpoint(zeraJson);
+
+            return ret;
         }
 
         public SourceResult SetLoadpoint(Loadpoint loadpoint)
         {
-            JObject veinRequest = VeinLoadpointMapper.ConvertToJson(loadpoint);
+            JObject veinRequest = VeinLoadpointMapper.ConvertToZeraJson(loadpoint);
 
             _logger.LogInformation(veinRequest.ToString());
 

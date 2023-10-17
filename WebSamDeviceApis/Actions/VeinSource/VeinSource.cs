@@ -2,10 +2,10 @@ using System.Net;
 
 using Newtonsoft.Json.Linq;
 
-using SourceMock.Actions.Source;
-using SourceMock.Model;
+using WebSamDeviceApis.Actions.Source;
+using WebSamDeviceApis.Model;
 
-namespace SourceMock.Actions.VeinSource
+namespace WebSamDeviceApis.Actions.VeinSource
 {
     /// <summary>
     /// Communicates with a ZENUX/Vein Source

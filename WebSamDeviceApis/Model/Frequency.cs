@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace SourceMock.Model
+namespace WebSamDeviceApis.Model
 {
     /// <summary>
     /// Describes how the frequency should be generated.

@@ -1,8 +1,8 @@
 using Newtonsoft.Json.Linq;
 
-using SourceMock.Model;
+using WebSamDeviceApis.Model;
 
-namespace SourceMock.Actions.VeinSource
+namespace WebSamDeviceApis.Actions.VeinSource
 {
     /// <summary>
     /// Maps VEIN and SourceAPIs LoadPoint values

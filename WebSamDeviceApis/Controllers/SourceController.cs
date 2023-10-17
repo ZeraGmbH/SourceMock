@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 
-using SourceMock.Actions.Source;
-using SourceMock.Model;
+using WebSamDeviceApis.Actions.Source;
+using WebSamDeviceApis.Model;
 
-namespace SourceMock.Controllers
+namespace WebSamDeviceApis.Controllers
 {
     /// <summary>
     /// Controls a source.

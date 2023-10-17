@@ -1,4 +1,4 @@
-namespace SourceMock.Actions.Source
+namespace WebSamDeviceApis.Actions.Source
 {
     /// <summary>
     /// Possible results of source operations.

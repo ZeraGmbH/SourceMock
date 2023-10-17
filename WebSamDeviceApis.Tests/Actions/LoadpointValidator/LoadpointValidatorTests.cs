@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-using SourceMock.Model;
+using WebSamDeviceApis.Model;
 
-namespace SourceMock.Tests.Actions.LoadpointValidator
+namespace WebSamDeviceApis.Tests.Actions.LoadpointValidator
 {
     internal class LoadpointValidatorTests
     {

@@ -1,9 +1,9 @@
 using System.Net;
 
-using SourceMock.Actions.VeinSource;
-using SourceMock.Tests.Misc;
+using WebSamDeviceApis.Actions.VeinSource;
+using WebSamDeviceApis.Tests.Misc;
 
-namespace SourceMock.Tests.Actions.VeinSource
+namespace WebSamDeviceApis.Tests.Actions.VeinSource
 {
     [TestFixture]
     internal class VeinSourceTests

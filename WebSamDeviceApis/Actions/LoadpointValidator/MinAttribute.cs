@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace SourceMock.Actions.LoadpointValidator
+namespace WebSamDeviceApis.Actions.LoadpointValidator
 {
     /// <summary>
     /// Specicifies the numeric range constraints for the values in an <see cref="IEnumerable"/>.

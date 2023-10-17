@@ -1,4 +1,4 @@
-namespace SourceMock.Model
+namespace WebSamDeviceApis.Model
 {
     public class SourceCapabilities
     {

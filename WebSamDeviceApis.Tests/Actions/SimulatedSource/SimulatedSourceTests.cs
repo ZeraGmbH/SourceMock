@@ -4,11 +4,11 @@ using Microsoft.Extensions.Logging;
 
 using Moq;
 
-using SourceMock.Actions.Source;
-using SourceMock.Model;
-using SourceMock.Tests.Actions.LoadpointValidator;
+using WebSamDeviceApis.Actions.Source;
+using WebSamDeviceApis.Model;
+using WebSamDeviceApis.Tests.Actions.LoadpointValidator;
 
-namespace SourceMock.Tests.Actions.Source
+namespace WebSamDeviceApis.Tests.Actions.Source
 {
     internal class SimulatedSourceTests
     {

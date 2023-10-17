@@ -1,7 +1,7 @@
 using Microsoft.OpenApi.Models;
 
-using SourceMock.Actions.Source;
-using SourceMock.Actions.VeinSource;
+using WebSamDeviceApis.Actions.Source;
+using WebSamDeviceApis.Actions.VeinSource;
 
 using System.Reflection;
 

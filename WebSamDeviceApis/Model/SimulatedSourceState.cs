@@ -1,4 +1,4 @@
-namespace SourceMock.Model
+namespace WebSamDeviceApis.Model
 {
     /// <summary>
     /// Contains the information about a simulated source

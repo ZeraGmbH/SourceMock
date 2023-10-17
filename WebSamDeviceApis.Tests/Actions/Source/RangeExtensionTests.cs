@@ -1,7 +1,7 @@
-using SourceMock.Actions.Source;
-using SourceMock.Model;
+using WebSamDeviceApis.Actions.Source;
+using WebSamDeviceApis.Model;
 
-namespace SourceMock.Tests.Actions.Source
+namespace WebSamDeviceApis.Tests.Actions.Source
 {
     [TestFixture]
     internal class RangeExtensionTests

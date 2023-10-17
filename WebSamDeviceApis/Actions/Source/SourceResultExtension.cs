@@ -1,4 +1,4 @@
-namespace SourceMock.Actions.Source
+namespace WebSamDeviceApis.Actions.Source
 {
     public static partial class SourceResultExtension
     {

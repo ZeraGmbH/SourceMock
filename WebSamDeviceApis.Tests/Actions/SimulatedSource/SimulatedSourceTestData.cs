@@ -1,6 +1,6 @@
-using SourceMock.Model;
+using WebSamDeviceApis.Model;
 
-namespace SourceMock.Tests.Actions.Source
+namespace WebSamDeviceApis.Tests.Actions.Source
 {
     public static class SimulatedSourceTestData
     {

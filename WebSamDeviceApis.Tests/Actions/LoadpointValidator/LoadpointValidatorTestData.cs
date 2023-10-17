@@ -1,6 +1,6 @@
-using SourceMock.Model;
+using WebSamDeviceApis.Model;
 
-namespace SourceMock.Tests.Actions.LoadpointValidator
+namespace WebSamDeviceApis.Tests.Actions.LoadpointValidator
 {
     public static class LoadpointValidatorTestData
     {

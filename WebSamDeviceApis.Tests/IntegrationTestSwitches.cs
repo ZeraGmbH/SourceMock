@@ -1,4 +1,4 @@
-namespace SourceMock.Tests
+namespace WebSamDeviceApis.Tests
 {
     static class IntegrationTestSwitches
     {

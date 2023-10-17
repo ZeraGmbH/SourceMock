@@ -1,6 +1,6 @@
-using SourceMock.Model;
+using WebSamDeviceApis.Model;
 
-namespace SourceMock.Actions.Source
+namespace WebSamDeviceApis.Actions.Source
 {
     /// <summary>
     /// Simulatetes the behaviour of a ZERA source.

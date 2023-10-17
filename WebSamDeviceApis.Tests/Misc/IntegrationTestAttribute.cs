@@ -1,6 +1,6 @@
 using NUnit.Framework.Interfaces;
 
-namespace SourceMock.Tests.Misc
+namespace WebSamDeviceApis.Tests.Misc
 {
     public class IntegrationTestAttribute : TestAttribute, ITestAction
     {

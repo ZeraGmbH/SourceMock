@@ -3,7 +3,7 @@ using System.Net.Http.Headers;
 
 using Newtonsoft.Json.Linq;
 
-namespace SourceMock.Actions.VeinSource
+namespace WebSamDeviceApis.Actions.VeinSource
 {
     /// <summary>
     /// Connects to VeinAPI to get and set components in Vein Entities

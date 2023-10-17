@@ -1,6 +1,6 @@
-using SourceMock.Model;
+using WebSamDeviceApis.Model;
 
-namespace SourceMock.Actions.Source
+namespace WebSamDeviceApis.Actions.Source
 {
     /// <summary>
     /// Verifies wheather or not a loadpoint is suitable for a given source.

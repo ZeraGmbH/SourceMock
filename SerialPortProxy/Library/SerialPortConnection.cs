@@ -153,7 +153,14 @@ public class SerialPortConnection : IDisposable
     /// </summary>
     /// <typeparam name="T">Some mocked class implementing ISerialPort.</typeparam>
     /// <returns>The new connection.</returns>
-    public static SerialPortConnection FromMock<T>() where T : class, ISerialPort, new() => new(new T());
+    public static SerialPortConnection FromMock<T>() where T : class, ISerialPort, new() => FromMock(typeof(T));
+
+    /// <summary>
+    /// Create a new mocked based connection.
+    /// </summary>
+    /// <param name="mockType">Some mocked class implementing ISerialPort.</param>
+    /// <returns>The new connection.</returns>
+    public static SerialPortConnection FromMock(Type mockType) => new((ISerialPort)Activator.CreateInstance(mockType)!);
 
     /// <summary>
     /// On dispose the serial connection and the ProcessFromQueue thread are terminated.

@@ -44,4 +44,24 @@ public class Tests
             Assert.That(reply[1], Is.EqualTo("AAVACK"));
         });
     }
+
+    [Test]
+    public async Task Can_Use_Service()
+    {
+        using var sut = new SerialPortService(new SerialPortConfiguration
+        {
+            PortNameOrMockType = typeof(PortMock).AssemblyQualifiedName!,
+            UseMockType = true
+        });
+
+        var reply = await sut.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
+
+        Assert.That(reply.Length, Is.EqualTo(2));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(reply[0], Is.EqualTo("MT786V06.33"));
+            Assert.That(reply[1], Is.EqualTo("AAVACK"));
+        });
+    }
 }

@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/SourceMock/bin/Debug/net6.0/SourceMock.dll",
+            "program": "${workspaceFolder}/WebSamDeviceApis/bin/Debug/net6.0/WebSamDeviceApis.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/SourceMock",
+            "cwd": "${workspaceFolder}/WebSamDeviceApis",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",

@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["SourceMock/SourceMock.csproj", "SourceMock/"]
-RUN dotnet restore "SourceMock/SourceMock.csproj"
+COPY ["WebSamDeviceApis/WebSamDeviceApis.csproj", "WebSamDeviceApis/"]
+RUN dotnet restore "WebSamDeviceApis/WebSamDeviceApis.csproj"
 COPY . .
-WORKDIR "/src/SourceMock"
-RUN dotnet build "SourceMock.csproj" -c Release -o /app/build
+WORKDIR "/src/WebSamDeviceApis"
+RUN dotnet build "WebSamDeviceApis.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "SourceMock.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "WebSamDeviceApis.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "SourceMock.dll"]
+ENTRYPOINT ["dotnet", "WebSamDeviceApis.dll"]

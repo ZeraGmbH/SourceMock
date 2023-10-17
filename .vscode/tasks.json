@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/SourceMock/SourceMock.csproj",
+                "${workspaceFolder}/WebSamDeviceApis/WebSamDeviceApis.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/SourceMock/SourceMock.csproj",
+                "${workspaceFolder}/WebSamDeviceApis/WebSamDeviceApis.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/SourceMock/SourceMock.csproj"
+                "${workspaceFolder}/WebSamDeviceApis/WebSamDeviceApis.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

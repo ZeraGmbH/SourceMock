@@ -4,6 +4,7 @@ using WebSamDeviceApis.Actions.Source;
 using WebSamDeviceApis.Actions.VeinSource;
 
 using System.Reflection;
+using SerialPortProxy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,7 +66,31 @@ switch (builder.Configuration["SourceType"])
         throw new NotImplementedException($"Unknown SourceType: {builder.Configuration["SourceType"]}");
 }
 
+{
+    var portName = builder.Configuration["SerialPort:PortName"];
+    var mockType = builder.Configuration["SerialPort:PortMockType"];
 
+    var config = new SerialPortConfiguration();
+
+    if (!string.IsNullOrEmpty(portName))
+    {
+        if (!string.IsNullOrEmpty(mockType))
+            throw new NotSupportedException("serial port name and port mock type must not be both set.");
+
+        config.UseMockType = false;
+        config.PortNameOrMockType = portName;
+    }
+    else if (!string.IsNullOrEmpty(mockType))
+    {
+        config.UseMockType = true;
+        config.PortNameOrMockType = mockType;
+    }
+    else
+        throw new NotSupportedException("either serial port name or port mock type must be set.");
+
+    builder.Services.AddSingleton(config);
+    builder.Services.AddSingleton<SerialPortService>();
+}
 
 var app = builder.Build();
 

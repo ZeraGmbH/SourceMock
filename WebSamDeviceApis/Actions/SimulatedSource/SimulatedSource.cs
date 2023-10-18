@@ -69,7 +69,7 @@ namespace WebSamDeviceApis.Actions.Source
 
             if (isValid == SourceResult.SUCCESS)
             {
-                _logger.LogTrace("Loadpoint set, source turend on.");
+                _logger.LogTrace("Loadpoint set, source turned on.");
                 _loadpoint = loadpoint;
             }
 

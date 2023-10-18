@@ -1,39 +1,37 @@
 using Microsoft.AspNetCore.Mvc;
 
-using SerialPortProxy;
-
+using WebSamDeviceApis.Actions.Device;
 using WebSamDeviceApis.Model;
 
 namespace WebSamDeviceApis.Controllers;
 
 /// <summary>
-/// 
+/// Request device dependant information.
 /// </summary>
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class DeviceInfoController : ControllerBase
 {
-    private readonly SerialPortService _service;
+    private readonly IDevice _device;
 
     /// <summary>
-    /// 
+    /// Initialize a new controller for the current request.
     /// </summary>
-    /// <param name="service"></param>
-    public DeviceInfoController(SerialPortService service)
+    /// <param name="device">The current device to use.</param>
+    public DeviceInfoController(IDevice device)
     {
-        _service = service;
+        _device = device;
     }
 
     /// <summary>
-    /// 
+    /// Read the firmware from the device.
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <returns>Firmware version of the device.</returns>
     [HttpGet("GetFirmwareVersion")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public DeviceFirmwareVersion GetFirmwareVersion()
+    public Task<DeviceFirmwareVersion> GetFirmwareVersion()
     {
-        throw new NotImplementedException();
+        return _device.GetFirmwareVersion();
     }
 }

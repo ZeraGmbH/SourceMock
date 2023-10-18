@@ -5,6 +5,7 @@ using WebSamDeviceApis.Actions.VeinSource;
 
 using System.Reflection;
 using SerialPortProxy;
+using WebSamDeviceApis.Actions.Device;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -90,6 +91,8 @@ switch (builder.Configuration["SourceType"])
 
     builder.Services.AddSingleton(config);
     builder.Services.AddSingleton<SerialPortService>();
+
+    builder.Services.AddScoped<IDevice, SerialPortDevice>();
 }
 
 var app = builder.Build();
@@ -100,8 +103,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
+else
+    app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

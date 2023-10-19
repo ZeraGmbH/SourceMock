@@ -160,7 +160,14 @@ public class SerialPortConnection : IDisposable
     /// </summary>
     /// <param name="mockType">Some mocked class implementing ISerialPort.</param>
     /// <returns>The new connection.</returns>
-    public static SerialPortConnection FromMock(Type mockType) => new((ISerialPort)Activator.CreateInstance(mockType)!);
+    public static SerialPortConnection FromMock(Type mockType) => FromPortInstance((ISerialPort)Activator.CreateInstance(mockType)!);
+
+    /// <summary>
+    /// Create a new mocked based connection.
+    /// </summary>
+    /// <param name="port">Implementation to use.</param>
+    /// <returns>The new connection.</returns>
+    public static SerialPortConnection FromPortInstance(ISerialPort port) => new(port);
 
     /// <summary>
     /// On dispose the serial connection and the ProcessFromQueue thread are terminated.
@@ -191,7 +198,7 @@ public class SerialPortConnection : IDisposable
             _queue.Clear();
 
             /* Wake up the _executer thread which will test the _running state. */
-            Monitor.PulseAll(_queue);
+            Monitor.Pulse(_queue);
 
             /* If there are any outstand requests notify the corresponding clients - callers of Execute. */
             if (pending != null)
@@ -214,7 +221,7 @@ public class SerialPortConnection : IDisposable
             Array.ForEach(requests, _queue.Enqueue);
 
             /* If queue executer thread is waiting (Monitor.Wait) for new entries wake it up for immediate processing the new entry. */
-            Monitor.PulseAll(_queue);
+            Monitor.Pulse(_queue);
         }
 
         /* Report the task related with the result promise. */
@@ -300,7 +307,7 @@ public class SerialPortConnection : IDisposable
                 /* Try to get the first (oldest) entry from the queue. */
                 if (!_queue.TryDequeue(out request))
                 {
-                    /* If queue is empty wait until someone intentionally wakes us up (Monitor.PulseAll) to avoid unnecessary processings. */
+                    /* If queue is empty wait until someone intentionally wakes us up (Monitor.Pulse) to avoid unnecessary processings. */
                     Monitor.Wait(_queue);
 
                     continue;

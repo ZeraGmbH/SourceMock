@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
+using Swashbuckle.AspNetCore.Annotations;
+
 using WebSamDeviceApis.Actions.Source;
 using WebSamDeviceApis.Model;
 
@@ -34,6 +36,7 @@ namespace WebSamDeviceApis.Controllers
         /// /// <response code="200">If the capabilities could be returned successfully.</response>
         [HttpGet("Capabilities")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "GetCapablities")]
         public ActionResult<SourceCapabilities> GetCapablities()
         {
             return Ok(_source.GetCapabilities());
@@ -53,6 +56,7 @@ namespace WebSamDeviceApis.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(OperationId = "SetLoadpoint")]
         public ActionResult SetLoadpoint([FromBody] Loadpoint loadpoint)
         {
             _logger.LogTrace("Loadpoint to be set: ", loadpoint);
@@ -92,6 +96,7 @@ namespace WebSamDeviceApis.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(OperationId = "TurnOff")]
         public ActionResult TurnOff()
         {
             var srcResult = _source.TurnOff();
@@ -119,6 +124,7 @@ namespace WebSamDeviceApis.Controllers
         [HttpGet("Loadpoint")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [SwaggerOperation(OperationId = "GetLoadpoint")]
         public ActionResult<Loadpoint> GetCurrentLoadpoint()
         {
             var loadpoint = _source.GetCurrentLoadpoint();

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
+using Swashbuckle.AspNetCore.Annotations;
+
 using WebSamDeviceApis.Actions.Source;
 using WebSamDeviceApis.Model;
 
@@ -38,6 +40,7 @@ namespace WebSamDeviceApis.Controllers
         [HttpGet("SourceState")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [SwaggerOperation(OperationId = "GetSourceState")]
         public ActionResult<SimulatedSourceState> GetSourceState()
         {
             var state = _source.GetSimulatedSourceState();
@@ -54,6 +57,7 @@ namespace WebSamDeviceApis.Controllers
         /// <response code="200">If the source state was successfully set.</response>
         [HttpPost("SourceState")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "SetSourceState")]
         public ActionResult SetSourceState([FromBody] SimulatedSourceState simulatedSourceState)
         {
             _source.SetSimulatedSourceState(simulatedSourceState);

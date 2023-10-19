@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
+using Swashbuckle.AspNetCore.Annotations;
+
 using WebSamDeviceApis.Actions.Device;
 using WebSamDeviceApis.Model;
 
@@ -30,6 +32,7 @@ public class DeviceInfoController : ControllerBase
     /// <returns>Firmware version of the device.</returns>
     [HttpGet("GetFirmwareVersion")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [SwaggerOperation(OperationId = "GetFirmwareVersion")]
     public Task<DeviceFirmwareVersion> GetFirmwareVersion()
     {
         return _device.GetFirmwareVersion();

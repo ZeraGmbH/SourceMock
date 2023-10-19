@@ -13,6 +13,6 @@
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Library\Library.csproj" />
+    <ProjectReference Include="..\Library\SerialPortProxy.csproj" />
   </ItemGroup>
 </Project>

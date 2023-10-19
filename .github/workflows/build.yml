@@ -23,22 +23,20 @@ jobs:
 
       - name: Build Windows
         run: |
-          dotnet publish WebSamDeviceApis -r win-x64 --self-contained false --configuration Release
-          ls -la
+          dotnet publish SourceApi/Server -r win-x64 --self-contained false --configuration Release
 
       - name: Build Linux
         run: |
-          dotnet publish WebSamDeviceApis -r linux-x64 --self-contained false --configuration Release
-          ls -la
+          dotnet publish SourceApi/Server -r linux-x64 --self-contained false --configuration Release
 
       - name: Run Unit-Tests
         run: |
-          dotnet test WebSamDeviceApis.Tests --no-build
+          dotnet test SourceApi --no-build
           dotnet test SerialPortProxy
 
       - name: Start Service for Acceptance Tests
         run: |
-          cd WebSamDeviceApis/bin/Release/net6.0/linux-x64/publish
+          cd SourceApi/Server/bin/Release/net6.0/linux-x64/publish
           ./WebSamDeviceApis&
           echo "SOURCE_MOCK_PID=$!" >> $GITHUB_ENV
 
@@ -50,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-win-x64
-          path: "WebSamDeviceApis/bin/Release/net6.0/win-x64/publish/"
+          path: "SourceApi/Server/bin/Release/net6.0/win-x64/publish/"
           if-no-files-found: error
           retention-days: 1
 
@@ -58,6 +56,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-linux-x64
-          path: "WebSamDeviceApis/bin/Release/net6.0/linux-x64/publish/"
+          path: "SourceApi/Server/bin/Release/net6.0/linux-x64/publish/"
           if-no-files-found: error
           retention-days: 1

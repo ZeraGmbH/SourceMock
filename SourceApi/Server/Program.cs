@@ -1,12 +1,8 @@
 using Microsoft.OpenApi.Models;
 
-using WebSamDeviceApis.Actions.Source;
-using WebSamDeviceApis.Actions.VeinSource;
-
 using System.Reflection;
-using SerialPortProxy;
-using WebSamDeviceApis.Actions.Device;
-using WebSamDeviceApis.Actions.SerialPort;
+
+using WebSamDeviceApis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,52 +48,7 @@ builder.Services.AddCors(options =>
 });
 #pragma warning restore IDE0053
 
-switch (builder.Configuration["SourceType"])
-{
-    case "simulated":
-        builder.Services.AddSingleton<SimulatedSource>();
-        builder.Services.AddSingleton<ISource>(x => x.GetRequiredService<SimulatedSource>());
-        builder.Services.AddSingleton<ISimulatedSource>(x => x.GetRequiredService<SimulatedSource>());
-        break;
-    case "vein":
-        builder.Services.AddSingleton<VeinClient>(new VeinClient(new(), "localhost", 8080));
-        builder.Services.AddSingleton<VeinSource>();
-        builder.Services.AddSingleton<ISource>(x => x.GetRequiredService<VeinSource>());
-        break;
-    case "serial":
-        builder.Services.AddSingleton<ISource, SerialPortSource>();
-        break;
-    default:
-        throw new NotImplementedException($"Unknown SourceType: {builder.Configuration["SourceType"]}");
-}
-
-{
-    var portName = builder.Configuration["SerialPort:PortName"];
-    var mockType = builder.Configuration["SerialPort:PortMockType"];
-
-    var config = new SerialPortConfiguration();
-
-    if (!string.IsNullOrEmpty(portName))
-    {
-        if (!string.IsNullOrEmpty(mockType))
-            throw new NotSupportedException("serial port name and port mock type must not be both set.");
-
-        config.UseMockType = false;
-        config.PortNameOrMockType = portName;
-    }
-    else if (!string.IsNullOrEmpty(mockType))
-    {
-        config.UseMockType = true;
-        config.PortNameOrMockType = mockType;
-    }
-    else
-        throw new NotSupportedException("either serial port name or port mock type must be set.");
-
-    builder.Services.AddSingleton(config);
-    builder.Services.AddSingleton<SerialPortService>();
-
-    builder.Services.AddScoped<IDevice, SerialPortDevice>();
-}
+builder.Services.UseDeviceApi(builder.Configuration);
 
 var app = builder.Build();
 

@@ -11,13 +11,55 @@ namespace WebSamDeviceApis.Tests.Actions.SerialPort;
 [TestFixture]
 public class SourceTests
 {
-    private readonly ILogger<SerialPortSource> _logger = new NullLogger<SerialPortSource>();
-
-    private readonly SerialPortService _service = new(new SerialPortConfiguration
+    class PortMock : SerialPortMock
     {
-        UseMockType = true,
-        PortNameOrMockType = typeof(SerialPortMock).AssemblyQualifiedName!
-    });
+        private static PortMock? _current;
+
+        public PortMock()
+        {
+            _current = this;
+        }
+
+        public override void Dispose()
+        {
+            _current = null;
+
+            base.Dispose();
+        }
+
+        private readonly List<string> _commands = new();
+
+        public static string[] Commands => _current!._commands.ToArray();
+
+        public override void WriteLine(string command)
+        {
+            _commands.Add(command);
+
+            base.WriteLine(command);
+        }
+    }
+
+    private ILogger<SerialPortSource> _logger;
+
+    private SerialPortService _service;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _logger = new NullLogger<SerialPortSource>();
+
+        _service = new(new SerialPortConfiguration
+        {
+            UseMockType = true,
+            PortNameOrMockType = typeof(PortMock).AssemblyQualifiedName!
+        });
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _service?.Dispose();
+    }
 
     [Test]
     public void Can_Get_Capabilities()
@@ -41,15 +83,15 @@ public class SourceTests
             Frequency = new Model.Frequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = 50 },
             Phases = new List<Model.PhaseLoadpoint>() {
                 new Model.PhaseLoadpoint {
-                    Current = new Model.ElectricalVectorQuantity { Rms=1, Angle=0, On=true},
+                    Current = new Model.ElectricalVectorQuantity { Rms=0.01, Angle=0, On=true},
                     Voltage = new Model.ElectricalVectorQuantity { Rms=220, Angle=0, On=true},
                 },
                 new Model.PhaseLoadpoint {
-                    Current = new Model.ElectricalVectorQuantity { Rms=1, Angle=120, On=true},
+                    Current = new Model.ElectricalVectorQuantity { Rms=0.01, Angle=120, On=true},
                     Voltage = new Model.ElectricalVectorQuantity { Rms=220, Angle=120, On=true},
                 },
                 new Model.PhaseLoadpoint {
-                    Current = new Model.ElectricalVectorQuantity { Rms=1, Angle=240, On=true},
+                    Current = new Model.ElectricalVectorQuantity { Rms=0.01, Angle=240, On=true},
                     Voltage = new Model.ElectricalVectorQuantity { Rms=220, Angle=240, On=true},
                 },
             },
@@ -57,6 +99,11 @@ public class SourceTests
         });
 
         Assert.That(result, Is.EqualTo(SourceResult.SUCCESS));
+
+        Assert.That(PortMock.Commands, Is.EqualTo(new string[] {
+            "SUPAAR220.000000.00S220.000120.00T220.000240.00",
+            "SIPAAR000.010000.00S000.010120.00T000.010240.00"
+        }));
 
         var loadpoint = sut.GetCurrentLoadpoint();
 

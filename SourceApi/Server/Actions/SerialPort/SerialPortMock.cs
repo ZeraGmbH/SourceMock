@@ -11,13 +11,15 @@ public class SerialPortMock : ISerialPort
 {
     private static readonly Regex _supCommand = new(@"^SUP([EA])([EA])R(\d{3}\.\d{3})(\d{3}\.\d{2})S(\d{3}\.\d{3})(\d{3}\.\d{2})T(\d{3}\.\d{3})(\d{3}\.\d{2})$");
 
+    private static readonly Regex _sipCommand = new(@"^SIP([EA])([AM])R(\d{3}\.\d{3})(\d{3}\.\d{2})S(\d{3}\.\d{3})(\d{3}\.\d{2})T(\d{3}\.\d{3})(\d{3}\.\d{2})$");
+
     /// <summary>
     /// Outgoing messages.
     /// </summary>
     private readonly Queue<string> _replies = new();
 
     /// <inheritdoc/>
-    public void Dispose()
+    public virtual void Dispose()
     {
     }
 
@@ -25,13 +27,13 @@ public class SerialPortMock : ISerialPort
     /// Report the next outstanding reply string.
     /// </summary>
     /// <returns>Next string.</returns>
-    public string ReadLine() => this._replies.Dequeue();
+    public virtual string ReadLine() => this._replies.Dequeue();
 
     /// <summary>
     /// Simulate a command.
     /// </summary>
     /// <param name="command">Command to simulate.</param>
-    public void WriteLine(string command)
+    public virtual void WriteLine(string command)
     {
         switch (command)
         {
@@ -46,9 +48,9 @@ public class SerialPortMock : ISerialPort
             default:
                 {
                     if (_supCommand.IsMatch(command))
-                    {
                         _replies.Enqueue("SOKUP");
-                    }
+                    else if (_sipCommand.IsMatch(command))
+                        _replies.Enqueue("SOKIP");
 
                     break;
                 }

@@ -102,7 +102,8 @@ public class SourceTests
 
         Assert.That(PortMock.Commands, Is.EqualTo(new string[] {
             "SUPAAR220.000000.00S220.000120.00T220.000240.00",
-            "SIPAAR000.010000.00S000.010120.00T000.010240.00"
+            "SIPAAR000.010000.00S000.010120.00T000.010240.00",
+            "SFR50.00"
         }));
 
         var loadpoint = sut.GetCurrentLoadpoint();

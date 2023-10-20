@@ -13,6 +13,8 @@ public class SerialPortMock : ISerialPort
 
     private static readonly Regex _sipCommand = new(@"^SIP([EA])([AM])R(\d{3}\.\d{3})(\d{3}\.\d{2})S(\d{3}\.\d{3})(\d{3}\.\d{2})T(\d{3}\.\d{3})(\d{3}\.\d{2})$");
 
+    private static readonly Regex _sfrCommand = new(@"^SFR(\d{2}\.\d{2})$");
+
     /// <summary>
     /// Outgoing messages.
     /// </summary>
@@ -51,6 +53,8 @@ public class SerialPortMock : ISerialPort
                         _replies.Enqueue("SOKUP");
                     else if (_sipCommand.IsMatch(command))
                         _replies.Enqueue("SOKIP");
+                    else if (_sfrCommand.IsMatch(command))
+                        _replies.Enqueue("SOKFR");
 
                     break;
                 }

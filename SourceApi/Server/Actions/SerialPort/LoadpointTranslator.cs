@@ -20,17 +20,36 @@ public static class LoadpointTranslator
     {
         var requests = new List<SerialPortRequest>();
 
-        /* Create voltage requests. */
         CreateVoltageRequests(loadpoint, requests);
 
-        /* Create currency requests. */
         CreateCurrentRequests(loadpoint, requests);
 
-        /* Create frequency requests. */
+        CreateFrequencyRequests(loadpoint, requests);
 
         /* Create activate requests. */
 
         return requests.ToArray();
+    }
+
+    /// <summary>
+    /// Create serial port requests to set the frequency.
+    /// </summary>
+    /// <param name="loadpoint">The full loadpoint definition.</param>
+    /// <param name="requests">The current list of all requests.</param>
+    private static void CreateFrequencyRequests(Loadpoint loadpoint, List<SerialPortRequest> requests)
+    {
+        var request = new StringBuilder("SFR");
+
+        var frequency = loadpoint.Frequency;
+
+        /* Only set the frequency if syncthetic mode is requested - else use 00.00. */
+        if (frequency.Mode == FrequencyMode.SYNTHETIC)
+            request.Append(frequency.Value.ToString("00.00"));
+        else
+            request.Append("00.00");
+
+        /* Finish the request and declare the expected success command. */
+        requests.Add(SerialPortRequest.Create(request.ToString(), "SOKFR"));
     }
 
     /// <summary>

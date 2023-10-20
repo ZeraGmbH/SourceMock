@@ -87,12 +87,12 @@ public class SourceTests
                     Voltage = new Model.ElectricalVectorQuantity { Rms=220, Angle=0, On=true},
                 },
                 new Model.PhaseLoadpoint {
-                    Current = new Model.ElectricalVectorQuantity { Rms=0.01, Angle=120, On=true},
-                    Voltage = new Model.ElectricalVectorQuantity { Rms=220, Angle=120, On=true},
+                    Current = new Model.ElectricalVectorQuantity { Rms=0.02, Angle=120, On=true},
+                    Voltage = new Model.ElectricalVectorQuantity { Rms=221, Angle=120, On=false},
                 },
                 new Model.PhaseLoadpoint {
-                    Current = new Model.ElectricalVectorQuantity { Rms=0.01, Angle=240, On=true},
-                    Voltage = new Model.ElectricalVectorQuantity { Rms=220, Angle=240, On=true},
+                    Current = new Model.ElectricalVectorQuantity { Rms=0.03, Angle=240, On=false},
+                    Voltage = new Model.ElectricalVectorQuantity { Rms=222, Angle=240, On=true},
                 },
             },
             VoltageNeutralConnected = true,
@@ -101,9 +101,10 @@ public class SourceTests
         Assert.That(result, Is.EqualTo(SourceResult.SUCCESS));
 
         Assert.That(PortMock.Commands, Is.EqualTo(new string[] {
-            "SUPAAR220.000000.00S220.000120.00T220.000240.00",
-            "SIPAAR000.010000.00S000.010120.00T000.010240.00",
-            "SFR50.00"
+            "SUPAAR220.000000.00S221.000120.00T222.000240.00",
+            "SIPAAR000.010000.00S000.020120.00T000.030240.00",
+            "SFR50.00",
+            "SUIEAEPPAAAA"
         }));
 
         var loadpoint = sut.GetCurrentLoadpoint();

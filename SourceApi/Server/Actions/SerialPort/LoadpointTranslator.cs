@@ -26,7 +26,7 @@ public static class LoadpointTranslator
 
         CreateFrequencyRequests(loadpoint, requests);
 
-        /* Create activate requests. */
+        CreatePhaseRequests(loadpoint, requests);
 
         return requests.ToArray();
     }
@@ -117,7 +117,7 @@ public static class LoadpointTranslator
             /* Set indicator for phase, API R=L1=A, S=L2=B, T=L3=C. */
             request.Append(i == 0 ? "R" : i == 1 ? "S" : "T");
 
-            /* See if a voltage is supplied. */
+            /* See if a current is supplied. */
             if (i < loadpoint.Phases.Count)
             {
                 var current = loadpoint.Phases[i]?.Current;
@@ -138,5 +138,40 @@ public static class LoadpointTranslator
 
         /* Finish the request and declare the expected success command. */
         requests.Add(SerialPortRequest.Create(request.ToString(), "SOKIP"));
+    }
+
+    /// <summary>
+    /// Create serial port request to switch phases.
+    /// </summary>
+    /// <param name="loadpoint">The full loadpoint definition.</param>
+    /// <param name="requests">The current list of all requests.</param>
+    private static void CreatePhaseRequests(Loadpoint loadpoint, List<SerialPortRequest> requests)
+    {
+        var request = new StringBuilder("SUI");
+
+        /* Werte aller Phasen eintragen */
+        for (var i = 0; i < 3; i++)
+            if (i < loadpoint.Phases.Count)
+                request.Append(loadpoint.Phases[i]?.Voltage?.On == true ? "E" : "A");
+            else
+                request.Append('A');
+
+        for (var i = 0; i < 3; i++)
+            if (i < loadpoint.Phases.Count)
+                request.Append(loadpoint.Phases[i]?.Current?.On == true ? "P" : "A");
+            else
+                request.Append('A');
+
+        /* H1. */
+        request.Append('A');
+
+        /* H2. */
+        request.Append('A');
+
+        /* R. */
+        request.Append('A');
+
+        /* Finish the request and declare the expected success command. */
+        requests.Add(SerialPortRequest.Create(request.ToString(), "SOKUI"));
     }
 }

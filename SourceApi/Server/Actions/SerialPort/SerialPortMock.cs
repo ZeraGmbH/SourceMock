@@ -15,6 +15,8 @@ public class SerialPortMock : ISerialPort
 
     private static readonly Regex _sfrCommand = new(@"^SFR(\d{2}\.\d{2})$");
 
+    private static readonly Regex _suiCommand = new(@"^SUI([AE])([AE])([AE])([AP])([AP])([AP])([AE])([AE])([AE])$");
+
     /// <summary>
     /// Outgoing messages.
     /// </summary>
@@ -55,6 +57,8 @@ public class SerialPortMock : ISerialPort
                         _replies.Enqueue("SOKIP");
                     else if (_sfrCommand.IsMatch(command))
                         _replies.Enqueue("SOKFR");
+                    else if (_suiCommand.IsMatch(command))
+                        _replies.Enqueue("SOKUI");
 
                     break;
                 }

@@ -27,7 +27,8 @@ class PortMock : ISerialPort
     }
 }
 
-public class Tests
+[TestFixture]
+public class ConnectionTests
 {
     [Test]
     public async Task Can_Read_Firmware_Version()

@@ -5,6 +5,12 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      docker_images:
+        description: "Create docker images"
+        required: false
+        default: "true"
 
 jobs:
   build:
@@ -59,3 +65,16 @@ jobs:
           path: "SourceApi/Server/bin/Release/net6.0/linux-x64/publish/"
           if-no-files-found: error
           retention-days: 1
+
+      - name: Docker build
+        if: github.event.inputs.docker_images == 'true'
+        run: |
+          docker build . -f SourceApi/Server/Dockerfile -t=device-api
+          docker save -o device-api.tar device-api
+
+      - name: Upload Docker Artifacts
+        if: github.event.inputs.docker_images == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: device-api
+          path: device-api.tar

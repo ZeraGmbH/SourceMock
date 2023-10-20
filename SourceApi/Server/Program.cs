@@ -6,6 +6,7 @@ using WebSamDeviceApis.Actions.VeinSource;
 using System.Reflection;
 using SerialPortProxy;
 using WebSamDeviceApis.Actions.Device;
+using WebSamDeviceApis.Actions.SerialPort;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +63,9 @@ switch (builder.Configuration["SourceType"])
         builder.Services.AddSingleton<VeinClient>(new VeinClient(new(), "localhost", 8080));
         builder.Services.AddSingleton<VeinSource>();
         builder.Services.AddSingleton<ISource>(x => x.GetRequiredService<VeinSource>());
+        break;
+    case "serial":
+        builder.Services.AddSingleton<ISource, SerialPortSource>();
         break;
     default:
         throw new NotImplementedException($"Unknown SourceType: {builder.Configuration["SourceType"]}");

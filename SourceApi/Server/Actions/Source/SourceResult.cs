@@ -25,5 +25,9 @@ namespace WebSamDeviceApis.Actions.Source
         /// The number of harmonics given in the loadpoint is higher than what the source can provide.
         /// </summary>
         LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS,
+        /// <summary>
+        /// The angle must be between 0 (inclusive) and 360 (exclusive).
+        /// </summary>
+        LOADPOINT_ANGLE_INVALID,
     }
 }

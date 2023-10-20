@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 using SerialPortProxy;
 
 namespace WebSamDeviceApis.Actions.SerialPort;
@@ -7,6 +9,8 @@ namespace WebSamDeviceApis.Actions.SerialPort;
 /// </summary>
 public class SerialPortMock : ISerialPort
 {
+    private static readonly Regex _supCommand = new(@"^SUP([EA])([EA])R(\d{3}\.\d{3})(\d{3}\.\d{2})S(\d{3}\.\d{3})(\d{3}\.\d{2})T(\d{3}\.\d{3})(\d{3}\.\d{2})$");
+
     /// <summary>
     /// Outgoing messages.
     /// </summary>
@@ -39,6 +43,16 @@ public class SerialPortMock : ISerialPort
 
                     break;
                 }
+            default:
+                {
+                    if (_supCommand.IsMatch(command))
+                    {
+                        _replies.Enqueue("SOKUP");
+                    }
+
+                    break;
+                }
+
         }
     }
 }

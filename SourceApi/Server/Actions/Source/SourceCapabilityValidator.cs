@@ -29,12 +29,27 @@ namespace WebSamDeviceApis.Actions.Source
                 loadpoint.Phases.Count() != capabilities.Phases.Count;
         }
 
+        private static SourceResult CheckAngle(double actualAngle)
+        {
+            if (actualAngle < 0 || actualAngle >= 360)
+                return SourceResult.LOADPOINT_ANGLE_INVALID;
+
+            return SourceResult.SUCCESS;
+        }
+
         private static SourceResult CheckCurrents(Loadpoint loadpoint, SourceCapabilities capabilities)
         {
             for (int i = 0; i < loadpoint.Phases.Count; ++i)
             {
-                if (!capabilities.Phases[i].Current.IsIncluded(loadpoint.Phases[i].Current.Rms))
+                var actualRms = loadpoint.Phases[i].Current.Rms;
+                var allowedRange = capabilities.Phases[i].Current;
+
+                if (!allowedRange.IsIncluded(actualRms))
                     return SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
+
+                var isAngleValue = CheckAngle(loadpoint.Phases[i].Current.Angle);
+                if (isAngleValue != SourceResult.SUCCESS)
+                    return SourceResult.LOADPOINT_ANGLE_INVALID;
             }
             return SourceResult.SUCCESS;
         }
@@ -49,8 +64,16 @@ namespace WebSamDeviceApis.Actions.Source
                     continue;
                 }
 
-                if (!capabilities.Phases[i].Voltage.IsIncluded(loadpoint.Phases[i].Voltage.Rms))
+                var actualRms = loadpoint.Phases[i].Voltage.Rms;
+                var allowedRange = capabilities.Phases[i].Voltage;
+
+                if (!allowedRange.IsIncluded(actualRms))
                     return SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID;
+
+
+                var isAngleValue = CheckAngle(loadpoint.Phases[i].Voltage.Angle);
+                if (isAngleValue != SourceResult.SUCCESS)
+                    return SourceResult.LOADPOINT_ANGLE_INVALID;
 
             }
             return SourceResult.SUCCESS;

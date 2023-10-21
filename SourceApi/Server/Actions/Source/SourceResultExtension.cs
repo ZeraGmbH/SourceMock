@@ -18,6 +18,8 @@ namespace WebSamDeviceApis.Actions.Source
                     return "The number of harmonics given in the loadpoint is higher than what the source can provide.";
                 case SourceResult.LOADPOINT_ANGLE_INVALID:
                     return "The angle must be between 0 (inclusive) and 360 (exclusive) degrees.";
+                case SourceResult.SUCCESS_NOT_ACTIVATED:
+                    return "The loadpoint is valid and has been saved but it could not be activated on the device.";
                 default:
                     return "There is no user friendly explainaition for this error implemented.";
             }

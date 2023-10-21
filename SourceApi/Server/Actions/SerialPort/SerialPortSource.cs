@@ -53,9 +53,19 @@ public class SerialPortSource : ISource
         /* Remember loadpoint even if we were not able to completly send it to the device. */
         _loadpoint = loadpoint;
 
-        /* TODO: SetLoadpoint should return a Task and communication should use await to return Thread to ThreadPool while waiting */
+        try
+        {
+            /* TODO: SetLoadpoint should return a Task and communication should use await to return Thread to ThreadPool while waiting */
 
-        Task.WhenAll(_device.Execute(LoadpointTranslator.ToSerialPortRequests(loadpoint))).Wait();
+            Task.WhenAll(_device.Execute(LoadpointTranslator.ToSerialPortRequests(loadpoint))).Wait();
+        }
+        catch (Exception e)
+        {
+            /* At least one request in the transaction failed, transaction was aborted and device not turned on - this would be the last request in the transaction. */
+            _logger.LogWarning("Loadpoint set, but source could not be turned on: {0}", e);
+
+            return SourceResult.SUCCESS_NOT_ACTIVATED;
+        }
 
         return SourceResult.SUCCESS;
     }

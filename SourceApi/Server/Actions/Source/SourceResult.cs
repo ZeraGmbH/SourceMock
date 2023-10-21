@@ -29,5 +29,9 @@ namespace WebSamDeviceApis.Actions.Source
         /// The angle must be between 0 (inclusive) and 360 (exclusive).
         /// </summary>
         LOADPOINT_ANGLE_INVALID,
+        /// <summary>
+        /// The loadpoint has been accepted but it could not be activated on the device.
+        /// </summary>
+        SUCCESS_NOT_ACTIVATED,
     }
 }

@@ -219,7 +219,7 @@ public class SerialPortConnection : IDisposable
                 foreach (var requests in pending)
                     foreach (var request in requests)
                     {
-                        _logger.LogDebug("Cancel command {0}", request.Command);
+                        _logger.LogWarning("Cancel command {0}", request.Command);
 
                         request.Result.SetException(new OperationCanceledException());
                     }
@@ -271,7 +271,7 @@ public class SerialPortConnection : IDisposable
         }
         catch (Exception e)
         {
-            _logger.LogDebug("Command {0} rejected: {1}", request.Command, e);
+            _logger.LogError("Command {0} rejected: {1}", request.Command, e);
 
             /* Unable to sent the command - report error to caller. */
             request.Result.SetException(e);
@@ -293,7 +293,7 @@ public class SerialPortConnection : IDisposable
                 /* If a device response ends with NAK there are invalid arguments. */
                 if (reply.EndsWith("NAK"))
                 {
-                    _logger.LogDebug("Command {0} reported NAK", request.Command);
+                    _logger.LogError("Command {0} reported NAK", request.Command);
 
                     request.Result.SetException(new ArgumentException(request.Command));
 
@@ -316,7 +316,7 @@ public class SerialPortConnection : IDisposable
             }
             catch (Exception e)
             {
-                _logger.LogDebug("Reading command {0} reply failed: {1}", request.Command, e);
+                _logger.LogError("Reading command {0} reply failed: {1}", request.Command, e);
 
                 /* 
                     If it is not possible to read something from the device report exception to caller. 

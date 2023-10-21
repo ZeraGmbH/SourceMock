@@ -14,14 +14,14 @@ public class SerialPortSource : ISource
 {
     private readonly ILogger<SerialPortSource> _logger;
 
-    private readonly SerialPortService _device;
+    private readonly SerialPortConnection _device;
 
     /// <summary>
     /// Initialize a new source implementation.
     /// </summary>
     /// <param name="logger">Logger to use.</param>
     /// <param name="device">Access to the serial port.</param>
-    public SerialPortSource(ILogger<SerialPortSource> logger, SerialPortService device)
+    public SerialPortSource(ILogger<SerialPortSource> logger, SerialPortConnection device)
     {
         _device = device;
         _logger = logger;

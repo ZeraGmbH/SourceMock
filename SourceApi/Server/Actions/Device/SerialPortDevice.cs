@@ -16,22 +16,22 @@ public class SerialPortDevice : IDevice
     /// </summary>
     private static readonly Regex _versionReg = new("^(.+)V([^V]+)$", RegexOptions.Singleline | RegexOptions.Compiled);
 
-    private readonly SerialPortService _service;
+    private readonly SerialPortConnection _device;
 
     /// <summary>
     /// Initialize device manager.
     /// </summary>
-    /// <param name="service">Service to access the current serial port.</param>
-    public SerialPortDevice(SerialPortService service)
+    /// <param name="device">Service to access the current serial port.</param>
+    public SerialPortDevice(SerialPortConnection device)
     {
-        _service = service;
+        _device = device;
     }
 
     /// <inheritdoc/>
     public async Task<DeviceFirmwareVersion> GetFirmwareVersion()
     {
         /* Execute the request and wait for the information string. */
-        var reply = await _service.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
+        var reply = await _device.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
         if (reply.Length != 2)
             throw new InvalidOperationException("too many response lines");

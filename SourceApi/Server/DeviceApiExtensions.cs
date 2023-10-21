@@ -20,7 +20,7 @@ public static class Configuration
                 services.AddSingleton<ISimulatedSource>(x => x.GetRequiredService<SimulatedSource>());
                 break;
             case "vein":
-                services.AddSingleton<VeinClient>(new VeinClient(new(), "localhost", 8080));
+                services.AddSingleton(new VeinClient(new(), "localhost", 8080));
                 services.AddSingleton<VeinSource>();
                 services.AddSingleton<ISource>(x => x.GetRequiredService<VeinSource>());
                 break;
@@ -35,26 +35,19 @@ public static class Configuration
             var portName = configuration["SerialPort:PortName"];
             var mockType = configuration["SerialPort:PortMockType"];
 
-            var config = new SerialPortConfiguration();
-
             if (!string.IsNullOrEmpty(portName))
             {
                 if (!string.IsNullOrEmpty(mockType))
                     throw new NotSupportedException("serial port name and port mock type must not be both set.");
 
-                config.UseMockType = false;
-                config.PortNameOrMockType = portName;
+                services.AddSingleton(() => SerialPortConnection.FromSerialPort(portName));
             }
             else if (!string.IsNullOrEmpty(mockType))
             {
-                config.UseMockType = true;
-                config.PortNameOrMockType = mockType;
+                services.AddSingleton(() => SerialPortConnection.FromMock(Type.GetType(mockType)!));
             }
             else
                 throw new NotSupportedException("either serial port name or port mock type must be set.");
-
-            services.AddSingleton(config);
-            services.AddSingleton<SerialPortService>();
 
             services.AddScoped<IDevice, SerialPortDevice>();
         }

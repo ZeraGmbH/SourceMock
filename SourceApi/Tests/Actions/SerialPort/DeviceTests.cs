@@ -74,15 +74,9 @@ public class DeviceTests
     [Test]
     public async Task Can_Detect_Firmware_Version()
     {
-        var service = new SerialPortService(
-            new SerialPortConfiguration
-            {
-                UseMockType = true,
-                PortNameOrMockType = typeof(CorrectVersionMock).AssemblyQualifiedName!
-            }
-        );
+        using var device = SerialPortConnection.FromMock<CorrectVersionMock>();
 
-        var dut = new SerialPortDevice(service);
+        var dut = new SerialPortDevice(device);
 
         var version = await dut.GetFirmwareVersion();
 
@@ -93,15 +87,9 @@ public class DeviceTests
     [Test]
     public void Fails_On_Invalid_Version()
     {
-        var service = new SerialPortService(
-            new SerialPortConfiguration
-            {
-                UseMockType = true,
-                PortNameOrMockType = typeof(IncorrectVersionMock).AssemblyQualifiedName!
-            }
-        );
+        using var device = SerialPortConnection.FromMock<IncorrectVersionMock>();
 
-        var dut = new SerialPortDevice(service);
+        var dut = new SerialPortDevice(device);
 
         var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await dut.GetFirmwareVersion());
 
@@ -111,15 +99,9 @@ public class DeviceTests
     [Test]
     public void Fails_On_NAK_Reply()
     {
-        var service = new SerialPortService(
-            new SerialPortConfiguration
-            {
-                UseMockType = true,
-                PortNameOrMockType = typeof(NakVersionMock).AssemblyQualifiedName!
-            }
-        );
+        using var device = SerialPortConnection.FromMock<NakVersionMock>();
 
-        var dut = new SerialPortDevice(service);
+        var dut = new SerialPortDevice(device);
 
         var ex = Assert.ThrowsAsync<ArgumentException>(async () => await dut.GetFirmwareVersion());
 
@@ -129,15 +111,9 @@ public class DeviceTests
     [Test]
     public void Fails_On_Communication_Timeout()
     {
-        var service = new SerialPortService(
-            new SerialPortConfiguration
-            {
-                UseMockType = true,
-                PortNameOrMockType = typeof(VersionTimeoutMock).AssemblyQualifiedName!
-            }
-        );
+        using var device = SerialPortConnection.FromMock<VersionTimeoutMock>();
 
-        var dut = new SerialPortDevice(service);
+        var dut = new SerialPortDevice(device);
 
         var ex = Assert.ThrowsAsync<TimeoutException>(async () => await dut.GetFirmwareVersion());
 
@@ -147,15 +123,9 @@ public class DeviceTests
     [Test]
     public void Fails_On_Empty_Modelname()
     {
-        var service = new SerialPortService(
-            new SerialPortConfiguration
-            {
-                UseMockType = true,
-                PortNameOrMockType = typeof(EmtpyModelNameMock).AssemblyQualifiedName!
-            }
-        );
+        using var device = SerialPortConnection.FromMock<EmtpyModelNameMock>();
 
-        var dut = new SerialPortDevice(service);
+        var dut = new SerialPortDevice(device);
 
         var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await dut.GetFirmwareVersion());
 
@@ -165,15 +135,9 @@ public class DeviceTests
     [Test]
     public void Fails_On_Empty_Version()
     {
-        var service = new SerialPortService(
-            new SerialPortConfiguration
-            {
-                UseMockType = true,
-                PortNameOrMockType = typeof(EmptyVersionMock).AssemblyQualifiedName!
-            }
-        );
+        using var device = SerialPortConnection.FromMock<EmptyVersionMock>();
 
-        var dut = new SerialPortDevice(service);
+        var dut = new SerialPortDevice(device);
 
         var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await dut.GetFirmwareVersion());
 

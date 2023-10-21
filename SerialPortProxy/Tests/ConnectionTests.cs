@@ -49,11 +49,7 @@ public class ConnectionTests
     [Test]
     public async Task Can_Use_Service()
     {
-        using var sut = new SerialPortService(new SerialPortConfiguration
-        {
-            PortNameOrMockType = typeof(PortMock).AssemblyQualifiedName!,
-            UseMockType = true
-        });
+        using var sut = SerialPortConnection.FromMock<PortMock>();
 
         var reply = await sut.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
 

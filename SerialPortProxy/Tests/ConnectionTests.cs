@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
 
 namespace Tests;
@@ -30,10 +32,12 @@ class PortMock : ISerialPort
 [TestFixture]
 public class ConnectionTests
 {
+    private readonly NullLogger<SerialPortConnection> _logger = new();
+
     [Test]
     public async Task Can_Read_Firmware_Version()
     {
-        using var cut = SerialPortConnection.FromMock<PortMock>();
+        using var cut = SerialPortConnection.FromMock<PortMock>(_logger);
 
         var reply = await cut.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
@@ -49,7 +53,7 @@ public class ConnectionTests
     [Test]
     public async Task Can_Use_Service()
     {
-        using var sut = SerialPortConnection.FromMock<PortMock>();
+        using var sut = SerialPortConnection.FromMock<PortMock>(_logger);
 
         var reply = await sut.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
 

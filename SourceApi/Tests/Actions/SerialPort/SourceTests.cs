@@ -39,16 +39,16 @@ public class SourceTests
         }
     }
 
-    private ILogger<SerialPortSource> _logger;
+    private readonly NullLogger<SerialPortSource> _portLogger = new();
+
+    private readonly NullLogger<SerialPortConnection> _connectionLogger = new();
 
     private SerialPortConnection _device;
 
     [SetUp]
     public void SetUp()
     {
-        _logger = new NullLogger<SerialPortSource>();
-
-        _device = SerialPortConnection.FromMock<PortMock>();
+        _device = SerialPortConnection.FromMock<PortMock>(_connectionLogger);
     }
 
     [TearDown]
@@ -60,7 +60,7 @@ public class SourceTests
     [Test]
     public void Can_Get_Capabilities()
     {
-        var sut = new SerialPortSource(_logger, _device);
+        var sut = new SerialPortSource(_portLogger, _device);
 
         var caps = sut.GetCapabilities();
 
@@ -70,7 +70,7 @@ public class SourceTests
     [Test]
     public void Can_Set_Valid_Loadpoint()
     {
-        var sut = new SerialPortSource(_logger, _device);
+        var sut = new SerialPortSource(_portLogger, _device);
 
         Assert.That(sut.GetCurrentLoadpoint(), Is.Null);
 
@@ -114,7 +114,7 @@ public class SourceTests
     [TestCase(220, 1, 700, SourceResult.LOADPOINT_ANGLE_INVALID)]
     public void Can_Set_Invalid_Loadpoint(int voltage, int current, int angle, SourceResult expectedError)
     {
-        var sut = new SerialPortSource(_logger, _device);
+        var sut = new SerialPortSource(_portLogger, _device);
 
         Assert.That(sut.GetCurrentLoadpoint(), Is.Null);
 

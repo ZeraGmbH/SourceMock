@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging.Abstractions;
+
 using SerialPortProxy;
 
 using WebSamDeviceApis.Actions.Device;
@@ -71,10 +73,12 @@ class EmptyVersionMock : PortMock
 [TestFixture]
 public class DeviceTests
 {
+    private readonly NullLogger<SerialPortConnection> _logger = new();
+
     [Test]
     public async Task Can_Detect_Firmware_Version()
     {
-        using var device = SerialPortConnection.FromMock<CorrectVersionMock>();
+        using var device = SerialPortConnection.FromMock<CorrectVersionMock>(_logger);
 
         var dut = new SerialPortDevice(device);
 
@@ -87,7 +91,7 @@ public class DeviceTests
     [Test]
     public void Fails_On_Invalid_Version()
     {
-        using var device = SerialPortConnection.FromMock<IncorrectVersionMock>();
+        using var device = SerialPortConnection.FromMock<IncorrectVersionMock>(_logger);
 
         var dut = new SerialPortDevice(device);
 
@@ -99,7 +103,7 @@ public class DeviceTests
     [Test]
     public void Fails_On_NAK_Reply()
     {
-        using var device = SerialPortConnection.FromMock<NakVersionMock>();
+        using var device = SerialPortConnection.FromMock<NakVersionMock>(_logger);
 
         var dut = new SerialPortDevice(device);
 
@@ -111,7 +115,7 @@ public class DeviceTests
     [Test]
     public void Fails_On_Communication_Timeout()
     {
-        using var device = SerialPortConnection.FromMock<VersionTimeoutMock>();
+        using var device = SerialPortConnection.FromMock<VersionTimeoutMock>(_logger);
 
         var dut = new SerialPortDevice(device);
 
@@ -123,7 +127,7 @@ public class DeviceTests
     [Test]
     public void Fails_On_Empty_Modelname()
     {
-        using var device = SerialPortConnection.FromMock<EmtpyModelNameMock>();
+        using var device = SerialPortConnection.FromMock<EmtpyModelNameMock>(_logger);
 
         var dut = new SerialPortDevice(device);
 
@@ -135,7 +139,7 @@ public class DeviceTests
     [Test]
     public void Fails_On_Empty_Version()
     {
-        using var device = SerialPortConnection.FromMock<EmptyVersionMock>();
+        using var device = SerialPortConnection.FromMock<EmptyVersionMock>(_logger);
 
         var dut = new SerialPortDevice(device);
 

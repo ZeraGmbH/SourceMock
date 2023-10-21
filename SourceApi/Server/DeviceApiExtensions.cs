@@ -40,11 +40,11 @@ public static class Configuration
                 if (!string.IsNullOrEmpty(mockType))
                     throw new NotSupportedException("serial port name and port mock type must not be both set.");
 
-                services.AddSingleton(() => SerialPortConnection.FromSerialPort(portName));
+                services.AddSingleton(ctx => SerialPortConnection.FromSerialPort(portName, ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
             }
             else if (!string.IsNullOrEmpty(mockType))
             {
-                services.AddSingleton(() => SerialPortConnection.FromMock(Type.GetType(mockType)!));
+                services.AddSingleton(ctx => SerialPortConnection.FromMock(Type.GetType(mockType)!, ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
             }
             else
                 throw new NotSupportedException("either serial port name or port mock type must be set.");

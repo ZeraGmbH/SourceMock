@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using System.IO.Ports;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace SerialPortProxy;
 
@@ -126,12 +128,20 @@ public class SerialPortConnection : IDisposable
     /// </summary>
     private bool _running = true;
 
+    private readonly ILogger<SerialPortConnection> _logger;
+
     /// <summary>
     /// Initialize a serial connection manager.
     /// </summary>
     /// <param name="port">Serial port proxy - maybe physical or mocked.</param>
-    private SerialPortConnection(ISerialPort port)
+    /// <param name="logger">Optional logging instance.</param>
+    /// <exception cref="ArgumentNullException">Proxy must not be null.</exception>
+    private SerialPortConnection(ISerialPort port, ILogger<SerialPortConnection> logger)
     {
+        if (port == null)
+            throw new ArgumentNullException("port");
+
+        _logger = logger ?? new NullLogger<SerialPortConnection>();
         _port = port;
 
         /* Create and start a thread handling requests to the serial port. */
@@ -145,29 +155,33 @@ public class SerialPortConnection : IDisposable
     /// </summary>
     /// <param name="port">Name of the serial port, e.g. COM3 for Windows
     /// or /dev/ttyUSB0 for a USB serial adapter on Linux.</param>
+    /// <param name="logger">Optional logging instance.</param>
     /// <returns>The brand new connection.</returns>
-    public static SerialPortConnection FromSerialPort(string port) => new(new PhysicalProxy(port));
+    public static SerialPortConnection FromSerialPort(string port, ILogger<SerialPortConnection> logger) => new(new PhysicalProxy(port), logger);
 
     /// <summary>
     /// Create a new mocked based connection.
     /// </summary>
+    /// <param name="logger">Optional logging instance.</param>
     /// <typeparam name="T">Some mocked class implementing ISerialPort.</typeparam>
     /// <returns>The new connection.</returns>
-    public static SerialPortConnection FromMock<T>() where T : class, ISerialPort, new() => FromMock(typeof(T));
+    public static SerialPortConnection FromMock<T>(ILogger<SerialPortConnection> logger) where T : class, ISerialPort, new() => FromMock(typeof(T), logger);
 
     /// <summary>
     /// Create a new mocked based connection.
     /// </summary>
     /// <param name="mockType">Some mocked class implementing ISerialPort.</param>
+    /// <param name="logger">Optional logging instance.</param>
     /// <returns>The new connection.</returns>
-    public static SerialPortConnection FromMock(Type mockType) => FromPortInstance((ISerialPort)Activator.CreateInstance(mockType)!);
+    public static SerialPortConnection FromMock(Type mockType, ILogger<SerialPortConnection> logger) => FromPortInstance((ISerialPort)Activator.CreateInstance(mockType)!, logger);
 
     /// <summary>
     /// Create a new mocked based connection.
     /// </summary>
     /// <param name="port">Implementation to use.</param>
+    /// <param name="logger">Optional logging instance.</param>
     /// <returns>The new connection.</returns>
-    public static SerialPortConnection FromPortInstance(ISerialPort port) => new(port);
+    public static SerialPortConnection FromPortInstance(ISerialPort port, ILogger<SerialPortConnection> logger) => new(port, logger);
 
     /// <summary>
     /// On dispose the serial connection and the ProcessFromQueue thread are terminated.
@@ -204,7 +218,11 @@ public class SerialPortConnection : IDisposable
             if (pending != null)
                 foreach (var requests in pending)
                     foreach (var request in requests)
+                    {
+                        _logger.LogDebug("Cancel command {0}", request.Command);
+
                         request.Result.SetException(new OperationCanceledException());
+                    }
         }
     }
 
@@ -244,11 +262,17 @@ public class SerialPortConnection : IDisposable
     {
         try
         {
+            _logger.LogDebug("Sending command {0}", request.Command);
+
             /* Send the command string to the device - <CR> is automatically added. */
             _port.WriteLine(request.Command);
+
+            _logger.LogDebug("Command {0} accepted by device", request.Command);
         }
         catch (Exception e)
         {
+            _logger.LogDebug("Command {0} rejected: {1}", request.Command, e);
+
             /* Unable to sent the command - report error to caller. */
             request.Result.SetException(e);
 
@@ -260,11 +284,17 @@ public class SerialPortConnection : IDisposable
             try
             {
                 /* Read a single response line from the device. */
+                _logger.LogDebug("Wait for command {0} reply", request.Command);
+
                 var reply = _port.ReadLine();
+
+                _logger.LogDebug("Got reply {1} for command {0}", request.Command, reply);
 
                 /* If a device response ends with NAK there are invalid arguments. */
                 if (reply.EndsWith("NAK"))
                 {
+                    _logger.LogDebug("Command {0} reported NAK", request.Command);
+
                     request.Result.SetException(new ArgumentException(request.Command));
 
                     return false;
@@ -276,6 +306,8 @@ public class SerialPortConnection : IDisposable
                 /* If the terminating string is detected the reply from the device is complete. */
                 if (reply == request.End)
                 {
+                    _logger.LogDebug("Command {0} finished, replies: {1}", request.Command, answer.Count());
+
                     /* Set the task result to all strings collected and therefore finish the task with success. */
                     request.Result.SetResult(answer.ToArray());
 
@@ -284,6 +316,8 @@ public class SerialPortConnection : IDisposable
             }
             catch (Exception e)
             {
+                _logger.LogDebug("Reading command {0} reply failed: {1}", request.Command, e);
+
                 /* 
                     If it is not possible to read something from the device report exception to caller. 
                     In case the device does not recognize the command it will not respond anything. Then
@@ -315,6 +349,8 @@ public class SerialPortConnection : IDisposable
                 /* Try to get the first (oldest) entry from the queue. */
                 if (!_queue.TryDequeue(out requests))
                 {
+                    _logger.LogDebug("Queue is empty, waiting for next request");
+
                     /* If queue is empty wait until someone intentionally wakes us up (Monitor.Pulse) to avoid unnecessary processings. */
                     Monitor.Wait(_queue);
 
@@ -323,6 +359,8 @@ public class SerialPortConnection : IDisposable
             }
 
             /* Process the transaction until finished or some request failed - important: ExecuteCommand MUST NOT throw an exception. */
+            _logger.LogDebug("Starting transaction processing, commands: {0}", requests.Length);
+
             foreach (var request in requests)
                 if (!ExecuteCommand(request))
                     break;

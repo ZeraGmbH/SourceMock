@@ -1,5 +1,5 @@
 using System.Diagnostics;
-
+using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
 
 namespace Tests;
@@ -59,12 +59,14 @@ class CounterMock : ISerialPort
 [TestFixture]
 public class QueueTests
 {
+    private readonly NullLogger<SerialPortConnection> _logger = new();
+
     [Test]
     public async Task All_Commands_Are_Executed_On_The_Same_Thread()
     {
         var counter = new CounterMock();
 
-        using var cut = SerialPortConnection.FromPortInstance(counter);
+        using var cut = SerialPortConnection.FromPortInstance(counter, _logger);
 
         await Task.WhenAll(Enumerable.Range(0, 20).Select(_ => Task.Run(async () =>
             {

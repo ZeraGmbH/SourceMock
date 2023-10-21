@@ -20,6 +20,10 @@ namespace WebSamDeviceApis.Actions.Source
             if (voltageResult != SourceResult.SUCCESS)
                 return voltageResult;
 
+            var frequencyResult = CheckFrequencies(loadpoint, capabilities);
+            if (frequencyResult != SourceResult.SUCCESS)
+                return frequencyResult;
+
             return SourceResult.SUCCESS;
         }
 
@@ -78,6 +82,21 @@ namespace WebSamDeviceApis.Actions.Source
             }
             return SourceResult.SUCCESS;
         }
-    }
 
+        private static SourceResult CheckFrequencies(Loadpoint loadpoint, SourceCapabilities capabilities)
+        {
+            if (loadpoint.Frequency.Mode != FrequencyMode.SYNTHETIC)
+                return SourceResult.SUCCESS;
+
+            var frequency = loadpoint.Frequency.Value;
+
+            foreach (var range in capabilities.FrequencyRanges)
+                if (range.Mode == FrequencyMode.SYNTHETIC)
+                    if (frequency >= range.Min && frequency <= range.Max)
+                        return SourceResult.SUCCESS;
+
+            return SourceResult.LOADPOINT_NOT_SUITABLE_FREQUENCY_INVALID;
+        }
+    }
 }
+

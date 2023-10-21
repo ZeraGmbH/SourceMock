@@ -21,7 +21,13 @@ abstract class PortMock : ISerialPort
     {
     }
 
-    public virtual string ReadLine() => _replies.Dequeue();
+    public virtual string ReadLine()
+    {
+        if (_replies.TryDequeue(out var reply))
+            return reply;
+
+        throw new TimeoutException("no reply in quuue");
+    }
 
     public void WriteLine(string command)
     {

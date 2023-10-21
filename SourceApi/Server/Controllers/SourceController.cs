@@ -75,6 +75,7 @@ namespace WebSamDeviceApis.Controllers
                 case SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID:
                 case SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID:
                 case SourceResult.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS:
+                case SourceResult.LOADPOINT_NOT_SUITABLE_FREQUENCY_INVALID:
                 case SourceResult.LOADPOINT_ANGLE_INVALID:
                     _logger.LogInformation(srcResult.ToString());
                     return Problem(

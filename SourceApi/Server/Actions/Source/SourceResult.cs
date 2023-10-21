@@ -22,6 +22,10 @@ namespace WebSamDeviceApis.Actions.Source
         /// </summary>
         LOADPOINT_NOT_SUITABLE_CURRENT_INVALID,
         /// <summary>
+        /// The frequency which was tried to be set was not in any range that this source can provide.
+        /// </summary>
+        LOADPOINT_NOT_SUITABLE_FREQUENCY_INVALID,
+        /// <summary>
         /// The number of harmonics given in the loadpoint is higher than what the source can provide.
         /// </summary>
         LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS,

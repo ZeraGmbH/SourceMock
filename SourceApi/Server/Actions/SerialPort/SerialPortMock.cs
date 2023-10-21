@@ -31,7 +31,13 @@ public class SerialPortMock : ISerialPort
     /// Report the next outstanding reply string.
     /// </summary>
     /// <returns>Next string.</returns>
-    public virtual string ReadLine() => this._replies.Dequeue();
+    public virtual string ReadLine()
+    {
+        if (_replies.TryDequeue(out var reply))
+            return reply;
+
+        throw new TimeoutException("no reply in quuue");
+    }
 
     /// <summary>
     /// Simulate a command.

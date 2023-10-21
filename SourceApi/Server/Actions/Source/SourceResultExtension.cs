@@ -14,6 +14,8 @@ namespace WebSamDeviceApis.Actions.Source
                     return "The voltage which was tried to be set was higher that what this source can provide.";
                 case SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID:
                     return "The current that was tried to be set was higher than what this source can provide.";
+                case SourceResult.LOADPOINT_NOT_SUITABLE_FREQUENCY_INVALID:
+                    return "The frequency that was tried to be set was not in the range what this source can provide.";
                 case SourceResult.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS:
                     return "The number of harmonics given in the loadpoint is higher than what the source can provide.";
                 case SourceResult.LOADPOINT_ANGLE_INVALID:

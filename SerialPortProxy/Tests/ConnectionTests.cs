@@ -12,7 +12,13 @@ class PortMock : ISerialPort
     {
     }
 
-    public string ReadLine() => this._replies.Dequeue();
+    public string ReadLine()
+    {
+        if (_replies.TryDequeue(out var reply))
+            return reply;
+
+        throw new TimeoutException("no reply in quuue");
+    }
 
     public void WriteLine(string command)
     {

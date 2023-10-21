@@ -28,9 +28,14 @@ class CounterMock : ISerialPort
     public string ReadLine()
     {
         lock (_ids)
+        {
+            if (!_replies.TryDequeue(out var reply))
+                throw new TimeoutException("no reply in quuue");
+
             _ids.Add(Thread.CurrentThread.ManagedThreadId);
 
-        return _replies.Dequeue();
+            return reply;
+        }
     }
 
     public void WriteLine(string command)

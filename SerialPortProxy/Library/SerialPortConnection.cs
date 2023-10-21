@@ -114,7 +114,7 @@ public class SerialPortConnection : IDisposable
     /// <summary>
     /// Non thread-safe queue - may use ConcurrentQueue or Producer/Consumer pattern with integrated locking.
     /// </summary>
-    private readonly Queue<SerialPortRequest> _queue = new();
+    private readonly Queue<SerialPortRequest[]> _queue = new();
 
     /// <summary>
     /// The physical connection to a serial port.
@@ -202,8 +202,9 @@ public class SerialPortConnection : IDisposable
 
             /* If there are any outstand requests notify the corresponding clients - callers of Execute. */
             if (pending != null)
-                foreach (var request in pending)
-                    request.Result.SetException(new OperationCanceledException());
+                foreach (var requests in pending)
+                    foreach (var request in requests)
+                        request.Result.SetException(new OperationCanceledException());
         }
     }
 
@@ -211,14 +212,20 @@ public class SerialPortConnection : IDisposable
     /// Add a command to be sent to the serial port to the queue.
     /// </summary>
     /// <param name="requests">The command to send to the device.</param>
+    /// <exception cref="ArgumentNullException">Parameter must not be null.</exception>
     /// <returns>All lines sent from the device as a task.</returns>
     public Task<string[]>[] Execute(params SerialPortRequest[] requests)
+
     {
+        if (requests == null)
+            throw new ArgumentNullException("requests");
+
         /* Since we are expecting multi-threaded access lock the queue. */
         lock (_queue)
         {
             /* Queue is locked, we have exclusive access and can now safely add the entry. */
-            Array.ForEach(requests, _queue.Enqueue);
+            if (requests.Length > 0)
+                _queue.Enqueue(requests);
 
             /* If queue executer thread is waiting (Monitor.Wait) for new entries wake it up for immediate processing the new entry. */
             Monitor.Pulse(_queue);
@@ -232,7 +239,8 @@ public class SerialPortConnection : IDisposable
     /// Executes a single command.
     /// </summary>
     /// <param name="request">Describes the request.</param>
-    private void ExecuteCommand(SerialPortRequest request)
+    /// <returns>Gesetzt, wenn die Ausführung erfolgreich war.</returns>
+    private bool ExecuteCommand(SerialPortRequest request)
     {
         try
         {
@@ -244,7 +252,7 @@ public class SerialPortConnection : IDisposable
             /* Unable to sent the command - report error to caller. */
             request.Result.SetException(e);
 
-            return;
+            return false;
         }
 
         /* Collect response strings until expected termination string is detected. */
@@ -259,7 +267,7 @@ public class SerialPortConnection : IDisposable
                 {
                     request.Result.SetException(new ArgumentException(request.Command));
 
-                    return;
+                    return false;
                 }
 
                 /* Always remember the reply - even the terminating string. */
@@ -271,7 +279,7 @@ public class SerialPortConnection : IDisposable
                     /* Set the task result to all strings collected and therefore finish the task with success. */
                     request.Result.SetResult(answer.ToArray());
 
-                    return;
+                    return true;
                 }
             }
             catch (Exception e)
@@ -283,7 +291,7 @@ public class SerialPortConnection : IDisposable
                 */
                 request.Result.SetException(e);
 
-                return;
+                return false;
             }
     }
 
@@ -295,7 +303,7 @@ public class SerialPortConnection : IDisposable
         /* Done if no longer running - i.e. connection is disposed. */
         while (_running)
         {
-            SerialPortRequest? request;
+            SerialPortRequest[]? requests;
 
             /* Must have exclusive access to the queue to avoid data corruption. */
             lock (_queue)
@@ -305,7 +313,7 @@ public class SerialPortConnection : IDisposable
                     return;
 
                 /* Try to get the first (oldest) entry from the queue. */
-                if (!_queue.TryDequeue(out request))
+                if (!_queue.TryDequeue(out requests))
                 {
                     /* If queue is empty wait until someone intentionally wakes us up (Monitor.Pulse) to avoid unnecessary processings. */
                     Monitor.Wait(_queue);
@@ -314,8 +322,10 @@ public class SerialPortConnection : IDisposable
                 }
             }
 
-            /* Process the request - important: ExecuteCommand MUST NOT throw an exception. */
-            ExecuteCommand(request);
+            /* Process the transaction until finished or some request failed - important: ExecuteCommand MUST NOT throw an exception. */
+            foreach (var request in requests)
+                if (!ExecuteCommand(request))
+                    break;
         }
     }
 }

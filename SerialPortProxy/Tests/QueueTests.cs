@@ -82,8 +82,7 @@ public class QueueTests
         )));
 
         Assert.That(counter.ThreadIds.Length, Is.EqualTo(1));
-        Assert.That(counter.Total, Is.GreaterThanOrEqualTo(400));
-        Assert.That(counter.Total, Is.LessThanOrEqualTo(1600));
+        Assert.That(counter.Total, Is.GreaterThanOrEqualTo(400).And.LessThanOrEqualTo(1600));
 
         Console.WriteLine($"Total={counter.Total}");
     }

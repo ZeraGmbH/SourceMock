@@ -36,7 +36,7 @@ namespace WebSamDeviceApis.Controllers
         /// /// <response code="200">If the capabilities could be returned successfully.</response>
         [HttpGet("Capabilities")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [SwaggerOperation(OperationId = "GetCapablities")]
+        [SwaggerOperation(OperationId = "GetCapabilities")]
         public ActionResult<SourceCapabilities> GetCapablities()
         {
             return Ok(_source.GetCapabilities());

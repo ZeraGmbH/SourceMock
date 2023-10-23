@@ -361,9 +361,13 @@ public class SerialPortConnection : IDisposable
             /* Process the transaction until finished or some request failed - important: ExecuteCommand MUST NOT throw an exception. */
             _logger.LogDebug("Starting transaction processing, commands: {0}", requests.Length);
 
+            var failed = false;
+
             foreach (var request in requests)
-                if (!ExecuteCommand(request))
-                    break;
+                if (failed)
+                    request.Result.SetException(new OperationCanceledException("previous command failed"));
+                else
+                    failed = !ExecuteCommand(request);
         }
     }
 }

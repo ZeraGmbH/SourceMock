@@ -30,7 +30,7 @@ public class DeviceInfoController : ControllerBase
     /// Read the firmware from the device.
     /// </summary>
     /// <returns>Firmware version of the device.</returns>
-    [HttpGet("GetFirmwareVersion")]
+    [HttpGet("FirmwareVersion")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "GetFirmwareVersion")]
     public Task<DeviceFirmwareVersion> GetFirmwareVersion()

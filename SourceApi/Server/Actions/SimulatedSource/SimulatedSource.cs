@@ -63,7 +63,7 @@ namespace WebSamDeviceApis.Actions.Source
         private SimulatedSourceState? _simulatedSourceState;
 
         /// <inheritdoc/>
-        public SourceResult SetLoadpoint(Loadpoint loadpoint)
+        public Task<SourceResult> SetLoadpoint(Loadpoint loadpoint)
         {
             var isValid = SourceCapabilityValidator.IsValid(loadpoint, _sourceCapabilities);
 
@@ -73,15 +73,16 @@ namespace WebSamDeviceApis.Actions.Source
                 _loadpoint = loadpoint;
             }
 
-            return isValid;
+            return Task.FromResult(isValid);
         }
 
         /// <inheritdoc/>
-        public SourceResult TurnOff()
+        public Task<SourceResult> TurnOff()
         {
             _logger.LogTrace("Source turned off.");
             _loadpoint = null;
-            return SourceResult.SUCCESS;
+
+            return Task.FromResult(SourceResult.SUCCESS);
         }
 
         /// <inheritdoc/>
@@ -102,9 +103,9 @@ namespace WebSamDeviceApis.Actions.Source
             return _simulatedSourceState;
         }
 
-        public SourceCapabilities GetCapabilities()
+        public Task<SourceCapabilities> GetCapabilities()
         {
-            return _sourceCapabilities;
+            return Task.FromResult(_sourceCapabilities);
         }
     }
 }

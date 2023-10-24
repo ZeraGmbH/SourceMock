@@ -30,20 +30,20 @@ public class SerialPortSource : ISource
     private Loadpoint? _loadpoint;
 
     /// <inheritdoc/>
-    public SourceCapabilities GetCapabilities()
+    public Task<SourceCapabilities> GetCapabilities()
     {
         /* Currently we assume MT768, future versions may read the firmware from the device. */
-        return CapabilitiesMap.GetCapabilitiesByModel("MT786");
+        return Task.FromResult(CapabilitiesMap.GetCapabilitiesByModel("MT786"));
     }
 
     /// <inheritdoc/>
     public Loadpoint? GetCurrentLoadpoint() => _loadpoint;
 
     /// <inheritdoc/>
-    public SourceResult SetLoadpoint(Loadpoint loadpoint)
+    public async Task<SourceResult> SetLoadpoint(Loadpoint loadpoint)
     {
         /* Always validate the loadpoint against the device capabilities. */
-        var isValid = SourceCapabilityValidator.IsValid(loadpoint, GetCapabilities());
+        var isValid = SourceCapabilityValidator.IsValid(loadpoint, await GetCapabilities());
 
         if (isValid != SourceResult.SUCCESS)
             return isValid;
@@ -55,9 +55,7 @@ public class SerialPortSource : ISource
 
         try
         {
-            /* TODO: SetLoadpoint should return a Task and communication should use await to return Thread to ThreadPool while waiting */
-
-            Task.WhenAll(_device.Execute(LoadpointTranslator.ToSerialPortRequests(loadpoint))).Wait();
+            await Task.WhenAll(_device.Execute(LoadpointTranslator.ToSerialPortRequests(loadpoint)));
         }
         catch (Exception e)
         {
@@ -71,8 +69,12 @@ public class SerialPortSource : ISource
     }
 
     /// <inheritdoc/>
-    public SourceResult TurnOff()
+    public async Task<SourceResult> TurnOff()
     {
-        throw new NotImplementedException();
+        _logger.LogTrace("Switching anything off.");
+
+        await Task.WhenAll(_device.Execute(SerialPortRequest.Create("SUIAAAAAAAAA", "SOKUI")));
+
+        return SourceResult.SUCCESS;
     }
 }

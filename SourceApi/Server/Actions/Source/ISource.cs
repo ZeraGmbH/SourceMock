@@ -11,20 +11,20 @@ namespace WebSamDeviceApis.Actions.Source
         /// Gets the capabilities of this source.
         /// </summary>
         /// <returns>The corresponding <see cref="SourceCapabilities"/>-Object for this source.</returns>
-        public SourceCapabilities GetCapabilities();
+        public Task<SourceCapabilities> GetCapabilities();
 
         /// <summary>
         /// Sets a specified loadpoint imediatly.
         /// </summary>
         /// <param name="loadpoint">The loadpoint to be set.</param>
         /// <returns>The corresponding value of <see cref="SourceResult"/> with regard to the success of the operation.</returns>
-        public SourceResult SetLoadpoint(Loadpoint loadpoint);
+        public Task<SourceResult> SetLoadpoint(Loadpoint loadpoint);
 
         /// <summary>
         /// Turns off the source.
         /// </summary>
         /// <returns>The corresponding value of <see cref="SourceResult"/> with regard to the success of the operation.</returns>
-        public SourceResult TurnOff();
+        public Task<SourceResult> TurnOff();
 
         /// <summary>
         /// Gets the currently set loadpoint.

@@ -34,7 +34,7 @@ public class SerialPortDevice : IDevice
         var reply = await _device.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
         if (reply.Length != 2)
-            throw new InvalidOperationException("too many response lines");
+            throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");
 
         /* Validate the response consisting of model name and version numner. */
         var versionMatch = _versionReg.Match(reply[0]);

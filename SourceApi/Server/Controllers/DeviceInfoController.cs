@@ -31,10 +31,35 @@ public class DeviceInfoController : ControllerBase
     /// </summary>
     /// <returns>Firmware version of the device.</returns>
     [HttpGet("FirmwareVersion")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "GetFirmwareVersion")]
-    public Task<DeviceFirmwareVersion> GetFirmwareVersion()
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<DeviceFirmwareVersion>> GetFirmwareVersion()
     {
-        return _device.GetFirmwareVersion();
+        try
+        {
+            return Ok(await _device.GetFirmwareVersion());
+        }
+        catch (TimeoutException)
+        {
+            return Problem(
+                detail: "Source operation timed out.",
+                statusCode: StatusCodes.Status500InternalServerError
+            );
+        }
+        catch (InvalidOperationException e)
+        {
+            return Problem(
+                detail: $"Unable to execute request: {e.Message}.",
+                statusCode: StatusCodes.Status500InternalServerError
+            );
+        }
+        catch (OperationCanceledException e)
+        {
+            return Problem(
+                detail: $"Execution has been cancelled: {e.Message}.",
+                statusCode: StatusCodes.Status500InternalServerError
+            );
+        }
     }
 }

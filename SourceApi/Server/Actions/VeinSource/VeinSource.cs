@@ -21,10 +21,7 @@ namespace WebSamDeviceApis.Actions.VeinSource
             _veinClient = veinClient;
         }
 
-        public SourceCapabilities GetCapabilities()
-        {
-            throw new NotImplementedException();
-        }
+        public Task<SourceCapabilities> GetCapabilities() => Task.FromException<SourceCapabilities>(new NotImplementedException());
 
         public Loadpoint? GetCurrentLoadpoint()
         {
@@ -39,7 +36,7 @@ namespace WebSamDeviceApis.Actions.VeinSource
             return ret;
         }
 
-        public SourceResult SetLoadpoint(Loadpoint loadpoint)
+        public Task<SourceResult> SetLoadpoint(Loadpoint loadpoint)
         {
             JObject veinRequest = VeinLoadpointMapper.ConvertToZeraJson(loadpoint);
 
@@ -48,12 +45,9 @@ namespace WebSamDeviceApis.Actions.VeinSource
             HttpStatusCode veinStatusCode = _veinClient.SetLoadpoint(veinRequest.ToString());
 
 
-            return SourceResult.SUCCESS;
+            return Task.FromResult(SourceResult.SUCCESS);
         }
 
-        public SourceResult TurnOff()
-        {
-            throw new NotImplementedException();
-        }
+        public Task<SourceResult> TurnOff() => Task.FromException<SourceResult>(new NotImplementedException());
     }
 }

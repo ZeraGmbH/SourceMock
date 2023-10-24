@@ -17,7 +17,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
         #region PositiveTestCases
         [Test]
         [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.ValidLoadpoints))]
-        public void TestValidTurnOn(Loadpoint loadpoint)
+        public async Task TestValidTurnOn(Loadpoint loadpoint)
         {
             // Arrange
             var capabilities = SimulatedSourceTestData.GetSourceCapabilitiesForNumberOfPhases(loadpoint.Phases.Count);
@@ -25,7 +25,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
             // Act
-            var result = source.SetLoadpoint(loadpoint);
+            var result = await source.SetLoadpoint(loadpoint);
 
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
@@ -36,17 +36,17 @@ namespace WebSamDeviceApis.Tests.Actions.Source
 
         [Test]
         [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.ValidLoadpoints))]
-        public void TestValidTurnOff(Loadpoint loadpoint)
+        public async Task TestValidTurnOff(Loadpoint loadpoint)
         {
             // Arrange
             var capabilities = SimulatedSourceTestData.GetSourceCapabilitiesForNumberOfPhases(loadpoint.Phases.Count);
 
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
-            source.SetLoadpoint(loadpoint);
+            await source.SetLoadpoint(loadpoint);
 
             // Act
-            var result = source.TurnOff();
+            var result = await source.TurnOff();
 
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
@@ -59,7 +59,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
         #region LoadpointIssues
         [Test]
         [TestCaseSource(typeof(SimulatedSourceTestData), nameof(SimulatedSourceTestData.ValidLoadpointsWithOneOrThreePhases))]
-        public void TestTurnOnWithInvalidLoadpoint(Loadpoint loadpoint)
+        public async Task TestTurnOnWithInvalidLoadpoint(Loadpoint loadpoint)
         {
             // Arrange
             var capabilities = SimulatedSourceTestData.DefaultTwoPhaseSourceCapabilities;
@@ -67,7 +67,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
             // Act
-            var result = source.SetLoadpoint(loadpoint);
+            var result = await source.SetLoadpoint(loadpoint);
 
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
@@ -79,7 +79,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
 
         #region CapabilityIssues
         [Test]
-        public void TestTooHighVoltage()
+        public async Task TestTooHighVoltage()
         {
             // Arrange 
             ISource source = GenerateSimulatedSource();
@@ -87,7 +87,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             lp.Phases[0].Voltage.Rms = 500;
 
             // Act
-            var result = source.SetLoadpoint(lp);
+            var result = await source.SetLoadpoint(lp);
 
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
@@ -97,7 +97,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
         }
 
         [Test]
-        public void TestTooHighCurrent()
+        public async Task TestTooHighCurrent()
         {
             // Arrange 
             ISource source = GenerateSimulatedSource();
@@ -105,7 +105,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             lp.Phases[0].Current.Rms = 100;
 
             // Act
-            var result = source.SetLoadpoint(lp);
+            var result = await source.SetLoadpoint(lp);
 
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();

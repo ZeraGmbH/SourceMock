@@ -58,23 +58,23 @@ public class SourceTests
     }
 
     [Test]
-    public void Can_Get_Capabilities()
+    public async Task Can_Get_Capabilities()
     {
         var sut = new SerialPortSource(_portLogger, _device);
 
-        var caps = sut.GetCapabilities();
+        var caps = await sut.GetCapabilities();
 
         Assert.That(caps.FrequencyRanges[0].Min, Is.EqualTo(45));
     }
 
     [Test]
-    public void Can_Set_Valid_Loadpoint()
+    public async Task Can_Set_Valid_Loadpoint()
     {
         var sut = new SerialPortSource(_portLogger, _device);
 
         Assert.That(sut.GetCurrentLoadpoint(), Is.Null);
 
-        var result = sut.SetLoadpoint(new Model.Loadpoint
+        var result = await sut.SetLoadpoint(new Model.Loadpoint
         {
             Frequency = new Model.Frequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = 50 },
             Phases = new List<Model.PhaseLoadpoint>() {
@@ -112,13 +112,13 @@ public class SourceTests
     [TestCase(600, 1, 0, SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID)]
     [TestCase(220, 1000, 0, SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID)]
     [TestCase(220, 1, 700, SourceResult.LOADPOINT_ANGLE_INVALID)]
-    public void Can_Set_Invalid_Loadpoint(int voltage, int current, int angle, SourceResult expectedError)
+    public async Task Can_Set_Invalid_Loadpoint(int voltage, int current, int angle, SourceResult expectedError)
     {
         var sut = new SerialPortSource(_portLogger, _device);
 
         Assert.That(sut.GetCurrentLoadpoint(), Is.Null);
 
-        var result = sut.SetLoadpoint(new Model.Loadpoint
+        var result = await sut.SetLoadpoint(new Model.Loadpoint
         {
             Frequency = new Model.Frequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = 50 },
             Phases = new List<Model.PhaseLoadpoint>() {

@@ -37,9 +37,9 @@ namespace WebSamDeviceApis.Controllers
         [HttpGet("Capabilities")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetCapabilities")]
-        public ActionResult<SourceCapabilities> GetCapablities()
+        public async Task<ActionResult<SourceCapabilities>> GetCapablities()
         {
-            return Ok(_source.GetCapabilities());
+            return Ok(await _source.GetCapabilities());
         }
 
         /// <summary>
@@ -57,11 +57,11 @@ namespace WebSamDeviceApis.Controllers
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "SetLoadpoint")]
-        public ActionResult SetLoadpoint([FromBody] Loadpoint loadpoint)
+        public async Task<ActionResult> SetLoadpoint([FromBody] Loadpoint loadpoint)
         {
             _logger.LogTrace("Loadpoint to be set: ", loadpoint);
 
-            var srcResult = _source.SetLoadpoint(loadpoint);
+            var srcResult = await _source.SetLoadpoint(loadpoint);
 
             switch (srcResult)
             {
@@ -102,9 +102,10 @@ namespace WebSamDeviceApis.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "TurnOff")]
-        public ActionResult TurnOff()
+        public async Task<ActionResult> TurnOff()
         {
-            var srcResult = _source.TurnOff();
+            var srcResult = await _source.TurnOff();
+
 #pragma warning disable IDE0066 // Not all enum values are appicable here
             switch (srcResult)
             {

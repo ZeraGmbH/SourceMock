@@ -48,9 +48,9 @@ class PhysicalProxy : ISerialPort
             NewLine = "\r",
             Parity = Parity.None,
             PortName = port,
-            ReadTimeout = 500,
+            ReadTimeout = 30000,
             StopBits = StopBits.Two,
-            WriteTimeout = 500
+            WriteTimeout = 30000
         };
 
         /* Always open the connection immediatly. */
@@ -219,7 +219,7 @@ public class SerialPortConnection : IDisposable
                 foreach (var requests in pending)
                     foreach (var request in requests)
                     {
-                        _logger.LogWarning("Cancel command {0}", request.Command);
+                        _logger.LogWarning($"Cancel command {request.Command}");
 
                         request.Result.SetException(new OperationCanceledException());
                     }
@@ -262,16 +262,16 @@ public class SerialPortConnection : IDisposable
     {
         try
         {
-            _logger.LogDebug("Sending command {0}", request.Command);
+            _logger.LogDebug($"Sending command {request.Command}");
 
             /* Send the command string to the device - <CR> is automatically added. */
             _port.WriteLine(request.Command);
 
-            _logger.LogDebug("Command {0} accepted by device", request.Command);
+            _logger.LogDebug($"Command {request.Command} accepted by device");
         }
         catch (Exception e)
         {
-            _logger.LogError("Command {0} rejected: {1}", request.Command, e);
+            _logger.LogError($"Command {request.Command} rejected: {e}");
 
             /* Unable to sent the command - report error to caller. */
             request.Result.SetException(e);
@@ -284,16 +284,16 @@ public class SerialPortConnection : IDisposable
             try
             {
                 /* Read a single response line from the device. */
-                _logger.LogDebug("Wait for command {0} reply", request.Command);
+                _logger.LogDebug($"Wait for command {request.Command} reply");
 
                 var reply = _port.ReadLine();
 
-                _logger.LogDebug("Got reply {1} for command {0}", request.Command, reply);
+                _logger.LogDebug($"Got reply {reply} for command {request.Command}");
 
                 /* If a device response ends with NAK there are invalid arguments. */
                 if (reply.EndsWith("NAK"))
                 {
-                    _logger.LogError("Command {0} reported NAK", request.Command);
+                    _logger.LogError($"Command {request.Command} reported NAK");
 
                     request.Result.SetException(new ArgumentException(request.Command));
 
@@ -306,7 +306,7 @@ public class SerialPortConnection : IDisposable
                 /* If the terminating string is detected the reply from the device is complete. */
                 if (reply == request.End)
                 {
-                    _logger.LogDebug("Command {0} finished, replies: {1}", request.Command, answer.Count());
+                    _logger.LogDebug($"Command {request.Command} finished, replies: {answer.Count()}");
 
                     /* Set the task result to all strings collected and therefore finish the task with success. */
                     request.Result.SetResult(answer.ToArray());
@@ -316,7 +316,7 @@ public class SerialPortConnection : IDisposable
             }
             catch (Exception e)
             {
-                _logger.LogError("Reading command {0} reply failed: {1}", request.Command, e);
+                _logger.LogError($"Reading command {request.Command} reply failed: {e}");
 
                 /* 
                     If it is not possible to read something from the device report exception to caller. 
@@ -359,7 +359,7 @@ public class SerialPortConnection : IDisposable
             }
 
             /* Process the transaction until finished or some request failed - important: ExecuteCommand MUST NOT throw an exception. */
-            _logger.LogDebug("Starting transaction processing, commands: {0}", requests.Length);
+            _logger.LogDebug($"Starting transaction processing, commands: {requests.Length}");
 
             var failed = false;
 

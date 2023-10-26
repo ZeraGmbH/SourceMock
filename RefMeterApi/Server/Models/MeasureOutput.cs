@@ -8,42 +8,42 @@ public class MeasureOutputPhase
     /// <summary>
     /// 
     /// </summary>
-    public double? Voltage;
+    public double? Voltage { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public double? Current;
+    public double? Current { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public double? AngleVoltage;
+    public double? AngleVoltage { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public double? AngleCurrent;
+    public double? AngleCurrent { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public double? Angle;
+    public double? Angle { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public double? ActivePower;
+    public double? ActivePower { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public double? ReactivePower;
+    public double? ReactivePower { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public double? ApparentPower;
+    public double? ApparentPower { get; set; }
 }
 
 /// <summary>
@@ -54,30 +54,30 @@ public class MeasureOutput
     /// <summary>
     /// 
     /// </summary>
-    public int? PhaseOrder;
+    public int? PhaseOrder { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public readonly List<MeasureOutputPhase> Phases = new();
+    public List<MeasureOutputPhase> Phases { get; set; } = new();
 
     /// <summary>
     /// 
     /// </summary>
-    public double? ActivePower = new();
+    public double? ActivePower { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public double? ReactivePower = new();
+    public double? ReactivePower { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public double? ApparentPower = new();
+    public double? ApparentPower { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public double? Frequency = new();
+    public double? Frequency { get; set; }
 }

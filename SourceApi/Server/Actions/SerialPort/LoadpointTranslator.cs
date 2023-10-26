@@ -67,7 +67,7 @@ public static class LoadpointTranslator
         /* Set U-Dos. */
         request.Append('A');
 
-        /* Werte aller Phasen eintragen */
+        /* Process all phases. */
         for (var i = 0; i < 3; i++)
         {
             /* Set indicator for phase, API R=L1=A, S=L2=B, T=L3=C. */
@@ -108,10 +108,27 @@ public static class LoadpointTranslator
         /* Set I-Off. */
         request.Append('A');
 
-        /* Set Diemns. */
-        request.Append('A');
+        /* Find the base unit to use. */
+        var factor = 1000;
 
-        /* Werte aller Phasen eintragen */
+        for (var i = 0; i < 3; i++)
+            if (i < loadpoint.Phases.Count)
+            {
+                var current = loadpoint.Phases[i]?.Current;
+
+                /* Use mA as long as there is no single current with 1A or more. */
+                if (current != null && (1000 * current.Rms).ToString("000.000").Length > 7)
+                {
+                    factor = 1;
+
+                    break;
+                }
+            }
+
+        /* Set Dimens. */
+        request.Append(factor == 1 ? 'A' : "M");
+
+        /* Process all phases. */
         for (var i = 0; i < 3; i++)
         {
             /* Set indicator for phase, API R=L1=A, S=L2=B, T=L3=C. */
@@ -125,7 +142,7 @@ public static class LoadpointTranslator
                 if (current != null)
                 {
                     /* Convert voltage and angle to API protocol format. */
-                    request.Append(current.Rms.ToString("000.000"));
+                    request.Append((current.Rms * factor).ToString("000.000"));
                     request.Append(current.Angle.ToString("000.00"));
 
                     continue;
@@ -149,7 +166,7 @@ public static class LoadpointTranslator
     {
         var request = new StringBuilder("SUI");
 
-        /* Werte aller Phasen eintragen */
+        /* Process all phases. */
         for (var i = 0; i < 3; i++)
             if (i < loadpoint.Phases.Count)
                 request.Append(loadpoint.Phases[i]?.Voltage?.On == true ? "E" : "A");

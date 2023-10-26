@@ -67,8 +67,9 @@ public class SourceTests
         Assert.That(caps.FrequencyRanges[0].Min, Is.EqualTo(45));
     }
 
-    [Test]
-    public async Task Can_Set_Valid_Loadpoint()
+    [TestCase(0.01, "SIPAMR010.000000.00S020.000120.00T030.000240.00")]
+    [TestCase(0.5, "SIPAAR000.500000.00S001.000120.00T001.500240.00")]
+    public async Task Can_Set_Valid_Loadpoint(double baseAngle, string current)
     {
         var sut = new SerialPortSource(_portLogger, _device);
 
@@ -79,15 +80,15 @@ public class SourceTests
             Frequency = new Model.Frequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = 50 },
             Phases = new List<Model.PhaseLoadpoint>() {
                 new Model.PhaseLoadpoint {
-                    Current = new Model.ElectricalVectorQuantity { Rms=0.01, Angle=0, On=true},
+                    Current = new Model.ElectricalVectorQuantity { Rms=1 * baseAngle, Angle=0, On=true},
                     Voltage = new Model.ElectricalVectorQuantity { Rms=220, Angle=0, On=true},
                 },
                 new Model.PhaseLoadpoint {
-                    Current = new Model.ElectricalVectorQuantity { Rms=0.02, Angle=120, On=true},
+                    Current = new Model.ElectricalVectorQuantity { Rms=2 * baseAngle, Angle=120, On=true},
                     Voltage = new Model.ElectricalVectorQuantity { Rms=221, Angle=120, On=false},
                 },
                 new Model.PhaseLoadpoint {
-                    Current = new Model.ElectricalVectorQuantity { Rms=0.03, Angle=240, On=false},
+                    Current = new Model.ElectricalVectorQuantity { Rms=3 * baseAngle, Angle=240, On=false},
                     Voltage = new Model.ElectricalVectorQuantity { Rms=222, Angle=240, On=true},
                 },
             },
@@ -98,7 +99,7 @@ public class SourceTests
 
         Assert.That(PortMock.Commands, Is.EqualTo(new string[] {
             "SUPAAR220.000000.00S221.000120.00T222.000240.00",
-            "SIPAAR000.010000.00S000.020120.00T000.030240.00",
+            current,
             "SFR50.00",
             "SUIEAEPPAAAA"
         }));

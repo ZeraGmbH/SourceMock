@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 using RefMeterApi.Models;
 
@@ -37,8 +38,8 @@ public static class MeasureValueOutputParser
                 throw new ArgumentException($"bad reply {replies[i]}", nameof(replies));
 
             /* Decode index and value. */
-            var index = int.Parse(reply.Groups[1].Value);
-            var value = double.Parse(reply.Groups[2].Value);
+            var index = int.Parse(reply.Groups[1].Value, CultureInfo.InvariantCulture);
+            var value = double.Parse(reply.Groups[2].Value, CultureInfo.InvariantCulture);
 
             /* Copy value to the appropriate field. */
             switch (index)

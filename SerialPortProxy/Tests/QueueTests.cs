@@ -133,27 +133,6 @@ public class QueueTests
         TestContext.WriteLine($"Total={counter.Total}");
     }
 
-    /// <summary>
-    /// Wait of a task reporting an exception without freezing the test environment -
-    /// as Assert.ThrowAsync will do.
-    /// </summary>
-    /// <typeparam name="TException">Exception to expect.</typeparam>
-    /// <param name="task">Task to wait for.</param>
-    /// <returns>Set if the task reports the expected exception.</returns>
-    async Task<bool> AssertException<TException>(Task task) where TException : Exception
-    {
-        try
-        {
-            await task;
-
-            return false;
-        }
-        catch (TException)
-        {
-            return true;
-        }
-    }
-
     [Test]
     public async Task Failure_In_Request_Group_Terminates_Group()
     {
@@ -176,7 +155,8 @@ public class QueueTests
 
         await tasks[0];
 
-        Assert.That(await AssertException<TimeoutException>(tasks[1]), Is.True);
-        Assert.That(await AssertException<OperationCanceledException>(tasks[2]), Is.True);
+        /* May block if no await on the R9 command before - possibly due to the sync-over-async way ThrowAsync works. */
+        Assert.ThrowsAsync<TimeoutException>(async () => await tasks[1]);
+        Assert.ThrowsAsync<OperationCanceledException>(async () => await tasks[2]);
     }
 }

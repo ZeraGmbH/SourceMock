@@ -1,112 +1,8 @@
 ﻿using System.Diagnostics;
-using System.IO.Ports;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace SerialPortProxy;
-
-/// <summary>
-/// Represents the minimal set of methods neccessary to communicate with a serial port.
-/// </summary>
-public interface ISerialPort : IDisposable
-{
-    /// <summary>
-    /// Send a command to the device.
-    /// </summary>
-    /// <param name="command">Command string - &lt;CR> is automatically added.</param>
-    void WriteLine(string command);
-
-    /// <summary>
-    /// Wait for the next string from the device.
-    /// </summary>
-    /// <returns>The requested string.</returns>
-    string ReadLine();
-}
-
-/// <summary>
-/// Physical serial port mapped to the ISerialPort interface.
-/// </summary>
-class PhysicalProxy : ISerialPort
-{
-    /// <summary>
-    /// The physical connection.
-    /// </summary>
-    private readonly SerialPort _port;
-
-    /// <summary>
-    /// Initialiuze a new wrapper.
-    /// </summary>
-    /// <param name="port">Name of the serial port, e.g. COM3 for Windows
-    /// or /dev/ttyUSB0 for a USB serial adapter on Linux.</param>
-    public PhysicalProxy(string port)
-    {
-        /* Connected as required in the API documentation. MT3101_RS232_EXT_GB.pdf */
-        _port = new SerialPort
-        {
-            BaudRate = 9600,
-            DataBits = 8,
-            NewLine = "\r",
-            Parity = Parity.None,
-            PortName = port,
-            ReadTimeout = 30000,
-            StopBits = StopBits.Two,
-            WriteTimeout = 30000
-        };
-
-        /* Always open the connection immediatly. */
-        _port.Open();
-    }
-
-    /// <inheritdoc/>
-    public void Dispose() => _port.Dispose();
-
-    /// <inheritdoc/>
-    public string ReadLine() => _port.ReadLine();
-
-    /// <inheritdoc/>
-    public void WriteLine(string command) => _port.WriteLine(command);
-}
-
-/// <summary>
-/// Queue entry for a single request to the device.
-/// </summary>
-public class SerialPortRequest
-{
-    /// <summary>
-    /// Command string to send to the device - &lt;qCR> automatically added.
-    /// </summary>
-    public readonly string Command;
-
-    /// <summary>
-    /// Expected termination line.
-    /// </summary>
-    public readonly string End;
-
-    /// <summary>
-    /// Promise for the response of the device.
-    /// </summary>
-    public readonly TaskCompletionSource<string[]> Result = new();
-
-    /// <summary>
-    /// Initialize a new request.
-    /// </summary>
-    /// <param name="command">Command string.</param>
-    /// <param name="end">Final string from the device to end the request.</param>
-    private SerialPortRequest(string command, string end)
-    {
-        Command = command;
-        End = end;
-    }
-
-    /// <summary>
-    /// Create a new request.
-    /// </summary>
-    /// <param name="command">Command string.</param>
-    /// <param name="end">Final string from the device to end the request.</param>
-    /// <returns>The new request.</returns>
-    public static SerialPortRequest Create(string command, string end) => new SerialPortRequest(command, end);
-}
-
 
 /// <summary>
 /// Class to manage a sinle serial line connection.
@@ -128,6 +24,9 @@ public class SerialPortConnection : IDisposable
     /// </summary>
     private bool _running = true;
 
+    /// <summary>
+    /// Logger to use, esp. for communication tracing.
+    /// </summary>
     private readonly ILogger<SerialPortConnection> _logger;
 
     /// <summary>
@@ -138,11 +37,8 @@ public class SerialPortConnection : IDisposable
     /// <exception cref="ArgumentNullException">Proxy must not be null.</exception>
     private SerialPortConnection(ISerialPort port, ILogger<SerialPortConnection> logger)
     {
-        if (port == null)
-            throw new ArgumentNullException("port");
-
+        _port = port ?? throw new ArgumentNullException(nameof(port));
         _logger = logger ?? new NullLogger<SerialPortConnection>();
-        _port = port;
 
         /* Create and start a thread handling requests to the serial port. */
         var executor = new Thread(ProcessFromQueue);
@@ -157,7 +53,7 @@ public class SerialPortConnection : IDisposable
     /// or /dev/ttyUSB0 for a USB serial adapter on Linux.</param>
     /// <param name="logger">Optional logging instance.</param>
     /// <returns>The brand new connection.</returns>
-    public static SerialPortConnection FromSerialPort(string port, ILogger<SerialPortConnection> logger) => new(new PhysicalProxy(port), logger);
+    public static SerialPortConnection FromSerialPort(string port, ILogger<SerialPortConnection> logger) => FromPortInstance(new PhysicalPortProxy(port), logger);
 
     /// <summary>
     /// Create a new mocked based connection.
@@ -198,8 +94,7 @@ public class SerialPortConnection : IDisposable
         }
         catch (Exception e)
         {
-            /* To be very safe. */
-            Debug.WriteLine(e);
+            _logger.LogWarning($"Unable to close port: {e}");
         }
 
         /* Get exclusive access to the queue. */
@@ -215,14 +110,13 @@ public class SerialPortConnection : IDisposable
             Monitor.Pulse(_queue);
 
             /* If there are any outstand requests notify the corresponding clients - callers of Execute. */
-            if (pending != null)
-                foreach (var requests in pending)
-                    foreach (var request in requests)
-                    {
-                        _logger.LogWarning($"Cancel command {request.Command}");
+            foreach (var requests in pending)
+                foreach (var request in requests)
+                {
+                    _logger.LogWarning($"Cancel command {request.Command}");
 
-                        request.Result.SetException(new OperationCanceledException());
-                    }
+                    request.Result.SetException(new OperationCanceledException());
+                }
         }
     }
 

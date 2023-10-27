@@ -1,14 +1,58 @@
 using System.Globalization;
-using RefMeterApi.Actions.Parsers;
+using System.Runtime.InteropServices;
+using Microsoft.Extensions.Logging.Abstractions;
+using NUnit.Framework.Constraints;
+using RefMeterApi.Actions.Device;
+using SerialPortProxy;
 
 namespace RefMeterApiTests;
+
+class ReplyMock : ISerialPort
+{
+    private readonly Queue<string> _queue = new();
+
+    private readonly string[] _replies;
+
+    public ReplyMock(params string[] replies)
+    {
+        _replies = replies;
+    }
+
+    public void Dispose()
+    {
+    }
+
+    public string ReadLine()
+    {
+        if (_queue.TryDequeue(out var reply))
+            return reply;
+
+        throw new TimeoutException("queue is empty");
+    }
+
+    public void WriteLine(string command)
+    {
+        switch (command)
+        {
+            case "AME":
+                Array.ForEach(this._replies, _queue.Enqueue);
+
+                break;
+        }
+    }
+}
 
 [TestFixture]
 public class AMEParserTests
 {
+    private readonly NullLogger<SerialPortConnection> _logger = new();
+
+    private IRefMeterDevice CreateDevice(params string[] replies) => new SerialPortRefMeterDevice(SerialPortConnection.FromPortInstance(new ReplyMock(replies), _logger));
+
     [Test]
-    public void Can_Parse_AME_Reply()
+    public async Task Can_Parse_AME_Reply()
     {
+
         var currentCulture = Thread.CurrentThread.CurrentCulture;
         var currentUiCulture = Thread.CurrentThread.CurrentUICulture;
 
@@ -17,7 +61,8 @@ public class AMEParserTests
 
         try
         {
-            var parsed = MeasureValueOutputParser.Parse(File.ReadAllLines(@"TestData/ameReply.txt"));
+            var device = CreateDevice(File.ReadAllLines(@"TestData/ameReply.txt"));
+            var parsed = await device.GetActualValues();
 
             Assert.Multiple(() =>
             {
@@ -45,21 +90,21 @@ public class AMEParserTests
     [TestCase("xxxx")]
     public void Will_Fail_On_Invalid_Reply(string reply, Type? exception = null)
     {
-        Assert.That(() => MeasureValueOutputParser.Parse(new[] { reply, "AMEACK" }), Throws.TypeOf(exception ?? typeof(ArgumentException)));
+        Assert.ThrowsAsync(exception ?? typeof(ArgumentException), async () => await CreateDevice(new[] { reply, "AMEACK" }).GetActualValues());
     }
 
     [Test]
-    public void Will_Overwrite_Index_Value()
+    public async Task Will_Overwrite_Index_Value()
     {
-        var data = MeasureValueOutputParser.Parse(new[] { "28;1", "28;2", "AMEACK" });
+        var data = await CreateDevice(new[] { "28;1", "28;2", "AMEACK" }).GetActualValues();
 
         Assert.That(data.Frequency, Is.EqualTo(2));
     }
 
     [Test]
-    public void Can_Handle_Empty_Reply()
+    public async Task Can_Handle_Empty_Reply()
     {
-        MeasureValueOutputParser.Parse(new[] { "AMEACK" });
+        await CreateDevice(new[] { "AMEACK" }).GetActualValues();
 
         Assert.Pass();
     }
@@ -67,12 +112,6 @@ public class AMEParserTests
     [Test]
     public void Will_Detect_Missing_ACK()
     {
-        Assert.That(() => MeasureValueOutputParser.Parse(new[] { "0;1" }), Throws.TypeOf<ArgumentException>().With.Message.Contains("AMEACK"));
-    }
-
-    [Test]
-    public void Will_Detect_Misplaced_ACK()
-    {
-        Assert.That(() => MeasureValueOutputParser.Parse(new[] { "AMEACK", "0;1" }), Throws.TypeOf<ArgumentException>().With.Message.Contains("AMEACK"));
+        Assert.ThrowsAsync<TimeoutException>(async () => await CreateDevice(new[] { "0;1" }).GetActualValues());
     }
 }

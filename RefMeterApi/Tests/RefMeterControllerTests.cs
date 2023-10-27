@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
+using RefMeterApi.Actions.Device;
 using RefMeterApi.Controllers;
 using RefMeterApi.Models;
 using SerialPortProxy;
@@ -44,9 +45,9 @@ public class RefMeterControllerTests
     [Test]
     public async Task Controller_Will_Decode_AME_Reply()
     {
-        using var device = SerialPortConnection.FromMock<PortMock>(_logger);
+        using var port = SerialPortConnection.FromMock<PortMock>(_logger);
 
-        var cut = new RefMeterController(device);
+        var cut = new RefMeterController(new SerialPortRefMeterDevice(port));
 
         var response = await cut.GetCurrentMeasureOutput();
         var result = response.Result as OkObjectResult;

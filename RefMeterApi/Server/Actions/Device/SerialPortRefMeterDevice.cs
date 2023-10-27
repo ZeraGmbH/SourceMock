@@ -1,24 +1,34 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using RefMeterApi.Models;
+using SerialPortProxy;
 
-namespace RefMeterApi.Actions.Parsers;
+namespace RefMeterApi.Actions.Device;
 
 /// <summary>
-/// 
+/// Handle all requests to a device.
 /// </summary>
-public static class MeasureValueOutputParser
+public class SerialPortRefMeterDevice : IRefMeterDevice
 {
     private static readonly Regex _valueReg = new Regex("^(\\d{1,3});(.+)$");
 
+    private readonly SerialPortConnection _device;
+
     /// <summary>
-    /// Create measure output structure from AME reply sequence.
+    /// Initialize device manager.
     /// </summary>
-    /// <param name="replies">String data as received from an AME request.</param>
-    /// <returns>All data as provided by the device.</returns>
-    /// <exception cref="ArgumentException">Parameter is not a valid AME reply sequence.</exception>
-    public static MeasureOutput Parse(string[] replies)
+    /// <param name="device">Service to access the current serial port.</param>
+    public SerialPortRefMeterDevice(SerialPortConnection device)
     {
+        _device = device;
+    }
+
+    /// <inheritdoc/>
+    public async Task<MeasureOutput> GetActualValues()
+    {
+        /* Execute the request and get the answer from the device. */
+        var replies = await _device.Execute(SerialPortRequest.Create("AME", "AMEACK"))[0];
+
         /* Make sure this is an AME reply sequence. */
         if (replies.Length < 1 || replies[^1] != "AMEACK")
             throw new ArgumentException("missing AMEACK", nameof(replies));

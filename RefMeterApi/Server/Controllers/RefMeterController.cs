@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RefMeterApi.Actions.RefMeter;
+using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
-using SerialPortProxy;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RefMeterApi.Controllers;
@@ -15,13 +14,13 @@ namespace RefMeterApi.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 public class RefMeterController : ControllerBase
 {
-    private readonly SerialPortConnection _device;
+    private readonly IRefMeterDevice _device;
 
     /// <summary>
     /// Initialize a new controller.
     /// </summary>
     /// <param name="device">Serial port connected device to use.</param>
-    public RefMeterController(SerialPortConnection device)
+    public RefMeterController(IRefMeterDevice device)
     {
         _device = device;
     }
@@ -38,7 +37,7 @@ public class RefMeterController : ControllerBase
     {
         try
         {
-            return Ok(await QueryMeasureOutput.Execute(_device));
+            return Ok(await _device.GetActualValues());
         }
         catch (TimeoutException)
         {

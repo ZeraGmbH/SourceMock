@@ -37,9 +37,12 @@ public static class MeasureValueOutputParser
             if (!reply.Success)
                 throw new ArgumentException($"bad reply {replies[i]}", nameof(replies));
 
-            /* Decode index and value. */
+            /* Decode index and value - make sure that parsing is not messed by local operating system regional settings. */
             var index = int.Parse(reply.Groups[1].Value, CultureInfo.InvariantCulture);
             var value = double.Parse(reply.Groups[2].Value, CultureInfo.InvariantCulture);
+
+            if (index < 0)
+                throw new ArgumentException($"bad reply {replies[i]}", nameof(replies));
 
             /* Copy value to the appropriate field. */
             switch (index)

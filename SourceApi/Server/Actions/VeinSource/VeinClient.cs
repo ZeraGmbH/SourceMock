@@ -83,10 +83,9 @@ namespace WebSamDeviceApis.Actions.VeinSource
 
         private JObject GetFromVein(EntityIds entityId, string componentName)
         {
-            string payload = $"{{\"EntityID\": {(int)entityId}, \"componentName\": \"{componentName}\"}}";
-            StringContent stringContent = new(payload);
+            string payload = $"?entity_id={(int)entityId}&component_name={componentName}";
 
-            HttpResponseMessage response = _client.PostAsync($"http://{_hostIp}:{_hostPort}/api/v1/Vein/GetInfo", stringContent).Result;
+            HttpResponseMessage response = _client.GetAsync($"http://{_hostIp}:{_hostPort}/api/v1/Vein/{payload}").Result;
 
             return JObject.Parse(response.Content.ReadAsStringAsync().Result);
         }
@@ -99,7 +98,7 @@ namespace WebSamDeviceApis.Actions.VeinSource
             string payload = $"{{\"EntityID\": {(int)entityId}, \"componentName\": \"{componentName}\", \"newValue\": \"{value}\"}}";
             StringContent stringContent = new(payload);
 
-            HttpResponseMessage response = _client.PostAsync($"http://{_hostIp}:{_hostPort}/api/v1/Vein/SetInfo", stringContent).Result;
+            HttpResponseMessage response = _client.PutAsync($"http://{_hostIp}:{_hostPort}/api/v1/Vein/", stringContent).Result;
 
             return JObject.Parse(response.Content.ReadAsStringAsync().Result);
         }

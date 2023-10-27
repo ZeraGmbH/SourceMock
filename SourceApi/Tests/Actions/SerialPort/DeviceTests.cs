@@ -111,8 +111,11 @@ public class DeviceTests
 
         var version = await dut.GetFirmwareVersion();
 
-        Assert.That(version.ModelName, Is.EqualTo("MT9123"));
-        Assert.That(version.Version, Is.EqualTo("19.129"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(version.ModelName, Is.EqualTo("MT9123"));
+            Assert.That(version.Version, Is.EqualTo("19.129"));
+        });
     }
 
     [TestCase(typeof(EmptyModelNameMock), "invalid response V19.129 from device")]

@@ -107,7 +107,7 @@ public class DeviceTests
     {
         using var device = SerialPortConnection.FromMock<CorrectVersionMock>(_logger);
 
-        var dut = new SerialPortDevice(device);
+        var dut = new SerialPortSourceDevice(device);
 
         var version = await dut.GetFirmwareVersion();
 
@@ -127,7 +127,7 @@ public class DeviceTests
     {
         using var device = SerialPortConnection.FromMock(mockType, _logger);
 
-        var dut = new SerialPortDevice(device);
+        var dut = new SerialPortSourceDevice(device);
 
         var ex = Assert.ThrowsAsync(exception ?? typeof(InvalidOperationException), async () => await dut.GetFirmwareVersion());
 

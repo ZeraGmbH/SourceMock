@@ -1,3 +1,5 @@
+using RefMeterApi.Actions.Device;
+
 using SerialPortProxy;
 
 using WebSamDeviceApis.Actions.Device;
@@ -49,7 +51,8 @@ public static class Configuration
             else
                 throw new NotSupportedException("either serial port name or port mock type must be set.");
 
-            services.AddScoped<IDevice, SerialPortDevice>();
+            services.AddScoped<IRefMeterDevice, SerialPortRefMeterDevice>();
+            services.AddScoped<ISourceDevice, SerialPortSourceDevice>();
         }
 
     }

@@ -9,7 +9,7 @@ namespace WebSamDeviceApis.Actions.Device;
 /// <summary>
 /// Handle all requests to a device.
 /// </summary>
-public class SerialPortDevice : IDevice
+public class SerialPortSourceDevice : ISourceDevice
 {
     /// <summary>
     /// Detect model name and version number.
@@ -22,7 +22,7 @@ public class SerialPortDevice : IDevice
     /// Initialize device manager.
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
-    public SerialPortDevice(SerialPortConnection device)
+    public SerialPortSourceDevice(SerialPortConnection device)
     {
         _device = device;
     }

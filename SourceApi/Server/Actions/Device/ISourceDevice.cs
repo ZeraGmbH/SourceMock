@@ -5,7 +5,7 @@ namespace WebSamDeviceApis.Actions.Device;
 /// <summary>
 /// Describes any device - currently used for moving tests.
 /// </summary>
-public interface IDevice
+public interface ISourceDevice
 {
     /// <summary>
     /// Retrieve information on the firmware version.

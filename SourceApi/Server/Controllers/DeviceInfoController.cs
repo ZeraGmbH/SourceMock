@@ -15,13 +15,13 @@ namespace WebSamDeviceApis.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 public class DeviceInfoController : ControllerBase
 {
-    private readonly IDevice _device;
+    private readonly ISourceDevice _device;
 
     /// <summary>
     /// Initialize a new controller for the current request.
     /// </summary>
     /// <param name="device">The current device to use.</param>
-    public DeviceInfoController(IDevice device)
+    public DeviceInfoController(ISourceDevice device)
     {
         _device = device;
     }

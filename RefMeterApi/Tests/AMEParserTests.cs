@@ -1,7 +1,5 @@
 using System.Globalization;
-using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework.Constraints;
 using RefMeterApi.Actions.Device;
 using SerialPortProxy;
 

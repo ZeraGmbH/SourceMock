@@ -6,6 +6,9 @@ using WebSamDeviceApis.Actions.Device;
 
 namespace WebSamDeviceApis.Tests.Actions.SerialPort;
 
+/// <summary>
+/// General mock for validating command reply interpretation.
+/// </summary>
 abstract class PortMock : ISerialPort
 {
     private readonly string _reply;
@@ -44,21 +47,33 @@ abstract class PortMock : ISerialPort
     }
 }
 
+/// <summary>
+/// Mock with a regular esponse.
+/// </summary>
 class CorrectVersionMock : PortMock
 {
     public CorrectVersionMock() : base("MT9123V19.129") { }
 }
 
+/// <summary>
+/// Mock with a reply missing the separator (V).
+/// </summary>
 class IncorrectVersionMock : PortMock
 {
     public IncorrectVersionMock() : base("MT912319.129") { }
 }
 
+/// <summary>
+/// Mock creating a NAK reply.
+/// </summary>
 class NakVersionMock : PortMock
 {
     public NakVersionMock() : base("AAVNAK") { }
 }
 
+/// <summary>
+/// Mock producing a timeout when the reply is requested.
+/// </summary>
 class VersionTimeoutMock : PortMock
 {
     public VersionTimeoutMock() : base("") { }
@@ -66,11 +81,17 @@ class VersionTimeoutMock : PortMock
     public override string ReadLine() => throw new TimeoutException("Timed out");
 }
 
-class EmtpyModelNameMock : PortMock
+/// <summary>
+/// Mock with no model name in reply.
+/// </summary>
+class EmptyModelNameMock : PortMock
 {
-    public EmtpyModelNameMock() : base("V19.129") { }
+    public EmptyModelNameMock() : base("V19.129") { }
 }
 
+/// <summary>
+/// Mock with no version in reply.
+/// </summary>
 class EmptyVersionMock : PortMock
 {
     public EmptyVersionMock() : base("MT9123V") { }
@@ -94,63 +115,19 @@ public class DeviceTests
         Assert.That(version.Version, Is.EqualTo("19.129"));
     }
 
-    [Test]
-    public void Fails_On_Invalid_Version()
+    [TestCase(typeof(EmptyModelNameMock), "invalid response V19.129 from device")]
+    [TestCase(typeof(EmptyVersionMock), "invalid response MT9123V from device")]
+    [TestCase(typeof(IncorrectVersionMock), "invalid response MT912319.129 from device")]
+    [TestCase(typeof(NakVersionMock), "AAV", typeof(ArgumentException))]
+    [TestCase(typeof(VersionTimeoutMock), "Timed out", typeof(TimeoutException))]
+    public void Fails_On_Invalid_Reply(Type mockType, string message, Type? exception = null)
     {
-        using var device = SerialPortConnection.FromMock<IncorrectVersionMock>(_logger);
+        using var device = SerialPortConnection.FromMock(mockType, _logger);
 
         var dut = new SerialPortDevice(device);
 
-        var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await dut.GetFirmwareVersion());
+        var ex = Assert.ThrowsAsync(exception ?? typeof(InvalidOperationException), async () => await dut.GetFirmwareVersion());
 
-        Assert.That(ex.Message, Is.EqualTo("invalid response MT912319.129 from device"));
-    }
-
-    [Test]
-    public void Fails_On_NAK_Reply()
-    {
-        using var device = SerialPortConnection.FromMock<NakVersionMock>(_logger);
-
-        var dut = new SerialPortDevice(device);
-
-        var ex = Assert.ThrowsAsync<ArgumentException>(async () => await dut.GetFirmwareVersion());
-
-        Assert.That(ex.Message, Is.EqualTo("AAV"));
-    }
-
-    [Test]
-    public void Fails_On_Communication_Timeout()
-    {
-        using var device = SerialPortConnection.FromMock<VersionTimeoutMock>(_logger);
-
-        var dut = new SerialPortDevice(device);
-
-        var ex = Assert.ThrowsAsync<TimeoutException>(async () => await dut.GetFirmwareVersion());
-
-        Assert.That(ex.Message, Is.EqualTo("Timed out"));
-    }
-
-    [Test]
-    public void Fails_On_Empty_Modelname()
-    {
-        using var device = SerialPortConnection.FromMock<EmtpyModelNameMock>(_logger);
-
-        var dut = new SerialPortDevice(device);
-
-        var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await dut.GetFirmwareVersion());
-
-        Assert.That(ex.Message, Is.EqualTo("invalid response V19.129 from device"));
-    }
-
-    [Test]
-    public void Fails_On_Empty_Version()
-    {
-        using var device = SerialPortConnection.FromMock<EmptyVersionMock>(_logger);
-
-        var dut = new SerialPortDevice(device);
-
-        var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await dut.GetFirmwareVersion());
-
-        Assert.That(ex.Message, Is.EqualTo("invalid response MT9123V from device"));
+        Assert.That(ex.Message, Is.EqualTo(message));
     }
 }

@@ -5,6 +5,39 @@ using SerialPortProxy;
 namespace WebSamDeviceApis.Actions.SerialPort;
 
 /// <summary>
+/// Represents a single reply from the device.
+/// </summary>
+class QueueEntry
+{
+    /// <summary>
+    /// The reply text.
+    /// </summary>
+    public readonly string Reply;
+
+    /// <summary>
+    /// Optional delay to simulate real device behaviour.
+    /// </summary>
+    public readonly int Delay;
+
+    /// <summary>
+    /// Create a new reply entry.
+    /// </summary>
+    /// <param name="reply">Message to reply.</param>
+    /// <param name="delay">Number of milliseconds to wait before the message is sent.</param>
+    public QueueEntry(string reply, int delay)
+    {
+        Delay = delay;
+        Reply = reply;
+    }
+
+    /// <summary>
+    /// Povide auto conversion in the regular case with no delay.
+    /// </summary>
+    /// <param name="reply">Message to use as a reply, delay is assumed to be zero.</param>
+    public static implicit operator QueueEntry(string reply) { return new QueueEntry(reply, 0); }
+}
+
+/// <summary>
 /// Simulate a very general moving test.
 /// </summary>
 public class SerialPortMock : ISerialPort
@@ -20,7 +53,7 @@ public class SerialPortMock : ISerialPort
     /// <summary>
     /// Outgoing messages.
     /// </summary>
-    private readonly Queue<string> _replies = new();
+    private readonly Queue<QueueEntry> _replies = new();
 
     /// <inheritdoc/>
     public virtual void Dispose()
@@ -28,15 +61,24 @@ public class SerialPortMock : ISerialPort
     }
 
     /// <summary>
+    /// Reset in a unit test environment.
+    /// </summary>
+    protected virtual bool UseDelay => true;
+
+    /// <summary>
     /// Report the next outstanding reply string.
     /// </summary>
     /// <returns>Next string.</returns>
     public virtual string ReadLine()
     {
-        if (_replies.TryDequeue(out var reply))
-            return reply;
+        if (!_replies.TryDequeue(out var info))
+            throw new TimeoutException("no reply in quuue");
 
-        throw new TimeoutException("no reply in quuue");
+        /* Simulate delay. */
+        if (UseDelay && info.Delay > 0)
+            Thread.Sleep(info.Delay);
+
+        return info.Reply;
     }
 
     /// <summary>
@@ -100,7 +142,7 @@ public class SerialPortMock : ISerialPort
                     _replies.Enqueue("55;2.8615168E-01");
                     _replies.Enqueue("56;2.7889857E-01");
                     _replies.Enqueue("57;9.9984539E-01");
-                    _replies.Enqueue("AMEACK");
+                    _replies.Enqueue(new QueueEntry("AMEACK", 1000));
                 }
                 break;
             default:
@@ -112,7 +154,7 @@ public class SerialPortMock : ISerialPort
                     else if (_sfrCommand.IsMatch(command))
                         _replies.Enqueue("SOKFR");
                     else if (_suiCommand.IsMatch(command))
-                        _replies.Enqueue("SOKUI");
+                        _replies.Enqueue(new QueueEntry("SOKUI", 5000));
 
                     break;
                 }

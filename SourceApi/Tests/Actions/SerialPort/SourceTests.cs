@@ -13,6 +13,8 @@ public class SourceTests
 {
     class PortMock : SerialPortMock
     {
+        protected override bool UseDelay => false;
+
         private static PortMock? _current;
 
         public PortMock()

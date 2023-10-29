@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
 using SerialPortProxy;
 
@@ -14,13 +15,17 @@ public class SerialPortRefMeterDevice : IRefMeterDevice
 
     private readonly SerialPortConnection _device;
 
+    private readonly ILogger<SerialPortRefMeterDevice> _logger;
+
     /// <summary>
     /// Initialize device manager.
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
-    public SerialPortRefMeterDevice(SerialPortConnection device)
+    /// <param name="logger">Logging service for this device type.</param>
+    public SerialPortRefMeterDevice(SerialPortConnection device, ILogger<SerialPortRefMeterDevice> logger)
     {
         _device = device;
+        _logger = logger;
     }
 
     /// <inheritdoc/>
@@ -42,17 +47,38 @@ public class SerialPortRefMeterDevice : IRefMeterDevice
         for (var i = 0; i < replies.Length - 1; i++)
         {
             /* Chck for a value with index. */
-            var reply = _valueReg.Match(replies[i]);
+            var reply = replies[i];
+            var match = _valueReg.Match(reply);
 
-            if (!reply.Success)
-                throw new ArgumentException($"bad reply {replies[i]}", nameof(replies));
+            if (!match.Success)
+            {
+                _logger.LogWarning($"bad reply {reply}");
+
+                continue;
+            }
 
             /* Decode index and value - make sure that parsing is not messed by local operating system regional settings. */
-            var index = int.Parse(reply.Groups[1].Value, CultureInfo.InvariantCulture);
-            var value = double.Parse(reply.Groups[2].Value, CultureInfo.InvariantCulture);
+            int index;
+            double value;
+
+            try
+            {
+                index = int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+                value = double.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture);
+            }
+            catch (FormatException)
+            {
+                _logger.LogWarning($"invalid number in reply {reply}");
+
+                continue;
+            }
 
             if (index < 0)
-                throw new ArgumentException($"bad reply {replies[i]}", nameof(replies));
+            {
+                _logger.LogWarning($"bad reply {reply}");
+
+                continue;
+            }
 
             /* Copy value to the appropriate field. */
             switch (index)

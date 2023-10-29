@@ -1,4 +1,5 @@
 using System.Globalization;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
 using SerialPortProxy;
@@ -40,12 +41,37 @@ class ReplyMock : ISerialPort
     }
 }
 
+class DeviceLogger : ILogger<SerialPortRefMeterDevice>
+{
+    class Scope : IDisposable
+    {
+        public void Dispose()
+        {
+        }
+    }
+
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+    {
+        return new Scope();
+    }
+
+    public bool IsEnabled(LogLevel logLevel)
+    {
+        return true;
+    }
+
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) =>
+        throw new ArgumentException(formatter(state, exception));
+}
+
 [TestFixture]
 public class AMEParserTests
 {
-    private readonly NullLogger<SerialPortConnection> _logger = new();
+    private readonly NullLogger<SerialPortConnection> _portLogger = new();
 
-    private IRefMeterDevice CreateDevice(params string[] replies) => new SerialPortRefMeterDevice(SerialPortConnection.FromPortInstance(new ReplyMock(replies), _logger));
+    private readonly DeviceLogger _deviceLogger = new();
+
+    private IRefMeterDevice CreateDevice(params string[] replies) => new SerialPortRefMeterDevice(SerialPortConnection.FromPortInstance(new ReplyMock(replies), _portLogger), _deviceLogger);
 
     [Test]
     public async Task Can_Parse_AME_Reply()
@@ -83,12 +109,22 @@ public class AMEParserTests
     [TestCase("-1;1")]
     [TestCase(";1")]
     [TestCase("1;")]
-    [TestCase("1;1EA3", typeof(FormatException))]
+    [TestCase("1;1EA3")]
     [TestCase("12.3;1")]
     [TestCase("xxxx")]
-    public void Will_Fail_On_Invalid_Reply(string reply, Type? exception = null)
+    public async Task Will_Log_On_Invalid_Reply(string reply)
     {
-        Assert.ThrowsAsync(exception ?? typeof(ArgumentException), async () => await CreateDevice(new[] { reply, "AMEACK" }).GetActualValues());
+        /* Use the regular logger. */
+        var device = new SerialPortRefMeterDevice(
+            SerialPortConnection.FromPortInstance(new ReplyMock(new[] { reply, "AMEACK" }), _portLogger),
+            new NullLogger<SerialPortRefMeterDevice>()
+        );
+
+        /* Bad replies will only log a warning but not throw any exception. */
+        await device.GetActualValues();
+
+        /* Each log entry will create an ArgumentException. */
+        Assert.ThrowsAsync<ArgumentException>(async () => await CreateDevice(new[] { reply, "AMEACK" }).GetActualValues());
     }
 
     [Test]

@@ -40,14 +40,16 @@ class PortMock : ISerialPort
 [TestFixture]
 public class RefMeterControllerTests
 {
-    private readonly NullLogger<SerialPortConnection> _logger = new();
+    private readonly NullLogger<SerialPortConnection> _portLogger = new();
+
+    private readonly NullLogger<SerialPortRefMeterDevice> _deviceLogger = new();
 
     [Test]
     public async Task Controller_Will_Decode_AME_Reply()
     {
-        using var port = SerialPortConnection.FromMock<PortMock>(_logger);
+        using var port = SerialPortConnection.FromMock<PortMock>(_portLogger);
 
-        var cut = new RefMeterController(new SerialPortRefMeterDevice(port));
+        var cut = new RefMeterController(new SerialPortRefMeterDevice(port, _deviceLogger));
 
         var response = await cut.GetCurrentMeasureOutput();
         var result = response.Result as OkObjectResult;

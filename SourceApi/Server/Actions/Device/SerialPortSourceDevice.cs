@@ -33,11 +33,11 @@ public class SerialPortSourceDevice : ISourceDevice
         /* Execute the request and wait for the information string. */
         var reply = await _device.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
-        if (reply.Length != 2)
+        if (reply.Length < 2)
             throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");
 
         /* Validate the response consisting of model name and version numner. */
-        var versionMatch = _versionReg.Match(reply[0]);
+        var versionMatch = _versionReg.Match(reply[^2]);
 
         if (versionMatch?.Success != true)
             throw new InvalidOperationException($"invalid response {reply[0]} from device");

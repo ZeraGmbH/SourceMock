@@ -96,7 +96,7 @@ public class AMEParserTests
                 Assert.That(parsed.Phases[1].AngleVoltage, Is.EqualTo(120).Within(0.5));
                 Assert.That(parsed.Phases[2].AngleCurrent, Is.EqualTo(240).Within(0.5));
 
-                Assert.That(parsed.PhaseOrder, Is.EqualTo(123));
+                Assert.That(parsed.PhaseOrder, Is.EqualTo("123"));
             });
         }
         finally

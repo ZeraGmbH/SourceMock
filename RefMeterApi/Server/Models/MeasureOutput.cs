@@ -54,7 +54,7 @@ public class MeasureOutput
     /// <summary>
     /// Order of phases, default is 123.
     /// </summary>
-    public int? PhaseOrder { get; set; }
+    public string? PhaseOrder { get; set; }
 
     /// <summary>
     /// Individual values for each phase.

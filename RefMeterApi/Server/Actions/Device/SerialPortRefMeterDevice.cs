@@ -59,12 +59,14 @@ public class SerialPortRefMeterDevice : IRefMeterDevice
 
             /* Decode index and value - make sure that parsing is not messed by local operating system regional settings. */
             int index;
-            double value;
+            double value = 0;
 
             try
             {
                 index = int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
-                value = double.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture);
+
+                if (index != 27)
+                    value = double.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture);
             }
             catch (FormatException)
             {
@@ -165,7 +167,7 @@ public class SerialPortRefMeterDevice : IRefMeterDevice
                     response.ApparentPower = value;
                     break;
                 case 27:
-                    response.PhaseOrder = (int)value;
+                    response.PhaseOrder = match.Groups[2].Value;
                     break;
                 case 28:
                     response.Frequency = value;

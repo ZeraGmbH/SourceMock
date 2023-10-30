@@ -1,8 +1,75 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 using SerialPortProxy;
 
 namespace WebSamDeviceApis.Actions.SerialPort;
+
+static class AMEReplyEmulator
+{
+    private static readonly string[] MockData = {
+        "0;1.9996199E+01",
+        "1;1.9995480E+01",
+        "2;2.0000074E+01",
+        "3;9.9997595E-02",
+        "4;9.9997699E-02",
+        "5;1.0000440E-01",
+        "6;0.0000000E+00",
+        "7;1.1999798E+02",
+        "8;2.3999924E+02",
+        "9;7.7056885E-04",
+        "10;1.1999476E+02",
+        "11;2.3999344E+02",
+        "12;9.9965084E-01",
+        "13;9.9996138E-01",
+        "14;9.9992412E-01",
+        "15;1.9988739E+00",
+        "16;1.9994249E+00",
+        "17;1.9999436E+00",
+        "18;2.4177787E-05",
+        "19;-1.1213896E-04",
+        "20;-2.0453637E-04",
+        "21;1.9995722E+00",
+        "22;1.9995022E+00",
+        "23;2.0000954E+00",
+        "24;5.9982424E+00",
+        "25;-2.9249751E-04",
+        "26;5.9991698E+00",
+        "27;123",
+        "28;50.01",
+        "29;1.5582092E-01",
+        "30;1.3959724E-01",
+        "31;1.3618226E-01",
+        "32;2.0045177E-04",
+        "33;1.1796872E-04",
+        "34;9.6725911E-05",
+        "35;1",
+        "51;1.3298696E+00",
+        "52;8.5928971E-01",
+        "53;1.2193114E+00",
+        "54;2.2211032E+00",
+        "55;2.8615168E-01",
+        "56;2.7889857E-01",
+        "57;9.9984539E-01",
+    };
+
+    public static IEnumerable<string> GetReplies()
+    {
+        foreach (var reply in MockData)
+        {
+            /* Get the fallback value. */
+            var parts = reply.Split(";");
+            var index = int.Parse(parts[0], CultureInfo.InvariantCulture);
+            var num = double.Parse(parts[1], CultureInfo.InvariantCulture);
+
+            /* If a regular number just apply a random factor between 0.99 and 1.01 to the value. */
+            if (index != 27 && index != 35)
+                num *= Random.Shared.Next(99000, 101000) / 100000.0;
+
+            yield return $"{parts[0]};{num}";
+        }
+    }
+}
 
 /// <summary>
 /// Represents a single reply from the device.
@@ -99,49 +166,9 @@ public class SerialPortMock : ISerialPort
                 }
             case "AME":
                 {
-                    _replies.Enqueue("0;1.9996199E+01");
-                    _replies.Enqueue("1;1.9995480E+01");
-                    _replies.Enqueue("2;2.0000074E+01");
-                    _replies.Enqueue("3;9.9997595E-02");
-                    _replies.Enqueue("4;9.9997699E-02");
-                    _replies.Enqueue("5;1.0000440E-01");
-                    _replies.Enqueue("6;0.0000000E+00");
-                    _replies.Enqueue("7;1.1999798E+02");
-                    _replies.Enqueue("8;2.3999924E+02");
-                    _replies.Enqueue("9;7.7056885E-04");
-                    _replies.Enqueue("10;1.1999476E+02");
-                    _replies.Enqueue("11;2.3999344E+02");
-                    _replies.Enqueue("12;9.9965084E-01");
-                    _replies.Enqueue("13;9.9996138E-01");
-                    _replies.Enqueue("14;9.9992412E-01");
-                    _replies.Enqueue("15;1.9988739E+00");
-                    _replies.Enqueue("16;1.9994249E+00");
-                    _replies.Enqueue("17;1.9999436E+00");
-                    _replies.Enqueue("18;2.4177787E-05");
-                    _replies.Enqueue("19;-1.1213896E-04");
-                    _replies.Enqueue("20;-2.0453637E-04");
-                    _replies.Enqueue("21;1.9995722E+00");
-                    _replies.Enqueue("22;1.9995022E+00");
-                    _replies.Enqueue("23;2.0000954E+00");
-                    _replies.Enqueue("24;5.9982424E+00");
-                    _replies.Enqueue("25;-2.9249751E-04");
-                    _replies.Enqueue("26;5.9991698E+00");
-                    _replies.Enqueue("27;123");
-                    _replies.Enqueue("28;50.01");
-                    _replies.Enqueue("29;1.5582092E-01");
-                    _replies.Enqueue("30;1.3959724E-01");
-                    _replies.Enqueue("31;1.3618226E-01");
-                    _replies.Enqueue("32;2.0045177E-04");
-                    _replies.Enqueue("33;1.1796872E-04");
-                    _replies.Enqueue("34;9.6725911E-05");
-                    _replies.Enqueue("35;1");
-                    _replies.Enqueue("51;1.3298696E+00");
-                    _replies.Enqueue("52;8.5928971E-01");
-                    _replies.Enqueue("53;1.2193114E+00");
-                    _replies.Enqueue("54;2.2211032E+00");
-                    _replies.Enqueue("55;2.8615168E-01");
-                    _replies.Enqueue("56;2.7889857E-01");
-                    _replies.Enqueue("57;9.9984539E-01");
+                    foreach (var reply in AMEReplyEmulator.GetReplies())
+                        _replies.Enqueue(reply);
+
                     _replies.Enqueue(new QueueEntry("AMEACK", 1000));
                 }
                 break;

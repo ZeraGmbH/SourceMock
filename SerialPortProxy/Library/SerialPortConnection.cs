@@ -194,6 +194,16 @@ public class SerialPortConnection : IDisposable
                     return false;
                 }
 
+                /* Some special error code not yet finally understood. */
+                if (reply == "SER-UN")
+                {
+                    _logger.LogError($"Command {request.Command} reported SER-UN");
+
+                    request.Result.SetException(new ArgumentException(request.Command));
+
+                    return false;
+                }
+
                 /* Always remember the reply - even the terminating string. */
                 answer.Add(reply);
 

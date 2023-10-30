@@ -68,15 +68,13 @@ namespace WebSamDeviceApis.Controllers
                 case SourceResult.SUCCESS:
                     _logger.LogTrace("Loadpoint was successfully set.");
                     return Ok();
-                case SourceResult.SUCCESS_NOT_ACTIVATED:
-                    _logger.LogTrace("Loadpoint was successfully set but could not be activated.");
-                    return Ok();
                 case SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES:
                 case SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID:
                 case SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID:
                 case SourceResult.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS:
                 case SourceResult.LOADPOINT_NOT_SUITABLE_FREQUENCY_INVALID:
                 case SourceResult.LOADPOINT_ANGLE_INVALID:
+                case SourceResult.SUCCESS_NOT_ACTIVATED:
                     _logger.LogInformation(srcResult.ToString());
                     return Problem(
                         detail: srcResult.ToUserFriendlyString(),

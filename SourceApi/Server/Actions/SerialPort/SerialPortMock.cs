@@ -66,7 +66,7 @@ static class AMEReplyEmulator
             if (index != 27 && index != 35)
                 num *= Random.Shared.Next(99000, 101000) / 100000.0;
 
-            yield return $"{parts[0]};{num}";
+            yield return $"{parts[0]};{num.ToString(CultureInfo.InvariantCulture)}";
         }
     }
 }

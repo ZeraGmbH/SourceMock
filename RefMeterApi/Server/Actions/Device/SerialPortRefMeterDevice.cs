@@ -17,6 +17,9 @@ public class SerialPortRefMeterDevice : IRefMeterDevice
 
     private readonly ILogger<SerialPortRefMeterDevice> _logger;
 
+    /* Outstanding AME request - only works properly if the device instance is a singleton. */
+    private readonly ResponseShare<MeasureOutput> _actualValues;
+
     /// <summary>
     /// Initialize device manager.
     /// </summary>
@@ -26,16 +29,26 @@ public class SerialPortRefMeterDevice : IRefMeterDevice
     {
         _device = device;
         _logger = logger;
+
+        /* Setup caches for shared request results. */
+        _actualValues = new(CreateActualValueRequest);
     }
 
     /// <inheritdoc/>
-    public async Task<MeasureOutput> GetActualValues()
+    public Task<MeasureOutput> GetActualValues() => _actualValues.Execute();
+
+    /// <summary>
+    /// Begin reading the actual values - this may take some time.
+    /// </summary>
+    /// <returns>Task reading the actual values.</returns>
+    /// <exception cref="ArgumentException">Reply from the device was not recognized.</exception>
+    private async Task<MeasureOutput> CreateActualValueRequest()
     {
         /* Execute the request and get the answer from the device. */
         var replies = await _device.Execute(SerialPortRequest.Create("AME", "AMEACK"))[0];
 
         /* Make sure this is an AME reply sequence. */
-        if (replies.Length < 1 || replies[^1] != "AMEACK")
+        if (replies[^1] != "AMEACK")
             throw new ArgumentException("missing AMEACK", nameof(replies));
 
         /* Prepare response with three phases. */
@@ -52,6 +65,7 @@ public class SerialPortRefMeterDevice : IRefMeterDevice
 
             if (!match.Success)
             {
+                /* Report bad reply and ignore it. */
                 _logger.LogWarning($"bad reply {reply}");
 
                 continue;
@@ -70,6 +84,7 @@ public class SerialPortRefMeterDevice : IRefMeterDevice
             }
             catch (FormatException)
             {
+                /* Report bad number and ignore reply. */
                 _logger.LogWarning($"invalid number in reply {reply}");
 
                 continue;
@@ -77,6 +92,7 @@ public class SerialPortRefMeterDevice : IRefMeterDevice
 
             if (index < 0)
             {
+                /* Report bad number and ignore reply. */
                 _logger.LogWarning($"bad reply {reply}");
 
                 continue;

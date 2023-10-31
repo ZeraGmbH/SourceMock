@@ -6,41 +6,6 @@ using SerialPortProxy;
 
 namespace RefMeterApiTests;
 
-class ReplyMock : ISerialPort
-{
-    private readonly Queue<string> _queue = new();
-
-    private readonly string[] _replies;
-
-    public ReplyMock(params string[] replies)
-    {
-        _replies = replies;
-    }
-
-    public void Dispose()
-    {
-    }
-
-    public string ReadLine()
-    {
-        if (_queue.TryDequeue(out var reply))
-            return reply;
-
-        throw new TimeoutException("queue is empty");
-    }
-
-    public void WriteLine(string command)
-    {
-        switch (command)
-        {
-            case "AME":
-                Array.ForEach(this._replies, _queue.Enqueue);
-
-                break;
-        }
-    }
-}
-
 class DeviceLogger : ILogger<SerialPortRefMeterDevice>
 {
     class Scope : IDisposable
@@ -71,7 +36,7 @@ public class AMEParserTests
 
     private readonly DeviceLogger _deviceLogger = new();
 
-    private IRefMeterDevice CreateDevice(params string[] replies) => new SerialPortRefMeterDevice(SerialPortConnection.FromPortInstance(new ReplyMock(replies), _portLogger), _deviceLogger);
+    private IRefMeterDevice CreateDevice(params string[] replies) => new SerialPortRefMeterDevice(SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), _deviceLogger);
 
     [Test]
     public async Task Can_Parse_AME_Reply()
@@ -116,7 +81,7 @@ public class AMEParserTests
     {
         /* Use the regular logger. */
         var device = new SerialPortRefMeterDevice(
-            SerialPortConnection.FromPortInstance(new ReplyMock(new[] { reply, "AMEACK" }), _portLogger),
+            SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] { reply, "AMEACK" }), _portLogger),
             new NullLogger<SerialPortRefMeterDevice>()
         );
 
@@ -147,5 +112,21 @@ public class AMEParserTests
     public void Will_Detect_Missing_ACK()
     {
         Assert.ThrowsAsync<TimeoutException>(async () => await CreateDevice(new[] { "0;1" }).GetActualValues());
+    }
+
+    [Test]
+    public async Task Will_Cache_Request()
+    {
+        var device = new SerialPortRefMeterDevice(SerialPortConnection.FromMock<CountingMock>(_portLogger), _deviceLogger);
+
+        /* Since all task execute at the same time they all should get the same result. */
+        var first = await Task.WhenAll(Enumerable.Range(0, 10).Select(_ => device.GetActualValues()));
+
+        Array.ForEach(first, r => Assert.That(r.Frequency, Is.EqualTo(50)));
+
+        /* After all tasks complete a new request is necessary. */
+        var second = await Task.WhenAll(Enumerable.Range(0, 10).Select(_ => device.GetActualValues()));
+
+        Array.ForEach(second, r => Assert.That(r.Frequency, Is.EqualTo(51)));
     }
 }

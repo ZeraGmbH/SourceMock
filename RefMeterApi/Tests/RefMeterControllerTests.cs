@@ -7,36 +7,6 @@ using SerialPortProxy;
 
 namespace RefMeterApiTests;
 
-class PortMock : ISerialPort
-{
-    private static readonly string[] _replies = File.ReadAllLines(@"TestData/ameReply.txt");
-
-    private readonly Queue<string> _queue = new();
-
-    public void Dispose()
-    {
-    }
-
-    public string ReadLine()
-    {
-        if (_queue.TryDequeue(out var reply))
-            return reply;
-
-        throw new TimeoutException("queue is empty");
-    }
-
-    public void WriteLine(string command)
-    {
-        switch (command)
-        {
-            case "AME":
-                Array.ForEach(_replies, _queue.Enqueue);
-
-                break;
-        }
-    }
-}
-
 [TestFixture]
 public class RefMeterControllerTests
 {
@@ -47,7 +17,7 @@ public class RefMeterControllerTests
     [Test]
     public async Task Controller_Will_Decode_AME_Reply()
     {
-        using var port = SerialPortConnection.FromMock<PortMock>(_portLogger);
+        using var port = SerialPortConnection.FromMock<StandardPortMock>(_portLogger);
 
         var cut = new RefMeterController(new SerialPortRefMeterDevice(port, _deviceLogger));
 

@@ -42,8 +42,22 @@ public class ResponseShare<T>
         }
         finally
         {
-            lock (_lock)
-                _task = null;
+            /*
+                We have to process the reset of the active task
+                to avoid a possible race condition. In case the
+                Task created by the factory executes synchronously
+                (i.e. immediate on the current thread) the lock
+                is still hold by the caller (Execute). In this
+                situation the active task is reset here - which 
+                does nothing. In the next step Execute sets the
+                active task to the already completed task which
+                will never be released in the future.
+            */
+            ThreadPool.QueueUserWorkItem((state) =>
+            {
+                lock (_lock)
+                    _task = null;
+            });
         }
     }
 

@@ -37,8 +37,9 @@ jobs:
 
       - name: Run Unit-Tests
         run: |
-          dotnet test RefMeterApi
           dotnet test SourceApi --no-build
+          dotnet test Shared
+          dotnet test RefMeterApi
           dotnet test SerialPortProxy
 
       - name: Start Service for Acceptance Tests

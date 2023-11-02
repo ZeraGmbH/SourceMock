@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using DeviceApiSharedLibrary.Actions.Database;
 using DeviceApiSharedLibrary.Models;
 using DeviceApiSharedLibrary.Services;
+using DeviceApiLib.Actions.Database;
 
 namespace DeviceApiSharedLibraryTests;
 
@@ -13,28 +14,13 @@ class TestItem : DatabaseObject
     public string Name { get; set; } = null!;
 }
 
-class TestCollection : InMemoryCollection<TestItem>
-{
-    public TestCollection(ILogger<TestCollection> logger) : base(logger)
-    {
-    }
-}
-
-class MongoDbTestCollection : MongoDbCollection<TestItem>
-{
-    public override string CollectionName => "regular-collection";
-
-
-    public MongoDbTestCollection(IMongoDbDatabaseService service, ILogger<MongoDbTestCollection> logger) : base(service, logger)
-    {
-    }
-}
-
 public abstract class CollectionTests
 {
     protected abstract bool useMongoDb { get; }
 
     private IServiceProvider Services;
+
+    private IObjectCollection<TestItem> Collection;
 
     [SetUp]
     public async Task Setup()
@@ -60,27 +46,27 @@ public abstract class CollectionTests
             services.AddSingleton(configuration.GetSection("MongoDB").Get<MongoDbSettings>()!);
 
             services.AddSingleton<IMongoDbDatabaseService, MongoDbDatabaseService>();
-            services.AddSingleton<IObjectCollection<TestItem>, MongoDbTestCollection>();
+            services.AddSingleton(typeof(IObjectCollectionFactory<>), typeof(MongoDbCollectionFactory<>));
         }
         else
         {
-            services.AddSingleton<IObjectCollection<TestItem>, TestCollection>();
+            services.AddSingleton(typeof(IObjectCollectionFactory<>), typeof(InMemoryCollectionFactory<>));
         }
 
         Services = services.BuildServiceProvider();
 
-        await Services.GetService<IObjectCollection<TestItem>>()!.RemoveAll();
+        Collection = Services.GetService<IObjectCollectionFactory<TestItem>>()!.Create("regular-collection");
+
+        await Collection.RemoveAll();
     }
 
     [Test]
     public async Task Can_Add_Item()
     {
-        var cut = Services.GetService<IObjectCollection<TestItem>>();
-
-        Assert.That(cut, Is.Not.Null);
+        Assert.That(Collection, Is.Not.Null);
 
         var item = new TestItem() { Name = "Test 1" };
-        var added = await cut.AddItem(item, "autotest");
+        var added = await Collection.AddItem(item, "autotest");
 
         Assert.Multiple(() =>
         {
@@ -88,7 +74,7 @@ public abstract class CollectionTests
             Assert.That(added.Name, Is.EqualTo("Test 1"));
         });
 
-        var lookup = await cut.GetItem(item.Id);
+        var lookup = await Collection.GetItem(item.Id);
 
         Assert.That(lookup, Is.Not.SameAs(item));
         Assert.That(lookup, Is.Not.SameAs(added));
@@ -103,31 +89,27 @@ public abstract class CollectionTests
     [Test]
     public async Task Will_Detect_Duplicate_Item()
     {
-        var cut = Services.GetService<IObjectCollection<TestItem>>();
-
-        Assert.That(cut, Is.Not.Null);
+        Assert.That(Collection, Is.Not.Null);
 
         var item = new TestItem() { Name = "Test 2" };
 
-        await cut.AddItem(item, "autotest");
+        await Collection.AddItem(item, "autotest");
 
-        Assert.That(() => cut.AddItem(item, "autotest").Wait(), Throws.Exception);
+        Assert.That(() => Collection.AddItem(item, "autotest").Wait(), Throws.Exception);
     }
 
     [Test]
     public async Task Can_Update_Item()
     {
-        var cut = Services.GetService<IObjectCollection<TestItem>>();
-
-        Assert.That(cut, Is.Not.Null);
+        Assert.That(Collection, Is.Not.Null);
 
         var item = new TestItem() { Name = "Test 3" };
 
-        await cut.AddItem(item, "autotest");
+        await Collection.AddItem(item, "autotest");
 
         item.Name = "Test 4";
 
-        var updated = await cut.UpdateItem(item, "autotest");
+        var updated = await Collection.UpdateItem(item, "autotest");
 
         Assert.Multiple(() =>
         {
@@ -135,7 +117,7 @@ public abstract class CollectionTests
             Assert.That(updated.Name, Is.EqualTo("Test 4"));
         });
 
-        var lookup = await cut.GetItem(item.Id);
+        var lookup = await Collection.GetItem(item.Id);
 
         Assert.That(lookup, Is.Not.Null);
 
@@ -149,27 +131,23 @@ public abstract class CollectionTests
     [Test]
     public void May_Not_Update_Unknown_Item()
     {
-        var cut = Services.GetService<IObjectCollection<TestItem>>();
-
-        Assert.That(cut, Is.Not.Null);
+        Assert.That(Collection, Is.Not.Null);
 
         var item = new TestItem() { Name = "Test 5" };
 
-        Assert.ThrowsAsync<ArgumentException>(() => cut.UpdateItem(item, "autotest"));
+        Assert.ThrowsAsync<ArgumentException>(() => Collection.UpdateItem(item, "autotest"));
     }
 
     [Test]
     public async Task Can_Delete_Item()
     {
-        var cut = Services.GetService<IObjectCollection<TestItem>>();
-
-        Assert.That(cut, Is.Not.Null);
+        Assert.That(Collection, Is.Not.Null);
 
         var item = new TestItem() { Name = "Test 6" };
 
-        await cut.AddItem(item, "autotest");
+        await Collection.AddItem(item, "autotest");
 
-        var deleted = await cut.DeleteItem(item.Id, "autotest");
+        var deleted = await Collection.DeleteItem(item.Id, "autotest");
 
         Assert.Multiple(() =>
         {
@@ -177,7 +155,7 @@ public abstract class CollectionTests
             Assert.That(deleted.Name, Is.EqualTo("Test 6"));
         });
 
-        var lookup = await cut.GetItem(item.Id);
+        var lookup = await Collection.GetItem(item.Id);
 
         Assert.That(lookup, Is.Null);
     }
@@ -185,13 +163,11 @@ public abstract class CollectionTests
     [Test]
     public void Can_Not_Delete_Non_Existing_Item()
     {
-        var cut = Services.GetService<IObjectCollection<TestItem>>();
-
-        Assert.That(cut, Is.Not.Null);
+        Assert.That(Collection, Is.Not.Null);
 
         var item = new TestItem() { Name = "Test 7" };
 
-        Assert.That(() => cut.DeleteItem(item.Id, "autotest").Wait(), Throws.Exception);
+        Assert.That(() => Collection.DeleteItem(item.Id, "autotest").Wait(), Throws.Exception);
     }
 }
 

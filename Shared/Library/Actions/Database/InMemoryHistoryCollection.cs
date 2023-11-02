@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 using DeviceApiSharedLibrary.Models;
+using DeviceApiLib.Actions.Database;
 
 namespace DeviceApiSharedLibrary.Actions.Database;
 
@@ -10,7 +11,7 @@ namespace DeviceApiSharedLibrary.Actions.Database;
 /// In memory collection.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
-public abstract class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem> where TItem : DatabaseObject
+public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem> where TItem : DatabaseObject
 {
     private readonly ILogger<InMemoryHistoryCollection<TItem>> _logger;
 
@@ -31,7 +32,7 @@ public abstract class InMemoryHistoryCollection<TItem> : IHistoryCollection<TIte
     /// <param name="item">Some item.</param>
     /// <typeparam name="T">Type of the item to clone.</typeparam>
     /// <returns>Clone of the item.</returns>
-    private static T CloneItem<T>(T item)
+    public static T CloneItem<T>(T item)
     {
         /* Make us behave just like real implementations will do. */
         using var writer = new BsonDocumentWriter(new BsonDocument());
@@ -42,7 +43,7 @@ public abstract class InMemoryHistoryCollection<TItem> : IHistoryCollection<TIte
     }
 
     /// <inheritdoc/>
-    public virtual Task<TItem> AddItem(TItem item, string user)
+    public Task<TItem> AddItem(TItem item, string user)
     {
         /* Create all fields used for historisation. */
         var now = DateTime.Now;
@@ -71,7 +72,7 @@ public abstract class InMemoryHistoryCollection<TItem> : IHistoryCollection<TIte
     }
 
     /// <inheritdoc/>
-    public virtual Task<TItem> UpdateItem(TItem item, string user)
+    public Task<TItem> UpdateItem(TItem item, string user)
     {
         var now = DateTime.Now;
 
@@ -106,7 +107,7 @@ public abstract class InMemoryHistoryCollection<TItem> : IHistoryCollection<TIte
     }
 
     /// <inheritdoc/>
-    public virtual Task<TItem> DeleteItem(string id, string user)
+    public Task<TItem> DeleteItem(string id, string user)
     {
         /* Remove from dictionary. */
         lock (_data)
@@ -121,7 +122,7 @@ public abstract class InMemoryHistoryCollection<TItem> : IHistoryCollection<TIte
     }
 
     /// <inheritdoc/>
-    public virtual Task<IEnumerable<HistoryItem<TItem>>> GetHistory(string id)
+    public Task<IEnumerable<HistoryItem<TItem>>> GetHistory(string id)
     {
         /* Find in dictionary. */
         lock (_data)
@@ -153,5 +154,26 @@ public abstract class InMemoryHistoryCollection<TItem> : IHistoryCollection<TIte
         lock (_data)
             return _data.Values.Select(list => CloneItem(list[^1].Item)).ToArray().AsQueryable();
     }
+}
+
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TItem"></typeparam>
+public class InMemoryHistoryCollectionFactory<TItem> : IHistoryCollectionFactory<TItem> where TItem : DatabaseObject
+{
+    private readonly ILogger<InMemoryHistoryCollection<TItem>> _logger;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="logger"></param>
+    public InMemoryHistoryCollectionFactory(ILogger<InMemoryHistoryCollection<TItem>> logger)
+    {
+        _logger = logger;
+    }
+
+    /// <inheritdoc/>
+    public IHistoryCollection<TItem> Create(string uniqueName) => new InMemoryHistoryCollection<TItem>(_logger);
 }
 

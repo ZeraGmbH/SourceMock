@@ -5,6 +5,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using DeviceApiSharedLibrary.Models;
 using DeviceApiSharedLibrary.Services;
+using DeviceApiLib.Actions.Database;
 
 namespace DeviceApiSharedLibrary.Actions.Database;
 
@@ -12,7 +13,7 @@ namespace DeviceApiSharedLibrary.Actions.Database;
 /// MongoDb collection with automatic document history.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
-public abstract class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem> where TItem : DatabaseObject
+public sealed class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem> where TItem : DatabaseObject
 {
     /// <summary>
     /// Field added to each item containing history information.
@@ -26,7 +27,7 @@ public abstract class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem
     /// <summary>
     /// Name of the collection to use.
     /// </summary>
-    public abstract string CollectionName { get; }
+    public readonly string CollectionName;
 
     private string HistoryCollectionName => $"{CollectionName}-history";
 
@@ -39,18 +40,20 @@ public abstract class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem
     /// </summary>
     /// <param name="database">Database connection to use.</param>
     /// <param name="logger">Logging instance to use.</param>
-    public MongoDbHistoryCollection(IMongoDbDatabaseService database, ILogger<MongoDbHistoryCollection<TItem>> logger)
+    public MongoDbHistoryCollection(string collectionName, IMongoDbDatabaseService database, ILogger<MongoDbHistoryCollection<TItem>> logger)
     {
+        CollectionName = collectionName;
+
         _database = database;
         _logger = logger;
     }
 
-    private IMongoCollection<T> GetCollection<T>() => _database.Database.GetCollection<T>(CollectionName);
+    public IMongoCollection<T> GetCollection<T>() => _database.Database.GetCollection<T>(CollectionName);
 
-    private IMongoCollection<T> GetHistoryCollection<T>() => _database.Database.GetCollection<T>(HistoryCollectionName);
+    public IMongoCollection<T> GetHistoryCollection<T>() => _database.Database.GetCollection<T>(HistoryCollectionName);
 
     /// <inheritdoc/>
-    public virtual Task<TItem> AddItem(TItem item, string user)
+    public Task<TItem> AddItem(TItem item, string user)
     {
         /* Create all fields used for historisation. */
         var now = DateTime.Now;
@@ -68,7 +71,7 @@ public abstract class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem
     }
 
     /// <inheritdoc/>
-    public virtual async Task<TItem> UpdateItem(TItem item, string user)
+    public async Task<TItem> UpdateItem(TItem item, string user)
     {
         /* Apply history information. */
         var doc = item.ToBsonDocument();
@@ -104,7 +107,7 @@ public abstract class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem
     }
 
     /// <inheritdoc/>
-    public virtual async Task<TItem> DeleteItem(string id, string user)
+    public async Task<TItem> DeleteItem(string id, string user)
     {
         var self = GetCollection<BsonDocument>();
 
@@ -143,7 +146,7 @@ public abstract class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem
     /// </summary>
     /// <param name="id">Primary key of the document the history should be reported.</param>
     /// <returns>History of the document sorted by version descending - i.e. newest first.</returns>
-    public virtual Task<IEnumerable<HistoryItem<TItem>>> GetHistory(string id)
+    public Task<IEnumerable<HistoryItem<TItem>>> GetHistory(string id)
     {
         var pipeline = PipelineDefinitionBuilder
             /* Use raw BSON semantic to be more flexible on operations. */
@@ -184,5 +187,30 @@ public abstract class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem
 
     /// <inheritdoc/>
     public IQueryable<TItem> CreateQueryable() => GetCollection<TItem>().AsQueryable();
+}
+
+
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TItem"></typeparam>
+public class MongoDbHistoryCollectionFactory<TItem> : IHistoryCollectionFactory<TItem> where TItem : DatabaseObject
+{
+    private readonly ILogger<MongoDbHistoryCollection<TItem>> _logger;
+
+    private readonly IMongoDbDatabaseService _database;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="logger"></param>
+    public MongoDbHistoryCollectionFactory(IMongoDbDatabaseService database, ILogger<MongoDbHistoryCollection<TItem>> logger)
+    {
+        _database = database;
+        _logger = logger;
+    }
+
+    /// <inheritdoc/>
+    public IHistoryCollection<TItem> Create(string uniqueName) => new MongoDbHistoryCollection<TItem>(uniqueName, _database, _logger);
 }
 

@@ -4,6 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using DeviceApiSharedLibrary.Models;
 using DeviceApiSharedLibrary.Services;
+using DeviceApiLib.Actions.Database;
 
 namespace DeviceApiSharedLibrary.Actions.Database;
 
@@ -11,12 +12,12 @@ namespace DeviceApiSharedLibrary.Actions.Database;
 /// MongoDb collection.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
-public abstract class MongoDbCollection<TItem> : IObjectCollection<TItem> where TItem : DatabaseObject
+public sealed class MongoDbCollection<TItem> : IObjectCollection<TItem> where TItem : DatabaseObject
 {
     /// <summary>
     /// Name of the collection to use.
     /// </summary>
-    public abstract string CollectionName { get; }
+    public readonly string CollectionName;
 
     private readonly IMongoDbDatabaseService _database;
 
@@ -27,28 +28,30 @@ public abstract class MongoDbCollection<TItem> : IObjectCollection<TItem> where 
     /// </summary>
     /// <param name="database">Database connection to use.</param>
     /// <param name="logger">Logging instance to use.</param>
-    public MongoDbCollection(IMongoDbDatabaseService database, ILogger<MongoDbCollection<TItem>> logger)
+    public MongoDbCollection(string collectionName, IMongoDbDatabaseService database, ILogger<MongoDbCollection<TItem>> logger)
     {
+        CollectionName = collectionName;
+
         _database = database;
         _logger = logger;
     }
 
-    private IMongoCollection<T> GetCollection<T>() => _database.Database.GetCollection<T>(CollectionName);
+    public IMongoCollection<T> GetCollection<T>() => _database.Database.GetCollection<T>(CollectionName);
 
-    private IMongoCollection<TItem> GetCollection() => GetCollection<TItem>();
+    public IMongoCollection<TItem> GetCollection() => GetCollection<TItem>();
 
     /// <inheritdoc/>
-    public virtual Task<TItem> AddItem(TItem item, string user) => GetCollection()
+    public Task<TItem> AddItem(TItem item, string user) => GetCollection()
         .InsertOneAsync(item)
         .ContinueWith((task) => item, TaskContinuationOptions.OnlyOnRanToCompletion);
 
     /// <inheritdoc/>
-    public virtual Task<TItem> UpdateItem(TItem item, string user) => GetCollection()
+    public Task<TItem> UpdateItem(TItem item, string user) => GetCollection()
         .FindOneAndReplaceAsync(Builders<TItem>.Filter.Eq(nameof(DatabaseObject.Id), item.Id), item, new() { ReturnDocument = ReturnDocument.After })
         .ContinueWith(t => t.Result ?? throw new ArgumentException("item not found", nameof(item)), TaskContinuationOptions.OnlyOnRanToCompletion);
 
     /// <inheritdoc/>
-    public virtual Task<TItem> DeleteItem(string id, string user) => GetCollection()
+    public Task<TItem> DeleteItem(string id, string user) => GetCollection()
         .FindOneAndDeleteAsync(Builders<TItem>.Filter.Eq(nameof(DatabaseObject.Id), id))
         .ContinueWith(t => t.Result ?? throw new ArgumentException("item not found", nameof(id)), TaskContinuationOptions.OnlyOnRanToCompletion);
 
@@ -62,5 +65,29 @@ public abstract class MongoDbCollection<TItem> : IObjectCollection<TItem> where 
 
     /// <inheritdoc/>
     public IQueryable<TItem> CreateQueryable() => GetCollection().AsQueryable();
+}
+
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TItem"></typeparam>
+public class MongoDbCollectionFactory<TItem> : IObjectCollectionFactory<TItem> where TItem : DatabaseObject
+{
+    private readonly ILogger<MongoDbCollection<TItem>> _logger;
+
+    private readonly IMongoDbDatabaseService _database;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="logger"></param>
+    public MongoDbCollectionFactory(IMongoDbDatabaseService database, ILogger<MongoDbCollection<TItem>> logger)
+    {
+        _database = database;
+        _logger = logger;
+    }
+
+    /// <inheritdoc/>
+    public IObjectCollection<TItem> Create(string uniqueName) => new MongoDbCollection<TItem>(uniqueName, _database, _logger);
 }
 

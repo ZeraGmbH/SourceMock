@@ -6,6 +6,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using DeviceApiSharedLibrary.Actions.Database;
 using DeviceApiSharedLibrary.Models;
 using DeviceApiSharedLibrary.Services;
+using DeviceApiLib.Actions.Database;
 
 namespace DeviceApiSharedLibraryTests;
 
@@ -15,28 +16,13 @@ class HistoryTestItem : DatabaseObject
     public string Name { get; set; } = null!;
 }
 
-class HistoryTestCollection : InMemoryHistoryCollection<HistoryTestItem>
-{
-    public HistoryTestCollection(ILogger<HistoryTestCollection> logger) : base(logger)
-    {
-    }
-}
-
-class MongoDbHistoryTestCollection : MongoDbHistoryCollection<HistoryTestItem>
-{
-    public override string CollectionName => "history-collection";
-
-
-    public MongoDbHistoryTestCollection(IMongoDbDatabaseService service, ILogger<MongoDbHistoryTestCollection> logger) : base(service, logger)
-    {
-    }
-}
-
 public abstract class HistoryCollectionTests
 {
     protected abstract bool useMongoDb { get; }
 
     private IServiceProvider Services;
+
+    private IHistoryCollection<HistoryTestItem> Collection;
 
     [SetUp]
     public async Task Setup()
@@ -62,29 +48,29 @@ public abstract class HistoryCollectionTests
             services.AddSingleton(configuration.GetSection("MongoDB").Get<MongoDbSettings>()!);
 
             services.AddSingleton<IMongoDbDatabaseService, MongoDbDatabaseService>();
-            services.AddSingleton<IHistoryCollection<HistoryTestItem>, MongoDbHistoryTestCollection>();
+            services.AddSingleton(typeof(IHistoryCollectionFactory<>), typeof(MongoDbHistoryCollectionFactory<>));
         }
         else
         {
-            services.AddSingleton<IHistoryCollection<HistoryTestItem>, HistoryTestCollection>();
+            services.AddSingleton(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
         }
 
         services.AddSingleton<IObjectCollection<HistoryTestItem>>((s) => s.GetService<IHistoryCollection<HistoryTestItem>>()!);
 
         Services = services.BuildServiceProvider();
 
-        await Services.GetService<IObjectCollection<HistoryTestItem>>()!.RemoveAll();
+        Collection = Services.GetService<IHistoryCollectionFactory<HistoryTestItem>>()!.Create("history-collection");
+
+        await Collection.RemoveAll();
     }
 
     [Test]
     public async Task Can_Add_Item()
     {
-        var cut = Services.GetService<IHistoryCollection<HistoryTestItem>>();
-
-        Assert.That(cut, Is.Not.Null);
+        Assert.That(Collection, Is.Not.Null);
 
         var item = new HistoryTestItem() { Name = "Test 1" };
-        var added = await cut.AddItem(item, "autotest");
+        var added = await Collection.AddItem(item, "autotest");
 
         Assert.Multiple(() =>
         {
@@ -92,7 +78,7 @@ public abstract class HistoryCollectionTests
             Assert.That(added.Name, Is.EqualTo("Test 1"));
         });
 
-        var lookup = await cut.GetItem(item.Id);
+        var lookup = await Collection.GetItem(item.Id);
 
         Assert.That(lookup, Is.Not.SameAs(item));
         Assert.That(lookup, Is.Not.SameAs(added));
@@ -103,7 +89,7 @@ public abstract class HistoryCollectionTests
             Assert.That(lookup.Name, Is.EqualTo("Test 1"));
         });
 
-        var history = (await cut.GetHistory(item.Id)).ToArray();
+        var history = (await Collection.GetHistory(item.Id)).ToArray();
 
         Assert.That(history, Is.Not.Null);
         Assert.That(history.Length, Is.EqualTo(1));
@@ -124,31 +110,27 @@ public abstract class HistoryCollectionTests
     [Test]
     public async Task Will_Detect_Duplicate_Item()
     {
-        var cut = Services.GetService<IHistoryCollection<HistoryTestItem>>();
-
-        Assert.That(cut, Is.Not.Null);
+        Assert.That(Collection, Is.Not.Null);
 
         var item = new HistoryTestItem() { Name = "Test 2" };
 
-        await cut.AddItem(item, "autotest");
+        await Collection.AddItem(item, "autotest");
 
-        Assert.That(() => cut.AddItem(item, "autotest").Wait(), Throws.Exception);
+        Assert.That(() => Collection.AddItem(item, "autotest").Wait(), Throws.Exception);
     }
 
     [Test]
     public async Task Can_Update_Item()
     {
-        var cut = Services.GetService<IHistoryCollection<HistoryTestItem>>();
-
-        Assert.That(cut, Is.Not.Null);
+        Assert.That(Collection, Is.Not.Null);
 
         var item = new HistoryTestItem() { Name = "Test 3" };
 
-        await cut.AddItem(item, "autotest");
+        await Collection.AddItem(item, "autotest");
 
         item.Name = "Test 4";
 
-        var updated = await cut.UpdateItem(item, "updater");
+        var updated = await Collection.UpdateItem(item, "updater");
 
         Assert.Multiple(() =>
         {
@@ -156,7 +138,7 @@ public abstract class HistoryCollectionTests
             Assert.That(updated.Name, Is.EqualTo("Test 4"));
         });
 
-        var lookup = await cut.GetItem(item.Id);
+        var lookup = await Collection.GetItem(item.Id);
 
         Assert.That(lookup, Is.Not.Null);
 
@@ -166,7 +148,7 @@ public abstract class HistoryCollectionTests
             Assert.That(lookup.Name, Is.EqualTo("Test 4"));
         });
 
-        var history = (await cut.GetHistory(item.Id)).ToArray();
+        var history = (await Collection.GetHistory(item.Id)).ToArray();
 
         Assert.That(history, Is.Not.Null);
         Assert.That(history.Length, Is.EqualTo(2));
@@ -199,27 +181,23 @@ public abstract class HistoryCollectionTests
     [Test]
     public void May_Not_Update_Unknown_Item()
     {
-        var cut = Services.GetService<IHistoryCollection<HistoryTestItem>>();
-
-        Assert.That(cut, Is.Not.Null);
+        Assert.That(Collection, Is.Not.Null);
 
         var item = new HistoryTestItem() { Name = "Test 5" };
 
-        Assert.ThrowsAsync<ArgumentException>(() => cut.UpdateItem(item, "autotest"));
+        Assert.ThrowsAsync<ArgumentException>(() => Collection.UpdateItem(item, "autotest"));
     }
 
     [Test]
     public async Task Can_Delete_Item()
     {
-        var cut = Services.GetService<IHistoryCollection<HistoryTestItem>>();
-
-        Assert.That(cut, Is.Not.Null);
+        Assert.That(Collection, Is.Not.Null);
 
         var item = new HistoryTestItem() { Name = "Test 6" };
 
-        await cut.AddItem(item, "autotest");
+        await Collection.AddItem(item, "autotest");
 
-        var deleted = await cut.DeleteItem(item.Id, "autotest");
+        var deleted = await Collection.DeleteItem(item.Id, "autotest");
 
         Assert.Multiple(() =>
         {
@@ -227,11 +205,11 @@ public abstract class HistoryCollectionTests
             Assert.That(deleted.Name, Is.EqualTo("Test 6"));
         });
 
-        var lookup = await cut.GetItem(item.Id);
+        var lookup = await Collection.GetItem(item.Id);
 
         Assert.That(lookup, Is.Null);
 
-        var history = (await cut.GetHistory(item.Id)).ToArray();
+        var history = (await Collection.GetHistory(item.Id)).ToArray();
 
         Assert.That(history, Is.Not.Null);
         Assert.That(history.Length, Is.EqualTo(useMongoDb ? 2 : 0));
@@ -240,13 +218,11 @@ public abstract class HistoryCollectionTests
     [Test]
     public void Can_Not_Delete_Non_Existing_Item()
     {
-        var cut = Services.GetService<IHistoryCollection<HistoryTestItem>>();
-
-        Assert.That(cut, Is.Not.Null);
+        Assert.That(Collection, Is.Not.Null);
 
         var item = new HistoryTestItem() { Name = "Test 7" };
 
-        Assert.That(() => cut.DeleteItem(item.Id, "autotest").Wait(), Throws.Exception);
+        Assert.That(() => Collection.DeleteItem(item.Id, "autotest").Wait(), Throws.Exception);
     }
 }
 

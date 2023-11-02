@@ -4,6 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 using DeviceApiSharedLibrary.Models;
+using DeviceApiLib.Actions.Database;
 
 namespace DeviceApiSharedLibrary.Actions.Database;
 
@@ -11,7 +12,7 @@ namespace DeviceApiSharedLibrary.Actions.Database;
 /// In memory collection.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
-public abstract class InMemoryCollection<TItem> : IObjectCollection<TItem> where TItem : DatabaseObject
+public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where TItem : DatabaseObject
 {
     private readonly ILogger<InMemoryCollection<TItem>> _logger;
 
@@ -31,7 +32,7 @@ public abstract class InMemoryCollection<TItem> : IObjectCollection<TItem> where
     /// </summary>
     /// <param name="item">Some item.</param>
     /// <returns>Clone of the item.</returns>
-    private TItem CloneItem(TItem item)
+    public TItem CloneItem(TItem item)
     {
         /* Make us behave just like real implementations will do. */
         using var writer = new BsonDocumentWriter(new BsonDocument());
@@ -42,7 +43,7 @@ public abstract class InMemoryCollection<TItem> : IObjectCollection<TItem> where
     }
 
     /// <inheritdoc/>
-    public virtual Task<TItem> AddItem(TItem item, string user)
+    public Task<TItem> AddItem(TItem item, string user)
     {
         /* Always create a fully detached clone. */
         var clone = CloneItem(item);
@@ -57,7 +58,7 @@ public abstract class InMemoryCollection<TItem> : IObjectCollection<TItem> where
     }
 
     /// <inheritdoc/>
-    public virtual Task<TItem> UpdateItem(TItem item, string user)
+    public Task<TItem> UpdateItem(TItem item, string user)
     {
         /* Always create a fully detached clone. */
         var clone = CloneItem(item);
@@ -76,7 +77,7 @@ public abstract class InMemoryCollection<TItem> : IObjectCollection<TItem> where
     }
 
     /// <inheritdoc/>
-    public virtual Task<TItem> DeleteItem(string id, string user)
+    public Task<TItem> DeleteItem(string id, string user)
     {
         /* Remove from dictionary. */
         lock (_data)
@@ -110,5 +111,26 @@ public abstract class InMemoryCollection<TItem> : IObjectCollection<TItem> where
         lock (_data)
             return _data.Values.Select(CloneItem).ToArray().AsQueryable();
     }
+}
+
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TItem"></typeparam>
+public class InMemoryCollectionFactory<TItem> : IObjectCollectionFactory<TItem> where TItem : DatabaseObject
+{
+    private readonly ILogger<InMemoryCollection<TItem>> _logger;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="logger"></param>
+    public InMemoryCollectionFactory(ILogger<InMemoryCollection<TItem>> logger)
+    {
+        _logger = logger;
+    }
+
+    /// <inheritdoc/>
+    public IObjectCollection<TItem> Create(string uniqueName) => new InMemoryCollection<TItem>(_logger);
 }
 

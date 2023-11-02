@@ -1,3 +1,6 @@
+using DeviceApiLib.Actions.Database;
+
+using DeviceApiSharedLibrary.Actions.Database;
 using DeviceApiSharedLibrary.Models;
 using DeviceApiSharedLibrary.Services;
 
@@ -65,6 +68,13 @@ public static class Configuration
             {
                 services.AddSingleton(mongoDb);
                 services.AddSingleton<IMongoDbDatabaseService, MongoDbDatabaseService>();
+                services.AddSingleton(typeof(IObjectCollectionFactory<>), typeof(MongoDbCollectionFactory<>));
+                services.AddSingleton(typeof(IHistoryCollectionFactory<>), typeof(MongoDbHistoryCollectionFactory<>));
+            }
+            else
+            {
+                services.AddSingleton(typeof(IObjectCollectionFactory<>), typeof(InMemoryCollectionFactory<>));
+                services.AddSingleton(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
             }
         }
     }

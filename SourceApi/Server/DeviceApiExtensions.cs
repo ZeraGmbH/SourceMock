@@ -1,3 +1,6 @@
+using DeviceApiSharedLibrary.Models;
+using DeviceApiSharedLibrary.Services;
+
 using RefMeterApi.Actions.Device;
 
 using SerialPortProxy;
@@ -53,6 +56,16 @@ public static class Configuration
 
             services.AddSingleton<IRefMeterDevice, SerialPortRefMeterDevice>();
             services.AddSingleton<ISourceDevice, SerialPortSourceDevice>();
+        }
+
+        {
+            var mongoDb = configuration.GetSection("MongoDB").Get<MongoDbSettings>();
+
+            if (!string.IsNullOrEmpty(mongoDb?.ServerName) && !string.IsNullOrEmpty(mongoDb?.DatabaseName))
+            {
+                services.AddSingleton(mongoDb);
+                services.AddSingleton<IMongoDbDatabaseService, MongoDbDatabaseService>();
+            }
         }
     }
 }

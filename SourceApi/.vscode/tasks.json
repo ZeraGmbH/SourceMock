@@ -35,7 +35,10 @@
         "--project",
         "${workspaceFolder}/Server/WebSamDeviceApis.csproj"
       ],
-      "problemMatcher": "$msCompile"
+      "problemMatcher": "$msCompile",
+      "options": {
+        "env": { "ASPNETCORE_ENVIRONMENT": "Development" }
+      }
     }
   ]
 }

@@ -5,6 +5,8 @@ using DeviceApiSharedLibrary.Models;
 using DeviceApiSharedLibrary.Services;
 
 using RefMeterApi.Actions.Device;
+using RefMeterApi.Models;
+using RefMeterApi.Services;
 
 using SerialPortProxy;
 
@@ -76,6 +78,8 @@ public static class Configuration
                 services.AddSingleton(typeof(IObjectCollectionFactory<>), typeof(InMemoryCollectionFactory<>));
                 services.AddSingleton(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
             }
+
+            services.AddSingleton<IDeviceUnderTestStorage, DeviceUnderTestStorage>();
         }
     }
 }

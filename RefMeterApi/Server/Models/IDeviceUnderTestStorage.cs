@@ -16,10 +16,11 @@ public interface IDeviceUnderTestStorage
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="id"></param>
     /// <param name="device"></param>
     /// <param name="user"></param>
     /// <returns></returns>
-    Task<DeviceUnderTest> Update(DeviceUnderTest device, string user);
+    Task<DeviceUnderTest> Update(string id, NewDeviceUnderTest device, string user);
 
     /// <summary>
     /// 

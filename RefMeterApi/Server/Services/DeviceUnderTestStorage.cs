@@ -44,8 +44,12 @@ public class DeviceUnderTestStorage : IDeviceUnderTestStorage
         _collection.GetItem(id);
 
     /// <inheritdoc/>
-    public Task<DeviceUnderTest> Update(DeviceUnderTest device, string user) =>
-        _collection.UpdateItem(device, user);
+    public Task<DeviceUnderTest> Update(string id, NewDeviceUnderTest device, string user) =>
+        _collection.UpdateItem(new DeviceUnderTest
+        {
+            Id = id,
+            Name = device.Name
+        }, user);
 
     /// <inheritdoc/>
     public Task<DeviceUnderTest> Delete(string id, string user) =>

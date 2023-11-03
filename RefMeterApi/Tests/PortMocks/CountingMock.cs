@@ -1,6 +1,6 @@
 using SerialPortProxy;
 
-namespace RefMeterApiTests;
+namespace RefMeterApiTests.PortMocks;
 
 public class CountingMock : ISerialPort
 {

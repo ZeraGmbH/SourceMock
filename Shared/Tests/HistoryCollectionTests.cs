@@ -18,7 +18,7 @@ class HistoryTestItem : DatabaseObject
 
 public abstract class HistoryCollectionTests
 {
-    protected abstract bool useMongoDb { get; }
+    protected abstract bool UseMongoDb { get; }
 
     private IServiceProvider Services;
 
@@ -27,7 +27,7 @@ public abstract class HistoryCollectionTests
     [SetUp]
     public async Task Setup()
     {
-        if (useMongoDb && Environment.GetEnvironmentVariable("EXECUTE_MONGODB_NUNIT_TESTS") != "yes")
+        if (UseMongoDb && Environment.GetEnvironmentVariable("EXECUTE_MONGODB_NUNIT_TESTS") != "yes")
         {
             Assert.Ignore("not runnig database tests");
 
@@ -38,7 +38,7 @@ public abstract class HistoryCollectionTests
 
         services.AddLogging(l => l.AddProvider(NullLoggerProvider.Instance));
 
-        if (useMongoDb)
+        if (UseMongoDb)
         {
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -212,7 +212,7 @@ public abstract class HistoryCollectionTests
         var history = (await Collection.GetHistory(item.Id)).ToArray();
 
         Assert.That(history, Is.Not.Null);
-        Assert.That(history.Length, Is.EqualTo(useMongoDb ? 2 : 0));
+        Assert.That(history.Length, Is.EqualTo(UseMongoDb ? 2 : 0));
     }
 
     [Test]
@@ -229,11 +229,11 @@ public abstract class HistoryCollectionTests
 [TestFixture]
 public class InMemoryHistoryCollectionTests : HistoryCollectionTests
 {
-    protected override bool useMongoDb { get; } = false;
+    protected override bool UseMongoDb { get; } = false;
 }
 
 [TestFixture]
 public class MongoDbHistoryCollectionTests : HistoryCollectionTests
 {
-    protected override bool useMongoDb { get; } = true;
+    protected override bool UseMongoDb { get; } = true;
 }

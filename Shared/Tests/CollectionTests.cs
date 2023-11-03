@@ -16,7 +16,7 @@ class TestItem : DatabaseObject
 
 public abstract class CollectionTests
 {
-    protected abstract bool useMongoDb { get; }
+    protected abstract bool UseMongoDb { get; }
 
     private IServiceProvider Services;
 
@@ -25,7 +25,7 @@ public abstract class CollectionTests
     [SetUp]
     public async Task Setup()
     {
-        if (useMongoDb && Environment.GetEnvironmentVariable("EXECUTE_MONGODB_NUNIT_TESTS") != "yes")
+        if (UseMongoDb && Environment.GetEnvironmentVariable("EXECUTE_MONGODB_NUNIT_TESTS") != "yes")
         {
             Assert.Ignore("not runnig database tests");
 
@@ -36,7 +36,7 @@ public abstract class CollectionTests
 
         services.AddLogging(l => l.AddProvider(NullLoggerProvider.Instance));
 
-        if (useMongoDb)
+        if (UseMongoDb)
         {
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -174,11 +174,11 @@ public abstract class CollectionTests
 [TestFixture]
 public class InMemoryCollectionTests : CollectionTests
 {
-    protected override bool useMongoDb { get; } = false;
+    protected override bool UseMongoDb { get; } = false;
 }
 
 [TestFixture]
 public class MongoDbCollectionTests : CollectionTests
 {
-    protected override bool useMongoDb { get; } = true;
+    protected override bool UseMongoDb { get; } = true;
 }

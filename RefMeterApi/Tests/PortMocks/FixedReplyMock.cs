@@ -1,12 +1,17 @@
 using SerialPortProxy;
 
-namespace RefMeterApiTests;
+namespace RefMeterApiTests.PortMocks;
 
-public class StandardPortMock : ISerialPort
+public class FixedReplyMock : ISerialPort
 {
-    private static readonly string[] _replies = File.ReadAllLines(@"TestData/ameReply.txt");
-
     private readonly Queue<string> _queue = new();
+
+    private readonly string[] _replies;
+
+    public FixedReplyMock(params string[] replies)
+    {
+        _replies = replies;
+    }
 
     public void Dispose()
     {
@@ -25,7 +30,7 @@ public class StandardPortMock : ISerialPort
         switch (command)
         {
             case "AME":
-                Array.ForEach(_replies, _queue.Enqueue);
+                Array.ForEach(this._replies, _queue.Enqueue);
 
                 break;
         }

@@ -79,6 +79,69 @@ public abstract class DeviceUnderTestTests
         Assert.That(dut, Is.Not.Null);
         Assert.That(dut.Name, Is.EqualTo("Test1"));
     }
+
+    [Test]
+    public async Task Can_Update_A_Device_Under_Test()
+    {
+        var added = await _storage.Add(new NewDeviceUnderTest
+        {
+            Name = "Test1"
+        }, "autotest");
+
+        added.Name = "Test2";
+
+        var updated = await _storage.Update(added, "updated");
+
+        Assert.That(updated, Is.Not.Null);
+        Assert.That(updated.Name, Is.EqualTo("Test2"));
+
+        var dut = await _storage.Get(added.Id);
+
+        Assert.That(dut, Is.Not.Null);
+        Assert.That(dut.Name, Is.EqualTo("Test2"));
+    }
+
+    [Test]
+    public async Task Can_Deleted_A_Device_Under_Test()
+    {
+        var added = await _storage.Add(new NewDeviceUnderTest
+        {
+            Name = "Test1"
+        }, "autotest");
+
+        var deleted = await _storage.Delete(added.Id, "updated");
+
+        Assert.That(deleted, Is.Not.Null);
+        Assert.That(deleted.Name, Is.EqualTo("Test1"));
+
+        var dut = await _storage.Get(added.Id);
+
+        Assert.That(dut, Is.Null);
+    }
+
+    [Test]
+    public async Task Can_Query_Devices_Under_Test()
+    {
+        await _storage.Add(new NewDeviceUnderTest { Name = "Test Jochen" }, "autotest");
+        await _storage.Add(new NewDeviceUnderTest { Name = "Test Florian" }, "autotest");
+        await _storage.Add(new NewDeviceUnderTest { Name = "Test Tanja" }, "autotest");
+        await _storage.Add(new NewDeviceUnderTest { Name = "Test Marcel" }, "autotest");
+
+        var result = _storage
+            .Query()
+            .Where(dut => dut.Name.Contains("a"))
+            .OrderBy(dut => dut.Name)
+            .ToArray();
+
+        Assert.That(result.Length, Is.EqualTo(3));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0].Name, Is.EqualTo("Test Florian"));
+            Assert.That(result[1].Name, Is.EqualTo("Test Marcel"));
+            Assert.That(result[2].Name, Is.EqualTo("Test Tanja"));
+        });
+    }
 }
 
 [TestFixture]

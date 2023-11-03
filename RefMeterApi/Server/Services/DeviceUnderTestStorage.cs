@@ -32,12 +32,26 @@ public class DeviceUnderTestStorage : IDeviceUnderTestStorage
     }
 
     /// <inheritdoc/>
-    public Task<DeviceUnderTest> Add(NewDeviceUnderTest device, string user) => _collection.AddItem(new DeviceUnderTest
-    {
-        Id = Guid.NewGuid().ToString(),
-        Name = device.Name
-    }, user);
+    public Task<DeviceUnderTest> Add(NewDeviceUnderTest device, string user) =>
+        _collection.AddItem(new DeviceUnderTest
+        {
+            Id = Guid.NewGuid().ToString(),
+            Name = device.Name
+        }, user);
 
     /// <inheritdoc/>
-    public Task<DeviceUnderTest?> Get(string id) => _collection.GetItem(id);
+    public Task<DeviceUnderTest?> Get(string id) =>
+        _collection.GetItem(id);
+
+    /// <inheritdoc/>
+    public Task<DeviceUnderTest> Update(DeviceUnderTest device, string user) =>
+        _collection.UpdateItem(device, user);
+
+    /// <inheritdoc/>
+    public Task<DeviceUnderTest> Delete(string id, string user) =>
+        _collection.DeleteItem(id, user);
+
+    /// <inheritdoc/>
+    public IQueryable<DeviceUnderTest> Query() =>
+        _collection.CreateQueryable();
 }

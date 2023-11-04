@@ -50,11 +50,11 @@ public abstract class DeviceUnderTestTests
             services.AddSingleton(configuration.GetSection("MongoDB").Get<MongoDbSettings>()!);
 
             services.AddSingleton<IMongoDbDatabaseService, MongoDbDatabaseService>();
-            services.AddSingleton(typeof(IHistoryCollectionFactory<>), typeof(MongoDbHistoryCollectionFactory<>));
+            services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(MongoDbHistoryCollectionFactory<>));
         }
         else
         {
-            services.AddSingleton(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
+            services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
         }
 
         Services = services.BuildServiceProvider();

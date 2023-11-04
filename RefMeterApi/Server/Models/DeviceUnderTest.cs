@@ -24,13 +24,15 @@ public class NewDeviceUnderTest
 /// Describes a device under test.
 /// </summary>
 [BsonIgnoreExtraElements]
-public class DeviceUnderTest : DatabaseObject
+public class DeviceUnderTest : NewDeviceUnderTest, IDatabaseObject
 {
     /// <summary>
-    /// The name of the device.
+    /// Unique identifer of the object which can be used
+    /// as a primary key. Defaults to a new Guid.
     /// </summary>
-    [BsonElement("name")]
+    [BsonId]
     [Required]
     [NotNull]
-    public string Name { get; set; } = null!;
+    [MinLength(1)]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
 }

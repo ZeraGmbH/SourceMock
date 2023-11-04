@@ -70,13 +70,13 @@ public static class Configuration
             {
                 services.AddSingleton(mongoDb);
                 services.AddSingleton<IMongoDbDatabaseService, MongoDbDatabaseService>();
-                services.AddSingleton(typeof(IObjectCollectionFactory<>), typeof(MongoDbCollectionFactory<>));
-                services.AddSingleton(typeof(IHistoryCollectionFactory<>), typeof(MongoDbHistoryCollectionFactory<>));
+                services.AddTransient(typeof(IObjectCollectionFactory<>), typeof(MongoDbCollectionFactory<>));
+                services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(MongoDbHistoryCollectionFactory<>));
             }
             else
             {
-                services.AddSingleton(typeof(IObjectCollectionFactory<>), typeof(InMemoryCollectionFactory<>));
-                services.AddSingleton(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
+                services.AddTransient(typeof(IObjectCollectionFactory<>), typeof(InMemoryCollectionFactory<>));
+                services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
             }
 
             services.AddSingleton<IDeviceUnderTestStorage, DeviceUnderTestStorage>();

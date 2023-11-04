@@ -13,9 +13,10 @@ public class NewDeviceUnderTest
     /// <summary>
     /// The name of the device.
     /// </summary>
+    [BsonElement("name")]
     [Required]
-    [MinLength(1)]
     [NotNull]
+    [MinLength(1)]
     public string Name { get; set; } = null!;
 }
 

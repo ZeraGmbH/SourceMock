@@ -13,7 +13,7 @@ namespace RefMeterApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class DeviceUnterTestController : ControllerBase
+public class DeviceUnderTestController : ControllerBase
 {
     private readonly IDeviceUnderTestStorage _storage;
 
@@ -21,7 +21,7 @@ public class DeviceUnterTestController : ControllerBase
     /// 
     /// </summary>
     /// <param name="storage"></param>
-    public DeviceUnterTestController(IDeviceUnderTestStorage storage)
+    public DeviceUnderTestController(IDeviceUnderTestStorage storage)
     {
         _storage = storage;
     }

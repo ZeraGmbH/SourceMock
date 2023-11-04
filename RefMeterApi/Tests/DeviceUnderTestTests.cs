@@ -21,7 +21,7 @@ public abstract class DeviceUnderTestTests
 
     private IDeviceUnderTestStorage _storage;
 
-    private DeviceUnterTestController _controller;
+    private DeviceUnderTestController _controller;
 
     [SetUp]
     public async Task Setup()
@@ -38,7 +38,7 @@ public abstract class DeviceUnderTestTests
         services.AddLogging(l => l.AddProvider(NullLoggerProvider.Instance));
 
         services.AddSingleton<IDeviceUnderTestStorage, DeviceUnderTestStorage>();
-        services.AddScoped<DeviceUnterTestController, DeviceUnterTestController>();
+        services.AddScoped<DeviceUnderTestController, DeviceUnderTestController>();
 
         if (UseMongoDb)
         {
@@ -60,7 +60,7 @@ public abstract class DeviceUnderTestTests
         Services = services.BuildServiceProvider();
 
         _storage = Services.GetService<IDeviceUnderTestStorage>()!;
-        _controller = Services.GetService<DeviceUnterTestController>()!;
+        _controller = Services.GetService<DeviceUnderTestController>()!;
 
         await ((DeviceUnderTestStorage)_storage).Collection.RemoveAll();
     }

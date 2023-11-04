@@ -6,11 +6,24 @@ using DeviceApiSharedLibrary.Actions.Database;
 using DeviceApiSharedLibrary.Models;
 using DeviceApiSharedLibrary.Services;
 using DeviceApiLib.Actions.Database;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace DeviceApiSharedLibraryTests;
 
-class TestItem : DatabaseObject
+class TestItem : IDatabaseObject
 {
+    /// <summary>
+    /// Unique identifer of the object which can be used
+    /// as a primary key. Defaults to a new Guid.
+    /// </summary>
+    [BsonId]
+    [Required]
+    [NotNull]
+    [MinLength(1)]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+
     public string Name { get; set; } = null!;
 }
 
@@ -46,11 +59,11 @@ public abstract class CollectionTests
             services.AddSingleton(configuration.GetSection("MongoDB").Get<MongoDbSettings>()!);
 
             services.AddSingleton<IMongoDbDatabaseService, MongoDbDatabaseService>();
-            services.AddSingleton(typeof(IObjectCollectionFactory<>), typeof(MongoDbCollectionFactory<>));
+            services.AddTransient(typeof(IObjectCollectionFactory<>), typeof(MongoDbCollectionFactory<>));
         }
         else
         {
-            services.AddSingleton(typeof(IObjectCollectionFactory<>), typeof(InMemoryCollectionFactory<>));
+            services.AddTransient(typeof(IObjectCollectionFactory<>), typeof(InMemoryCollectionFactory<>));
         }
 
         Services = services.BuildServiceProvider();

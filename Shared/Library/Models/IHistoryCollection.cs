@@ -4,7 +4,7 @@ namespace DeviceApiSharedLibrary.Models;
 /// Base class for implementing historized collections.
 /// </summary>
 /// <typeparam name="T">Type of the item to use</typeparam>
-public interface IHistoryCollection<T> : IObjectCollection<T> where T : DatabaseObject
+public interface IHistoryCollection<T> : IObjectCollection<T> where T : IDatabaseObject
 {
     /// <summary>
     /// Find items and add the full history information.

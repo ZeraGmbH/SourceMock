@@ -7,12 +7,24 @@ using DeviceApiSharedLibrary.Actions.Database;
 using DeviceApiSharedLibrary.Models;
 using DeviceApiSharedLibrary.Services;
 using DeviceApiLib.Actions.Database;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DeviceApiSharedLibraryTests;
 
 [BsonIgnoreExtraElements]
-class HistoryTestItem : DatabaseObject
+class HistoryTestItem : IDatabaseObject
 {
+    /// <summary>
+    /// Unique identifer of the object which can be used
+    /// as a primary key. Defaults to a new Guid.
+    /// </summary>
+    [BsonId]
+    [Required]
+    [NotNull]
+    [MinLength(1)]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+
     public string Name { get; set; } = null!;
 }
 
@@ -48,11 +60,11 @@ public abstract class HistoryCollectionTests
             services.AddSingleton(configuration.GetSection("MongoDB").Get<MongoDbSettings>()!);
 
             services.AddSingleton<IMongoDbDatabaseService, MongoDbDatabaseService>();
-            services.AddSingleton(typeof(IHistoryCollectionFactory<>), typeof(MongoDbHistoryCollectionFactory<>));
+            services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(MongoDbHistoryCollectionFactory<>));
         }
         else
         {
-            services.AddSingleton(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
+            services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
         }
 
         services.AddSingleton<IObjectCollection<HistoryTestItem>>((s) => s.GetService<IHistoryCollection<HistoryTestItem>>()!);

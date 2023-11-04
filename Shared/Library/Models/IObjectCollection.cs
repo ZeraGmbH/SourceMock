@@ -16,7 +16,7 @@ public interface IObjectCollection
 /// Base class for implementing historized collections.
 /// </summary>
 /// <typeparam name="T">Type of the item to use</typeparam>
-public interface IObjectCollection<T> : IObjectCollection where T : DatabaseObject
+public interface IObjectCollection<T> : IObjectCollection where T : IDatabaseObject
 {
     /// <summary>
     /// Add a brand new document to the collection.

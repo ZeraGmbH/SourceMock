@@ -12,7 +12,7 @@ namespace DeviceApiSharedLibrary.Actions.Database;
 /// MongoDb collection.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
-public sealed class MongoDbCollection<TItem> : IObjectCollection<TItem> where TItem : DatabaseObject
+public sealed class MongoDbCollection<TItem> : IObjectCollection<TItem> where TItem : IDatabaseObject
 {
     /// <summary>
     /// Name of the collection to use.
@@ -47,12 +47,12 @@ public sealed class MongoDbCollection<TItem> : IObjectCollection<TItem> where TI
 
     /// <inheritdoc/>
     public Task<TItem> UpdateItem(TItem item, string user) => GetCollection()
-        .FindOneAndReplaceAsync(Builders<TItem>.Filter.Eq(nameof(DatabaseObject.Id), item.Id), item, new() { ReturnDocument = ReturnDocument.After })
+        .FindOneAndReplaceAsync(Builders<TItem>.Filter.Eq(nameof(IDatabaseObject.Id), item.Id), item, new() { ReturnDocument = ReturnDocument.After })
         .ContinueWith(t => t.Result ?? throw new ArgumentException("item not found", nameof(item)), TaskContinuationOptions.OnlyOnRanToCompletion);
 
     /// <inheritdoc/>
     public Task<TItem> DeleteItem(string id, string user) => GetCollection()
-        .FindOneAndDeleteAsync(Builders<TItem>.Filter.Eq(nameof(DatabaseObject.Id), id))
+        .FindOneAndDeleteAsync(Builders<TItem>.Filter.Eq(nameof(IDatabaseObject.Id), id))
         .ContinueWith(t => t.Result ?? throw new ArgumentException("item not found", nameof(id)), TaskContinuationOptions.OnlyOnRanToCompletion);
 
     /// <summary>
@@ -71,7 +71,7 @@ public sealed class MongoDbCollection<TItem> : IObjectCollection<TItem> where TI
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public class MongoDbCollectionFactory<TItem> : IObjectCollectionFactory<TItem> where TItem : DatabaseObject
+public class MongoDbCollectionFactory<TItem> : IObjectCollectionFactory<TItem> where TItem : IDatabaseObject
 {
     private readonly ILogger<MongoDbCollection<TItem>> _logger;
 

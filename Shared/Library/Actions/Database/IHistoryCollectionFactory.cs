@@ -6,7 +6,7 @@ namespace DeviceApiLib.Actions.Database;
 /// 
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IHistoryCollectionFactory<T> where T : DatabaseObject
+public interface IHistoryCollectionFactory<T> where T : IDatabaseObject
 {
     /// <summary>
     /// 

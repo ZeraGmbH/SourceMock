@@ -12,7 +12,7 @@ namespace DeviceApiSharedLibrary.Actions.Database;
 /// In memory collection.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
-public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where TItem : DatabaseObject
+public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where TItem : IDatabaseObject
 {
     private readonly ILogger<InMemoryCollection<TItem>> _logger;
 
@@ -117,7 +117,7 @@ public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where T
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public class InMemoryCollectionFactory<TItem> : IObjectCollectionFactory<TItem> where TItem : DatabaseObject
+public class InMemoryCollectionFactory<TItem> : IObjectCollectionFactory<TItem> where TItem : IDatabaseObject
 {
     private readonly ILogger<InMemoryCollection<TItem>> _logger;
 

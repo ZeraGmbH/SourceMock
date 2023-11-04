@@ -13,7 +13,7 @@ namespace DeviceApiSharedLibrary.Actions.Database;
 /// MongoDb collection with automatic document history.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
-public sealed class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem> where TItem : DatabaseObject
+public sealed class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem> where TItem : IDatabaseObject
 {
     /// <summary>
     /// Field added to each item containing history information.
@@ -102,7 +102,7 @@ public sealed class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem> 
 
         /* Must requery to get the current item - especially with the update version number. */
         return await GetCollection<TItem>()
-            .FindAsync(Builders<TItem>.Filter.Eq(nameof(DatabaseObject.Id), id))
+            .FindAsync(Builders<TItem>.Filter.Eq(nameof(IDatabaseObject.Id), id))
             .ContinueWith(task => task.Result.SingleOrDefault(), TaskContinuationOptions.OnlyOnRanToCompletion);
     }
 
@@ -194,7 +194,7 @@ public sealed class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem> 
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public class MongoDbHistoryCollectionFactory<TItem> : IHistoryCollectionFactory<TItem> where TItem : DatabaseObject
+public class MongoDbHistoryCollectionFactory<TItem> : IHistoryCollectionFactory<TItem> where TItem : IDatabaseObject
 {
     private readonly ILogger<MongoDbHistoryCollection<TItem>> _logger;
 

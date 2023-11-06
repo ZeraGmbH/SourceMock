@@ -69,7 +69,7 @@ public class SourceTests
         Assert.That(caps.FrequencyRanges[0].Min, Is.EqualTo(45));
     }
 
-    [TestCase(0.01, "SIPAMR010.000000.00S020.000120.00T030.000240.00")]
+    [TestCase(0.01, "SIPAAR000.010000.00S000.020120.00T000.030240.00")]
     [TestCase(0.5, "SIPAAR000.500000.00S001.000120.00T001.500240.00")]
     public async Task Can_Set_Valid_Loadpoint(double baseAngle, string current)
     {

@@ -24,6 +24,10 @@ public class StandardPortMock : ISerialPort
     {
         switch (command)
         {
+            case "ATI01":
+                _queue.Enqueue("ATIACK");
+
+                break;
             case "AME":
                 Array.ForEach(_replies, _queue.Enqueue);
 

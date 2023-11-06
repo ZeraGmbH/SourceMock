@@ -109,13 +109,15 @@ class QueueEntry
 /// </summary>
 public class SerialPortMock : ISerialPort
 {
-    private static readonly Regex _supCommand = new(@"^SUP([EA])([EA])R(\d{3}\.\d{3})(\d{3}\.\d{2})S(\d{3}\.\d{3})(\d{3}\.\d{2})T(\d{3}\.\d{3})(\d{3}\.\d{2})$");
+    private static readonly Regex SupCommand = new(@"^SUP([EA])([EA])R(\d{3}\.\d{3})(\d{3}\.\d{2})S(\d{3}\.\d{3})(\d{3}\.\d{2})T(\d{3}\.\d{3})(\d{3}\.\d{2})$");
 
-    private static readonly Regex _sipCommand = new(@"^SIP([EA])([AM])R(\d{3}\.\d{3})(\d{3}\.\d{2})S(\d{3}\.\d{3})(\d{3}\.\d{2})T(\d{3}\.\d{3})(\d{3}\.\d{2})$");
+    private static readonly Regex SipCommand = new(@"^SIP([EA])([AM])R(\d{3}\.\d{3})(\d{3}\.\d{2})S(\d{3}\.\d{3})(\d{3}\.\d{2})T(\d{3}\.\d{3})(\d{3}\.\d{2})$");
 
-    private static readonly Regex _sfrCommand = new(@"^SFR(\d{2}\.\d{2})$");
+    private static readonly Regex SfrCommand = new(@"^SFR(\d{2}\.\d{2})$");
 
-    private static readonly Regex _suiCommand = new(@"^SUI([AE])([AE])([AE])([AP])([AP])([AP])([AE])([AE])([AE])$");
+    private static readonly Regex SuiCommand = new(@"^SUI([AE])([AE])([AE])([AP])([AP])([AP])([AE])([AE])([AE])$");
+
+    private static readonly Regex AtiCommand = new(@"^ATI(0[1-9]|[1-9]\d)$");
 
     /// <summary>
     /// Outgoing messages.
@@ -174,14 +176,16 @@ public class SerialPortMock : ISerialPort
                 break;
             default:
                 {
-                    if (_supCommand.IsMatch(command))
+                    if (SupCommand.IsMatch(command))
                         _replies.Enqueue("SOKUP");
-                    else if (_sipCommand.IsMatch(command))
+                    else if (SipCommand.IsMatch(command))
                         _replies.Enqueue("SOKIP");
-                    else if (_sfrCommand.IsMatch(command))
+                    else if (SfrCommand.IsMatch(command))
                         _replies.Enqueue("SOKFR");
-                    else if (_suiCommand.IsMatch(command))
+                    else if (SuiCommand.IsMatch(command))
                         _replies.Enqueue(new QueueEntry("SOKUI", 5000));
+                    else if (AtiCommand.IsMatch(command))
+                        _replies.Enqueue("ATIACK");
 
                     break;
                 }

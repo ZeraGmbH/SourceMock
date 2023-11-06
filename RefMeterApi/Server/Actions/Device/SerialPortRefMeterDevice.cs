@@ -45,7 +45,10 @@ public class SerialPortRefMeterDevice : IRefMeterDevice
     private async Task<MeasureOutput> CreateActualValueRequest()
     {
         /* Execute the request and get the answer from the device. */
-        var replies = await _device.Execute(SerialPortRequest.Create("AME", "AMEACK"))[0];
+        var replies = await _device.Execute(
+            SerialPortRequest.Create("ATI01", "ATIACK"),
+            SerialPortRequest.Create("AME", "AMEACK")
+        )[1];
 
         /* Make sure this is an AME reply sequence. */
         if (replies[^1] != "AMEACK")

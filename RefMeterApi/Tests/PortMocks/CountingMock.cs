@@ -27,6 +27,10 @@ public class CountingMock : ISerialPort
     {
         switch (command)
         {
+            case "ATI01":
+                _queue.Enqueue("ATIACK");
+
+                break;
             case "AME":
                 _queue.Enqueue($"28;{_count++}");
                 _queue.Enqueue("AMEACK");

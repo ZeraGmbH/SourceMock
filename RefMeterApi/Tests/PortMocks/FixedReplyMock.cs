@@ -29,6 +29,10 @@ public class FixedReplyMock : ISerialPort
     {
         switch (command)
         {
+            case "ATI01":
+                _queue.Enqueue("ATIACK");
+
+                break;
             case "AME":
                 Array.ForEach(this._replies, _queue.Enqueue);
 

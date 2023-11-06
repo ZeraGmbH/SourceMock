@@ -15,15 +15,15 @@ public static class CapabilitiesMap
         Phases = new() {
                     new() {
                         Voltage = new(20, 500, 0.001),
-                        Current = new(0, 120, 0.01)
+                        Current = new(0, 120, 0.001)
                     },
                     new() {
                         Voltage = new(20, 500, 0.001),
-                        Current = new(0, 120, 0.01)
+                        Current = new(0, 120, 0.001)
                     },
                     new() {
                         Voltage = new(20, 500, 0.001),
-                        Current = new(0, 120, 0.01)
+                        Current = new(0, 120, 0.001)
                     }
                 },
         FrequencyRanges = new() {

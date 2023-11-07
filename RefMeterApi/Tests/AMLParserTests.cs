@@ -51,4 +51,40 @@ public class AMLParserTests
 
         Assert.That(modes.Length, Is.EqualTo(2));
     }
+
+    [TestCase("M=2WA", MeasurementModes.TwoWireActivePower)]
+    [TestCase("M=3WA", MeasurementModes.ThreeWireActivePower)]
+    [TestCase("M=4WA", MeasurementModes.FourWireActivePower)]
+    public async Task Can_Detect_Active_Mode(string modeAsString, MeasurementModes mode)
+    {
+        var device = new SerialPortRefMeterDevice(
+            SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] { modeAsString, "ASTACK" }), _portLogger),
+            new NullLogger<SerialPortRefMeterDevice>()
+        );
+
+        var reply = await device.GetActualMeasurementMode();
+
+        Assert.That(reply, Is.EqualTo(mode));
+    }
+
+    [TestCase("XX=12")]
+    [TestCase("M=")]
+    [TestCase("M=JOJO")]
+    public async Task Will_Detect_Unsupported_Mode(string reply)
+    {
+        var device = new SerialPortRefMeterDevice(
+            SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] {
+                "A=1",
+                reply,
+                "B=2",
+                "ASTACK"
+            }), _portLogger),
+            new NullLogger<SerialPortRefMeterDevice>()
+        );
+
+        var mode = await device.GetActualMeasurementMode();
+
+        Assert.That(mode, Is.Null);
+    }
 }
+

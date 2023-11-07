@@ -206,7 +206,7 @@ public class SerialPortMock : ISerialPort
                 {
                     _replies.Enqueue("UB=420");
                     _replies.Enqueue("IB=100");
-                    _replies.Enqueue("M=4WA");
+                    _replies.Enqueue("M=2WA");
                     _replies.Enqueue("PLL=U1");
                     _replies.Enqueue("UEB=--");
                     _replies.Enqueue("NIB=0");

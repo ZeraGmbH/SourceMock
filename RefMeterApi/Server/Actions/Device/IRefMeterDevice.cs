@@ -19,4 +19,10 @@ public interface IRefMeterDevice
     /// </summary>
     /// <returns></returns>
     Task<MeasurementModes[]> GetMeasurementModes();
+
+    /// <summary>
+    /// Get the active measurement mode.
+    /// </summary>
+    /// <returns>The currently active measurement mode.</returns>
+    Task<MeasurementModes?> GetActualMeasurementMode();
 }

@@ -37,13 +37,24 @@ public class RefMeterController : ControllerBase
         Utils.SafeExecuteSerialPortCommand(_device.GetActualValues);
 
     /// <summary>
-    /// Get the current measurement data.
+    /// Get the list of supported measurement modes.
     /// </summary>
-    /// <returns>The current data.</returns>
+    /// <returns>The list of modes.</returns>
     [HttpGet("MeasurementModes")]
     [SwaggerOperation(OperationId = "GetMeasurementModes")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<MeasurementModes[]>> GetMeasurementModes() =>
         Utils.SafeExecuteSerialPortCommand(_device.GetMeasurementModes);
+
+    /// <summary>
+    /// Get the current measurement mode.
+    /// </summary>
+    /// <returns>The current mode.</returns>
+    [HttpGet("MeasurementMode")]
+    [SwaggerOperation(OperationId = "GetMeasurementMode")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult<MeasurementModes?>> GetActualMeasurementMode() =>
+        Utils.SafeExecuteSerialPortCommand(_device.GetActualMeasurementMode);
 }

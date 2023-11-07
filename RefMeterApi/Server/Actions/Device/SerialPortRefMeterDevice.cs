@@ -53,6 +53,27 @@ public class SerialPortRefMeterDevice : IRefMeterDevice
     }
 
     /// <inheritdoc/>
+    public async Task<MeasurementModes?> GetActualMeasurementMode()
+    {
+        /* Execute the request and get the answer from the device. */
+        var replies = await _device.Execute(
+            SerialPortRequest.Create("AST", "ASTACK")
+        )[0];
+
+        /* Make sure this is an AME reply sequence. */
+        if (replies[^1] != "ASTACK")
+            throw new ArgumentException("missing ASTACK", nameof(replies));
+
+        /* Find the mode. */
+        var modeAsString = replies.SingleOrDefault(r => r.StartsWith("M="));
+
+        if (modeAsString == null)
+            return null;
+
+        return SupportedModes.TryGetValue(modeAsString.Substring(2), out var mode) ? mode : null;
+    }
+
+    /// <inheritdoc/>
     public Task<MeasureOutput> GetActualValues() => _actualValues.Execute();
 
     /// <inheritdoc/>

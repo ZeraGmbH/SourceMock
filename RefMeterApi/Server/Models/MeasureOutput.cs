@@ -28,7 +28,7 @@ public class MeasureOutputPhase
     /// <summary>
     /// [tbd]
     /// </summary>
-    public double? Angle { get; set; }
+    public double? PowerFactor { get; set; }
 
     /// <summary>
     /// Active power (W).

@@ -141,13 +141,13 @@ public class SerialPortRefMeterDevice : IRefMeterDevice
                     response.Phases[2].AngleCurrent = value;
                     break;
                 case 12:
-                    response.Phases[0].Angle = value;
+                    response.Phases[0].PowerFactor = value;
                     break;
                 case 13:
-                    response.Phases[1].Angle = value;
+                    response.Phases[1].PowerFactor = value;
                     break;
                 case 14:
-                    response.Phases[2].Angle = value;
+                    response.Phases[2].PowerFactor = value;
                     break;
                 case 15:
                     response.Phases[0].ActivePower = value;

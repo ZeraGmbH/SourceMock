@@ -33,32 +33,17 @@ public class RefMeterController : ControllerBase
     [SwaggerOperation(OperationId = "GetCurrentMeasure")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<MeasureOutput>> GetCurrentMeasureOutput()
-    {
-        try
-        {
-            return Ok(await _device.GetActualValues());
-        }
-        catch (TimeoutException)
-        {
-            return Problem(
-                detail: "Source operation timed out.",
-                statusCode: StatusCodes.Status500InternalServerError
-            );
-        }
-        catch (InvalidOperationException e)
-        {
-            return Problem(
-                detail: $"Unable to execute request: {e.Message}.",
-                statusCode: StatusCodes.Status500InternalServerError
-            );
-        }
-        catch (OperationCanceledException e)
-        {
-            return Problem(
-                detail: $"Execution has been cancelled: {e.Message}.",
-                statusCode: StatusCodes.Status500InternalServerError
-            );
-        }
-    }
+    public Task<ActionResult<MeasureOutput>> GetCurrentMeasureOutput() =>
+        Utils.SafeExecuteSerialPortCommand(_device.GetActualValues);
+
+    /// <summary>
+    /// Get the current measurement data.
+    /// </summary>
+    /// <returns>The current data.</returns>
+    [HttpGet("MeasurementModes")]
+    [SwaggerOperation(OperationId = "GetMeasurementModes")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult<MeasurementModes[]>> GetMeasurementModes() =>
+        Utils.SafeExecuteSerialPortCommand(_device.GetMeasurementModes);
 }

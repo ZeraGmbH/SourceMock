@@ -119,6 +119,8 @@ public class SerialPortMock : ISerialPort
 
     private static readonly Regex AtiCommand = new(@"^ATI(0[1-9]|[1-9]\d)$");
 
+    private static readonly Regex AmtCommand = new(@"^AMT.{1,4}$");
+
     /// <summary>
     /// Outgoing messages.
     /// </summary>
@@ -166,6 +168,7 @@ public class SerialPortMock : ISerialPort
 
                     break;
                 }
+            /* Read the current values. */
             case "AME":
                 {
                     foreach (var reply in AMEReplyEmulator.GetReplies())
@@ -174,18 +177,64 @@ public class SerialPortMock : ISerialPort
                     _replies.Enqueue(new QueueEntry("AMEACK", 1000));
                 }
                 break;
+            /* Read the list of supported measurement modes. */
+            case "AML":
+                {
+                    _replies.Enqueue("01;4WA;4LW");
+                    _replies.Enqueue("02;4WR;4LBE");
+                    _replies.Enqueue("03;4WRC;4LBK");
+                    _replies.Enqueue("04;4WAP;4LS");
+                    _replies.Enqueue("05;4WAb;4LWb");
+                    _replies.Enqueue("06;4WRb;4LBb");
+                    _replies.Enqueue("07;4WAPb;4LSb");
+                    _replies.Enqueue("08;3WA;3LW");
+                    _replies.Enqueue("09;3WR;3LBE");
+                    _replies.Enqueue("10;3WRCA;3LBKA");
+                    _replies.Enqueue("11;3WRCB;3LBKB");
+                    _replies.Enqueue("12;3WAP;3LS");
+                    _replies.Enqueue("13;2WA;2LW");
+                    _replies.Enqueue("14;2WR;2LB");
+                    _replies.Enqueue("15;2WAP;2LS");
+                    _replies.Enqueue("16;MQRef;MQRef");
+                    _replies.Enqueue("17;MQBase;MQBase");
+                    _replies.Enqueue("AMLACK");
+
+                    break;
+                }
+            /* Get the current status, esp. the measurement mode */
+            case "AST":
+                {
+                    _replies.Enqueue("UB=420");
+                    _replies.Enqueue("IB=100");
+                    _replies.Enqueue("M=4WA");
+                    _replies.Enqueue("PLL=U1");
+                    _replies.Enqueue("UEB=--");
+                    _replies.Enqueue("NIB=0");
+                    _replies.Enqueue("RDY=11-");
+                    _replies.Enqueue("ASTACK");
+
+                    break;
+                }
             default:
                 {
+                    /* Set voltage. */
                     if (SupCommand.IsMatch(command))
                         _replies.Enqueue("SOKUP");
+                    /* Set current.*/
                     else if (SipCommand.IsMatch(command))
                         _replies.Enqueue("SOKIP");
+                    /* Set frequency. */
                     else if (SfrCommand.IsMatch(command))
                         _replies.Enqueue("SOKFR");
+                    /* Activate phases. */
                     else if (SuiCommand.IsMatch(command))
                         _replies.Enqueue(new QueueEntry("SOKUI", 5000));
+                    /* Set integration time. */
                     else if (AtiCommand.IsMatch(command))
                         _replies.Enqueue("ATIACK");
+                    /* Set measurement mode. */
+                    else if (AmtCommand.IsMatch(command))
+                        _replies.Enqueue("AMTACK");
 
                     break;
                 }

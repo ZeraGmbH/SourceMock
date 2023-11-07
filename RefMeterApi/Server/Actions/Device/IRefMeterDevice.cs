@@ -13,4 +13,10 @@ public interface IRefMeterDevice
     /// </summary>
     /// <returns>All measurement data.</returns>
     Task<MeasureOutput> GetActualValues();
+
+    /// <summary>
+    /// Read all supported measurment modes.
+    /// </summary>
+    /// <returns></returns>
+    Task<MeasurementModes[]> GetMeasurementModes();
 }

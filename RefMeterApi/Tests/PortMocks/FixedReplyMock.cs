@@ -34,6 +34,7 @@ public class FixedReplyMock : ISerialPort
 
                 break;
             case "AME":
+            case "AML":
                 Array.ForEach(this._replies, _queue.Enqueue);
 
                 break;

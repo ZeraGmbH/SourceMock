@@ -121,6 +121,10 @@ public class SerialPortMock : ISerialPort
 
     private static readonly Regex AmtCommand = new(@"^AMT(.{1,4})$");
 
+    private static readonly Regex AdpCommand = new(@"^ADP\d{1,8};[0-4]$");
+
+    private static readonly Regex AdcCommand = new(@"^ADC[1-4]$");
+
     private string _measurementMode = "2WA";
 
     /// <summary>
@@ -217,6 +221,39 @@ public class SerialPortMock : ISerialPort
 
                     break;
                 }
+            /* Interrogage dosage or DOS mode status. */
+            case "ADS1":
+            case "ADS3":
+                {
+                    _replies.Enqueue("1");
+                    _replies.Enqueue("ADSACK");
+
+                    break;
+                }
+            /* Interrogage dosage energy. */
+            case "ADS5":
+                {
+                    _replies.Enqueue("0;0");
+                    _replies.Enqueue("ADSACK");
+
+                    break;
+                }
+            /* Interrogate dosage energy counter (downwards to 0). */
+            case "ADV4":
+                {
+                    _replies.Enqueue("0");
+                    _replies.Enqueue("ADVACK");
+
+                    break;
+                }
+            /* Interrogate dosage energy counter (upwards). */
+            case "ADV5":
+                {
+                    _replies.Enqueue("0");
+                    _replies.Enqueue("ADVACK");
+
+                    break;
+                }
             default:
                 {
                     /* Set voltage. */
@@ -234,9 +271,16 @@ public class SerialPortMock : ISerialPort
                     /* Set integration time. */
                     else if (AtiCommand.IsMatch(command))
                         _replies.Enqueue("ATIACK");
+                    /* Set energy for dosage. */
+                    else if (AdpCommand.IsMatch(command))
+                        _replies.Enqueue("ADPACK");
+                    /* Send dosage command. */
+                    else if (AdcCommand.IsMatch(command))
+                        _replies.Enqueue("ADCACK");
                     /* Set measurement mode. */
                     else
                     {
+                        /* On AMT remember the new measurement mode. */
                         var match = AmtCommand.Match(command);
 
                         if (match.Success)

@@ -25,4 +25,10 @@ public interface IRefMeterDevice
     /// </summary>
     /// <returns>The currently active measurement mode.</returns>
     Task<MeasurementModes?> GetActualMeasurementMode();
+
+    /// <summary>
+    /// Set the active measurement mode.
+    /// </summary>
+    /// <param name="mode">The new measurement mode.</param>
+    Task SetActualMeasurementMode(MeasurementModes mode);
 }

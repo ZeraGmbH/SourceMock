@@ -113,6 +113,21 @@ public class SerialPortRefMeterDevice : IRefMeterDevice
         return response.ToArray();
     }
 
+
+    /// <inheritdoc/>
+    public async Task SetActualMeasurementMode(MeasurementModes mode)
+    {
+        /* Reverse lookup the raw string for the mode - somewhat slow. */
+        var supported = SupportedModes.Single(m => m.Value == mode);
+
+        /* Send the command to the device. */
+        var replies = await _device.Execute(SerialPortRequest.Create($"AMT{supported.Key}", "AMTACK"))[0];
+
+        /* Minimal verification of reply. */
+        if (replies[^1] != "AMTACK")
+            throw new ArgumentException("missing AMTACK", nameof(mode));
+    }
+
     /// <summary>
     /// Begin reading the actual values - this may take some time.
     /// </summary>

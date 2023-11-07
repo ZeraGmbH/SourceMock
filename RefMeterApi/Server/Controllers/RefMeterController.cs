@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RefMeterApi.Actions.Device;
@@ -57,4 +58,14 @@ public class RefMeterController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<MeasurementModes?>> GetActualMeasurementMode() =>
         Utils.SafeExecuteSerialPortCommand(_device.GetActualMeasurementMode);
+
+    /// <summary>
+    /// Set the current measurement mode.
+    /// </summary>
+    [HttpPut("MeasurementMode")]
+    [SwaggerOperation(OperationId = "SetMeasurementMode")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult> SetActualMeasurementMode([FromBody] MeasurementModes mode) =>
+        Utils.SafeExecuteSerialPortCommand(() => _device.SetActualMeasurementMode(mode));
 }

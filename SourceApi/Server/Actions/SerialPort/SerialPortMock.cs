@@ -119,7 +119,9 @@ public class SerialPortMock : ISerialPort
 
     private static readonly Regex AtiCommand = new(@"^ATI(0[1-9]|[1-9]\d)$");
 
-    private static readonly Regex AmtCommand = new(@"^AMT.{1,4}$");
+    private static readonly Regex AmtCommand = new(@"^AMT(.{1,4})$");
+
+    private string _measurementMode = "2WA";
 
     /// <summary>
     /// Outgoing messages.
@@ -206,7 +208,7 @@ public class SerialPortMock : ISerialPort
                 {
                     _replies.Enqueue("UB=420");
                     _replies.Enqueue("IB=100");
-                    _replies.Enqueue("M=2WA");
+                    _replies.Enqueue($"M={_measurementMode}");
                     _replies.Enqueue("PLL=U1");
                     _replies.Enqueue("UEB=--");
                     _replies.Enqueue("NIB=0");
@@ -233,8 +235,17 @@ public class SerialPortMock : ISerialPort
                     else if (AtiCommand.IsMatch(command))
                         _replies.Enqueue("ATIACK");
                     /* Set measurement mode. */
-                    else if (AmtCommand.IsMatch(command))
-                        _replies.Enqueue("AMTACK");
+                    else
+                    {
+                        var match = AmtCommand.Match(command);
+
+                        if (match.Success)
+                        {
+                            _measurementMode = match.Groups[1].Value;
+
+                            _replies.Enqueue("AMTACK");
+                        }
+                    }
 
                     break;
                 }

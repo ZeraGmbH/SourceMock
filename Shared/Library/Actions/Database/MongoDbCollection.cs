@@ -26,6 +26,7 @@ public sealed class MongoDbCollection<TItem> : IObjectCollection<TItem> where TI
     /// <summary>
     /// Initializes a new collection.
     /// </summary>
+    /// <param name="collectionName"></param>
     /// <param name="database">Database connection to use.</param>
     /// <param name="logger">Logging instance to use.</param>
     public MongoDbCollection(string collectionName, IMongoDbDatabaseService database, ILogger<MongoDbCollection<TItem>> logger)
@@ -36,9 +37,9 @@ public sealed class MongoDbCollection<TItem> : IObjectCollection<TItem> where TI
         _logger = logger;
     }
 
-    public IMongoCollection<T> GetCollection<T>() => _database.Database.GetCollection<T>(CollectionName);
+    private IMongoCollection<T> GetCollection<T>() => _database.Database.GetCollection<T>(CollectionName);
 
-    public IMongoCollection<TItem> GetCollection() => GetCollection<TItem>();
+    private IMongoCollection<TItem> GetCollection() => GetCollection<TItem>();
 
     /// <inheritdoc/>
     public Task<TItem> AddItem(TItem item, string user) => GetCollection()
@@ -80,6 +81,7 @@ public class MongoDbCollectionFactory<TItem> : IObjectCollectionFactory<TItem> w
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="database"></param>
     /// <param name="logger"></param>
     public MongoDbCollectionFactory(IMongoDbDatabaseService database, ILogger<MongoDbCollection<TItem>> logger)
     {

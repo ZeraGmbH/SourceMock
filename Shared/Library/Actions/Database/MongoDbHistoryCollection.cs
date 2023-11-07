@@ -38,6 +38,7 @@ public sealed class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem> 
     /// <summary>
     /// Initializes a new collection.
     /// </summary>
+    /// <param name="collectionName"></param>
     /// <param name="database">Database connection to use.</param>
     /// <param name="logger">Logging instance to use.</param>
     public MongoDbHistoryCollection(string collectionName, IMongoDbDatabaseService database, ILogger<MongoDbHistoryCollection<TItem>> logger)
@@ -48,9 +49,9 @@ public sealed class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem> 
         _logger = logger;
     }
 
-    public IMongoCollection<T> GetCollection<T>() => _database.Database.GetCollection<T>(CollectionName);
+    private IMongoCollection<T> GetCollection<T>() => _database.Database.GetCollection<T>(CollectionName);
 
-    public IMongoCollection<T> GetHistoryCollection<T>() => _database.Database.GetCollection<T>(HistoryCollectionName);
+    private IMongoCollection<T> GetHistoryCollection<T>() => _database.Database.GetCollection<T>(HistoryCollectionName);
 
     /// <inheritdoc/>
     public Task<TItem> AddItem(TItem item, string user)
@@ -203,6 +204,7 @@ public class MongoDbHistoryCollectionFactory<TItem> : IHistoryCollectionFactory<
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="database"></param>
     /// <param name="logger"></param>
     public MongoDbHistoryCollectionFactory(IMongoDbDatabaseService database, ILogger<MongoDbHistoryCollection<TItem>> logger)
     {

@@ -52,6 +52,8 @@ builder.Services.UseDeviceApi(builder.Configuration);
 
 var app = builder.Build();
 
+app.UseDeviceApi();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

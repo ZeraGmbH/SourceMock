@@ -5,6 +5,7 @@ using DeviceApiSharedLibrary.Models;
 using DeviceApiSharedLibrary.Services;
 
 using RefMeterApi.Actions.Device;
+using RefMeterApi.Controllers;
 using RefMeterApi.Models;
 using RefMeterApi.Services;
 
@@ -19,9 +20,14 @@ namespace WebSamDeviceApis;
 
 public static class Configuration
 {
+    public static void UseDeviceApi(this IEndpointRouteBuilder app)
+    {
+        /* Register all SignalR (Web Socket) servers provided by the DeviceApi. */
+        app.MapHub<ScriptEngineHub>("/api/v1/ScriptEngine");
+    }
+
     public static void UseDeviceApi(this IServiceCollection services, IConfiguration configuration)
     {
-
         switch (configuration["SourceType"])
         {
             case "simulated":
@@ -80,6 +86,11 @@ public static class Configuration
             }
 
             services.AddSingleton<IDeviceUnderTestStorage, DeviceUnderTestStorage>();
+        }
+
+        {
+            // Use SignalR (Web Sockets).
+            services.AddSignalR();
         }
     }
 }

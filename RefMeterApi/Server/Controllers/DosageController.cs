@@ -52,7 +52,7 @@ public class DosageController : ControllerBase
     [SwaggerOperation(OperationId = "SetDOSMode")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetDOSMode([FromBody] bool on) => Utils.SafeExecuteSerialPortCommand(() => _device.SetDosageMode(on));
+    public Task<ActionResult> SetDOSMode(bool on) => Utils.SafeExecuteSerialPortCommand(() => _device.SetDosageMode(on));
 
     /// <summary>
     /// Read the current progress of a dosage operation.
@@ -72,5 +72,5 @@ public class DosageController : ControllerBase
     [SwaggerOperation(OperationId = "SetEnergy")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetEnergy([FromBody] double energy) => Utils.SafeExecuteSerialPortCommand(() => _device.SetDosageEnergy(energy));
+    public Task<ActionResult> SetEnergy(double energy) => Utils.SafeExecuteSerialPortCommand(() => _device.SetDosageEnergy(energy));
 }

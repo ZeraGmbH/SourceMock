@@ -66,6 +66,6 @@ public class RefMeterController : ControllerBase
     [SwaggerOperation(OperationId = "SetMeasurementMode")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetActualMeasurementMode([FromBody] MeasurementModes mode) =>
+    public Task<ActionResult> SetActualMeasurementMode(MeasurementModes mode) =>
         Utils.SafeExecuteSerialPortCommand(() => _device.SetActualMeasurementMode(mode));
 }

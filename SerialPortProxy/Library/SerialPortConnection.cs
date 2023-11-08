@@ -194,10 +194,10 @@ public class SerialPortConnection : IDisposable
                     return false;
                 }
 
-                /* Some special error code not yet finally understood. */
-                if (reply == "SER-UN")
+                /* Error handling for S commands. */
+                if (reply == "SERROR" || reply.StartsWith("SER-"))
                 {
-                    _logger.LogError($"Command {request.Command} reported SER-UN");
+                    _logger.LogError($"Command {request.Command} reported SER*");
 
                     request.Result.SetException(new ArgumentException(request.Command));
 
@@ -208,7 +208,7 @@ public class SerialPortConnection : IDisposable
                 answer.Add(reply);
 
                 /* If the terminating string is detected the reply from the device is complete. */
-                if (reply == request.End)
+                if (request.Match(reply))
                 {
                     _logger.LogDebug($"Command {request.Command} finished, replies: {answer.Count()}");
 

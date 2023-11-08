@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
@@ -20,7 +21,7 @@ class PortMock : ISerialPort
         if (_replies.TryDequeue(out var reply))
             return reply;
 
-        throw new TimeoutException("no reply in quuue");
+        throw new TimeoutException("no reply in queue");
     }
 
     public void WriteLine(string command)
@@ -31,6 +32,13 @@ class PortMock : ISerialPort
                 {
                     _replies.Enqueue("MT786V06.33");
                     _replies.Enqueue("AAVACK");
+
+                    break;
+                }
+            case "S3CM1":
+                {
+                    _replies.Enqueue("STUFF");
+                    _replies.Enqueue("SOK3CM1");
 
                     break;
                 }
@@ -56,6 +64,24 @@ public class ConnectionTests
         {
             Assert.That(reply[0], Is.EqualTo("MT786V06.33"));
             Assert.That(reply[1], Is.EqualTo("AAVACK"));
+        });
+    }
+
+    [Test]
+    public async Task Can_Detect_Parameters_On_Response()
+    {
+        using var cut = SerialPortConnection.FromMock<PortMock>(_logger);
+
+        var request = SerialPortRequest.Create("S3CM1", new Regex("^SOK3CM([1-4])$"));
+        var reply = await cut.Execute(request)[0];
+
+        Assert.That(reply, Has.Length.EqualTo(2));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(reply[0], Is.EqualTo("STUFF"));
+            Assert.That(reply[1], Is.EqualTo("SOK3CM1"));
+            Assert.That(request.EndMatch!.Groups[1].Value, Is.EqualTo("1"));
         });
     }
 }

@@ -1,85 +1,81 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using ZstdSharp.Unsafe;
 
 namespace RefMeterApi.Actions.Device;
 
 partial class SerialPortRefMeterDevice
 {
-    private static readonly Regex EnergyWithUnitReg = new Regex(@"^(.{1,8});([0-4])$");
-
     /// <inheritdoc/>
     public Task CancelDosage() =>
-        Task.WhenAll(_device.Execute(SerialPortRequest.Create("ADC2", "ADCACK")));
+        Task.WhenAll(_device.Execute(SerialPortRequest.Create("S3CM2", "SOK3CM2")));
 
     /// <inheritdoc/>
     public async Task<DosageProgress> GetDosageProgress()
     {
-        var commands = await Task.WhenAll(_device.Execute(
-            SerialPortRequest.Create("ADS5", "ADSACK"),
-            SerialPortRequest.Create("ADV4", "ADVACK"),
-            SerialPortRequest.Create("ADV5", "ADVACK")
-        ));
+        var active = SerialPortRequest.Create("S3SA1", new Regex(@"^SOK3SA1;([0123])$"));
+        var countdown = SerialPortRequest.Create("S3MA4", new Regex(@"^SOK3MA4;(.+)$"));
+        var progress = SerialPortRequest.Create("S3MA5", new Regex(@"^SOK3MA5;(.+)$"));
 
-        var totalWithUnit = EnergyWithUnitReg.Match(commands[0][0]);
-        var unit = int.Parse(totalWithUnit.Groups[2].Value, CultureInfo.InvariantCulture);
+        await Task.WhenAll(_device.Execute(active, countdown, progress));
 
-        return new DosageProgress
+        return new()
         {
-            Progress = double.Parse(commands[2][0], CultureInfo.InvariantCulture),
-            Remaining = double.Parse(commands[1][0], CultureInfo.InvariantCulture),
-            Total = double.Parse(totalWithUnit.Groups[1].Value, CultureInfo.InvariantCulture),
-            Unit =
-                unit == 0 ? EnergyUnits.MicroWattHours :
-                unit == 1 ? EnergyUnits.MilliWattHours :
-                unit == 2 ? EnergyUnits.WattHours :
-                unit == 3 ? EnergyUnits.KiloWattHours :
-                EnergyUnits.MegaWattHours
+            Active = active.EndMatch!.Groups[1].Value == "2",
+            Progress = (long)double.Parse(progress.EndMatch!.Groups[1].Value, CultureInfo.InvariantCulture),
+            Remaining = (long)double.Parse(countdown.EndMatch!.Groups[1].Value, CultureInfo.InvariantCulture),
         };
     }
 
-    /// <inheritdoc/>
-    public Task SetDosageEnergy(double value, EnergyUnits unit)
+    /// <summary>
+    /// Use the current status values from the device to calculate the 
+    /// meter constant.
+    /// </summary>
+    /// <returns>The current meter constant.</returns>
+    /// <exception cref="InvalidOperationException">Status is incomplete.</exception>
+    /// <exception cref="ArgumentException">Measuring mode not supported.</exception>
+    private async Task<double> GetCurrentMeterConstant()
     {
-        /* Coarse pre check for a maximum of 8 characters. */
-        if (value < 0 || value >= 1E8)
+        var reply = await _device.Execute(SerialPortRequest.Create("AST", "ASTACK"))[0];
+
+        double? voltage = null, current = null;
+        string? mode = null;
+
+        foreach (var value in reply)
+            if (value.StartsWith("UB="))
+                voltage = double.Parse(value.Substring(3), CultureInfo.InvariantCulture);
+            else if (value.StartsWith("IB="))
+                current = double.Parse(value.Substring(3), CultureInfo.InvariantCulture);
+            else if (value.StartsWith("M="))
+                mode = value.Substring(2);
+
+        if (!voltage.HasValue || !current.HasValue || string.IsNullOrEmpty(mode))
+            throw new InvalidOperationException("AST status incomplete");
+
+        var phases =
+            mode[0] == '4' ? 3d :
+            mode[0] == '3' ? 2d :
+            mode[0] == '2' ? 1d :
+            throw new ArgumentException($"unsupported measurement mode {mode}");
+
+        return 1000d * 3600d * 60000d / (phases * (double)voltage * (double)current);
+    }
+
+    /// <inheritdoc/>
+    public async Task SetDosageEnergy(double value)
+    {
+        if (value <= 0)
             throw new ArgumentOutOfRangeException(nameof(value));
 
-        /* Convert to string. */
-        var valueAsString = value.ToString(CultureInfo.InvariantCulture);
+        var meterConst = await GetCurrentMeterConstant();
+        var impulses = (long)Math.Round(meterConst * value);
 
-        /* If there is a dot at the very first position prepend a zero. */
-        var dot = valueAsString.IndexOf('.');
-
-        if (dot == 0)
-        {
-            valueAsString = $"0{valueAsString}";
-
-            dot = 1;
-        }
-
-        /* If the string has more than 8 characters we have to clip it. */
-        if (valueAsString.Length > 8)
-        {
-            /* Unable to clip without corrupting the value. */
-            if (dot < 0 || dot > 8)
-                throw new ArgumentOutOfRangeException(nameof(value));
-
-            /* This may lead to a slight rounding error. */
-            valueAsString = valueAsString.Substring(0, dot == 7 ? 7 : 8);
-        }
-
-        /* Translate the unit to a string. */
-        var unitAsString =
-            unit == EnergyUnits.MicroWattHours ? 0 :
-            unit == EnergyUnits.MilliWattHours ? 1 :
-            unit == EnergyUnits.WattHours ? 2 :
-            unit == EnergyUnits.KiloWattHours ? 3 :
-            unit == EnergyUnits.MegaWattHours ? 4 :
-            throw new ArgumentException(nameof(unit));
-
-        return _device.Execute(SerialPortRequest.Create($"ADP{valueAsString};{unitAsString}", "ADPACK"))[0];
+        await Task.WhenAll(_device.Execute(SerialPortRequest.Create($"S3PS46;{impulses:0000000000)}", "S3OKPS46")));
     }
 
     /// <inheritdoc/>
@@ -87,10 +83,10 @@ partial class SerialPortRefMeterDevice
     {
         var onAsNumber = on ? 3 : 4;
 
-        return Task.WhenAll(_device.Execute(SerialPortRequest.Create($"ADC{onAsNumber}", "ADCACK")));
+        return Task.WhenAll(_device.Execute(SerialPortRequest.Create($"S3CM{onAsNumber}", $"SOK3CM{onAsNumber}")));
     }
 
     /// <inheritdoc/>
     public Task StartDosage() =>
-        Task.WhenAll(_device.Execute(SerialPortRequest.Create("ADC1", "ADCACK")));
+        Task.WhenAll(_device.Execute(SerialPortRequest.Create("S3CM1", "SOK3CM1")));
 }

@@ -41,9 +41,8 @@ public interface IRefMeterDevice
     /// <summary>
     /// Define the dosage energy.
     /// </summary>
-    /// <param name="value">Value in units.</param>
-    /// <param name="unit">Unit to use.</param>
-    Task SetDosageEnergy(double value, EnergyUnits unit);
+    /// <param name="value">Value in kWH.</param>
+    Task SetDosageEnergy(double value);
 
     /// <summary>
     /// Start a dosage measurement.

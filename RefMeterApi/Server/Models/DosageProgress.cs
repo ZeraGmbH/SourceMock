@@ -1,27 +1,22 @@
 namespace RefMeterApi.Models;
 
 /// <summary>
-/// Report the progress of the latests dosage measurement.
+/// Report the progress of the latest dosage measurement.
 /// </summary>
 public class DosageProgress
 {
     /// <summary>
-    /// Remaining energy for the current measurment.
+    /// Set if a dosage measurement is currently active.
     /// </summary>
-    public double Remaining { get; set; }
+    public bool Active { get; set; }
 
     /// <summary>
-    /// Energy provided so far in the current measurement.
+    /// Remaining count for the current measurment.
     /// </summary>
-    public double Progress { get; set; }
+    public long Remaining { get; set; }
 
     /// <summary>
-    /// Total energy for the current measurement.
+    /// Count provided so far in the current measurement.
     /// </summary>
-    public double Total { get; set; }
-
-    /// <summary>
-    /// Unit to use for all energy values.
-    /// </summary>
-    public EnergyUnits Unit { get; set; }
+    public long Progress { get; set; }
 }

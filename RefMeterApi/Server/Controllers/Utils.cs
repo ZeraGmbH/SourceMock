@@ -44,6 +44,14 @@ class Utils
                 Status = StatusCodes.Status500InternalServerError
             });
         }
+        catch (ArgumentException e)
+        {
+            return new ObjectResult(new ProblemDetails
+            {
+                Detail = $"Unable to execute request: {e.Message}.",
+                Status = StatusCodes.Status500InternalServerError
+            });
+        }
         catch (OperationCanceledException e)
         {
             return new ObjectResult(new ProblemDetails

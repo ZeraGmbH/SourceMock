@@ -20,11 +20,11 @@ public static class LoadpointTranslator
     {
         var requests = new List<SerialPortRequest>();
 
+        CreateFrequencyRequests(loadpoint, requests);
+
         CreateVoltageRequests(loadpoint, requests);
 
         CreateCurrentRequests(loadpoint, requests);
-
-        CreateFrequencyRequests(loadpoint, requests);
 
         CreatePhaseRequests(loadpoint, requests);
 
@@ -65,7 +65,7 @@ public static class LoadpointTranslator
         request.Append('A');
 
         /* Set U-Dos. */
-        request.Append('A');
+        request.Append('E');
 
         /* Process all phases. */
         for (var i = 0; i < 3; i++)

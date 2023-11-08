@@ -100,7 +100,7 @@ public class SourceTests
         Assert.That(result, Is.EqualTo(SourceResult.SUCCESS));
 
         Assert.That(PortMock.Commands, Is.EqualTo(new string[] {
-            "SUPAAR220.000000.00S221.000120.00T222.000240.00",
+            "SUPAER220.000000.00S221.000120.00T222.000240.00",
             current,
             "SFR50.00",
             "SUIEAEPPAAAA"

@@ -41,7 +41,7 @@ public interface IRefMeterDevice
     /// <summary>
     /// Define the dosage energy.
     /// </summary>
-    /// <param name="value">Value in kWH.</param>
+    /// <param name="value">Value in Wh.</param>
     Task SetDosageEnergy(double value);
 
     /// <summary>

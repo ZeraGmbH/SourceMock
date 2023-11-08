@@ -82,6 +82,6 @@ public class DosageTests
 
         await device.SetDosageEnergy(energy);
 
-        Assert.That(mock.Commands[1], Is.EqualTo($"S3PS46;{(long)(6000E5 * energy):0000000000}"));
+        Assert.That(mock.Commands[1], Is.EqualTo($"S3PS46;{(long)(6000E5 * energy / 1000d):0000000000}"));
     }
 }

@@ -69,11 +69,11 @@ partial class SerialPortRefMeterDevice
     /// <inheritdoc/>
     public async Task SetDosageEnergy(double value)
     {
-        if (value <= 0)
+        if (value < 0)
             throw new ArgumentOutOfRangeException(nameof(value));
 
         var meterConst = await GetCurrentMeterConstant();
-        var impulses = (long)Math.Round(meterConst * value);
+        var impulses = (long)Math.Round(meterConst * value / 1000d);
 
         await Task.WhenAll(_device.Execute(SerialPortRequest.Create($"S3PS46;{impulses:0000000000}", "SOK3PS46")));
     }

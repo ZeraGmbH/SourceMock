@@ -121,6 +121,8 @@ public class SerialPortMock : ISerialPort
 
     private static readonly Regex AmtCommand = new(@"^AMT(.{1,4})$");
 
+    private static readonly Regex S3ps46Command = new(@"^S3PS46;(.+)$");
+
     private string _measurementMode = "2WA";
 
     /// <summary>
@@ -217,17 +219,52 @@ public class SerialPortMock : ISerialPort
 
                     break;
                 }
+            /* Start dosage. */
+            case "S3CM1":
+                {
+                    _replies.Enqueue("SOK3CM1");
+
+                    break;
+                }
+            /* Abort dosage. */
+            case "S3CM2":
+                {
+                    _replies.Enqueue("SOK3CM2");
+
+                    break;
+                }
             /* Set DOS mode. */
             case "S3CM3":
                 {
-                    _replies.Enqueue("S3OKCM3");
+                    _replies.Enqueue("SOK3CM3");
 
                     break;
                 }
             /* Reset DOS mode. */
             case "S3CM4":
                 {
-                    _replies.Enqueue("S3OKCM4");
+                    _replies.Enqueue("SOK3CM4");
+
+                    break;
+                }
+            /* Read dosage status. */
+            case "S3SA1":
+                {
+                    _replies.Enqueue("SOK3SA1;1");
+
+                    break;
+                }
+            /* Read remaining pulses. */
+            case "S3MA4":
+                {
+                    _replies.Enqueue("SOK3MA4;130129");
+
+                    break;
+                }
+            /* Read pulses processed. */
+            case "S3MA5":
+                {
+                    _replies.Enqueue("SOK3MA5;26671");
 
                     break;
                 }
@@ -248,6 +285,9 @@ public class SerialPortMock : ISerialPort
                     /* Set integration time. */
                     else if (AtiCommand.IsMatch(command))
                         _replies.Enqueue("ATIACK");
+                    /* Set dosage energy. */
+                    else if (S3ps46Command.IsMatch(command))
+                        _replies.Enqueue("SOK3PS46");
                     /* Set measurement mode. */
                     else
                     {

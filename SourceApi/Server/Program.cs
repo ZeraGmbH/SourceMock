@@ -1,8 +1,13 @@
+using DeviceApiSharedLibrary.Services;
+
 using Microsoft.OpenApi.Models;
 
-using System.Reflection;
+using RefMeterApi.Controllers;
+
+using SerialPortProxy;
 
 using WebSamDeviceApis;
+using WebSamDeviceApis.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +29,13 @@ builder.Services.AddSwaggerGen(options =>
             Url = new Uri("https://www.zera.de/en/contact/")
         }
     });
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(MongoDbDatabaseService).Assembly.GetName().Name}.xml"));
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(RefMeterController).Assembly.GetName().Name}.xml"));
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SerialPortConnection).Assembly.GetName().Name}.xml"));
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SourceController).Assembly.GetName().Name}.xml"));
+
+    options.UseDeviceApi();
 });
 
 builder.Services.AddApiVersioning();

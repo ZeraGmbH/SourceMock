@@ -254,6 +254,13 @@ public class SerialPortMock : ISerialPort
 
                     break;
                 }
+            /* Read total number of impulses. */
+            case "S3SA5":
+                {
+                    _replies.Enqueue("SOK3SA5;1127813");
+
+                    break;
+                }
             /* Read remaining pulses. */
             case "S3MA4":
                 {

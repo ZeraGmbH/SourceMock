@@ -1,11 +1,7 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RefMeterApi.Models;
 using SerialPortProxy;
-using ZstdSharp.Unsafe;
 
 namespace RefMeterApi.Actions.Device;
 
@@ -21,14 +17,16 @@ partial class SerialPortRefMeterDevice
         var active = SerialPortRequest.Create("S3SA1", new Regex(@"^SOK3SA1;([0123])$"));
         var countdown = SerialPortRequest.Create("S3MA4", new Regex(@"^SOK3MA4;(.+)$"));
         var progress = SerialPortRequest.Create("S3MA5", new Regex(@"^SOK3MA5;(.+)$"));
+        var total = SerialPortRequest.Create("S3SA5", new Regex(@"^SOK3SA5;(.+)$"));
 
-        await Task.WhenAll(_device.Execute(active, countdown, progress));
+        await Task.WhenAll(_device.Execute(active, countdown, progress, total));
 
         return new()
         {
             Active = active.EndMatch!.Groups[1].Value == "2",
             Progress = (long)double.Parse(progress.EndMatch!.Groups[1].Value, CultureInfo.InvariantCulture),
             Remaining = (long)double.Parse(countdown.EndMatch!.Groups[1].Value, CultureInfo.InvariantCulture),
+            Total = (long)double.Parse(total.EndMatch!.Groups[1].Value, CultureInfo.InvariantCulture),
         };
     }
 

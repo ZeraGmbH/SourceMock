@@ -52,7 +52,8 @@ public class DosageTests
         var progress = await CreateDevice(new[] {
             $"SOK3SA1;{dosage}",
             $"SOK3MA4;{remaining}",
-            "SOK3MA5;303541"
+            "SOK3MA5;303541",
+            "SOK3SA5;218375",
         }).GetDosageProgress();
 
         Assert.Multiple(() =>
@@ -60,6 +61,7 @@ public class DosageTests
             Assert.That(progress.Active, Is.EqualTo(dosage == 2));
             Assert.That(progress.Remaining, Is.EqualTo(double.Parse(remaining, CultureInfo.InvariantCulture)));
             Assert.That(progress.Progress, Is.EqualTo(303541));
+            Assert.That(progress.Total, Is.EqualTo(218375));
         });
     }
 

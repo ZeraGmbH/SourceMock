@@ -19,4 +19,9 @@ public class DosageProgress
     /// Count provided so far in the current measurement.
     /// </summary>
     public long Progress { get; set; }
+
+    /// <summary>
+    /// Total number of requested pulses.
+    /// </summary>
+    public long Total { get; set; }
 }

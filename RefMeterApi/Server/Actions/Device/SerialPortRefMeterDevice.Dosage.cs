@@ -75,7 +75,7 @@ partial class SerialPortRefMeterDevice
         var meterConst = await GetCurrentMeterConstant();
         var impulses = (long)Math.Round(meterConst * value);
 
-        await Task.WhenAll(_device.Execute(SerialPortRequest.Create($"S3PS46;{impulses:0000000000)}", "S3OKPS46")));
+        await Task.WhenAll(_device.Execute(SerialPortRequest.Create($"S3PS46;{impulses:0000000000}", "SOK3PS46")));
     }
 
     /// <inheritdoc/>

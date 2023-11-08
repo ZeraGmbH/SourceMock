@@ -2,13 +2,15 @@ using SerialPortProxy;
 
 namespace RefMeterApiTests.PortMocks;
 
-public class FixedReplyMock : ISerialPort
+public class CommandPeekMock : ISerialPort
 {
     private readonly Queue<string> _queue = new();
 
     private readonly string[] _replies;
 
-    public FixedReplyMock(params string[] replies)
+    public readonly List<string> Commands = new();
+
+    public CommandPeekMock(params string[] replies)
     {
         _replies = replies;
     }
@@ -25,6 +27,10 @@ public class FixedReplyMock : ISerialPort
         throw new TimeoutException("queue is empty");
     }
 
-    public void WriteLine(string command) =>
+    public void WriteLine(string command)
+    {
+        Commands.Add(command);
+
         Array.ForEach(_replies, _queue.Enqueue);
+    }
 }

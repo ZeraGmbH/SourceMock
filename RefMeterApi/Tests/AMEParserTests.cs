@@ -16,15 +16,9 @@ class DeviceLogger : ILogger<SerialPortRefMeterDevice>
         }
     }
 
-    public IDisposable? BeginScope<TState>(TState state) where TState : notnull
-    {
-        return new Scope();
-    }
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull => new Scope();
 
-    public bool IsEnabled(LogLevel logLevel)
-    {
-        return true;
-    }
+    public bool IsEnabled(LogLevel logLevel) => true;
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) =>
         throw new ArgumentException(formatter(state, exception));
@@ -51,7 +45,11 @@ public class AMEParserTests
 
         try
         {
-            var device = CreateDevice(File.ReadAllLines(@"TestData/ameReply.txt"));
+            var ameResponse = new List<string>(File.ReadAllLines(@"TestData/ameReply.txt"));
+
+            ameResponse.Insert(0, "ATIACK");
+
+            var device = CreateDevice(ameResponse.ToArray());
             var parsed = await device.GetActualValues();
 
             Assert.Multiple(() =>
@@ -83,7 +81,7 @@ public class AMEParserTests
     {
         /* Use the regular logger. */
         var device = new SerialPortRefMeterDevice(
-            SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] { reply, "AMEACK" }), _portLogger),
+            SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] { "ATIACK", reply, "AMEACK" }), _portLogger),
             new NullLogger<SerialPortRefMeterDevice>()
         );
 
@@ -91,13 +89,13 @@ public class AMEParserTests
         await device.GetActualValues();
 
         /* Each log entry will create an ArgumentException. */
-        Assert.ThrowsAsync<ArgumentException>(async () => await CreateDevice(new[] { reply, "AMEACK" }).GetActualValues());
+        Assert.ThrowsAsync<ArgumentException>(async () => await CreateDevice(new[] { "ATIACK", reply, "AMEACK" }).GetActualValues());
     }
 
     [Test]
     public async Task Will_Overwrite_Index_Value()
     {
-        var data = await CreateDevice(new[] { "28;1", "28;2", "AMEACK" }).GetActualValues();
+        var data = await CreateDevice(new[] { "ATIACK", "28;1", "28;2", "AMEACK" }).GetActualValues();
 
         Assert.That(data.Frequency, Is.EqualTo(2));
     }
@@ -105,7 +103,7 @@ public class AMEParserTests
     [Test]
     public async Task Can_Handle_Empty_Reply()
     {
-        await CreateDevice(new[] { "AMEACK" }).GetActualValues();
+        await CreateDevice(new[] { "ATIACK", "AMEACK" }).GetActualValues();
 
         Assert.Pass();
     }
@@ -113,7 +111,7 @@ public class AMEParserTests
     [Test]
     public void Will_Detect_Missing_ACK()
     {
-        Assert.ThrowsAsync<TimeoutException>(async () => await CreateDevice(new[] { "0;1" }).GetActualValues());
+        Assert.ThrowsAsync<TimeoutException>(async () => await CreateDevice(new[] { "ATIACK", "0;1" }).GetActualValues());
     }
 
     [Test]

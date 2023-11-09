@@ -23,4 +23,35 @@ public class ScriptEngineHub : Hub
         /* Always start with the version information. */
         await GetVersion();
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public Task DosageStart() => Clients.Caller.SendAsync("ScriptError");
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public Task InputResponse(object value) => Clients.Caller.SendAsync("ScriptError", value);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public Task DosageDone() => Clients.Caller.SendAsync("ScriptError");
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public Task DosageAbort() => Clients.Caller.SendAsync("ScriptError");
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public Task Reconnect() => Clients.Caller.SendAsync("ScriptError");
 }

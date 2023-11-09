@@ -119,7 +119,7 @@ public class SerialPortMock : ISerialPort
 
     private static readonly Regex AtiCommand = new(@"^ATI(0[1-9]|[1-9]\d)$");
 
-    private static readonly Regex AmtCommand = new(@"^AMT(.{1,4})$");
+    private static readonly Regex AmtCommand = new(@"^AMT(.+)$");
 
     private static readonly Regex S3ps46Command = new(@"^S3PS46;(.+)$");
 

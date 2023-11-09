@@ -4,14 +4,9 @@ using DeviceApiSharedLibrary.Actions.Database;
 using DeviceApiSharedLibrary.Models;
 using DeviceApiSharedLibrary.Services;
 
-using Microsoft.OpenApi.Models;
-
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using RefMeterApi.Services;
-
-using ScriptApi.Controllers;
-using ScriptApi.Models;
 
 using SerialPortProxy;
 
@@ -26,24 +21,12 @@ namespace WebSamDeviceApis;
 
 public static class Configuration
 {
-    class SignalRExtraSchemas : IDocumentFilter
-    {
-        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
-        {
-            context.SchemaGenerator.GenerateSchema(typeof(ScriptEngineVersion), context.SchemaRepository);
-        }
-    }
-
     public static void UseDeviceApi(this SwaggerGenOptions options)
     {
-        options.DocumentFilter<SignalRExtraSchemas>();
-
     }
 
     public static void UseDeviceApi(this IEndpointRouteBuilder app)
     {
-        /* Register all SignalR (Web Socket) servers provided by the DeviceApi. */
-        app.MapHub<ScriptEngineHub>("/api/v1/ScriptEngine");
     }
 
     public static void UseDeviceApi(this IServiceCollection services, IConfiguration configuration)
@@ -106,11 +89,6 @@ public static class Configuration
             }
 
             services.AddSingleton<IDeviceUnderTestStorage, DeviceUnderTestStorage>();
-        }
-
-        {
-            // Use SignalR (Web Sockets).
-            services.AddSignalR();
         }
     }
 }

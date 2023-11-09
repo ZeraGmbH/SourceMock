@@ -21,7 +21,7 @@ public enum MeasurementModes
     /// <summary>
     /// 4WRC
     /// </summary>
-    FourWireReactivePowerCrossConected,
+    FourWireReactivePowerCrossConnected,
 
     /// <summary>
     /// 4WAP
@@ -41,12 +41,12 @@ public enum MeasurementModes
     /// <summary>
     /// 3WRCA
     /// </summary>
-    ThreeWireReactivePowerCrossConectedA,
+    ThreeWireReactivePowerCrossConnectedA,
 
     /// <summary>
     /// 3WRCB
     /// </summary>
-    ThreeWireReactivePowerCrossConectedB,
+    ThreeWireReactivePowerCrossConnectedB,
 
     /// <summary>
     /// 3WAP

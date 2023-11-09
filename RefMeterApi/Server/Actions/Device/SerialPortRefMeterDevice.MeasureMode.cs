@@ -14,12 +14,12 @@ partial class SerialPortRefMeterDevice
         {"3WA", MeasurementModes.ThreeWireActivePower},
         {"3WAP", MeasurementModes.ThreeWireApparentPower},
         {"3WR", MeasurementModes.ThreeWireReactivePower},
-        {"3WRCA", MeasurementModes.ThreeWireReactivePowerCrossConectedA},
-        {"3WRCB", MeasurementModes.ThreeWireReactivePowerCrossConectedB},
+        {"3WRCA", MeasurementModes.ThreeWireReactivePowerCrossConnectedA},
+        {"3WRCB", MeasurementModes.ThreeWireReactivePowerCrossConnectedB},
         {"4WA", MeasurementModes.FourWireActivePower},
         {"4WAP", MeasurementModes.FourWireApparentPower},
         {"4WR", MeasurementModes.FourWireReactivePower},
-        {"4WRC", MeasurementModes.FourWireReactivePowerCrossConected},
+        {"4WRC", MeasurementModes.FourWireReactivePowerCrossConnected},
     };
 
     private static readonly Regex MeasurementModeReg = new Regex(@"^(\d{1,3});([^;]+);(.+)$");

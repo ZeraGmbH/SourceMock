@@ -28,5 +28,6 @@
     <ProjectReference Include="..\..\SerialPortProxy\Library\SerialPortProxy.csproj" />
     <ProjectReference Include="..\..\RefMeterApi\Server\RefMeterApi.csproj" />
     <ProjectReference Include="..\..\Shared\Library\DeviceApiLib.csproj" />
+    <ProjectReference Include="..\..\ScriptApi\Server\ScriptApi.csproj" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,8 @@
 #!/bin/sh
 
 dotnet test Shared
-dotnet test RefMeterApi
-dotnet test SourceApi
 dotnet test SerialPortProxy
+dotnet test RefMeterApi
+dotnet test ScriptApi
+dotnet test SourceApi
+

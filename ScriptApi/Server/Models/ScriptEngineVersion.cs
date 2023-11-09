@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace RefMeterApi.Models;
+namespace ScriptApi.Models;
 
 /// <summary>
 /// Version information of the script engine.

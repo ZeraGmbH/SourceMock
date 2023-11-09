@@ -7,9 +7,11 @@ using DeviceApiSharedLibrary.Services;
 using Microsoft.OpenApi.Models;
 
 using RefMeterApi.Actions.Device;
-using RefMeterApi.Controllers;
 using RefMeterApi.Models;
 using RefMeterApi.Services;
+
+using ScriptApi.Controllers;
+using ScriptApi.Models;
 
 using SerialPortProxy;
 

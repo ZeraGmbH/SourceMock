@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
-using RefMeterApi.Models;
+using ScriptApi.Models;
 
-namespace RefMeterApi.Controllers;
+namespace ScriptApi.Controllers;
 
 /// <summary>
 /// SignalR (Web Socket) server to control script execution.

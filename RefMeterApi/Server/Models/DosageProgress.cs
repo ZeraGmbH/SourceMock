@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+
 namespace RefMeterApi.Models;
 
 /// <summary>
@@ -8,20 +11,24 @@ public class DosageProgress
     /// <summary>
     /// Set if a dosage measurement is currently active.
     /// </summary>
+    [Required, NotNull]
     public bool Active { get; set; }
 
     /// <summary>
     /// Remaining energy for the current measurment in Wh.
     /// </summary>
+    [Required, NotNull]
     public double Remaining { get; set; }
 
     /// <summary>
-    /// Energiy provided so far in the current measurement in Wh.
+    /// Energy provided so far in the current measurement in Wh.
     /// </summary>
+    [Required, NotNull]
     public double Progress { get; set; }
 
     /// <summary>
     /// Total number of requested energy in Wh.
     /// </summary>
+    [Required, NotNull]
     public double Total { get; set; }
 }

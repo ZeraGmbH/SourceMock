@@ -11,17 +11,17 @@ public class DosageProgress
     public bool Active { get; set; }
 
     /// <summary>
-    /// Remaining count for the current measurment.
+    /// Remaining energy for the current measurment in Wh.
     /// </summary>
-    public long Remaining { get; set; }
+    public double Remaining { get; set; }
 
     /// <summary>
-    /// Count provided so far in the current measurement.
+    /// Energiy provided so far in the current measurement in Wh.
     /// </summary>
-    public long Progress { get; set; }
+    public double Progress { get; set; }
 
     /// <summary>
-    /// Total number of requested pulses.
+    /// Total number of requested energy in Wh.
     /// </summary>
-    public long Total { get; set; }
+    public double Total { get; set; }
 }

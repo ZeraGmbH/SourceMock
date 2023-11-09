@@ -19,14 +19,16 @@ partial class SerialPortRefMeterDevice
         var progress = SerialPortRequest.Create("S3MA5", new Regex(@"^SOK3MA5;(.+)$"));
         var total = SerialPortRequest.Create("S3SA5", new Regex(@"^SOK3SA5;(.+)$"));
 
+        var measureConstant = await GetCurrentMeterConstant() / 1000d;
+
         await Task.WhenAll(_device.Execute(active, countdown, progress, total));
 
         return new()
         {
             Active = active.EndMatch!.Groups[1].Value == "2",
-            Progress = (long)double.Parse(progress.EndMatch!.Groups[1].Value, CultureInfo.InvariantCulture),
-            Remaining = (long)double.Parse(countdown.EndMatch!.Groups[1].Value, CultureInfo.InvariantCulture),
-            Total = (long)double.Parse(total.EndMatch!.Groups[1].Value, CultureInfo.InvariantCulture),
+            Progress = double.Parse(progress.EndMatch!.Groups[1].Value, CultureInfo.InvariantCulture) / measureConstant,
+            Remaining = double.Parse(countdown.EndMatch!.Groups[1].Value, CultureInfo.InvariantCulture) / measureConstant,
+            Total = double.Parse(total.EndMatch!.Groups[1].Value, CultureInfo.InvariantCulture) / measureConstant,
         };
     }
 

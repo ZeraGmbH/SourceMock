@@ -54,14 +54,18 @@ public class DosageTests
             $"SOK3MA4;{remaining}",
             "SOK3MA5;303541",
             "SOK3SA5;218375",
+            "UB=60",
+            "IB=2",
+            "M=4WA",
+            "ASTACK",
         }).GetDosageProgress();
 
         Assert.Multiple(() =>
         {
             Assert.That(progress.Active, Is.EqualTo(dosage == 2));
-            Assert.That(progress.Remaining, Is.EqualTo(double.Parse(remaining, CultureInfo.InvariantCulture)));
-            Assert.That(progress.Progress, Is.EqualTo(303541));
-            Assert.That(progress.Total, Is.EqualTo(218375));
+            Assert.That(progress.Remaining, Is.EqualTo(double.Parse(remaining, CultureInfo.InvariantCulture) / 600000d));
+            Assert.That(progress.Progress, Is.EqualTo(303541 / 600000d));
+            Assert.That(progress.Total, Is.EqualTo(218375 / 600000d));
         });
     }
 

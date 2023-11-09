@@ -28,7 +28,13 @@ public class ScriptEngineHub : Hub
     /// 
     /// </summary>
     /// <returns></returns>
-    public Task DosageStart() => Clients.Caller.SendAsync("ScriptError");
+    public Task<StartDosageScriptResponse> StartScript(StartDosageScriptRequest request)
+    {
+        if (request.Name != StartDosageScriptRequest.ScriptName)
+            return Task.FromResult(new StartDosageScriptResponse() { ErrorMessage = $"Script '{request.Name}' not found" });
+
+        return Task.FromResult(new StartDosageScriptResponse() { ErrorMessage = $"Script '{request.Name}' not yet implemented" });
+    }
 
     /// <summary>
     /// 

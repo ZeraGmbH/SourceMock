@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
@@ -17,9 +18,18 @@ public static class Configuration
 {
     class SignalRExtraSchemas : IDocumentFilter
     {
+        private static void Apply<T>(DocumentFilterContext context)
+        {
+            context.SchemaGenerator.GenerateSchema(typeof(T), context.SchemaRepository);
+        }
+
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
-            context.SchemaGenerator.GenerateSchema(typeof(ScriptEngineVersion), context.SchemaRepository);
+            Apply<ScriptEngineVersion>(context);
+            Apply<StartDosageScriptRequest>(context);
+            Apply<StartDosageScriptResponse>(context);
+            Apply<StartScriptRequest>(context);
+            Apply<StartScriptResponse>(context);
         }
     }
 

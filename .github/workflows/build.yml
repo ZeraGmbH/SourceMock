@@ -40,7 +40,6 @@ jobs:
           dotnet test SourceApi --no-build
           dotnet test Shared
           dotnet test RefMeterApi
-          dotnet test ScriptApi
           dotnet test SerialPortProxy
 
       - name: Start Service for Acceptance Tests

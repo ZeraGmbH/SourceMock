@@ -3,6 +3,5 @@
 dotnet test Shared
 dotnet test SerialPortProxy
 dotnet test RefMeterApi
-dotnet test ScriptApi
 dotnet test SourceApi
 

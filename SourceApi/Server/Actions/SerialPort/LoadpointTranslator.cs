@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 
 using SerialPortProxy;
@@ -44,7 +45,7 @@ public static class LoadpointTranslator
 
         /* Only set the frequency if syncthetic mode is requested - else use 00.00. */
         if (frequency.Mode == FrequencyMode.SYNTHETIC)
-            request.Append(frequency.Value.ToString("00.00"));
+            request.Append(frequency.Value.ToString("00.00", CultureInfo.InvariantCulture));
         else
             request.Append("00.00");
 
@@ -81,8 +82,8 @@ public static class LoadpointTranslator
                 if (voltage != null)
                 {
                     /* Convert voltage and angle to API protocol format. */
-                    request.Append(voltage.Rms.ToString("000.000"));
-                    request.Append(voltage.Angle.ToString("000.00"));
+                    request.Append(voltage.Rms.ToString("000.000", CultureInfo.InvariantCulture));
+                    request.Append(voltage.Angle.ToString("000.00", CultureInfo.InvariantCulture));
 
                     continue;
                 }
@@ -126,8 +127,8 @@ public static class LoadpointTranslator
                 if (current != null)
                 {
                     /* Convert voltage and angle to API protocol format. */
-                    request.Append(current.Rms.ToString("000.000"));
-                    request.Append(current.Angle.ToString("000.00"));
+                    request.Append(current.Rms.ToString("000.000", CultureInfo.InvariantCulture));
+                    request.Append(current.Angle.ToString("000.00", CultureInfo.InvariantCulture));
 
                     continue;
                 }

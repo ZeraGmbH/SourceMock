@@ -36,7 +36,7 @@ partial class SerialPortRefMeterDevice
     /// Use the current status values from the device to calculate the 
     /// meter constant.
     /// </summary>
-    /// <returns>The current meter constant.</returns>
+    /// <returns>The current meter constant (impulses per kWh).</returns>
     /// <exception cref="InvalidOperationException">Status is incomplete.</exception>
     /// <exception cref="ArgumentException">Measuring mode not supported.</exception>
     private async Task<double> GetCurrentMeterConstant()

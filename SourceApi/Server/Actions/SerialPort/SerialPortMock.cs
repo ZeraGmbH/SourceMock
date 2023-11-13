@@ -164,7 +164,7 @@ public class SerialPortMock : ISerialPort
     {
         get
         {
-            return Math.Min((int)((DateTime.Now - _dosageStart).TotalSeconds * 100), 100);
+            return Math.Min((int)((DateTime.Now - _dosageStart).TotalSeconds * 10), 100);
         }
     }
 

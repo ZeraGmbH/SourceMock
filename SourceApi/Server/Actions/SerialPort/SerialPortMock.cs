@@ -125,6 +125,10 @@ public class SerialPortMock : ISerialPort
 
     private string _measurementMode = "2WA";
 
+    private long _pulses = 0;
+
+    private DateTime _dosageStart = DateTime.MinValue;
+
     /// <summary>
     /// Outgoing messages.
     /// </summary>
@@ -154,6 +158,14 @@ public class SerialPortMock : ISerialPort
             Thread.Sleep(info.Delay);
 
         return info.Reply;
+    }
+
+    private int Progress
+    {
+        get
+        {
+            return Math.Min((int)((DateTime.Now - _dosageStart).TotalSeconds * 100), 100);
+        }
     }
 
     /// <summary>
@@ -222,6 +234,8 @@ public class SerialPortMock : ISerialPort
             /* Start dosage. */
             case "S3CM1":
                 {
+                    _dosageStart = DateTime.Now;
+
                     _replies.Enqueue("SOK3CM1");
 
                     break;
@@ -250,33 +264,37 @@ public class SerialPortMock : ISerialPort
             /* Read dosage status. */
             case "S3SA1":
                 {
-                    _replies.Enqueue("SOK3SA1;1");
+                    var active = Progress < 100 ? "2" : "1";
+
+                    _replies.Enqueue($"SOK3SA1;{active}");
 
                     break;
                 }
             /* Read total number of impulses. */
             case "S3SA5":
                 {
-                    _replies.Enqueue("SOK3SA5;1127813");
+                    _replies.Enqueue($"SOK3SA5;{_pulses}");
 
                     break;
                 }
             /* Read remaining pulses. */
             case "S3MA4":
                 {
-                    _replies.Enqueue("SOK3MA4;130129");
+                    _replies.Enqueue($"SOK3MA4;{_pulses * (100 - Progress) / 100}");
 
                     break;
                 }
             /* Read pulses processed. */
             case "S3MA5":
                 {
-                    _replies.Enqueue("SOK3MA5;26671");
+                    _replies.Enqueue($"SOK3MA5;{_pulses * Progress / 100}");
 
                     break;
                 }
             default:
                 {
+                    Match? match;
+
                     /* Set voltage. */
                     if (SupCommand.IsMatch(command))
                         _replies.Enqueue("SOKUP");
@@ -293,20 +311,18 @@ public class SerialPortMock : ISerialPort
                     else if (AtiCommand.IsMatch(command))
                         _replies.Enqueue("ATIACK");
                     /* Set dosage energy. */
-                    else if (S3ps46Command.IsMatch(command))
-                        _replies.Enqueue("SOK3PS46");
-                    /* Set measurement mode. */
-                    else
+                    else if ((match = S3ps46Command.Match(command)).Success)
                     {
-                        /* On AMT remember the new measurement mode. */
-                        var match = AmtCommand.Match(command);
+                        _pulses = long.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
 
-                        if (match.Success)
-                        {
-                            _measurementMode = match.Groups[1].Value;
+                        _replies.Enqueue("SOK3PS46");
+                    }
+                    /* Set measurement mode. */
+                    else if ((match = AmtCommand.Match(command)).Success)
+                    {
+                        _measurementMode = match.Groups[1].Value;
 
-                            _replies.Enqueue("AMTACK");
-                        }
+                        _replies.Enqueue("AMTACK");
                     }
 
                     break;

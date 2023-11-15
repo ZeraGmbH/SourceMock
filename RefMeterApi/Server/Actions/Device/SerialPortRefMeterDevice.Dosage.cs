@@ -14,15 +14,18 @@ partial class SerialPortRefMeterDevice
     /// <inheritdoc/>
     public async Task<DosageProgress> GetDosageProgress()
     {
+        /* Request the current meter constant. */
+        var measureConstant = await GetCurrentMeterConstant() / 1000d;
+
+        /* Get all actual values - unit is pulse interval. */
         var active = SerialPortRequest.Create("S3SA1", new Regex(@"^SOK3SA1;([0123])$"));
         var countdown = SerialPortRequest.Create("S3MA4", new Regex(@"^SOK3MA4;(.+)$"));
         var progress = SerialPortRequest.Create("S3MA5", new Regex(@"^SOK3MA5;(.+)$"));
         var total = SerialPortRequest.Create("S3SA5", new Regex(@"^SOK3SA5;(.+)$"));
 
-        var measureConstant = await GetCurrentMeterConstant() / 1000d;
-
         await Task.WhenAll(_device.Execute(active, countdown, progress, total));
 
+        /* Scale actual values to energy - in Wh. */
         return new()
         {
             Active = active.EndMatch!.Groups[1].Value == "2",
@@ -43,6 +46,7 @@ partial class SerialPortRefMeterDevice
     {
         var reply = await _device.Execute(SerialPortRequest.Create("AST", "ASTACK"))[0];
 
+        /* We need the range of voltage and current and the measurement mode as well. */
         double? voltage = null, current = null;
         string? mode = null;
 
@@ -63,6 +67,7 @@ partial class SerialPortRefMeterDevice
             mode[0] == '2' ? 1d :
             throw new ArgumentException($"unsupported measurement mode {mode}");
 
+        /* Calculate according to formula - see MT78x_MAN_EXT_GB.pdf section 5.6.*/
         return 1000d * 3600d * 60000d / (phases * (double)voltage * (double)current);
     }
 
@@ -72,6 +77,7 @@ partial class SerialPortRefMeterDevice
         if (value < 0)
             throw new ArgumentOutOfRangeException(nameof(value));
 
+        /* Calculate the number of impulses from the energy (in Wh) and the meter constant. */
         var meterConst = await GetCurrentMeterConstant();
         var impulses = (long)Math.Round(meterConst * value / 1000d);
 

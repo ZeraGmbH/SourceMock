@@ -31,5 +31,33 @@ namespace WebSamDeviceApis.Actions.Source
         /// </summary>
         /// <returns>The loadpoint, null if none was set.</returns>
         public Loadpoint? GetCurrentLoadpoint();
+
+        /// <summary>
+        /// Set the DOS mode.
+        /// </summary>
+        /// <param name="on">set to turn on.</param>
+        Task SetDosageMode(bool on);
+
+        /// <summary>
+        /// Define the dosage energy.
+        /// </summary>
+        /// <param name="value">Value in Wh.</param>
+        Task SetDosageEnergy(double value);
+
+        /// <summary>
+        /// Start a dosage measurement.
+        /// </summary>
+        Task StartDosage();
+
+        /// <summary>
+        /// Terminate a dosage measurement.
+        /// </summary>
+        Task CancelDosage();
+
+        /// <summary>
+        /// Reports the remaining energy in the current dosage operation.
+        /// </summary>
+        /// <returns>Information on the current progress of the dosage measurement.</returns>
+        Task<DosageProgress> GetDosageProgress();
     }
 }

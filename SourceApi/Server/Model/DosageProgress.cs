@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace RefMeterApi.Models;
+namespace WebSamDeviceApis.Model;
 
 /// <summary>
 /// Report the progress of the latest dosage measurement.

@@ -107,5 +107,30 @@ namespace WebSamDeviceApis.Actions.Source
         {
             return Task.FromResult(_sourceCapabilities);
         }
+
+        public Task SetDosageMode(bool on)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetDosageEnergy(double value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task StartDosage()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CancelDosage()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<DosageProgress> GetDosageProgress()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

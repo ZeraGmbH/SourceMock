@@ -1,11 +1,14 @@
-using System.ComponentModel.Design;
 using System.Globalization;
+
 using Microsoft.Extensions.Logging.Abstractions;
-using RefMeterApi.Actions.Device;
-using RefMeterApiTests.PortMocks;
+
 using SerialPortProxy;
 
-namespace RefMeterApiTests;
+using WebSamDeviceApis.Actions.SerialPort;
+using WebSamDeviceApis.Actions.Source;
+using WebSamDeviceApis.Tests.Actions.Dosage.PortMocks;
+
+namespace WebSamDeviceApis.Tests.Actions.Dosage;
 
 [TestFixture]
 public class DosageTests
@@ -14,7 +17,7 @@ public class DosageTests
 
     private readonly DeviceLogger _deviceLogger = new();
 
-    private IRefMeter CreateDevice(params string[] replies) => new SerialPortRefMeterDevice(SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), _deviceLogger);
+    private ISource CreateDevice(params string[] replies) => new SerialPortSource(_deviceLogger, SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger));
 
     [Test]
     public async Task Can_Turn_Off_DOS_Mode()
@@ -84,7 +87,7 @@ public class DosageTests
             "SOK3PS46"
         });
 
-        var device = new SerialPortRefMeterDevice(SerialPortConnection.FromPortInstance(mock, _portLogger), _deviceLogger);
+        var device = new SerialPortSource(_deviceLogger, SerialPortConnection.FromPortInstance(mock, _portLogger));
 
         await device.SetDosageEnergy(energy);
 

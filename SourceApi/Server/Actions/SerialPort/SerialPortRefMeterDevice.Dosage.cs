@@ -1,11 +1,13 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using RefMeterApi.Models;
+
 using SerialPortProxy;
 
-namespace RefMeterApi.Actions.Device;
+using WebSamDeviceApis.Model;
 
-partial class SerialPortRefMeterDevice
+namespace WebSamDeviceApis.Actions.SerialPort;
+
+partial class SerialPortSource
 {
     /// <inheritdoc/>
     public Task CancelDosage() =>

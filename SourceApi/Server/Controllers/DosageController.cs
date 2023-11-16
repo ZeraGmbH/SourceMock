@@ -1,11 +1,11 @@
-using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RefMeterApi.Actions.Device;
-using RefMeterApi.Models;
+
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RefMeterApi.Controllers;
+using WebSamDeviceApis.Actions.Source;
+using WebSamDeviceApis.Model;
+
+namespace WebSamDeviceApis.Controllers;
 
 /// <summary>
 /// Request device dependant information.
@@ -15,13 +15,13 @@ namespace RefMeterApi.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 public class DosageController : ControllerBase
 {
-    private readonly IRefMeter _device;
+    private readonly ISource _device;
 
     /// <summary>
     /// Initialize a new controller.
     /// </summary>
     /// <param name="device">Serial port connected device to use.</param>
-    public DosageController(IRefMeter device)
+    public DosageController(ISource device)
     {
         _device = device;
     }

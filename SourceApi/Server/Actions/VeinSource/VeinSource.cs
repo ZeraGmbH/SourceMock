@@ -21,6 +21,11 @@ namespace WebSamDeviceApis.Actions.VeinSource
             _veinClient = veinClient;
         }
 
+        public Task CancelDosage()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<SourceCapabilities> GetCapabilities() => Task.FromException<SourceCapabilities>(new NotImplementedException());
 
         public Loadpoint? GetCurrentLoadpoint()
@@ -36,6 +41,21 @@ namespace WebSamDeviceApis.Actions.VeinSource
             return ret;
         }
 
+        public Task<DosageProgress> GetDosageProgress()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetDosageEnergy(double value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetDosageMode(bool on)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<SourceResult> SetLoadpoint(Loadpoint loadpoint)
         {
             JObject veinRequest = VeinLoadpointMapper.ConvertToZeraJson(loadpoint);
@@ -46,6 +66,11 @@ namespace WebSamDeviceApis.Actions.VeinSource
 
 
             return Task.FromResult(SourceResult.SUCCESS);
+        }
+
+        public Task StartDosage()
+        {
+            throw new NotImplementedException();
         }
 
         public Task<SourceResult> TurnOff() => Task.FromException<SourceResult>(new NotImplementedException());

@@ -5,12 +5,11 @@ using WebSamDeviceApis.Model;
 
 namespace WebSamDeviceApis.Actions.SerialPort;
 
-
 /// <summary>
 /// A ISource implenmentation to access a (potentially mocked) device. This
 /// should be a singleton because it manages the loadpoint.
 /// </summary>
-public class SerialPortSource : ISource
+public partial class SerialPortSource : ISource
 {
     private readonly ILogger<SerialPortSource> _logger;
 

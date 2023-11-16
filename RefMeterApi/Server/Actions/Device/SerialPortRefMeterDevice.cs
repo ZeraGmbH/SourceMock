@@ -25,5 +25,4 @@ public partial class SerialPortRefMeterDevice : IRefMeter
         /* Setup caches for shared request results. */
         _actualValues = new(CreateActualValueRequest);
     }
-
 }

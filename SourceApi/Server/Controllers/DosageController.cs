@@ -12,7 +12,7 @@ namespace WebSamDeviceApis.Controllers;
 /// </summary>
 [ApiVersion("1.0")]
 [ApiController]
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("api/v{version:apiVersion}/Source/[controller]")]
 public class DosageController : ControllerBase
 {
     private readonly ISource _device;

@@ -9,7 +9,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/SourceApi/Server/bin/Debug/net6.0/WebSamDeviceApis.dll",
+      "program": "${workspaceFolder}/SourceApi/Server/bin/Debug/net7.0/WebSamDeviceApis.dll",
       "args": [],
       "cwd": "${workspaceFolder}/SourceApi/Server",
       "stopAtEntry": false,

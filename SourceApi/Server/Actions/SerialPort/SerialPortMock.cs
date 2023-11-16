@@ -127,6 +127,10 @@ public class SerialPortMock : ISerialPort
 
     private long _pulses = 0;
 
+    private DateTime? _errorActive = null;
+
+    private bool _errorFinished = false;
+
     private DateTime _dosageStart = DateTime.MinValue;
 
     /// <summary>
@@ -288,6 +292,53 @@ public class SerialPortMock : ISerialPort
             case "S3MA5":
                 {
                     _replies.Enqueue($"SOK3MA5;{_pulses * Progress / 100}");
+
+                    break;
+                }
+            /* Start error measurement in single mode. */
+            case "AEB0":
+                {
+                    _errorActive = DateTime.Now;
+                    _errorFinished = false;
+
+                    _replies.Enqueue("AEBACK");
+
+                    break;
+                }
+            /* Abort error measurement. */
+            case "AEE":
+                {
+                    _errorActive = null;
+
+                    _replies.Enqueue("AEEACK");
+
+                    break;
+                }
+            /* Get error management status. */
+            case "AES1":
+                {
+                    _replies.Enqueue(_errorActive != null
+                        ? _errorFinished
+                        ? "03"      // Finished
+                        : "02"      // Running
+                        : "00"      // Not active
+                    );
+
+                    _replies.Enqueue(_errorActive != null
+                        ? _errorFinished
+                        ? "1.23"    // Finished, report error in percentage
+                        : "--.--"   // Running, indicate not calculated yet
+                        : "oo.oo"   // Inactive, not applicable
+                    );
+
+                    _replies.Enqueue(_errorActive != null
+                        ? _errorFinished
+                        ? "0.000000;1290.1234"  // Finished
+                        : "0.000000;0.000000"   // Running, show some progress
+                        : "0.000000;0.000000"   // Inactive
+                    );
+
+                    _replies.Enqueue("AESACK");
 
                     break;
                 }

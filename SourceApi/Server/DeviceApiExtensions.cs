@@ -1,12 +1,4 @@
-using DeviceApiLib.Actions.Database;
-
-using DeviceApiSharedLibrary.Actions.Database;
-using DeviceApiSharedLibrary.Models;
-using DeviceApiSharedLibrary.Services;
-
 using RefMeterApi.Actions.Device;
-using RefMeterApi.Models;
-using RefMeterApi.Services;
 
 using SerialPortProxy;
 
@@ -70,25 +62,6 @@ public static class Configuration
 
             services.AddSingleton<IRefMeterDevice, SerialPortRefMeterDevice>();
             services.AddSingleton<ISourceDevice, SerialPortSourceDevice>();
-        }
-
-        {
-            var mongoDb = configuration.GetSection("MongoDB").Get<MongoDbSettings>();
-
-            if (!string.IsNullOrEmpty(mongoDb?.ServerName) && !string.IsNullOrEmpty(mongoDb?.DatabaseName))
-            {
-                services.AddSingleton(mongoDb);
-                services.AddSingleton<IMongoDbDatabaseService, MongoDbDatabaseService>();
-                services.AddTransient(typeof(IObjectCollectionFactory<>), typeof(MongoDbCollectionFactory<>));
-                services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(MongoDbHistoryCollectionFactory<>));
-            }
-            else
-            {
-                services.AddTransient(typeof(IObjectCollectionFactory<>), typeof(InMemoryCollectionFactory<>));
-                services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
-            }
-
-            services.AddSingleton<IDeviceUnderTestStorage, DeviceUnderTestStorage>();
         }
     }
 }

@@ -16,6 +16,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\SerialPortProxy\Library\SerialPortProxy.csproj" />
-    <ProjectReference Include="..\..\Shared\Library\DeviceApiLib.csproj" />
   </ItemGroup>
 </Project>

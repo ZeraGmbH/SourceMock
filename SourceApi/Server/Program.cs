@@ -1,5 +1,3 @@
-using DeviceApiSharedLibrary.Services;
-
 using Microsoft.OpenApi.Models;
 
 using RefMeterApi.Controllers;
@@ -30,7 +28,6 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(MongoDbDatabaseService).Assembly.GetName().Name}.xml"));
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(RefMeterController).Assembly.GetName().Name}.xml"));
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SerialPortConnection).Assembly.GetName().Name}.xml"));
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SourceController).Assembly.GetName().Name}.xml"));

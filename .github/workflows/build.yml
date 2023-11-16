@@ -43,7 +43,7 @@ jobs:
 
       - name: Start Service for Acceptance Tests
         run: |
-          cd SourceApi/Server/bin/Release/net6.0/linux-x64/publish
+          cd SourceApi/Server/bin/Release/net7.0/linux-x64/publish
           ./WebSamDeviceApis&
           echo "SOURCE_MOCK_PID=$!" >> $GITHUB_ENV
 
@@ -55,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-win-x64
-          path: "SourceApi/Server/bin/Release/net6.0/win-x64/publish/"
+          path: "SourceApi/Server/bin/Release/net7.0/win-x64/publish/"
           if-no-files-found: error
           retention-days: 1
 
@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-linux-x64
-          path: "SourceApi/Server/bin/Release/net6.0/linux-x64/publish/"
+          path: "SourceApi/Server/bin/Release/net7.0/linux-x64/publish/"
           if-no-files-found: error
           retention-days: 1
 

@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using RefMeterApi.Models;
 using SerialPortProxy;
@@ -119,19 +120,59 @@ partial class SerialPortRefMeterDevice
     /// <inheritdoc/>
     public Task SetErrorMeasurementParameters(double meterConstant, long impulses)
     {
-        if (meterConstant <= 0)
-            throw new ArgumentOutOfRangeException(nameof(meterConstant), "Meter constant must not positive.");
+        var (rawMeter, powMeter) = ClipNumberToProtocol((long)Math.Round(meterConstant * 1E5), 16);
 
-        if (meterConstant > 99999900000)
-            throw new ArgumentOutOfRangeException(nameof(meterConstant), "Meter constant must be at most 99999900000.");
+        if (powMeter > 10)
+            throw new ArgumentOutOfRangeException(nameof(impulses));
 
-        if (impulses <= 0)
-            throw new ArgumentOutOfRangeException(nameof(impulses), "Number of impulses must be positive.");
+        var (rawImpulses, powImpulses) = ClipNumberToProtocol(impulses, 11);
 
-        if (impulses > 99999900000)
-            throw new ArgumentOutOfRangeException(nameof(impulses), "Number of impulses must be at most 99999900000.");
+        if (powImpulses > 5)
+            throw new ArgumentOutOfRangeException(nameof(impulses));
 
-        return Task.CompletedTask;
+        return _device.Execute(SerialPortRequest.Create($"AEP{rawMeter};{powMeter};{rawImpulses};{powImpulses}", "AEPACK"))[0];
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="number"></param>
+    /// <param name="limit"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    public static Tuple<string, int> ClipNumberToProtocol(long number, int limit)
+    {
+        if (number <= 0)
+            throw new ArgumentOutOfRangeException(nameof(number));
+
+        /* Total precision is at most 6 digits scaled with up to 100,000. */
+        var asString = number.ToString("".PadLeft(limit, '0'), CultureInfo.InvariantCulture).TrimStart('0');
+
+        if (asString.Length > limit)
+            throw new ArgumentOutOfRangeException(nameof(number));
+
+        /* Check for the scale factor. */
+        var power = asString.Length - 6;
+
+        if (power <= 0)
+            return Tuple.Create(asString, 0);
+
+        /* Must eventually round. */
+        var scale = Math.Pow(10d, power);
+
+        number = (long)(Math.Round(number / scale) * scale);
+
+        /* Reconstruct the string. */
+        asString = number.ToString("".PadLeft(limit, '0'), CultureInfo.InvariantCulture).TrimStart('0');
+
+        if (asString.Length > limit)
+            throw new ArgumentOutOfRangeException(nameof(number));
+
+        /* Recalculate the power factor. */
+        power = Math.Max(0, asString.Length - 6);
+
+        /* Clip off scaling. */
+        return Tuple.Create(asString[..^power], power);
     }
 
     /// <inheritdoc/>

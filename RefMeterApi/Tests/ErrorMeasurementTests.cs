@@ -14,6 +14,8 @@ public class ErrorMeasurementTests
 
         public string[] StatusResponse = { };
 
+        public string ActiveParameters = "";
+
         public void Dispose()
         {
         }
@@ -41,6 +43,15 @@ public class ErrorMeasurementTests
                     Array.ForEach(StatusResponse, r => _queue.Enqueue(r));
 
                     _queue.Enqueue("AESACK");
+                    break;
+                default:
+                    if (command.StartsWith("AEP"))
+                    {
+                        ActiveParameters = command[3..];
+
+                        _queue.Enqueue("AEPACK");
+                    }
+
                     break;
             }
         }
@@ -168,6 +179,50 @@ public class ErrorMeasurementTests
             Assert.That(status.ErrorValue, Is.EqualTo(-0.2d));
             Assert.That(status.Progress, Is.EqualTo(51.234112d));
             Assert.That(status.Energy, Is.EqualTo(912.38433d));
+        });
+    }
+
+    [TestCase(10000, 50000, "100000;4;50000;0")]
+    [TestCase(100000, 2500050, "100000;5;250005;1")]
+    [TestCase(100000, 2500055, "100000;5;250006;1")]
+    [TestCase(100000, 99999949, "100000;5;999999;2")]
+    [TestCase(0.1, 99999949, "10000;0;999999;2")]
+    [TestCase(0.001235, 99999949, "124;0;999999;2")]
+    [TestCase(10000.3, 50000, "100003;4;50000;0")]
+    [TestCase(10000.5, 50000, "100005;4;50000;0")]
+    [TestCase(100000.3, 2500050, "100000;5;250005;1")]
+    [TestCase(100000.5, 2500050, "100000;5;250005;1")]
+    [TestCase(100000.51, 2500050, "100001;5;250005;1")]
+    public async Task Can_Set_Error_Measurement_Parameters(double meterConstant, long impluses, string expected)
+    {
+        var cut = new SerialPortRefMeterDevice(Device, _logger);
+
+        await cut.SetErrorMeasurementParameters(meterConstant, impluses);
+
+        Assert.That(_port.ActiveParameters, Is.EqualTo(expected));
+    }
+
+    [TestCase(1, "1", 0)]
+    [TestCase(10, "10", 0)]
+    [TestCase(100, "100", 0)]
+    [TestCase(1000, "1000", 0)]
+    [TestCase(10000, "10000", 0)]
+    [TestCase(100000, "100000", 0)]
+    [TestCase(1000000, "100000", 1)]
+    [TestCase(10000000, "100000", 2)]
+    [TestCase(100000000, "100000", 3)]
+    [TestCase(1000000000, "100000", 4)]
+    [TestCase(10000000000, "100000", 5)]
+    [TestCase(99999944, "999999", 2)]
+    [TestCase(99999950, "100000", 3)]
+    [TestCase(99999999, "100000", 3)]
+    public void Can_Clip_Numbers_To_Protocol_Restriction(long number, string expectedString, int expectedScale)
+    {
+        var (asString, power) = SerialPortRefMeterDevice.ClipNumberToProtocol(number, 11);
+        Assert.Multiple(() =>
+        {
+            Assert.That(asString, Is.EqualTo(expectedString));
+            Assert.That(power, Is.EqualTo(expectedScale));
         });
     }
 }

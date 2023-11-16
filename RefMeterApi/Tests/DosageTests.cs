@@ -14,7 +14,7 @@ public class DosageTests
 
     private readonly DeviceLogger _deviceLogger = new();
 
-    private IRefMeterDevice CreateDevice(params string[] replies) => new SerialPortRefMeterDevice(SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), _deviceLogger);
+    private IRefMeter CreateDevice(params string[] replies) => new SerialPortRefMeterDevice(SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), _deviceLogger);
 
     [Test]
     public async Task Can_Turn_Off_DOS_Mode()

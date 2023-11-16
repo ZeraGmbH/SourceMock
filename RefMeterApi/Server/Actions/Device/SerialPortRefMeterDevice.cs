@@ -6,7 +6,7 @@ namespace RefMeterApi.Actions.Device;
 /// <summary>
 /// Handle all requests to a device.
 /// </summary>
-public partial class SerialPortRefMeterDevice : IRefMeterDevice
+public partial class SerialPortRefMeterDevice : IRefMeter
 {
     private readonly SerialPortConnection _device;
 

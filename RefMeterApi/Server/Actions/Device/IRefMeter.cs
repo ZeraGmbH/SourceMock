@@ -5,7 +5,7 @@ namespace RefMeterApi.Actions.Device;
 /// <summary>
 /// Represents a reference meter device.
 /// </summary>
-public interface IRefMeterDevice
+public interface IRefMeter
 {
     /// <summary>
     /// Queries a device connected to the serial port for the current

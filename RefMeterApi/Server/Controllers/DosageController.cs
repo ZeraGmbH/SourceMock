@@ -15,13 +15,13 @@ namespace RefMeterApi.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 public class DosageController : ControllerBase
 {
-    private readonly IRefMeterDevice _device;
+    private readonly IRefMeter _device;
 
     /// <summary>
     /// Initialize a new controller.
     /// </summary>
     /// <param name="device">Serial port connected device to use.</param>
-    public DosageController(IRefMeterDevice device)
+    public DosageController(IRefMeter device)
     {
         _device = device;
     }

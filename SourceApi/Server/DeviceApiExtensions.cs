@@ -60,7 +60,7 @@ public static class Configuration
             else
                 throw new NotSupportedException("either serial port name or port mock type must be set.");
 
-            services.AddSingleton<IRefMeterDevice, SerialPortRefMeterDevice>();
+            services.AddSingleton<IRefMeter, SerialPortRefMeterDevice>();
             services.AddSingleton<ISourceDevice, SerialPortSourceDevice>();
         }
     }

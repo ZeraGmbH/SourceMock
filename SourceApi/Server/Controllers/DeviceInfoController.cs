@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Swashbuckle.AspNetCore.Annotations;
 
-using WebSamDeviceApis.Actions.Device;
+using WebSamDeviceApis.Actions.Source;
 using WebSamDeviceApis.Model;
 
 namespace WebSamDeviceApis.Controllers;
@@ -15,13 +15,13 @@ namespace WebSamDeviceApis.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 public class DeviceInfoController : ControllerBase
 {
-    private readonly ISourceDevice _device;
+    private readonly ISource _device;
 
     /// <summary>
     /// Initialize a new controller for the current request.
     /// </summary>
     /// <param name="device">The current device to use.</param>
-    public DeviceInfoController(ISourceDevice device)
+    public DeviceInfoController(ISource device)
     {
         _device = device;
     }

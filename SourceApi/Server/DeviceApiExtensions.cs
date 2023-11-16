@@ -4,7 +4,6 @@ using SerialPortProxy;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-using WebSamDeviceApis.Actions.Device;
 using WebSamDeviceApis.Actions.SerialPort;
 using WebSamDeviceApis.Actions.Source;
 using WebSamDeviceApis.Actions.VeinSource;
@@ -61,7 +60,6 @@ public static class Configuration
                 throw new NotSupportedException("either serial port name or port mock type must be set.");
 
             services.AddSingleton<IRefMeter, SerialPortRefMeterDevice>();
-            services.AddSingleton<ISourceDevice, SerialPortSourceDevice>();
         }
     }
 }

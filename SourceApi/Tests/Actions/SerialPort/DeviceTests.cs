@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
 
-using WebSamDeviceApis.Actions.Device;
+using WebSamDeviceApis.Actions.SerialPort;
 
 namespace WebSamDeviceApis.Tests.Actions.SerialPort;
 
@@ -102,12 +102,14 @@ public class DeviceTests
 {
     private readonly NullLogger<SerialPortConnection> _logger = new();
 
+    private readonly NullLogger<SerialPortSource> _portLogger = new();
+
     [Test]
     public async Task Can_Detect_Firmware_Version()
     {
         using var device = SerialPortConnection.FromMock<CorrectVersionMock>(_logger);
 
-        var dut = new SerialPortSourceDevice(device);
+        var dut = new SerialPortSource(_portLogger, device);
 
         var version = await dut.GetFirmwareVersion();
 
@@ -127,7 +129,7 @@ public class DeviceTests
     {
         using var device = SerialPortConnection.FromMock(mockType, _logger);
 
-        var dut = new SerialPortSourceDevice(device);
+        var dut = new SerialPortSource(_portLogger, device);
 
         var ex = Assert.ThrowsAsync(exception ?? typeof(InvalidOperationException), async () => await dut.GetFirmwareVersion());
 

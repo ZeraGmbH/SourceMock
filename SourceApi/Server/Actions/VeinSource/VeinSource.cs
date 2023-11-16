@@ -46,6 +46,13 @@ namespace WebSamDeviceApis.Actions.VeinSource
             throw new NotImplementedException();
         }
 
+        public Task<DeviceFirmwareVersion> GetFirmwareVersion() =>
+            Task.FromResult(new DeviceFirmwareVersion
+            {
+                ModelName = "VEIN001",
+                Version = "0.1"
+            });
+
         public Task SetDosageEnergy(double value)
         {
             throw new NotImplementedException();

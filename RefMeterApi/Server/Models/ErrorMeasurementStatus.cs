@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+
 namespace RefMeterApi.Models;
 
 /// <summary>
@@ -8,20 +11,21 @@ public class ErrorMeasurementStatus
     /// <summary>
     /// 
     /// </summary>
+    [NotNull, Required]
     public ErrorMeasurementStates State { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public double ErrorValue { get; set; }
+    public double? ErrorValue { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public double Progress { get; set; }
+    public double? Progress { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public double Energy { get; set; }
+    public double? Energy { get; set; }
 }

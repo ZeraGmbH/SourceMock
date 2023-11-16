@@ -51,11 +51,11 @@ public class ErrorMeasurementController : ControllerBase
     /// <summary>
     /// Start a single error measurement.
     /// </summary>
-    [HttpPost("Start")]
-    [SwaggerOperation(OperationId = "Start")]
+    [HttpPost("StartSingle")]
+    [SwaggerOperation(OperationId = "StartSingle")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> Start() =>
+    public Task<ActionResult> StartSingle() =>
         Utils.SafeExecuteSerialPortCommand(() => _device.StartErrorMeasurement(false));
 
     /// <summary>

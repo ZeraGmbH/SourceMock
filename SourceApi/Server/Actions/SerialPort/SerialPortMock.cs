@@ -123,6 +123,8 @@ public class SerialPortMock : ISerialPort
 
     private static readonly Regex S3ps46Command = new(@"^S3PS46;(.+)$");
 
+    private static readonly Regex AepCommand = new(@"^AEP([^;]{1,6});([0-9]|(10));([^;]{1,6});([0-5])$");
+
     private string _measurementMode = "2WA";
 
     private long _pulses = 0;
@@ -164,7 +166,7 @@ public class SerialPortMock : ISerialPort
         return info.Reply;
     }
 
-    private int Progress
+    private int DosageProgress
     {
         get
         {
@@ -268,7 +270,7 @@ public class SerialPortMock : ISerialPort
             /* Read dosage status. */
             case "S3SA1":
                 {
-                    var active = Progress < 100 ? "2" : "1";
+                    var active = DosageProgress < 100 ? "2" : "1";
 
                     _replies.Enqueue($"SOK3SA1;{active}");
 
@@ -284,14 +286,14 @@ public class SerialPortMock : ISerialPort
             /* Read remaining pulses. */
             case "S3MA4":
                 {
-                    _replies.Enqueue($"SOK3MA4;{_pulses * (100 - Progress) / 100}");
+                    _replies.Enqueue($"SOK3MA4;{_pulses * (100 - DosageProgress) / 100}");
 
                     break;
                 }
             /* Read pulses processed. */
             case "S3MA5":
                 {
-                    _replies.Enqueue($"SOK3MA5;{_pulses * Progress / 100}");
+                    _replies.Enqueue($"SOK3MA5;{_pulses * DosageProgress / 100}");
 
                     break;
                 }
@@ -317,6 +319,15 @@ public class SerialPortMock : ISerialPort
             /* Get error management status. */
             case "AES1":
                 {
+                    double progress = 0;
+
+                    if (_errorActive != null && !_errorFinished)
+                    {
+                        progress = Math.Min((DateTime.Now - _errorActive).Value.TotalSeconds * 10, 100);
+
+                        _errorFinished = progress >= 100;
+                    }
+
                     _replies.Enqueue(_errorActive != null
                         ? _errorFinished
                         ? "03"      // Finished
@@ -333,9 +344,9 @@ public class SerialPortMock : ISerialPort
 
                     _replies.Enqueue(_errorActive != null
                         ? _errorFinished
-                        ? "0.000000;1290.1234"  // Finished
-                        : "0.000000;0.000000"   // Running, show some progress
-                        : "0.000000;0.000000"   // Inactive
+                        ? "0.000000;1290.1234"              // Finished
+                        : $"{progress:0.000000};51.182736"  // Running, show some progress
+                        : "0.000000;0.000000"               // Inactive
                     );
 
                     _replies.Enqueue("AESACK");
@@ -361,6 +372,9 @@ public class SerialPortMock : ISerialPort
                     /* Set integration time. */
                     else if (AtiCommand.IsMatch(command))
                         _replies.Enqueue("ATIACK");
+                    /* Set error measurement parameters. */
+                    else if (AepCommand.IsMatch(command))
+                        _replies.Enqueue("AEPACK");
                     /* Set dosage energy. */
                     else if ((match = S3ps46Command.Match(command)).Success)
                     {

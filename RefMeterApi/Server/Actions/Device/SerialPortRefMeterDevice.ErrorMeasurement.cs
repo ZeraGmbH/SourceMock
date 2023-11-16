@@ -177,5 +177,5 @@ partial class SerialPortRefMeterDevice
 
     /// <inheritdoc/>
     public Task StartErrorMeasurement(bool continuous) =>
-        _device.Execute(SerialPortRequest.Create(continuous ? "AEB1" : "AEB1", "AEBACK"))[0];
+        _device.Execute(SerialPortRequest.Create(continuous ? "AEB1" : "AEB0", "AEBACK"))[0];
 }

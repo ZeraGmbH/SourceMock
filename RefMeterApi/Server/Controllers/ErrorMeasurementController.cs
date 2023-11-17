@@ -11,7 +11,7 @@ namespace RefMeterApi.Controllers;
 /// </summary>
 [ApiVersion("1.0")]
 [ApiController]
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("api/v{version:apiVersion}/RefMeter/[controller]")]
 public class ErrorMeasurementController : ControllerBase
 {
     private readonly IRefMeter _device;

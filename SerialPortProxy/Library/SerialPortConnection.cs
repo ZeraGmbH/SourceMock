@@ -56,6 +56,14 @@ public class SerialPortConnection : IDisposable
     public static SerialPortConnection FromSerialPort(string port, ILogger<SerialPortConnection> logger) => FromPortInstance(new PhysicalPortProxy(port), logger);
 
     /// <summary>
+    /// Create a new connection based on a TCP-to-Serial passthrouh connection.
+    /// </summary>
+    /// <param name="serverAndPort">Name of the server to connect including the port - separated by colons.</param>
+    /// <param name="logger">Optional logging instance.</param>
+    /// <returns>The brand new connection.</returns>
+    public static SerialPortConnection FromNetwork(string serverAndPort, ILogger<SerialPortConnection> logger) => FromPortInstance(new TcpPortProxy(serverAndPort), logger);
+
+    /// <summary>
     /// Create a new mocked based connection.
     /// </summary>
     /// <param name="logger">Optional logging instance.</param>

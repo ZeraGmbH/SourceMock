@@ -9,22 +9,22 @@ namespace RefMeterApi.Models;
 public enum ErrorMeasurementStates
 {
     /// <summary>
-    /// 
+    /// The error measurement can be used.
     /// </summary>
     Active,
 
     /// <summary>
-    /// 
+    /// The last error measurement has been finished.
     /// </summary>
     Finished,
 
     /// <summary>
-    /// 
+    /// The error measurement is not available.
     /// </summary>
     NotActive,
 
     /// <summary>
-    /// 
+    /// An error measurement is active.
     /// </summary>
-    Run,
+    Running,
 }

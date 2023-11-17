@@ -47,7 +47,7 @@ partial class SerialPortRefMeterDevice
                         state = result.State = ErrorMeasurementStates.Active;
                         break;
                     case "2":
-                        state = result.State = ErrorMeasurementStates.Run;
+                        state = result.State = ErrorMeasurementStates.Running;
                         break;
                     case "3":
                         state = result.State = ErrorMeasurementStates.Finished;

@@ -136,7 +136,7 @@ public class ErrorMeasurementTests
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(status.State, Is.EqualTo(ErrorMeasurementStates.Run));
+            Assert.That(status.State, Is.EqualTo(ErrorMeasurementStates.Running));
             Assert.That(status.ErrorValue, Is.Null);
             Assert.That(status.Progress, Is.EqualTo(51.234112d));
             Assert.That(status.Energy, Is.EqualTo(912.38433d));

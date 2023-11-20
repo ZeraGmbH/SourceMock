@@ -11,6 +11,7 @@ namespace WebSamDeviceApis.Actions.Source
         private readonly ILogger<SimulatedSource> _logger;
         private readonly IConfiguration _configuration;
         private readonly SourceCapabilities _sourceCapabilities;
+        private readonly LoadpointInfo _info = new();
 
         /// <summary>
         /// Constructor that injects logger and configuration and uses default source capablities.
@@ -140,5 +141,6 @@ namespace WebSamDeviceApis.Actions.Source
                 Version = "0.1"
             });
 
+        public LoadpointInfo GetActiveLoadpointInfo() => _info;
     }
 }

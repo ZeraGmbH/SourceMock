@@ -39,6 +39,11 @@ namespace WebSamDeviceApis.Actions.Source
         public Loadpoint? GetCurrentLoadpoint();
 
         /// <summary>
+        /// Reports information on the active loadpoint.
+        /// </summary>
+        public LoadpointInfo GetActiveLoadpointInfo();
+
+        /// <summary>
         /// Set the DOS mode.
         /// </summary>
         /// <param name="on">set to turn on.</param>

@@ -12,6 +12,7 @@ namespace WebSamDeviceApis.Actions.VeinSource
     /// </summary>
     public class VeinSource : ISource
     {
+        private readonly LoadpointInfo _info = new();
         private readonly ILogger<VeinSource> _logger;
         private readonly VeinClient _veinClient;
 
@@ -25,6 +26,8 @@ namespace WebSamDeviceApis.Actions.VeinSource
         {
             throw new NotImplementedException();
         }
+
+        public LoadpointInfo GetActiveLoadpointInfo() => _info;
 
         public Task<SourceCapabilities> GetCapabilities() => Task.FromException<SourceCapabilities>(new NotImplementedException());
 

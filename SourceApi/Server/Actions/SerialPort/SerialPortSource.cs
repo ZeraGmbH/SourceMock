@@ -22,6 +22,8 @@ public partial class SerialPortSource : ISource
 
     private readonly SerialPortConnection _device;
 
+    private readonly LoadpointInfo _info = new();
+
     /// <summary>
     /// Initialize a new source implementation.
     /// </summary>
@@ -58,10 +60,13 @@ public partial class SerialPortSource : ISource
 
         /* Remember loadpoint even if we were not able to completly send it to the device. */
         _loadpoint = loadpoint;
+        _info.SavedAt = DateTime.Now;
 
         try
         {
             await Task.WhenAll(_device.Execute(LoadpointTranslator.ToSerialPortRequests(loadpoint)));
+
+            _info.ActivatedAt = DateTime.Now;
         }
         catch (Exception e)
         {
@@ -106,4 +111,8 @@ public partial class SerialPortSource : ISource
             Version = versionMatch.Groups[2].Value
         };
     }
+
+    /// <inheritdoc/>
+    public LoadpointInfo GetActiveLoadpointInfo() => _info;
+
 }

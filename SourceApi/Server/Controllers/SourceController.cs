@@ -137,5 +137,11 @@ namespace WebSamDeviceApis.Controllers
                 ? NoContent()
                 : Ok(loadpoint);
         }
+
+        /// <summary>
+        /// Report information on the last loadpoint activated.
+        /// </summary>
+        /// <returns>The information including some dates.</returns>
+        public ActionResult<LoadpointInfo> GetLoadpointInfo() => _source.GetActiveLoadpointInfo();
     }
 }

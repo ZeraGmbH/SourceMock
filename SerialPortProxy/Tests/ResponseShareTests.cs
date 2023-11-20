@@ -17,7 +17,7 @@ public class ResponseShareTests
 
         Array.ForEach(first, v => Assert.That(v, Is.EqualTo(1)));
 
-        Thread.Sleep(100);
+        Thread.Sleep(250);
 
         var second = await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => cut.Execute()));
 

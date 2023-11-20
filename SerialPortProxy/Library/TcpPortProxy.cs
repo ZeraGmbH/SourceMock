@@ -34,7 +34,12 @@ public class TcpPortProxy : ISerialPort
         var port = ushort.Parse(serverAndPort[(sep + 1)..], CultureInfo.InvariantCulture);
 
         /* Create the connection. */
-        _client = new TcpClient(server, port);
+        _client = new TcpClient(server, port)
+        {
+            SendTimeout = 30000,
+            ReceiveTimeout = 30000,
+        };
+
         _stream = _client.GetStream();
     }
 

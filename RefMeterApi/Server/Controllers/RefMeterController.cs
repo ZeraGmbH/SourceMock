@@ -30,11 +30,11 @@ public class RefMeterController : ControllerBase
     /// Get the current measurement data.
     /// </summary>
     /// <returns>The current data.</returns>
-    [HttpGet("CurrentMeasure")]
-    [SwaggerOperation(OperationId = "GetCurrentMeasure")]
+    [HttpGet("ActualValues")]
+    [SwaggerOperation(OperationId = "GetActualValues")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<MeasureOutput>> GetCurrentMeasureOutput() =>
+    public Task<ActionResult<MeasureOutput>> GetActualValues() =>
         Utils.SafeExecuteSerialPortCommand(_device.GetActualValues);
 
     /// <summary>

@@ -22,7 +22,7 @@ public class RefMeterControllerTests
 
         var cut = new RefMeterController(new SerialPortRefMeterDevice(port, _deviceLogger));
 
-        var response = await cut.GetCurrentMeasureOutput();
+        var response = await cut.GetActualValues();
         var result = response.Result as OkObjectResult;
         var data = result?.Value as MeasureOutput;
 

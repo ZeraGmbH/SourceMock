@@ -6,7 +6,7 @@ namespace SerialPortProxyTests;
 [TestFixture]
 public class ResponseShareTests
 {
-    [Test]
+    [Test, Timeout(1500)]
     public async Task Will_Shared_Response()
     {
         var count = 0;
@@ -17,7 +17,8 @@ public class ResponseShareTests
 
         Array.ForEach(first, v => Assert.That(v, Is.EqualTo(1)));
 
-        Thread.Sleep(250);
+        for (; cut.IsBusy; Thread.Sleep(100))
+            TestContext.WriteLine("still busy - retry in 100ms");
 
         var second = await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => cut.Execute()));
 

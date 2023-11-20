@@ -16,6 +16,11 @@ public class ResponseShare<T>
     private Task<T>? _task;
 
     /// <summary>
+    /// For testing purposes see if task is active.
+    /// </summary>
+    public bool IsBusy => _task != null;
+
+    /// <summary>
     /// Method to create a new request task.
     /// </summary>
     private readonly Func<Task<T>> _factory;

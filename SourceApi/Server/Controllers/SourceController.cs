@@ -142,6 +142,9 @@ namespace WebSamDeviceApis.Controllers
         /// Report information on the last loadpoint activated.
         /// </summary>
         /// <returns>The information including some dates.</returns>
+        [HttpGet("LoadpointInfo")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "GetLoadpointInfo")]
         public ActionResult<LoadpointInfo> GetLoadpointInfo() => _source.GetActiveLoadpointInfo();
     }
 }

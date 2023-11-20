@@ -59,7 +59,7 @@ namespace WebSamDeviceApis.Controllers
         [SwaggerOperation(OperationId = "SetLoadpoint")]
         public async Task<ActionResult> SetLoadpoint([FromBody] Loadpoint loadpoint)
         {
-            _logger.LogTrace("Loadpoint to be set: ", loadpoint);
+            _logger.LogTrace($"Loadpoint to be set: {loadpoint}");
 
             var srcResult = await _source.SetLoadpoint(loadpoint);
 
@@ -80,7 +80,7 @@ namespace WebSamDeviceApis.Controllers
                         detail: srcResult.ToUserFriendlyString(),
                         statusCode: StatusCodes.Status422UnprocessableEntity);
                 default:
-                    _logger.LogError($"Unkown response from source: ", srcResult.ToString());
+                    _logger.LogError($"Unkown response from source: {srcResult}");
                     return Problem(
                         detail: $"Unkown Response from source: {srcResult}, {srcResult.ToUserFriendlyString()}",
                         statusCode: StatusCodes.Status500InternalServerError);
@@ -111,7 +111,7 @@ namespace WebSamDeviceApis.Controllers
                     _logger.LogTrace("Source was turned off.");
                     return Ok();
                 default:
-                    _logger.LogError($"Unkown response from source: ", srcResult.ToString());
+                    _logger.LogError($"Unkown response from source: {srcResult}");
                     return Problem(
                         detail: "Unkown Response from source.",
                         statusCode: StatusCodes.Status500InternalServerError);

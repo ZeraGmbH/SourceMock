@@ -61,7 +61,7 @@ namespace WebSamDeviceApis.Controllers
         public ActionResult SetSourceState([FromBody] SimulatedSourceState simulatedSourceState)
         {
             _source.SetSimulatedSourceState(simulatedSourceState);
-            _logger.LogTrace("New simulated source state set: ", simulatedSourceState);
+            _logger.LogTrace($"New simulated source state set: {simulatedSourceState}");
             return Ok();
         }
     }

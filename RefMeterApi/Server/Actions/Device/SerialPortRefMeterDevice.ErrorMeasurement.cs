@@ -69,7 +69,7 @@ partial class SerialPortRefMeterDevice
                 try
                 {
                     /* Check for a fairly regular value. */
-                    var error = double.Parse(reply, CultureInfo.CurrentUICulture);
+                    var error = double.Parse(reply, CultureInfo.InvariantCulture);
 
                     if (double.IsNaN(error) || double.IsInfinity(error))
                         gotError = false;
@@ -92,8 +92,8 @@ partial class SerialPortRefMeterDevice
                 /* Try parse numbers. */
                 try
                 {
-                    var progress = double.Parse(match.Groups[1].Value, CultureInfo.CurrentUICulture);
-                    var energy = double.Parse(match.Groups[2].Value, CultureInfo.CurrentUICulture);
+                    var progress = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+                    var energy = double.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture);
 
                     if (double.IsNaN(progress) || double.IsInfinity(progress))
                         continue;

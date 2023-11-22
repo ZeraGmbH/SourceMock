@@ -344,9 +344,9 @@ public class SerialPortMock : ISerialPort
 
                     _replies.Enqueue(_errorActive != null
                         ? _errorFinished
-                        ? "0.000000;1290.1234"              // Finished
-                        : $"{progress:0.000000};51.182736"  // Running, show some progress
-                        : "0.000000;0.000000"               // Inactive
+                        ? "0.000000;1290.1234"                                              // Finished
+                        : $"{progress:0.000000};{progress / 100d * 1290.1234:0.000000}"     // Running, show some progress
+                        : "0.000000;0.000000"                                               // Inactive
                     );
 
                     _replies.Enqueue("AESACK");

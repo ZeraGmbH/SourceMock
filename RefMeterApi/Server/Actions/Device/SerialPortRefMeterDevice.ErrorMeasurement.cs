@@ -129,7 +129,7 @@ partial class SerialPortRefMeterDevice
         if (powImpulses > 5)
             throw new ArgumentOutOfRangeException(nameof(impulses));
 
-        return _device.Execute(SerialPortRequest.Create($"AEP{rawMeter};{powMeter};{rawImpulses};{powImpulses}", "AEPACK"))[0];
+        return _device.Execute(SerialPortRequest.Create($"AEP{rawMeter};{powMeter:00};{rawImpulses};{powImpulses}", "AEPACK"))[0];
     }
 
     /// <summary>

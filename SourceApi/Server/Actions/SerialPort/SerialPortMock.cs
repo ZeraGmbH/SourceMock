@@ -123,7 +123,7 @@ public class SerialPortMock : ISerialPort
 
     private static readonly Regex S3ps46Command = new(@"^S3PS46;(.+)$");
 
-    private static readonly Regex AepCommand = new(@"^AEP([^;]{1,6});([0-9]|(10));([^;]{1,6});([0-5])$");
+    private static readonly Regex AepCommand = new(@"^AEP([^;]{1,6});((0[0-9])|(10));([^;]{1,6});([0-5])$");
 
     private string _measurementMode = "2WA";
 

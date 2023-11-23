@@ -66,7 +66,7 @@ public class DosageTests
         Assert.Multiple(() =>
         {
             Assert.That(progress.Active, Is.EqualTo(dosage == 2));
-            Assert.That(progress.Remaining, Is.EqualTo(double.Parse(remaining, CultureInfo.InvariantCulture) / 600000d));
+            Assert.That(progress.Remaining, Is.EqualTo(double.Parse(remaining) / 600000d));
             Assert.That(progress.Progress, Is.EqualTo(303541 / 600000d));
             Assert.That(progress.Total, Is.EqualTo(218375 / 600000d));
         });

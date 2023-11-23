@@ -69,7 +69,7 @@ partial class SerialPortRefMeterDevice
                 try
                 {
                     /* Check for a fairly regular value. */
-                    var error = double.Parse(reply, CultureInfo.InvariantCulture);
+                    var error = double.Parse(reply);
 
                     if (double.IsNaN(error) || double.IsInfinity(error))
                         gotError = false;
@@ -92,8 +92,8 @@ partial class SerialPortRefMeterDevice
                 /* Try parse numbers. */
                 try
                 {
-                    var progress = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
-                    var energy = double.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture);
+                    var progress = double.Parse(match.Groups[1].Value);
+                    var energy = double.Parse(match.Groups[2].Value);
 
                     if (double.IsNaN(progress) || double.IsInfinity(progress))
                         continue;
@@ -145,7 +145,7 @@ partial class SerialPortRefMeterDevice
             throw new ArgumentOutOfRangeException(nameof(number));
 
         /* Total precision is at most 6 digits scaled with up to 100,000. */
-        var asString = number.ToString("".PadLeft(limit, '0'), CultureInfo.InvariantCulture).TrimStart('0');
+        var asString = number.ToString("".PadLeft(limit, '0')).TrimStart('0');
 
         if (asString.Length > limit)
             throw new ArgumentOutOfRangeException(nameof(number));
@@ -162,7 +162,7 @@ partial class SerialPortRefMeterDevice
         number = (long)(Math.Round(number / scale) * scale);
 
         /* Reconstruct the string. */
-        asString = number.ToString("".PadLeft(limit, '0'), CultureInfo.InvariantCulture).TrimStart('0');
+        asString = number.ToString("".PadLeft(limit, '0')).TrimStart('0');
 
         if (asString.Length > limit)
             throw new ArgumentOutOfRangeException(nameof(number));

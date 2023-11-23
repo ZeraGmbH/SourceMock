@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text.RegularExpressions;
 
 using SerialPortProxy;
@@ -59,14 +58,14 @@ static class AMEReplyEmulator
         {
             /* Get the fallback value. */
             var parts = reply.Split(";");
-            var index = int.Parse(parts[0], CultureInfo.InvariantCulture);
-            var num = double.Parse(parts[1], CultureInfo.InvariantCulture);
+            var index = int.Parse(parts[0]);
+            var num = double.Parse(parts[1]);
 
             /* If a regular number just apply a random factor between 0.99 and 1.01 to the value. */
             if (index != 27 && index != 35)
                 num *= Random.Shared.Next(99000, 101000) / 100000.0;
 
-            yield return $"{parts[0]};{num.ToString(CultureInfo.InvariantCulture)}";
+            yield return $"{parts[0]};{num}";
         }
     }
 }
@@ -378,7 +377,7 @@ public class SerialPortMock : ISerialPort
                     /* Set dosage energy. */
                     else if ((match = S3ps46Command.Match(command)).Success)
                     {
-                        _pulses = long.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+                        _pulses = long.Parse(match.Groups[1].Value);
 
                         _replies.Enqueue("SOK3PS46");
                     }

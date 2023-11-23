@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text.RegularExpressions;
 
 using SerialPortProxy;
@@ -31,9 +30,9 @@ partial class SerialPortSource
         return new()
         {
             Active = active.EndMatch!.Groups[1].Value == "2",
-            Progress = double.Parse(progress.EndMatch!.Groups[1].Value, CultureInfo.InvariantCulture) / measureConstant,
-            Remaining = double.Parse(countdown.EndMatch!.Groups[1].Value, CultureInfo.InvariantCulture) / measureConstant,
-            Total = double.Parse(total.EndMatch!.Groups[1].Value, CultureInfo.InvariantCulture) / measureConstant,
+            Progress = double.Parse(progress.EndMatch!.Groups[1].Value) / measureConstant,
+            Remaining = double.Parse(countdown.EndMatch!.Groups[1].Value) / measureConstant,
+            Total = double.Parse(total.EndMatch!.Groups[1].Value) / measureConstant,
         };
     }
 
@@ -54,9 +53,9 @@ partial class SerialPortSource
 
         foreach (var value in reply)
             if (value.StartsWith("UB="))
-                voltage = double.Parse(value.Substring(3), CultureInfo.InvariantCulture);
+                voltage = double.Parse(value.Substring(3));
             else if (value.StartsWith("IB="))
-                current = double.Parse(value.Substring(3), CultureInfo.InvariantCulture);
+                current = double.Parse(value.Substring(3));
             else if (value.StartsWith("M="))
                 mode = value.Substring(2);
 

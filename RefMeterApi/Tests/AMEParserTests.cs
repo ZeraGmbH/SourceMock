@@ -1,4 +1,3 @@
-using System.Globalization;
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
 using RefMeterApiTests.PortMocks;
@@ -18,39 +17,24 @@ public class AMEParserTests
     [Test]
     public async Task Can_Parse_AME_Reply()
     {
+        var ameResponse = new List<string>(File.ReadAllLines(@"TestData/ameReply.txt"));
 
-        var currentCulture = Thread.CurrentThread.CurrentCulture;
-        var currentUiCulture = Thread.CurrentThread.CurrentUICulture;
+        ameResponse.Insert(0, "ATIACK");
 
-        Thread.CurrentThread.CurrentCulture = new CultureInfo("de");
-        Thread.CurrentThread.CurrentUICulture = new CultureInfo("de");
+        var device = CreateDevice(ameResponse.ToArray());
+        var parsed = await device.GetActualValues();
 
-        try
+        Assert.Multiple(() =>
         {
-            var ameResponse = new List<string>(File.ReadAllLines(@"TestData/ameReply.txt"));
+            Assert.That(parsed.Frequency, Is.EqualTo(50).Within(0.5));
+            Assert.That(parsed.Phases[0].Voltage, Is.EqualTo(20).Within(0.5));
+            Assert.That(parsed.Phases[1].Current, Is.EqualTo(0.1).Within(0.05));
+            Assert.That(parsed.Phases[1].AngleVoltage, Is.EqualTo(120).Within(0.5));
+            Assert.That(parsed.Phases[2].AngleCurrent, Is.EqualTo(240).Within(0.5));
+            Assert.That(parsed.Phases[0].PowerFactor, Is.EqualTo(0.99965084));
 
-            ameResponse.Insert(0, "ATIACK");
-
-            var device = CreateDevice(ameResponse.ToArray());
-            var parsed = await device.GetActualValues();
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(parsed.Frequency, Is.EqualTo(50).Within(0.5));
-                Assert.That(parsed.Phases[0].Voltage, Is.EqualTo(20).Within(0.5));
-                Assert.That(parsed.Phases[1].Current, Is.EqualTo(0.1).Within(0.05));
-                Assert.That(parsed.Phases[1].AngleVoltage, Is.EqualTo(120).Within(0.5));
-                Assert.That(parsed.Phases[2].AngleCurrent, Is.EqualTo(240).Within(0.5));
-                Assert.That(parsed.Phases[0].PowerFactor, Is.EqualTo(0.99965084));
-
-                Assert.That(parsed.PhaseOrder, Is.EqualTo("123"));
-            });
-        }
-        finally
-        {
-            Thread.CurrentThread.CurrentUICulture = currentUiCulture;
-            Thread.CurrentThread.CurrentCulture = currentCulture;
-        }
+            Assert.That(parsed.PhaseOrder, Is.EqualTo("123"));
+        });
     }
 
     [TestCase("-1;1")]

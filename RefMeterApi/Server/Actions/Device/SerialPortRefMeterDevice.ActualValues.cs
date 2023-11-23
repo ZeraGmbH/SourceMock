@@ -55,10 +55,10 @@ partial class SerialPortRefMeterDevice
 
             try
             {
-                index = int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+                index = int.Parse(match.Groups[1].Value);
 
                 if (index != 27)
-                    value = double.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture);
+                    value = double.Parse(match.Groups[2].Value);
             }
             catch (FormatException)
             {

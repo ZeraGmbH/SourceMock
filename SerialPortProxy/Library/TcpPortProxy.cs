@@ -31,7 +31,7 @@ public class TcpPortProxy : ISerialPort
             throw new ArgumentException(nameof(serverAndPort));
 
         var server = serverAndPort[..sep];
-        var port = ushort.Parse(serverAndPort[(sep + 1)..], CultureInfo.InvariantCulture);
+        var port = ushort.Parse(serverAndPort[(sep + 1)..]);
 
         /* Create the connection. */
         _client = new TcpClient(server, port)

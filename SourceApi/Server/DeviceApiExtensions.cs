@@ -42,25 +42,22 @@ public static class Configuration
         }
 
         {
-            var portName = configuration["SerialPort:PortName"];
             var mockType = configuration["SerialPort:PortMockType"];
 
-            if (!string.IsNullOrEmpty(portName))
+            if (!string.IsNullOrEmpty(mockType))
+                services.AddSingleton(ctx => SerialPortConnection.FromMock(Type.GetType(mockType)!, ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
+            else
             {
-                if (!string.IsNullOrEmpty(mockType))
-                    throw new NotSupportedException("serial port name and port mock type must not be both set.");
+                var portName = configuration["SerialPort:PortName"];
+
+                if (string.IsNullOrEmpty(portName))
+                    throw new NotSupportedException("either serial port name or port mock type must be set.");
 
                 if (portName.Contains(':'))
                     services.AddSingleton(ctx => SerialPortConnection.FromNetwork(portName, ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
                 else
                     services.AddSingleton(ctx => SerialPortConnection.FromSerialPort(portName, ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
             }
-            else if (!string.IsNullOrEmpty(mockType))
-            {
-                services.AddSingleton(ctx => SerialPortConnection.FromMock(Type.GetType(mockType)!, ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
-            }
-            else
-                throw new NotSupportedException("either serial port name or port mock type must be set.");
 
             services.AddSingleton<IRefMeter, SerialPortRefMeterDevice>();
         }

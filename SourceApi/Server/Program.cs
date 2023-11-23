@@ -1,3 +1,5 @@
+using System.Globalization;
+
 using Microsoft.OpenApi.Models;
 
 using RefMeterApi.Controllers;
@@ -6,6 +8,8 @@ using SerialPortProxy;
 
 using WebSamDeviceApis;
 using WebSamDeviceApis.Controllers;
+
+CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en-us");
 
 var builder = WebApplication.CreateBuilder(args);
 

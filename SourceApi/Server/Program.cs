@@ -9,7 +9,7 @@ using SerialPortProxy;
 using WebSamDeviceApis;
 using WebSamDeviceApis.Controllers;
 
-CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en-us");
+CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-us");
 
 var builder = WebApplication.CreateBuilder(args);
 

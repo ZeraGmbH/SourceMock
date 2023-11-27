@@ -18,7 +18,7 @@ namespace WebSamDeviceApis.Tests.Actions.LoadpointValidator
             var errCount = ValidateObject(loadpoint);
 
             // Assert
-            Assert.AreEqual(0, errCount);
+            Assert.That(errCount, Is.Zero);
         }
         #endregion
 
@@ -38,7 +38,7 @@ namespace WebSamDeviceApis.Tests.Actions.LoadpointValidator
             var errCount = ValidateObject(electricalVectorQuantity);
 
             // Assert
-            Assert.AreEqual(0, errCount);
+            Assert.That(errCount, Is.Zero);
         }
 
         [Test]
@@ -56,7 +56,7 @@ namespace WebSamDeviceApis.Tests.Actions.LoadpointValidator
             var errCount = ValidateObject(electricalVectorQuantity);
 
             // Assert
-            Assert.AreEqual(1, errCount);
+            Assert.That(errCount, Is.EqualTo(1));
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace WebSamDeviceApis.Tests.Actions.LoadpointValidator
             var errCount = ValidateObject(electricalVectorQuantity);
 
             // Assert
-            Assert.AreEqual(1, errCount);
+            Assert.That(errCount, Is.EqualTo(1));
         }
         #endregion
 

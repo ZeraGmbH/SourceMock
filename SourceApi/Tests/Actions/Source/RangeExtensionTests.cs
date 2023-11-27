@@ -16,7 +16,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             var result = range.IsIncluded(0);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             var result = range.IsIncluded(4);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             var result = range.IsIncluded(3);
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
 
         }
 
@@ -56,7 +56,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             var result = range.IsIncluded(1);
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             var result = range.IsIncluded(1.05);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             var result = range.IsIncluded(2.2);
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -98,7 +98,7 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             var result = ranges.IsIncluded(4);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
         [Test]
@@ -115,8 +115,8 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             var result2 = ranges.IsIncluded(6);
 
             // Assert
-            Assert.IsTrue(result1);
-            Assert.IsTrue(result2);
+            Assert.That(result1, Is.True);
+            Assert.That(result2, Is.True);
         }
     }
 }

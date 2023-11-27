@@ -71,6 +71,12 @@ public class ErrorMeasurementTests
         Device = SerialPortConnection.FromPortInstance(_port, new NullLogger<SerialPortConnection>());
     }
 
+    [TearDown]
+    public void Teardown()
+    {
+        Device?.Dispose();
+    }
+
     [Test]
     public async Task Can_Start_Error_Measure()
     {

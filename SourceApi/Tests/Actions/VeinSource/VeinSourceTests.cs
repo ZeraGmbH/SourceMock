@@ -22,8 +22,8 @@ namespace WebSamDeviceApis.Tests.Actions.VeinSource
             var result = veinClient.GetSystemEntityName();
 
             // Assert
-            Assert.AreEqual(HttpStatusCode.OK, result.Status);
-            Assert.AreEqual("_System", result.Value);
+            Assert.That(result.Status, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(result.Value, Is.EqualTo("_System"));
         }
 
         [IntegrationTest(IntegrationTestSwitches.DO_VEIN_TESTS)]
@@ -37,7 +37,7 @@ namespace WebSamDeviceApis.Tests.Actions.VeinSource
 
             HttpStatusCode statusCode = veinClient.SetCustomerCity("foo");
             // Assert
-            Assert.AreEqual(HttpStatusCode.OK, statusCode);
+            Assert.That(statusCode, Is.EqualTo(HttpStatusCode.OK));
         }
         #endregion
     }

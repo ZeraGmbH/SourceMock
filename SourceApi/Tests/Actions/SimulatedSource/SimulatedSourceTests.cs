@@ -30,8 +30,8 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
 
-            Assert.AreEqual(SourceResult.SUCCESS, result);
-            Assert.AreEqual(currentLoadpoint, currentLoadpoint);
+            Assert.That(result, Is.EqualTo(SourceResult.SUCCESS));
+            Assert.That(loadpoint, Is.EqualTo(currentLoadpoint));
         }
 
         [Test]
@@ -51,8 +51,8 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
 
-            Assert.AreEqual(SourceResult.SUCCESS, result);
-            Assert.AreEqual(null, currentLoadpoint);
+            Assert.That(result, Is.EqualTo(SourceResult.SUCCESS));
+            Assert.That(currentLoadpoint, Is.Null);
         }
         #endregion
 
@@ -72,8 +72,8 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
 
-            Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES, result);
-            Assert.AreEqual(null, currentLoadpoint);
+            Assert.That(result, Is.EqualTo(SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES));
+            Assert.That(currentLoadpoint, Is.Null);
         }
         #endregion
 
@@ -92,8 +92,8 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
 
-            Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID, result);
-            Assert.AreEqual(null, currentLoadpoint);
+            Assert.That(result, Is.EqualTo(SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID));
+            Assert.That(currentLoadpoint, Is.Null);
         }
 
         [Test]
@@ -110,8 +110,8 @@ namespace WebSamDeviceApis.Tests.Actions.Source
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
 
-            Assert.AreEqual(SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID, result);
-            Assert.AreEqual(null, currentLoadpoint);
+            Assert.That(result, Is.EqualTo(SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID));
+            Assert.That(currentLoadpoint, Is.Null);
         }
         #endregion
 

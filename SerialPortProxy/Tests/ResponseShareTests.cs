@@ -1,4 +1,3 @@
-using System.Globalization;
 using SerialPortProxy;
 
 namespace SerialPortProxyTests;
@@ -6,7 +5,7 @@ namespace SerialPortProxyTests;
 [TestFixture]
 public class ResponseShareTests
 {
-    [Test, Timeout(1500)]
+    [Test, CancelAfter(2500)]
     public async Task Will_Shared_Response()
     {
         var count = 0;

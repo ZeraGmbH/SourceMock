@@ -1,13 +1,8 @@
-using System.Globalization;
-
 using Microsoft.OpenApi.Models;
 
-using RefMeterApi.Controllers;
-
-using SerialPortProxy;
+using System.Globalization;
 
 using WebSamDeviceApis;
-using WebSamDeviceApis.Controllers;
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-us");
 
@@ -31,10 +26,6 @@ builder.Services.AddSwaggerGen(options =>
             Url = new Uri("https://www.zera.de/en/contact/")
         }
     });
-
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(RefMeterController).Assembly.GetName().Name}.xml"));
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SerialPortConnection).Assembly.GetName().Name}.xml"));
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SourceController).Assembly.GetName().Name}.xml"));
 
     options.UseDeviceApi();
 });

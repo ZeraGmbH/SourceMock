@@ -27,5 +27,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\SerialPortProxy\Library\SerialPortProxy.csproj" />
     <ProjectReference Include="..\..\RefMeterApi\Server\RefMeterApi.csproj" />
+    <ProjectReference Include="..\..\ErrorMeasurementApi\Server\ErrorMeasurementApi.csproj" />
   </ItemGroup>
 </Project>

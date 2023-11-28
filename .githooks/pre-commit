@@ -3,4 +3,5 @@
 dotnet test SerialPortProxy
 dotnet test RefMeterApi
 dotnet test SourceApi
+dotnet test ErrorMeasurementApi
 

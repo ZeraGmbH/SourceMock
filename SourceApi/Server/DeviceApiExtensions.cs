@@ -1,4 +1,5 @@
 using RefMeterApi.Actions.Device;
+using RefMeterApi.Controllers;
 
 using SerialPortProxy;
 
@@ -7,6 +8,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using WebSamDeviceApis.Actions.SerialPort;
 using WebSamDeviceApis.Actions.Source;
 using WebSamDeviceApis.Actions.VeinSource;
+using WebSamDeviceApis.Controllers;
 
 namespace WebSamDeviceApis;
 
@@ -14,6 +16,9 @@ public static class Configuration
 {
     public static void UseDeviceApi(this SwaggerGenOptions options)
     {
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(RefMeterController).Assembly.GetName().Name}.xml"));
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SerialPortConnection).Assembly.GetName().Name}.xml"));
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SourceController).Assembly.GetName().Name}.xml"));
     }
 
     public static void UseDeviceApi(this IEndpointRouteBuilder app)

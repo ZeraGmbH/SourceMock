@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace ErrorMeasurementApi.Models;
+namespace ErrorCalculatorApi.Models;
 
 /// <summary>
 /// Possible operation states of an error measurement.

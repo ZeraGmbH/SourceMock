@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ErrorMeasurementApi.Controllers;
+namespace ErrorCalculatorApi.Controllers;
 
 class Utils
 {

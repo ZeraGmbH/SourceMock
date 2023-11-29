@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Server\ErrorMeasurementApi.csproj" />
+    <ProjectReference Include="..\Server\ErrorCalculatorApi.csproj" />
   </ItemGroup>
 
 </Project>

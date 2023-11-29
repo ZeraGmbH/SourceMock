@@ -38,7 +38,7 @@ jobs:
       - name: Run Unit-Tests
         run: |
           dotnet test SourceApi --no-build
-          dotnet test ErrorMeasurementApi
+          dotnet test ErrorCalculatorApi
           dotnet test RefMeterApi
           dotnet test SerialPortProxy
 

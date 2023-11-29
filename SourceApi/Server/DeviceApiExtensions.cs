@@ -1,5 +1,5 @@
-using ErrorMeasurementApi.Actions.Device;
-using ErrorMeasurementApi.Controllers;
+using ErrorCalculatorApi.Actions.Device;
+using ErrorCalculatorApi.Controllers;
 
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Controllers;
@@ -69,7 +69,7 @@ public static class Configuration
             }
 
             services.AddSingleton<IRefMeter, SerialPortRefMeterDevice>();
-            services.AddSingleton<IErrorMeasurement, SerialPortErrorManagementDevice>();
+            services.AddSingleton<IErrorCalculator, SerialPortErrorCalculatorDevice>();
         }
     }
 }

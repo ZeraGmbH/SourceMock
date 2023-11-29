@@ -1,10 +1,10 @@
 using System.Text.RegularExpressions;
-using ErrorMeasurementApi.Models;
+using ErrorCalculatorApi.Models;
 using SerialPortProxy;
 
-namespace ErrorMeasurementApi.Actions.Device;
+namespace ErrorCalculatorApi.Actions.Device;
 
-partial class SerialPortErrorManagementDevice
+partial class SerialPortErrorCalculatorDevice
 {
     private static readonly Regex MatchErrorStatus1 = new(@"^([0-1])([0-3])$");
 

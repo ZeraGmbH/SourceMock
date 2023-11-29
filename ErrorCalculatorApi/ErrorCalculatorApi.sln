@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ErrorMeasurementApi", "Server\ErrorMeasurementApi.csproj", "{D0A6302E-E406-4796-81C7-2801151C8836}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ErrorCalculatorApi", "Server\ErrorCalculatorApi.csproj", "{D0A6302E-E406-4796-81C7-2801151C8836}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ErrorMeasurementApiTests", "Tests\ErrorMeasurementApiTests.csproj", "{1E2FE70A-20A9-4D7E-AA18-CE3761A82B0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ErrorCalculatorApiTests", "Tests\ErrorCalculatorApiTests.csproj", "{1E2FE70A-20A9-4D7E-AA18-CE3761A82B0E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

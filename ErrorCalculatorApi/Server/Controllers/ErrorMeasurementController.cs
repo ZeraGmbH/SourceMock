@@ -1,26 +1,26 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ErrorMeasurementApi.Actions.Device;
-using ErrorMeasurementApi.Models;
+using ErrorCalculatorApi.Actions.Device;
+using ErrorCalculatorApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace ErrorMeasurementApi.Controllers;
+namespace ErrorCalculatorApi.Controllers;
 
 /// <summary>
-/// Controller to manage error measurements.
+/// Controller to manage error calculators.
 /// </summary>
 [ApiVersion("1.0")]
 [ApiController]
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("api/v{version:apiVersion}/ErrorCalculator/[controller]")]
 public class ErrorMeasurementController : ControllerBase
 {
-    private readonly IErrorMeasurement _device;
+    private readonly IErrorCalculator _device;
 
     /// <summary>
     /// Initialize a new controller.
     /// </summary>
     /// <param name="device">Serial port connected device to use.</param>
-    public ErrorMeasurementController(IErrorMeasurement device)
+    public ErrorMeasurementController(IErrorCalculator device)
     {
         _device = device;
     }

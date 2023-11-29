@@ -1,11 +1,11 @@
-using ErrorMeasurementApi.Models;
+using ErrorCalculatorApi.Models;
 
-namespace ErrorMeasurementApi.Actions.Device;
+namespace ErrorCalculatorApi.Actions.Device;
 
 /// <summary>
-/// API for any error measurement device.
+/// API for any error calculator device.
 /// </summary>
-public interface IErrorMeasurement
+public interface IErrorCalculator
 {
     /// <summary>
     /// Configure the error measurement.

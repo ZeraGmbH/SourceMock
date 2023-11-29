@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace RefMeterApi.Models;
+namespace ErrorMeasurementApi.Models;
 
 /// <summary>
 /// Possible operation states of an error measurement.

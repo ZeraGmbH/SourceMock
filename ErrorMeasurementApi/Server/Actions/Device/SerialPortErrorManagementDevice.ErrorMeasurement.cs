@@ -1,11 +1,10 @@
-using System.Globalization;
 using System.Text.RegularExpressions;
-using RefMeterApi.Models;
+using ErrorMeasurementApi.Models;
 using SerialPortProxy;
 
-namespace RefMeterApi.Actions.Device;
+namespace ErrorMeasurementApi.Actions.Device;
 
-partial class SerialPortRefMeterDevice
+partial class SerialPortErrorManagementDevice
 {
     private static readonly Regex MatchErrorStatus1 = new(@"^([0-1])([0-3])$");
 
@@ -14,8 +13,7 @@ partial class SerialPortRefMeterDevice
     private static readonly Regex MatchErrorStatus3 = new(@"^([^;]+);([^;]+)$");
 
     /// <inheritdoc/>
-    public Task AbortErrorMeasurement() =>
-        _device.Execute(SerialPortRequest.Create("AEE", "AEEACK"))[0];
+    public Task AbortErrorMeasurement() => _device.Execute(SerialPortRequest.Create("AEE", "AEEACK"))[0];
 
     /// <inheritdoc/>
     public async Task<ErrorMeasurementStatus> GetErrorStatus()
@@ -175,6 +173,5 @@ partial class SerialPortRefMeterDevice
     }
 
     /// <inheritdoc/>
-    public Task StartErrorMeasurement(bool continuous) =>
-        _device.Execute(SerialPortRequest.Create(continuous ? "AEB1" : "AEB0", "AEBACK"))[0];
+    public Task StartErrorMeasurement(bool continuous) => _device.Execute(SerialPortRequest.Create(continuous ? "AEB1" : "AEB0", "AEBACK"))[0];
 }

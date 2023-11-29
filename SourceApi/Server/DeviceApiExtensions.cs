@@ -1,3 +1,6 @@
+using ErrorMeasurementApi.Actions.Device;
+using ErrorMeasurementApi.Controllers;
+
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Controllers;
 
@@ -16,6 +19,7 @@ public static class Configuration
 {
     public static void UseDeviceApi(this SwaggerGenOptions options)
     {
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(ErrorMeasurementController).Assembly.GetName().Name}.xml"));
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(RefMeterController).Assembly.GetName().Name}.xml"));
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SerialPortConnection).Assembly.GetName().Name}.xml"));
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SourceController).Assembly.GetName().Name}.xml"));
@@ -65,6 +69,7 @@ public static class Configuration
             }
 
             services.AddSingleton<IRefMeter, SerialPortRefMeterDevice>();
+            services.AddSingleton<IErrorMeasurement, SerialPortErrorManagementDevice>();
         }
     }
 }

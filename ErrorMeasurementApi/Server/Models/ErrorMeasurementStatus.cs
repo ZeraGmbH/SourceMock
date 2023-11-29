@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace RefMeterApi.Models;
+namespace ErrorMeasurementApi.Models;
 
 /// <summary>
 /// Current status of the error measurement.

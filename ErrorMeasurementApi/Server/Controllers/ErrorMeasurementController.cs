@@ -1,26 +1,26 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RefMeterApi.Actions.Device;
-using RefMeterApi.Models;
+using ErrorMeasurementApi.Actions.Device;
+using ErrorMeasurementApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RefMeterApi.Controllers;
+namespace ErrorMeasurementApi.Controllers;
 
 /// <summary>
 /// Controller to manage error measurements.
 /// </summary>
 [ApiVersion("1.0")]
 [ApiController]
-[Route("api/v{version:apiVersion}/RefMeter/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class ErrorMeasurementController : ControllerBase
 {
-    private readonly IRefMeter _device;
+    private readonly IErrorMeasurement _device;
 
     /// <summary>
     /// Initialize a new controller.
     /// </summary>
     /// <param name="device">Serial port connected device to use.</param>
-    public ErrorMeasurementController(IRefMeter device)
+    public ErrorMeasurementController(IErrorMeasurement device)
     {
         _device = device;
     }

@@ -18,9 +18,9 @@ public class AMLParserTests
     [TestCase("4WA", MeasurementModes.FourWireActivePower)]
     public async Task Can_Process_Supported_Modes(string modeAsString, MeasurementModes mode)
     {
-        var device = new SerialPortRefMeterDevice(
+        var device = new SerialPortMTRefMeter(
             SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] { $"01;{modeAsString};xxx", "AMLACK" }), _portLogger),
-            new NullLogger<SerialPortRefMeterDevice>()
+            new NullLogger<SerialPortMTRefMeter>()
         );
 
         var modes = await device.GetMeasurementModes();
@@ -35,14 +35,14 @@ public class AMLParserTests
     [TestCase("01;XXX;ZZZ")]
     public async Task Will_Discard_Bad_Input(string reply)
     {
-        var device = new SerialPortRefMeterDevice(
+        var device = new SerialPortMTRefMeter(
             SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] {
                 "01;2WA;2WAde",
                 reply,
                 "03;3WA;3WAde",
                 "AMLACK"
             }), _portLogger),
-            new NullLogger<SerialPortRefMeterDevice>()
+            new NullLogger<SerialPortMTRefMeter>()
         );
 
         var modes = await device.GetMeasurementModes();
@@ -55,9 +55,9 @@ public class AMLParserTests
     [TestCase("M=4WA", MeasurementModes.FourWireActivePower)]
     public async Task Can_Detect_Active_Mode(string modeAsString, MeasurementModes mode)
     {
-        var device = new SerialPortRefMeterDevice(
+        var device = new SerialPortMTRefMeter(
             SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] { modeAsString, "ASTACK" }), _portLogger),
-            new NullLogger<SerialPortRefMeterDevice>()
+            new NullLogger<SerialPortMTRefMeter>()
         );
 
         var reply = await device.GetActualMeasurementMode();
@@ -70,14 +70,14 @@ public class AMLParserTests
     [TestCase("M=JOJO")]
     public async Task Will_Detect_Unsupported_Mode(string reply)
     {
-        var device = new SerialPortRefMeterDevice(
+        var device = new SerialPortMTRefMeter(
             SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] {
                 "A=1",
                 reply,
                 "B=2",
                 "ASTACK"
             }), _portLogger),
-            new NullLogger<SerialPortRefMeterDevice>()
+            new NullLogger<SerialPortMTRefMeter>()
         );
 
         var mode = await device.GetActualMeasurementMode();

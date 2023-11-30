@@ -11,14 +11,14 @@ namespace WebSamDeviceApis.Actions.SerialPort;
 /// A ISource implenmentation to access a (potentially mocked) device. This
 /// should be a singleton because it manages the loadpoint.
 /// </summary>
-public partial class SerialPortSource : ISource
+public partial class SerialPortMTSource : ISource
 {
     /// <summary>
     /// Detect model name and version number.
     /// </summary>
     private static readonly Regex _versionReg = new("^(.+)V([^V]+)$", RegexOptions.Singleline | RegexOptions.Compiled);
 
-    private readonly ILogger<SerialPortSource> _logger;
+    private readonly ILogger<SerialPortMTSource> _logger;
 
     private readonly SerialPortConnection _device;
 
@@ -29,7 +29,7 @@ public partial class SerialPortSource : ISource
     /// </summary>
     /// <param name="logger">Logger to use.</param>
     /// <param name="device">Access to the serial port.</param>
-    public SerialPortSource(ILogger<SerialPortSource> logger, SerialPortConnection device)
+    public SerialPortMTSource(ILogger<SerialPortMTSource> logger, SerialPortConnection device)
     {
         _device = device;
         _logger = logger;

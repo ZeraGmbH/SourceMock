@@ -4,7 +4,7 @@ using WebSamDeviceApis.Actions.SerialPort;
 
 namespace WebSamDeviceApis.Tests.Actions.Dosage;
 
-public class DeviceLogger : ILogger<SerialPortSource>
+public class DeviceLogger : ILogger<SerialPortMTSource>
 {
     class Scope : IDisposable
     {

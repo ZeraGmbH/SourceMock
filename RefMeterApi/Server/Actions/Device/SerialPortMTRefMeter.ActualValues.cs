@@ -6,7 +6,7 @@ using SerialPortProxy;
 
 namespace RefMeterApi.Actions.Device;
 
-partial class SerialPortRefMeterDevice
+partial class SerialPortMTRefMeter
 {
     private static readonly Regex ActualValueReg = new Regex(@"^(\d{1,3});(.+)$");
 

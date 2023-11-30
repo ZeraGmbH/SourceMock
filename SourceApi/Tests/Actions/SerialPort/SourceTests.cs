@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
@@ -11,7 +10,7 @@ namespace WebSamDeviceApis.Tests.Actions.SerialPort;
 [TestFixture]
 public class SourceTests
 {
-    class PortMock : SerialPortMock
+    class PortMock : SerialPortMTMock
     {
         protected override bool UseDelay => false;
 
@@ -41,7 +40,7 @@ public class SourceTests
         }
     }
 
-    private readonly NullLogger<SerialPortSource> _portLogger = new();
+    private readonly NullLogger<SerialPortMTSource> _portLogger = new();
 
     private readonly NullLogger<SerialPortConnection> _connectionLogger = new();
 
@@ -62,7 +61,7 @@ public class SourceTests
     [Test]
     public async Task Can_Get_Capabilities()
     {
-        var sut = new SerialPortSource(_portLogger, _device);
+        var sut = new SerialPortMTSource(_portLogger, _device);
 
         var caps = await sut.GetCapabilities();
 
@@ -73,7 +72,7 @@ public class SourceTests
     [TestCase(0.5, "SIPAAR000.500000.00S001.000120.00T001.500240.00")]
     public async Task Can_Set_Valid_Loadpoint(double baseAngle, string current)
     {
-        var sut = new SerialPortSource(_portLogger, _device);
+        var sut = new SerialPortMTSource(_portLogger, _device);
 
         Assert.That(sut.GetCurrentLoadpoint(), Is.Null);
 
@@ -117,7 +116,7 @@ public class SourceTests
     [TestCase(220, 1, 700, SourceResult.LOADPOINT_ANGLE_INVALID)]
     public async Task Can_Set_Invalid_Loadpoint(int voltage, int current, int angle, SourceResult expectedError)
     {
-        var sut = new SerialPortSource(_portLogger, _device);
+        var sut = new SerialPortMTSource(_portLogger, _device);
 
         Assert.That(sut.GetCurrentLoadpoint(), Is.Null);
 

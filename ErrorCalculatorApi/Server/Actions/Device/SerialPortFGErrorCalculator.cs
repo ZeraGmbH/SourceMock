@@ -1,0 +1,51 @@
+using ErrorCalculatorApi.Models;
+using Microsoft.Extensions.Logging;
+using SerialPortProxy;
+
+namespace ErrorCalculatorApi.Actions.Device;
+
+/// <summary>
+/// Handle all requests to a MT compatible device.
+/// </summary>
+
+public class SerialPortFGErrorCalculator : IErrorCalculator
+{
+    private readonly SerialPortConnection _device;
+
+    private readonly ILogger<SerialPortFGErrorCalculator> _logger;
+
+    /// <summary>
+    /// Initialize device manager.
+    /// </summary>
+    /// <param name="device">Service to access the current serial port.</param>
+    /// <param name="logger">Logging service for this device type.</param>
+    public SerialPortFGErrorCalculator(SerialPortConnection device, ILogger<SerialPortFGErrorCalculator> logger)
+    {
+        _device = device;
+        _logger = logger;
+    }
+
+    /// <inheritdoc/>
+    public Task AbortErrorMeasurement()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
+    public Task<ErrorMeasurementStatus> GetErrorStatus()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
+    public Task SetErrorMeasurementParameters(double meterConstant, long impulses)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
+    public Task StartErrorMeasurement(bool continuous)
+    {
+        throw new NotImplementedException();
+    }
+}

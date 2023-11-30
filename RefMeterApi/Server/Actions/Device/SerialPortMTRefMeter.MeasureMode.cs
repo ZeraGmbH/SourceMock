@@ -5,7 +5,7 @@ using SerialPortProxy;
 
 namespace RefMeterApi.Actions.Device;
 
-partial class SerialPortRefMeterDevice
+partial class SerialPortMTRefMeter
 {
     private static readonly Dictionary<string, MeasurementModes> SupportedModes = new() {
         {"2WA", MeasurementModes.TwoWireActivePower},

@@ -4,7 +4,7 @@ using SerialPortProxy;
 
 namespace ErrorCalculatorApi.Actions.Device;
 
-partial class SerialPortErrorCalculatorDevice
+partial class SerialPortMTErrorCalculator
 {
     private static readonly Regex MatchErrorStatus1 = new(@"^([0-1])([0-3])$");
 

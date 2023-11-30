@@ -3,7 +3,7 @@ using RefMeterApi.Actions.Device;
 
 namespace RefMeterApiTests;
 
-public class DeviceLogger : ILogger<SerialPortRefMeterDevice>
+public class DeviceLogger : ILogger<SerialPortMTRefMeter>
 {
     class Scope : IDisposable
     {

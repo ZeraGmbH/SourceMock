@@ -6,7 +6,7 @@ using WebSamDeviceApis.Model;
 
 namespace WebSamDeviceApis.Actions.SerialPort;
 
-partial class SerialPortSource
+partial class SerialPortMTSource
 {
     /// <inheritdoc/>
     public Task CancelDosage() =>

@@ -58,7 +58,7 @@ public class ErrorMeasurementTests
 
     }
 
-    private readonly NullLogger<SerialPortErrorCalculatorDevice> _logger = new();
+    private readonly NullLogger<SerialPortMTErrorCalculator> _logger = new();
 
     private readonly PortMock _port = new();
 
@@ -79,7 +79,7 @@ public class ErrorMeasurementTests
     [Test]
     public async Task Can_Start_Error_Measure()
     {
-        var cut = new SerialPortErrorCalculatorDevice(Device, _logger);
+        var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
         await cut.StartErrorMeasurement(false);
         await cut.StartErrorMeasurement(true);
@@ -88,7 +88,7 @@ public class ErrorMeasurementTests
     [Test]
     public async Task Can_Abort_Error_Measure()
     {
-        var cut = new SerialPortErrorCalculatorDevice(Device, _logger);
+        var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
         await cut.AbortErrorMeasurement();
     }
@@ -96,7 +96,7 @@ public class ErrorMeasurementTests
     [Test]
     public async Task Can_Request_Error_Management_Status()
     {
-        var cut = new SerialPortErrorCalculatorDevice(Device, _logger);
+        var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
         var status = await cut.GetErrorStatus();
 
@@ -201,7 +201,7 @@ public class ErrorMeasurementTests
     [TestCase(100000.51, 2500050, "100001;05;250005;1")]
     public async Task Can_Set_Error_Measurement_Parameters(double meterConstant, long impluses, string expected)
     {
-        var cut = new SerialPortErrorCalculatorDevice(Device, _logger);
+        var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
         await cut.SetErrorMeasurementParameters(meterConstant, impluses);
 
@@ -224,7 +224,7 @@ public class ErrorMeasurementTests
     [TestCase(99999999, "100000", 3)]
     public void Can_Clip_Numbers_To_Protocol_Restriction(long number, string expectedString, int expectedScale)
     {
-        var (asString, power) = SerialPortErrorCalculatorDevice.ClipNumberToProtocol(number, 11);
+        var (asString, power) = SerialPortMTErrorCalculator.ClipNumberToProtocol(number, 11);
         Assert.Multiple(() =>
         {
             Assert.That(asString, Is.EqualTo(expectedString));

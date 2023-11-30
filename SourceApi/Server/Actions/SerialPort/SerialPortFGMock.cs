@@ -1,0 +1,30 @@
+using SerialPortProxy;
+
+namespace WebSamDeviceApis.Actions.SerialPort;
+
+/// <summary>
+/// 
+/// </summary>
+public class SerialPortFGMock : ISerialPort
+{
+    private readonly Queue<QueueEntry> _replies = new();
+
+    /// <inheritdoc/>
+    public virtual void Dispose()
+    {
+    }
+
+    /// <inheritdoc/>
+    public virtual string ReadLine()
+    {
+        if (!_replies.TryDequeue(out var info))
+            throw new TimeoutException("no reply in quuue");
+
+        return info.Reply;
+    }
+
+    /// <inheritdoc/>
+    public virtual void WriteLine(string command)
+    {
+    }
+}

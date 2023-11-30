@@ -44,7 +44,7 @@ public static class Configuration
                 services.AddSingleton<ISource>(x => x.GetRequiredService<VeinSource>());
                 break;
             case "serial":
-                services.AddSingleton<ISource, SerialPortSource>();
+                services.AddSingleton<ISource, SerialPortMTSource>();
                 break;
             default:
                 throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
@@ -68,8 +68,8 @@ public static class Configuration
                     services.AddSingleton(ctx => SerialPortConnection.FromSerialPort(portName, ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
             }
 
-            services.AddSingleton<IRefMeter, SerialPortRefMeterDevice>();
-            services.AddSingleton<IErrorCalculator, SerialPortErrorCalculatorDevice>();
+            services.AddSingleton<IRefMeter, SerialPortMTRefMeter>();
+            services.AddSingleton<IErrorCalculator, SerialPortMTErrorCalculator>();
         }
     }
 }

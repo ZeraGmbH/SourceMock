@@ -13,14 +13,14 @@ public class RefMeterControllerTests
 {
     private readonly NullLogger<SerialPortConnection> _portLogger = new();
 
-    private readonly NullLogger<SerialPortRefMeterDevice> _deviceLogger = new();
+    private readonly NullLogger<SerialPortMTRefMeter> _deviceLogger = new();
 
     [Test]
     public async Task Controller_Will_Decode_AME_Reply()
     {
         using var port = SerialPortConnection.FromMock<StandardPortMock>(_portLogger);
 
-        var cut = new RefMeterController(new SerialPortRefMeterDevice(port, _deviceLogger));
+        var cut = new RefMeterController(new SerialPortMTRefMeter(port, _deviceLogger));
 
         var response = await cut.GetActualValues();
         var result = response.Result as OkObjectResult;

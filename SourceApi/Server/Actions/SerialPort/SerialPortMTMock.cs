@@ -4,7 +4,7 @@ using SerialPortProxy;
 
 namespace WebSamDeviceApis.Actions.SerialPort;
 
-static class AMEReplyEmulator
+public static class AMEReplyEmulator
 {
     private static readonly string[] MockData = {
         "0;1.9996199E+01",
@@ -73,7 +73,7 @@ static class AMEReplyEmulator
 /// <summary>
 /// Represents a single reply from the device.
 /// </summary>
-class QueueEntry
+public class QueueEntry
 {
     /// <summary>
     /// The reply text.
@@ -106,7 +106,7 @@ class QueueEntry
 /// <summary>
 /// Simulate a very general moving test.
 /// </summary>
-public class SerialPortMock : ISerialPort
+public class SerialPortMTMock : ISerialPort
 {
     private static readonly Regex SupCommand = new(@"^SUP([EA])([EA])R(\d{3}\.\d{3})(\d{3}\.\d{2})S(\d{3}\.\d{3})(\d{3}\.\d{2})T(\d{3}\.\d{3})(\d{3}\.\d{2})$");
 

@@ -12,7 +12,7 @@ public class AMEParserTests
 
     private readonly DeviceLogger _deviceLogger = new();
 
-    private IRefMeter CreateDevice(params string[] replies) => new SerialPortRefMeterDevice(SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), _deviceLogger);
+    private IRefMeter CreateDevice(params string[] replies) => new SerialPortMTRefMeter(SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), _deviceLogger);
 
     [Test]
     public async Task Can_Parse_AME_Reply()
@@ -46,9 +46,9 @@ public class AMEParserTests
     public async Task Will_Log_On_Invalid_Reply(string reply)
     {
         /* Use the regular logger. */
-        var device = new SerialPortRefMeterDevice(
+        var device = new SerialPortMTRefMeter(
             SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] { "ATIACK", reply, "AMEACK" }), _portLogger),
-            new NullLogger<SerialPortRefMeterDevice>()
+            new NullLogger<SerialPortMTRefMeter>()
         );
 
         /* Bad replies will only log a warning but not throw any exception. */
@@ -83,7 +83,7 @@ public class AMEParserTests
     [Test]
     public async Task Will_Cache_Request()
     {
-        var device = new SerialPortRefMeterDevice(SerialPortConnection.FromMock<CountingMock>(_portLogger), _deviceLogger);
+        var device = new SerialPortMTRefMeter(SerialPortConnection.FromMock<CountingMock>(_portLogger), _deviceLogger);
 
         /* Since all task execute at the same time they all should get the same result. */
         var first = await Task.WhenAll(Enumerable.Range(0, 10).Select(_ => device.GetActualValues()));

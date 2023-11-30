@@ -102,14 +102,14 @@ public class DeviceTests
 {
     private readonly NullLogger<SerialPortConnection> _logger = new();
 
-    private readonly NullLogger<SerialPortSource> _portLogger = new();
+    private readonly NullLogger<SerialPortMTSource> _portLogger = new();
 
     [Test]
     public async Task Can_Detect_Firmware_Version()
     {
         using var device = SerialPortConnection.FromMock<CorrectVersionMock>(_logger);
 
-        var dut = new SerialPortSource(_portLogger, device);
+        var dut = new SerialPortMTSource(_portLogger, device);
 
         var version = await dut.GetFirmwareVersion();
 
@@ -129,7 +129,7 @@ public class DeviceTests
     {
         using var device = SerialPortConnection.FromMock(mockType, _logger);
 
-        var dut = new SerialPortSource(_portLogger, device);
+        var dut = new SerialPortMTSource(_portLogger, device);
 
         var ex = Assert.ThrowsAsync(exception ?? typeof(InvalidOperationException), async () => await dut.GetFirmwareVersion());
 

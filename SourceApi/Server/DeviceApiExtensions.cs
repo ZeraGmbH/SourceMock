@@ -31,6 +31,11 @@ public static class Configuration
 
     public static void UseDeviceApi(this IServiceCollection services, IConfiguration configuration)
     {
+        var deviceType = configuration["SerialPort:DeviceType"];
+
+        if (deviceType != "MT" && deviceType != "FG")
+            throw new NotImplementedException($"Unknown DeviceType: {deviceType}");
+
         switch (configuration["SourceType"])
         {
             case "simulated":
@@ -44,23 +49,39 @@ public static class Configuration
                 services.AddSingleton<ISource>(x => x.GetRequiredService<VeinSource>());
                 break;
             case "serial":
-                services.AddSingleton<ISource, SerialPortMTSource>();
+                switch (deviceType)
+                {
+                    case "FG":
+                        services.AddSingleton<ISource, SerialPortFGSource>();
+                        break;
+                    default:
+                        services.AddSingleton<ISource, SerialPortMTSource>();
+                        break;
+                }
                 break;
             default:
                 throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
         }
 
         {
-            var mockType = configuration["SerialPort:PortMockType"];
+            var usePortMock = configuration["SerialPort:UsePortMock"];
 
-            if (!string.IsNullOrEmpty(mockType))
-                services.AddSingleton(ctx => SerialPortConnection.FromMock(Type.GetType(mockType)!, ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
+            if (usePortMock == "yes")
+                switch (deviceType)
+                {
+                    case "FG":
+                        services.AddSingleton(ctx => SerialPortConnection.FromMock<SerialPortFGMock>(ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
+                        break;
+                    default:
+                        services.AddSingleton(ctx => SerialPortConnection.FromMock<SerialPortMTMock>(ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
+                        break;
+                }
             else
             {
                 var portName = configuration["SerialPort:PortName"];
 
                 if (string.IsNullOrEmpty(portName))
-                    throw new NotSupportedException("either serial port name or port mock type must be set.");
+                    throw new NotSupportedException("serial port name must be set if not using serial port mock.");
 
                 if (portName.Contains(':'))
                     services.AddSingleton(ctx => SerialPortConnection.FromNetwork(portName, ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
@@ -68,8 +89,17 @@ public static class Configuration
                     services.AddSingleton(ctx => SerialPortConnection.FromSerialPort(portName, ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
             }
 
-            services.AddSingleton<IRefMeter, SerialPortMTRefMeter>();
-            services.AddSingleton<IErrorCalculator, SerialPortMTErrorCalculator>();
+            switch (deviceType)
+            {
+                case "FG":
+                    services.AddSingleton<IRefMeter, SerialPortFGRefMeter>();
+                    services.AddSingleton<IErrorCalculator, SerialPortFGErrorCalculator>();
+                    break;
+                default:
+                    services.AddSingleton<IRefMeter, SerialPortMTRefMeter>();
+                    services.AddSingleton<IErrorCalculator, SerialPortMTErrorCalculator>();
+                    break;
+            }
         }
     }
 }

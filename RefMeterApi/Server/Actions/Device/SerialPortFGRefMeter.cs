@@ -27,24 +27,41 @@ public class SerialPortFGRefMeter : IRefMeter
     /// <inheritdoc/>
     public Task<MeasurementModes?> GetActualMeasurementMode()
     {
+        // Could be MI, but maybe not queryable
         throw new NotImplementedException();
     }
 
     /// <inheritdoc/>
     public Task<MeasureOutput> GetActualValues()
     {
+        // Must be requested separatly
+        //  Phase Order: unknown, may be derivable
+        //  Phase
+        //  - Voltage: AU/AD and BU
+        //  - Current: AI and BI
+        //  - Angles: AW
+        //  - Power Factor: unknown, may be derivable
+        //  - Active Power: MP
+        //  - Reactive Power: MQ
+        //  - Apparent Power: MS
+        //  Active Power - must be summed up from phases
+        //  Reactive Power - must be summed up from phases
+        //  Apparent Power - must be summed up from phases
+        //  Frequency: AF
         throw new NotImplementedException();
     }
 
     /// <inheritdoc/>
     public Task<MeasurementModes[]> GetMeasurementModes()
     {
+        // Should be MI
         throw new NotImplementedException();
     }
 
     /// <inheritdoc/>
     public Task SetActualMeasurementMode(MeasurementModes mode)
     {
+        // Should be MA
         throw new NotImplementedException();
     }
 }

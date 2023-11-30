@@ -5,7 +5,10 @@ using SerialPortProxy;
 namespace ErrorCalculatorApi.Actions.Device;
 
 /// <summary>
-/// Handle all requests to a MT compatible device.
+/// Handle all requests to a FG30x compatible device. There is
+/// no error calculaor available using the serial port communication,
+/// it has to be connected separatly (via network and Koala XML 
+/// protocol).
 /// </summary>
 
 public class SerialPortFGErrorCalculator : IErrorCalculator

@@ -18,7 +18,7 @@ public class SerialPortFGMock : ISerialPort
     public virtual string ReadLine()
     {
         if (!_replies.TryDequeue(out var info))
-            throw new TimeoutException("no reply in quuue");
+            throw new TimeoutException("no reply in queue");
 
         return info.Reply;
     }

@@ -29,7 +29,7 @@ abstract class PortMock : ISerialPort
         if (_replies.TryDequeue(out var reply))
             return reply;
 
-        throw new TimeoutException("no reply in quuue");
+        throw new TimeoutException("no reply in queue");
     }
 
     public void WriteLine(string command)

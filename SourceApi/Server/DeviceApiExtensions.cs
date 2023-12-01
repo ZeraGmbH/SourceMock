@@ -8,7 +8,8 @@ using SerialPortProxy;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-using WebSamDeviceApis.Actions.SerialPort;
+using WebSamDeviceApis.Actions.SerialPort.FG30x;
+using WebSamDeviceApis.Actions.SerialPort.MT768;
 using WebSamDeviceApis.Actions.Source;
 using WebSamDeviceApis.Actions.VeinSource;
 using WebSamDeviceApis.Controllers;

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-using WebSamDeviceApis.Actions.SerialPort;
+using WebSamDeviceApis.Actions.SerialPort.MT768;
 
 namespace WebSamDeviceApis.Tests.Actions.Dosage;
 

@@ -4,7 +4,7 @@ using SerialPortProxy;
 
 using WebSamDeviceApis.Model;
 
-namespace WebSamDeviceApis.Actions.SerialPort;
+namespace WebSamDeviceApis.Actions.SerialPort.MT768;
 
 partial class SerialPortMTSource
 {

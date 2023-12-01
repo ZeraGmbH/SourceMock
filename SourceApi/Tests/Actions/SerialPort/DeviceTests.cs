@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
 
-using WebSamDeviceApis.Actions.SerialPort;
+using WebSamDeviceApis.Actions.SerialPort.MT768;
 
 namespace WebSamDeviceApis.Tests.Actions.SerialPort;
 

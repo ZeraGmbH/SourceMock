@@ -6,158 +6,106 @@ namespace WebSamDeviceApis.Model;
 /// 
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum VoltageAmplifiers
+public enum CurrentAmplifiers
 {
     /// <summary>
     /// 
     /// </summary>
-    N132_3 = 13,
+    N132_7 = 29,
     /// <summary>
     /// 
     /// </summary>
-    N132_4 = 14,
+    SCG1020 = 42,
     /// <summary>
     /// 
     /// </summary>
-    N132_5 = 15,
+    V115_1 = 24,
     /// <summary>
     /// 
     /// </summary>
-    N132_6 = 21,
+    V115_2 = 25,
     /// <summary>
     /// 
     /// </summary>
-    N132_9 = 16,
+    V115_3 = 26,
     /// <summary>
     /// 
     /// </summary>
-    SVG3020_0 = 37,
+    V115_4 = 27,
     /// <summary>
     /// 
     /// </summary>
-    V114_2 = 4,
+    V115_5 = 28,
     /// <summary>
     /// 
     /// </summary>
-    V114_3 = 5,
+    V115_6 = 30,
     /// <summary>
     /// 
     /// </summary>
-    V114_4 = 6,
+    V200_1 = 21,
     /// <summary>
     /// 
     /// </summary>
-    V114_5 = 7,
+    V200_1_3 = 33,
     /// <summary>
     /// 
     /// </summary>
-    V114_5_2 = 24,
+    V200_2 = 34,
     /// <summary>
     /// 
     /// </summary>
-    V114_6 = 23,
+    V200_4 = 40,
     /// <summary>
     /// 
     /// </summary>
-    V116_1 = 8,
+    VI201_0_1 = 39,
     /// <summary>
     /// 
     /// </summary>
-    V116_2 = 9,
+    VI201_01 = 35,
     /// <summary>
     /// 
     /// </summary>
-    V116_2_2 = 22,
+    VI202_0 = 36,
     /// <summary>
     /// 
     /// </summary>
-    V116_4 = 10,
+    VI202_0_1 = 41,
     /// <summary>
     /// 
     /// </summary>
-    V116_5 = 11,
+    VI202_0_2 = 43,
     /// <summary>
     /// 
     /// </summary>
-    V116_7 = 12,
+    VI202_0_3 = 44,
     /// <summary>
     /// 
     /// </summary>
-    V210_1 = 1,
+    VI202_0_4 = 45,
     /// <summary>
     /// 
     /// </summary>
-    V210_1_2 = 28,
+    VI202_0_5 = 47,
     /// <summary>
     /// 
     /// </summary>
-    V210_1_3 = 29,
+    VI220_1 = 22,
     /// <summary>
     /// 
     /// </summary>
-    VU211_012 = 30,
+    VI221_0 = 37,
     /// <summary>
     /// 
     /// </summary>
-    VU220 = 2,
+    VI222_0 = 38,
     /// <summary>
     /// 
     /// </summary>
-    VU220_1 = 18,
+    VI222_0_1 = 46,
     /// <summary>
     /// 
     /// </summary>
-    VU220_1_1 = 27,
-    /// <summary>
-    /// 
-    /// </summary>
-    VU220_2 = 17,
-    /// <summary>
-    /// 
-    /// </summary>
-    VU220_2_2 = 25,
-    /// <summary>
-    /// 
-    /// </summary>
-    VU220_3 = 19,
-    /// <summary>
-    /// 
-    /// </summary>
-    VU220_4 = 20,
-    /// <summary>
-    /// 
-    /// </summary>
-    VU220_4_1 = 26,
-    /// <summary>
-    /// 
-    /// </summary>
-    VU220_4_2 = 34,
-    /// <summary>
-    /// 
-    /// </summary>
-    VU221_0 = 31,
-    /// <summary>
-    /// 
-    /// </summary>
-    VU221_0_1 = 35,
-    /// <summary>
-    /// 
-    /// </summary>
-    VU221_0_2 = 36,
-    /// <summary>
-    /// 
-    /// </summary>
-    VU221_0_3 = 38,
-    /// <summary>
-    /// 
-    /// </summary>
-    VU221_13 = 32,
-    /// <summary>
-    /// 
-    /// </summary>
-    VU221_2 = 33,
-    /// <summary>
-    /// 
-    /// </summary>
-    VU301_1 = 3,
+    VI301_1 = 23,
 }

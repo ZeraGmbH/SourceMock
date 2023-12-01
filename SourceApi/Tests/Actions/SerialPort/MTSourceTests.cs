@@ -8,7 +8,7 @@ using WebSamDeviceApis.Actions.Source;
 namespace WebSamDeviceApis.Tests.Actions.SerialPort;
 
 [TestFixture]
-public class SourceTests
+public class MTSourceTests
 {
     class PortMock : SerialPortMTMock
     {

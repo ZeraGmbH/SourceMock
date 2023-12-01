@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 using SerialPortProxy;
 
 using WebSamDeviceApis.Actions.Source;
@@ -10,6 +12,11 @@ namespace WebSamDeviceApis.Actions.SerialPort;
 /// </summary>
 public class SerialPortFGSource : ISource
 {
+    /// <summary>
+    /// Detect model name and version number.
+    /// </summary>
+    private static readonly Regex _versionReg = new("^TS(.{8})(.{4})$", RegexOptions.Singleline | RegexOptions.Compiled);
+
     private readonly ILogger<SerialPortFGSource> _logger;
 
     private readonly SerialPortConnection _device;
@@ -61,10 +68,26 @@ public class SerialPortFGSource : ISource
     }
 
     /// <inheritdoc/>
-    public Task<DeviceFirmwareVersion> GetFirmwareVersion()
+    public async Task<DeviceFirmwareVersion> GetFirmwareVersion()
     {
-        // 2TS
-        throw new NotImplementedException();
+        /* Send command and check reply. */
+        var reply = await _device.Execute(SerialPortRequest.Create("TS", _versionReg))[0];
+
+        if (reply.Length < 1)
+            throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");
+
+        /* Validate the response consisting of model name and version numner. */
+        var versionMatch = _versionReg.Match(reply[^1]);
+
+        if (versionMatch?.Success != true)
+            throw new InvalidOperationException($"invalid response {reply[0]} from device");
+
+        /* Create response structure. */
+        return new DeviceFirmwareVersion
+        {
+            ModelName = versionMatch.Groups[1].Value.Trim(),
+            Version = versionMatch.Groups[2].Value.Trim()
+        };
     }
 
     /// <inheritdoc/>

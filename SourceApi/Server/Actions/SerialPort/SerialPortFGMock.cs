@@ -26,5 +26,11 @@ public class SerialPortFGMock : ISerialPort
     /// <inheritdoc/>
     public virtual void WriteLine(string command)
     {
+        switch (command)
+        {
+            case "TS":
+                _replies.Enqueue("TSFG399   V703");
+                break;
+        }
     }
 }

@@ -9,16 +9,33 @@ namespace WebSamDeviceApis.Tests.Actions.SerialPort;
 [TestFixture]
 public class FGSourceTests
 {
+    class LoggingSourceMock : SerialPortFGMock
+    {
+        public readonly List<string> Commands = new();
+
+        public override void WriteLine(string command)
+        {
+            Commands.Add(command);
+
+            base.WriteLine(command);
+        }
+    }
+
     private readonly NullLogger<SerialPortFGSource> _portLogger = new();
 
     private readonly NullLogger<SerialPortConnection> _connectionLogger = new();
 
     private SerialPortConnection _device;
 
+    private SerialPortFGSource _source;
+
+    private readonly LoggingSourceMock _port = new();
+
     [SetUp]
     public void SetUp()
     {
-        _device = SerialPortConnection.FromMock<SerialPortFGMock>(_connectionLogger);
+        _device = SerialPortConnection.FromPortInstance(_port, _connectionLogger);
+        _source = new SerialPortFGSource(_portLogger, _device);
     }
 
     [TearDown]
@@ -30,9 +47,7 @@ public class FGSourceTests
     [Test]
     public async Task Can_Get_Firmware_Version()
     {
-        var sut = new SerialPortFGSource(_portLogger, _device);
-
-        var version = await sut.GetFirmwareVersion();
+        var version = await _source.GetFirmwareVersion();
 
         Assert.Multiple(() =>
         {

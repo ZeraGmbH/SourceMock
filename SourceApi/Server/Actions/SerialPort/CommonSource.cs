@@ -25,17 +25,17 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     /// <summary>
     /// 
     /// </summary>
-    protected Loadpoint? Loadpoint;
+    protected Loadpoint? Loadpoint { get; private set; }
 
     /// <summary>
     /// 
     /// </summary>
-    protected readonly LoadpointInfo Info = new();
+    protected LoadpointInfo Info { get; private set; } = new();
 
     /// <summary>
     /// 
     /// </summary>
-    protected readonly ILoadpointTranslator Translator = new T();
+    protected ILoadpointTranslator Translator { get; private set; } = new T();
 
     /// <summary>
     /// 

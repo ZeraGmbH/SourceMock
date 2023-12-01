@@ -11,91 +11,91 @@ public enum VoltageAmplifiers
     /// <summary>
     /// 
     /// </summary>
-    N132_3 = 13,
+    N132x3 = 13,
     /// <summary>
     /// 
     /// </summary>
-    N132_4 = 14,
+    N132x4 = 14,
     /// <summary>
     /// 
     /// </summary>
-    N132_5 = 15,
+    N132x5 = 15,
     /// <summary>
     /// 
     /// </summary>
-    N132_6 = 21,
+    N132x6 = 21,
     /// <summary>
     /// 
     /// </summary>
-    N132_9 = 16,
+    N132x9 = 16,
     /// <summary>
     /// 
     /// </summary>
-    SVG3020_0 = 37,
+    SVG3020x0 = 37,
     /// <summary>
     /// 
     /// </summary>
-    V114_2 = 4,
+    V114x2 = 4,
     /// <summary>
     /// 
     /// </summary>
-    V114_3 = 5,
+    V114x3 = 5,
     /// <summary>
     /// 
     /// </summary>
-    V114_4 = 6,
+    V114x4 = 6,
     /// <summary>
     /// 
     /// </summary>
-    V114_5 = 7,
+    V114x5 = 7,
     /// <summary>
     /// 
     /// </summary>
-    V114_5_2 = 24,
+    V114x5x2 = 24,
     /// <summary>
     /// 
     /// </summary>
-    V114_6 = 23,
+    V114x6 = 23,
     /// <summary>
     /// 
     /// </summary>
-    V116_1 = 8,
+    V116x1 = 8,
     /// <summary>
     /// 
     /// </summary>
-    V116_2 = 9,
+    V116x2 = 9,
     /// <summary>
     /// 
     /// </summary>
-    V116_2_2 = 22,
+    V116x2x2 = 22,
     /// <summary>
     /// 
     /// </summary>
-    V116_4 = 10,
+    V116x4 = 10,
     /// <summary>
     /// 
     /// </summary>
-    V116_5 = 11,
+    V116x5 = 11,
     /// <summary>
     /// 
     /// </summary>
-    V116_7 = 12,
+    V116x7 = 12,
     /// <summary>
     /// 
     /// </summary>
-    V210_1 = 1,
+    V210x1 = 1,
     /// <summary>
     /// 
     /// </summary>
-    V210_1_2 = 28,
+    V210x1x2 = 28,
     /// <summary>
     /// 
     /// </summary>
-    V210_1_3 = 29,
+    V210x1x3 = 29,
     /// <summary>
     /// 
     /// </summary>
-    VU211_012 = 30,
+    VU211x012 = 30,
     /// <summary>
     /// 
     /// </summary>
@@ -103,61 +103,61 @@ public enum VoltageAmplifiers
     /// <summary>
     /// 
     /// </summary>
-    VU220_1 = 18,
+    VU220x1 = 18,
     /// <summary>
     /// 
     /// </summary>
-    VU220_1_1 = 27,
+    VU220x1x1 = 27,
     /// <summary>
     /// 
     /// </summary>
-    VU220_2 = 17,
+    VU220x2 = 17,
     /// <summary>
     /// 
     /// </summary>
-    VU220_2_2 = 25,
+    VU220x2x2 = 25,
     /// <summary>
     /// 
     /// </summary>
-    VU220_3 = 19,
+    VU220x3 = 19,
     /// <summary>
     /// 
     /// </summary>
-    VU220_4 = 20,
+    VU220x4 = 20,
     /// <summary>
     /// 
     /// </summary>
-    VU220_4_1 = 26,
+    VU220x4x1 = 26,
     /// <summary>
     /// 
     /// </summary>
-    VU220_4_2 = 34,
+    VU220x4x2 = 34,
     /// <summary>
     /// 
     /// </summary>
-    VU221_0 = 31,
+    VU221x0 = 31,
     /// <summary>
     /// 
     /// </summary>
-    VU221_0_1 = 35,
+    VU221x0x1 = 35,
     /// <summary>
     /// 
     /// </summary>
-    VU221_0_2 = 36,
+    VU221x0x2 = 36,
     /// <summary>
     /// 
     /// </summary>
-    VU221_0_3 = 38,
+    VU221x0x3 = 38,
     /// <summary>
     /// 
     /// </summary>
-    VU221_13 = 32,
+    VU221x13 = 32,
     /// <summary>
     /// 
     /// </summary>
-    VU221_2 = 33,
+    VU221x2 = 33,
     /// <summary>
     /// 
     /// </summary>
-    VU301_1 = 3,
+    VU301x1 = 3,
 }

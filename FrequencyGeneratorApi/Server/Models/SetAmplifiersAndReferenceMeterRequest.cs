@@ -1,0 +1,28 @@
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+
+namespace FrequencyGeneratorApi.Models;
+
+/// <summary>
+/// 
+/// </summary>
+public class SetAmplifiersAndReferenceMeterRequest
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    [NotNull, Required]
+    public VoltageAmplifiers VoltageAmplifier { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [NotNull, Required]
+    public CurrentAmplifiers CurrentAmplifier { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [NotNull, Required]
+    public ReferenceMeters ReferenceMeter { get; set; }
+}

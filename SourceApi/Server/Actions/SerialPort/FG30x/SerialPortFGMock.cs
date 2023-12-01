@@ -17,6 +17,7 @@ public class SerialPortFGMock : ISerialPort
 
     private static readonly Regex UiCommand = new(@"^UI([AE])([AE])([AE])([AP])([AP])([AP])([AE])([AE])([AE])$");
 
+    private static readonly Regex ZpCommand = new(@"^ZP\d{10}$");
 
     private readonly Queue<QueueEntry> _replies = new();
 
@@ -56,6 +57,9 @@ public class SerialPortFGMock : ISerialPort
                     /* Activate phases. */
                     else if (UiCommand.IsMatch(command))
                         _replies.Enqueue("OKUI");
+                    /* Configure amplifiers and reference meter. */
+                    else if (ZpCommand.IsMatch(command))
+                        _replies.Enqueue("OKZP");
 
                     break;
                 }

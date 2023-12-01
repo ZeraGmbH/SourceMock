@@ -1,6 +1,7 @@
 using ErrorCalculatorApi.Actions.Device;
 using ErrorCalculatorApi.Controllers;
 
+using FrequencyGeneratorApi.Actions.Device;
 using FrequencyGeneratorApi.Models;
 
 using RefMeterApi.Actions.Device;
@@ -98,10 +99,12 @@ public static class Configuration
                 case "FG":
                     services.AddSingleton<IRefMeter, SerialPortFGRefMeter>();
                     services.AddSingleton<IErrorCalculator, SerialPortFGErrorCalculator>();
+                    services.AddSingleton<IFrequencyGenerator, SerialPortFGFrequencyGenerator>();
                     break;
                 default:
                     services.AddSingleton<IRefMeter, SerialPortMTRefMeter>();
                     services.AddSingleton<IErrorCalculator, SerialPortMTErrorCalculator>();
+                    services.AddSingleton<IFrequencyGenerator, SerialPortMTFrequencyGenerator>();
                     break;
             }
         }

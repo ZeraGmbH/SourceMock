@@ -11,7 +11,7 @@ public enum CurrentAmplifiers
     /// <summary>
     /// 
     /// </summary>
-    N132_7 = 29,
+    N132x7 = 29,
     /// <summary>
     /// 
     /// </summary>
@@ -19,93 +19,93 @@ public enum CurrentAmplifiers
     /// <summary>
     /// 
     /// </summary>
-    V115_1 = 24,
+    V115x1 = 24,
     /// <summary>
     /// 
     /// </summary>
-    V115_2 = 25,
+    V115x2 = 25,
     /// <summary>
     /// 
     /// </summary>
-    V115_3 = 26,
+    V115x3 = 26,
     /// <summary>
     /// 
     /// </summary>
-    V115_4 = 27,
+    V115x4 = 27,
     /// <summary>
     /// 
     /// </summary>
-    V115_5 = 28,
+    V115x5 = 28,
     /// <summary>
     /// 
     /// </summary>
-    V115_6 = 30,
+    V115x6 = 30,
     /// <summary>
     /// 
     /// </summary>
-    V200_1 = 21,
+    V200x1 = 21,
     /// <summary>
     /// 
     /// </summary>
-    V200_1_3 = 33,
+    V200x1x3 = 33,
     /// <summary>
     /// 
     /// </summary>
-    V200_2 = 34,
+    V200x2 = 34,
     /// <summary>
     /// 
     /// </summary>
-    V200_4 = 40,
+    V200x4 = 40,
     /// <summary>
     /// 
     /// </summary>
-    VI201_0_1 = 39,
+    VI201x0x1 = 39,
     /// <summary>
     /// 
     /// </summary>
-    VI201_01 = 35,
+    VI201x01 = 35,
     /// <summary>
     /// 
     /// </summary>
-    VI202_0 = 36,
+    VI202x0 = 36,
     /// <summary>
     /// 
     /// </summary>
-    VI202_0_1 = 41,
+    VI202x0x1 = 41,
     /// <summary>
     /// 
     /// </summary>
-    VI202_0_2 = 43,
+    VI202x0x2 = 43,
     /// <summary>
     /// 
     /// </summary>
-    VI202_0_3 = 44,
+    VI202x0x3 = 44,
     /// <summary>
     /// 
     /// </summary>
-    VI202_0_4 = 45,
+    VI202x0x4 = 45,
     /// <summary>
     /// 
     /// </summary>
-    VI202_0_5 = 47,
+    VI202x0x5 = 47,
     /// <summary>
     /// 
     /// </summary>
-    VI220_1 = 22,
+    VI220x1 = 22,
     /// <summary>
     /// 
     /// </summary>
-    VI221_0 = 37,
+    VI221x0 = 37,
     /// <summary>
     /// 
     /// </summary>
-    VI222_0 = 38,
+    VI222x0 = 38,
     /// <summary>
     /// 
     /// </summary>
-    VI222_0_1 = 46,
+    VI222x0x1 = 46,
     /// <summary>
     /// 
     /// </summary>
-    VI301_1 = 23,
+    VI301x1 = 23,
 }

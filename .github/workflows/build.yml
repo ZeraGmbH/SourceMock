@@ -39,6 +39,7 @@ jobs:
         run: |
           dotnet test SourceApi --no-build
           dotnet test ErrorCalculatorApi
+          dotnet test FrequencyGeneratorApi
           dotnet test RefMeterApi
           dotnet test SerialPortProxy
 

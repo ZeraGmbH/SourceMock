@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace WebSamDeviceApis.Model;
+namespace FrequencyGeneratorApi.Models;
 
 /// <summary>
 /// 

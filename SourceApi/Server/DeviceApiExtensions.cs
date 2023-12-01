@@ -1,6 +1,8 @@
 using ErrorCalculatorApi.Actions.Device;
 using ErrorCalculatorApi.Controllers;
 
+using FrequencyGeneratorApi.Models;
+
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Controllers;
 
@@ -21,6 +23,7 @@ public static class Configuration
     public static void UseDeviceApi(this SwaggerGenOptions options)
     {
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(ErrorMeasurementController).Assembly.GetName().Name}.xml"));
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(FrequencyGeneratorCapabilities).Assembly.GetName().Name}.xml"));
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(RefMeterController).Assembly.GetName().Name}.xml"));
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SerialPortConnection).Assembly.GetName().Name}.xml"));
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SourceController).Assembly.GetName().Name}.xml"));

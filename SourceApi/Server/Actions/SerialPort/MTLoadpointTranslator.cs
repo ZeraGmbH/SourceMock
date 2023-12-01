@@ -9,14 +9,14 @@ namespace WebSamDeviceApis.Actions.SerialPort;
 /// <summary>
 /// 
 /// </summary>
-public static class LoadpointTranslator
+public class MTLoadpointTranslator : ILoadpointTranslator
 {
     /// <summary>
     /// Create a sequence of related serial port request from any loadpoint.
     /// </summary>
     /// <param name="loadpoint">Some already validated loadpoint.</param>
     /// <returns>Sequence of requests to send as a single transaction.</returns>
-    public static SerialPortRequest[] ToSerialPortRequests(Loadpoint loadpoint)
+    public SerialPortRequest[] ToSerialPortRequests(Loadpoint loadpoint)
     {
         var requests = new List<SerialPortRequest>();
 

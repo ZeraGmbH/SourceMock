@@ -9,11 +9,11 @@ namespace WebSamDeviceApis.Actions.SerialPort;
 partial class SerialPortMTSource
 {
     /// <inheritdoc/>
-    public Task CancelDosage() =>
-        Task.WhenAll(_device.Execute(SerialPortRequest.Create("S3CM2", "SOK3CM2")));
+    public override Task CancelDosage() =>
+        Task.WhenAll(Device.Execute(SerialPortRequest.Create("S3CM2", "SOK3CM2")));
 
     /// <inheritdoc/>
-    public async Task<DosageProgress> GetDosageProgress()
+    public override async Task<DosageProgress> GetDosageProgress()
     {
         /* Request the current meter constant. */
         var measureConstant = await GetCurrentMeterConstant() / 1000d;
@@ -24,7 +24,7 @@ partial class SerialPortMTSource
         var progress = SerialPortRequest.Create("S3MA5", new Regex(@"^SOK3MA5;(.+)$"));
         var total = SerialPortRequest.Create("S3SA5", new Regex(@"^SOK3SA5;(.+)$"));
 
-        await Task.WhenAll(_device.Execute(active, countdown, progress, total));
+        await Task.WhenAll(Device.Execute(active, countdown, progress, total));
 
         /* Scale actual values to energy - in Wh. */
         return new()
@@ -45,7 +45,7 @@ partial class SerialPortMTSource
     /// <exception cref="ArgumentException">Measuring mode not supported.</exception>
     private async Task<double> GetCurrentMeterConstant()
     {
-        var reply = await _device.Execute(SerialPortRequest.Create("AST", "ASTACK"))[0];
+        var reply = await Device.Execute(SerialPortRequest.Create("AST", "ASTACK"))[0];
 
         /* We need the range of voltage and current and the measurement mode as well. */
         double? voltage = null, current = null;
@@ -73,7 +73,7 @@ partial class SerialPortMTSource
     }
 
     /// <inheritdoc/>
-    public async Task SetDosageEnergy(double value)
+    public override async Task SetDosageEnergy(double value)
     {
         if (value < 0)
             throw new ArgumentOutOfRangeException(nameof(value));
@@ -82,18 +82,18 @@ partial class SerialPortMTSource
         var meterConst = await GetCurrentMeterConstant();
         var impulses = (long)Math.Round(meterConst * value / 1000d);
 
-        await Task.WhenAll(_device.Execute(SerialPortRequest.Create($"S3PS46;{impulses:0000000000}", "SOK3PS46")));
+        await Task.WhenAll(Device.Execute(SerialPortRequest.Create($"S3PS46;{impulses:0000000000}", "SOK3PS46")));
     }
 
     /// <inheritdoc/>
-    public Task SetDosageMode(bool on)
+    public override Task SetDosageMode(bool on)
     {
         var onAsNumber = on ? 3 : 4;
 
-        return Task.WhenAll(_device.Execute(SerialPortRequest.Create($"S3CM{onAsNumber}", $"SOK3CM{onAsNumber}")));
+        return Task.WhenAll(Device.Execute(SerialPortRequest.Create($"S3CM{onAsNumber}", $"SOK3CM{onAsNumber}")));
     }
 
     /// <inheritdoc/>
-    public Task StartDosage() =>
-        Task.WhenAll(_device.Execute(SerialPortRequest.Create("S3CM1", "SOK3CM1")));
+    public override Task StartDosage() =>
+        Task.WhenAll(Device.Execute(SerialPortRequest.Create("S3CM1", "SOK3CM1")));
 }

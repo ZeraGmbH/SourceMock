@@ -33,6 +33,7 @@ public static class CapabilitiesMap
 
     private static readonly Dictionary<string, SourceCapabilities> ByModel = new()
         {
+            { "FG30x", Default },
             { "MT786", Default },
             { "MT793", Default },
         };

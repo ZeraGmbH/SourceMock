@@ -36,9 +36,10 @@ public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>
     /// <inheritdoc/>
     public override Task<SourceCapabilities> GetCapabilities()
     {
-        // Software only
-        throw new NotImplementedException();
+        /* Currently we assume MT768, future versions may read the firmware from the device. */
+        return Task.FromResult(CapabilitiesMap.GetCapabilitiesByModel("FG30x"));
     }
+
 
     /// <inheritdoc/>
     public override Task<DosageProgress> GetDosageProgress()

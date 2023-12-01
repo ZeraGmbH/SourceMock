@@ -358,7 +358,6 @@ public class SerialPortMTMock : ISerialPort
 
                     break;
                 }
-
         }
     }
 }

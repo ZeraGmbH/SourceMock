@@ -212,6 +212,16 @@ public class SerialPortConnection : IDisposable
                     return false;
                 }
 
+                /* Error handling for ERR commands. */
+                if (reply.StartsWith("ER-") || reply.StartsWith("ERR-") || reply.StartsWith("ERROR-"))
+                {
+                    _logger.LogError($"Command {request.Command} reported ER*");
+
+                    request.Result.SetException(new ArgumentException(request.Command));
+
+                    return false;
+                }
+
                 /* Always remember the reply - even the terminating string. */
                 answer.Add(reply);
 

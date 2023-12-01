@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 using SerialPortProxy;
 
 namespace WebSamDeviceApis.Actions.SerialPort.FG30x;
@@ -7,6 +9,15 @@ namespace WebSamDeviceApis.Actions.SerialPort.FG30x;
 /// </summary>
 public class SerialPortFGMock : ISerialPort
 {
+    private static readonly Regex UpCommand = new(@"^UP([EA])([EA])R(\d{3}\.\d{3})(\d{3}\.\d{2})S(\d{3}\.\d{3})(\d{3}\.\d{2})T(\d{3}\.\d{3})(\d{3}\.\d{2})$");
+
+    private static readonly Regex IpCommand = new(@"^IP([EA])([AM])R(\d{3}\.\d{3})(\d{3}\.\d{2})S(\d{3}\.\d{3})(\d{3}\.\d{2})T(\d{3}\.\d{3})(\d{3}\.\d{2})$");
+
+    private static readonly Regex FrCommand = new(@"^FR(\d{2}\.\d{2})$");
+
+    private static readonly Regex UiCommand = new(@"^UI([AE])([AE])([AE])([AP])([AP])([AP])([AE])([AE])([AE])$");
+
+
     private readonly Queue<QueueEntry> _replies = new();
 
     /// <inheritdoc/>
@@ -31,6 +42,24 @@ public class SerialPortFGMock : ISerialPort
             case "TS":
                 _replies.Enqueue("TSFG399   V703");
                 break;
+            default:
+                {
+                    /* Set voltage. */
+                    if (UpCommand.IsMatch(command))
+                        _replies.Enqueue("OKUP");
+                    /* Set current.*/
+                    else if (IpCommand.IsMatch(command))
+                        _replies.Enqueue("OKIP");
+                    /* Set frequency. */
+                    else if (FrCommand.IsMatch(command))
+                        _replies.Enqueue("OKFR");
+                    /* Activate phases. */
+                    else if (UiCommand.IsMatch(command))
+                        _replies.Enqueue("OKUI");
+
+                    break;
+                }
+
         }
     }
 }

@@ -9,9 +9,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/SourceApi/Server/bin/Debug/net7.0/WebSamDeviceApis.dll",
+      "program": "${workspaceFolder}/WebServer/Server/bin/Debug/net7.0/WebSamDeviceApis.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/SourceApi/Server",
+      "cwd": "${workspaceFolder}/WebServer/Server",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",

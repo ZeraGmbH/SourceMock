@@ -8,6 +8,6 @@ public class GlobalSetup
     [OneTimeSetUp]
     public void Setup()
     {
-        CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en-us");
+        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-us");
     }
 }

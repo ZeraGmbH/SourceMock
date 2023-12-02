@@ -8,7 +8,7 @@ namespace ErrorCalculatorApi.Actions.Device;
 /// </summary>
 public partial class SerialPortMTErrorCalculator : IErrorCalculator
 {
-    private readonly SerialPortConnection _device;
+    private readonly ISerialPortConnection _device;
 
     private readonly ILogger<SerialPortMTErrorCalculator> _logger;
 
@@ -17,7 +17,7 @@ public partial class SerialPortMTErrorCalculator : IErrorCalculator
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
     /// <param name="logger">Logging service for this device type.</param>
-    public SerialPortMTErrorCalculator(SerialPortConnection device, ILogger<SerialPortMTErrorCalculator> logger)
+    public SerialPortMTErrorCalculator(ISerialPortConnection device, ILogger<SerialPortMTErrorCalculator> logger)
     {
         _device = device;
         _logger = logger;

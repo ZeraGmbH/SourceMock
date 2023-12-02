@@ -9,7 +9,7 @@ namespace RefMeterApi.Actions.Device;
 /// </summary>
 public class SerialPortFGRefMeter : IRefMeter
 {
-    private readonly SerialPortConnection _device;
+    private readonly ISerialPortConnection _device;
 
     private readonly ILogger<SerialPortFGRefMeter> _logger;
 
@@ -18,7 +18,7 @@ public class SerialPortFGRefMeter : IRefMeter
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
     /// <param name="logger">Logging service for this device type.</param>
-    public SerialPortFGRefMeter(SerialPortConnection device, ILogger<SerialPortFGRefMeter> logger)
+    public SerialPortFGRefMeter(ISerialPortConnection device, ILogger<SerialPortFGRefMeter> logger)
     {
         _device = device;
         _logger = logger;

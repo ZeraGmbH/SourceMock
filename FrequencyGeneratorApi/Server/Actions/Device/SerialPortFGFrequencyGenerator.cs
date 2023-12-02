@@ -11,7 +11,7 @@ namespace FrequencyGeneratorApi.Actions.Device;
 /// </summary>
 public class SerialPortFGFrequencyGenerator : IFrequencyGenerator
 {
-    private readonly SerialPortConnection _device;
+    private readonly ISerialPortConnection _device;
 
     private readonly ILogger<SerialPortFGFrequencyGenerator> _logger;
 
@@ -20,7 +20,7 @@ public class SerialPortFGFrequencyGenerator : IFrequencyGenerator
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
     /// <param name="logger">Logging service for this device type.</param>
-    public SerialPortFGFrequencyGenerator(SerialPortConnection device, ILogger<SerialPortFGFrequencyGenerator> logger)
+    public SerialPortFGFrequencyGenerator(ISerialPortConnection device, ILogger<SerialPortFGFrequencyGenerator> logger)
     {
         _device = device;
         _logger = logger;

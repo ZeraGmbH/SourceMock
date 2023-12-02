@@ -9,7 +9,7 @@ namespace RefMeterApiTests;
 [TestFixture]
 public class AMLParserTests
 {
-    private readonly NullLogger<SerialPortConnection> _portLogger = new();
+    private readonly NullLogger<ISerialPortConnection> _portLogger = new();
 
     private readonly DeviceLogger _deviceLogger = new();
 

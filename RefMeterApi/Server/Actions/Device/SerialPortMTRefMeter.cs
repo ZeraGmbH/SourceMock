@@ -8,7 +8,7 @@ namespace RefMeterApi.Actions.Device;
 /// </summary>
 public partial class SerialPortMTRefMeter : IRefMeter
 {
-    private readonly SerialPortConnection _device;
+    private readonly ISerialPortConnection _device;
 
     private readonly ILogger<SerialPortMTRefMeter> _logger;
 
@@ -17,7 +17,7 @@ public partial class SerialPortMTRefMeter : IRefMeter
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
     /// <param name="logger">Logging service for this device type.</param>
-    public SerialPortMTRefMeter(SerialPortConnection device, ILogger<SerialPortMTRefMeter> logger)
+    public SerialPortMTRefMeter(ISerialPortConnection device, ILogger<SerialPortMTRefMeter> logger)
     {
         _device = device;
         _logger = logger;

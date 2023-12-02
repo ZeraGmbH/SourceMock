@@ -40,7 +40,7 @@ public class GeneratorTests
 
     private PortMock _port = null!;
 
-    private SerialPortConnection Device = null!;
+    private ISerialPortConnection Device = null!;
 
     private IFrequencyGenerator Generator = null!;
 
@@ -49,7 +49,7 @@ public class GeneratorTests
     {
         _port = new();
 
-        Device = SerialPortConnection.FromPortInstance(_port, new NullLogger<SerialPortConnection>());
+        Device = SerialPortConnection.FromPortInstance(_port, new NullLogger<ISerialPortConnection>());
 
         Generator = new SerialPortFGFrequencyGenerator(Device, _logger);
     }

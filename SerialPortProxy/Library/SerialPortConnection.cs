@@ -1,13 +1,12 @@
-﻿using System.Diagnostics;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace SerialPortProxy;
 
 /// <summary>
-/// Class to manage a sinle serial line connection.
+/// Class to manage a single serial line connection.
 /// </summary>
-public class SerialPortConnection : IDisposable
+public class SerialPortConnection : ISerialPortConnection
 {
     /// <summary>
     /// Non thread-safe queue - may use ConcurrentQueue or Producer/Consumer pattern with integrated locking.
@@ -27,7 +26,7 @@ public class SerialPortConnection : IDisposable
     /// <summary>
     /// Logger to use, esp. for communication tracing.
     /// </summary>
-    private readonly ILogger<SerialPortConnection> _logger;
+    private readonly ILogger<ISerialPortConnection> _logger;
 
     /// <summary>
     /// Initialize a serial connection manager.
@@ -35,7 +34,7 @@ public class SerialPortConnection : IDisposable
     /// <param name="port">Serial port proxy - maybe physical or mocked.</param>
     /// <param name="logger">Optional logging instance.</param>
     /// <exception cref="ArgumentNullException">Proxy must not be null.</exception>
-    private SerialPortConnection(ISerialPort port, ILogger<SerialPortConnection> logger)
+    private SerialPortConnection(ISerialPort port, ILogger<ISerialPortConnection> logger)
     {
         _port = port ?? throw new ArgumentNullException(nameof(port));
         _logger = logger ?? new NullLogger<SerialPortConnection>();
@@ -53,7 +52,7 @@ public class SerialPortConnection : IDisposable
     /// or /dev/ttyUSB0 for a USB serial adapter on Linux.</param>
     /// <param name="logger">Optional logging instance.</param>
     /// <returns>The brand new connection.</returns>
-    public static SerialPortConnection FromSerialPort(string port, ILogger<SerialPortConnection> logger) => FromPortInstance(new PhysicalPortProxy(port), logger);
+    public static ISerialPortConnection FromSerialPort(string port, ILogger<ISerialPortConnection> logger) => FromPortInstance(new PhysicalPortProxy(port), logger);
 
     /// <summary>
     /// Create a new connection based on a TCP-to-Serial passthrouh connection.
@@ -61,7 +60,7 @@ public class SerialPortConnection : IDisposable
     /// <param name="serverAndPort">Name of the server to connect including the port - separated by colons.</param>
     /// <param name="logger">Optional logging instance.</param>
     /// <returns>The brand new connection.</returns>
-    public static SerialPortConnection FromNetwork(string serverAndPort, ILogger<SerialPortConnection> logger) => FromPortInstance(new TcpPortProxy(serverAndPort), logger);
+    public static ISerialPortConnection FromNetwork(string serverAndPort, ILogger<ISerialPortConnection> logger) => FromPortInstance(new TcpPortProxy(serverAndPort), logger);
 
     /// <summary>
     /// Create a new mocked based connection.
@@ -69,7 +68,7 @@ public class SerialPortConnection : IDisposable
     /// <param name="logger">Optional logging instance.</param>
     /// <typeparam name="T">Some mocked class implementing ISerialPort.</typeparam>
     /// <returns>The new connection.</returns>
-    public static SerialPortConnection FromMock<T>(ILogger<SerialPortConnection> logger) where T : class, ISerialPort, new() => FromMock(typeof(T), logger);
+    public static ISerialPortConnection FromMock<T>(ILogger<ISerialPortConnection> logger) where T : class, ISerialPort, new() => FromMock(typeof(T), logger);
 
     /// <summary>
     /// Create a new mocked based connection.
@@ -77,7 +76,7 @@ public class SerialPortConnection : IDisposable
     /// <param name="mockType">Some mocked class implementing ISerialPort.</param>
     /// <param name="logger">Optional logging instance.</param>
     /// <returns>The new connection.</returns>
-    public static SerialPortConnection FromMock(Type mockType, ILogger<SerialPortConnection> logger) => FromPortInstance((ISerialPort)Activator.CreateInstance(mockType)!, logger);
+    public static ISerialPortConnection FromMock(Type mockType, ILogger<ISerialPortConnection> logger) => FromPortInstance((ISerialPort)Activator.CreateInstance(mockType)!, logger);
 
     /// <summary>
     /// Create a new mocked based connection.
@@ -85,7 +84,7 @@ public class SerialPortConnection : IDisposable
     /// <param name="port">Implementation to use.</param>
     /// <param name="logger">Optional logging instance.</param>
     /// <returns>The new connection.</returns>
-    public static SerialPortConnection FromPortInstance(ISerialPort port, ILogger<SerialPortConnection> logger) => new(port, logger);
+    public static ISerialPortConnection FromPortInstance(ISerialPort port, ILogger<ISerialPortConnection> logger) => new SerialPortConnection(port, logger);
 
     /// <summary>
     /// On dispose the serial connection and the ProcessFromQueue thread are terminated.
@@ -128,17 +127,11 @@ public class SerialPortConnection : IDisposable
         }
     }
 
-    /// <summary>
-    /// Add a command to be sent to the serial port to the queue.
-    /// </summary>
-    /// <param name="requests">The command to send to the device.</param>
-    /// <exception cref="ArgumentNullException">Parameter must not be null.</exception>
-    /// <returns>All lines sent from the device as a task.</returns>
+    /// <inheritdoc/>
     public Task<string[]>[] Execute(params SerialPortRequest[] requests)
-
     {
         if (requests == null)
-            throw new ArgumentNullException("requests");
+            throw new ArgumentNullException(nameof(requests));
 
         /* Since we are expecting multi-threaded access lock the queue. */
         lock (_queue)

@@ -49,7 +49,7 @@ class PortMock : ISerialPort
 [TestFixture]
 public class ConnectionTests
 {
-    private readonly NullLogger<SerialPortConnection> _logger = new();
+    private readonly NullLogger<ISerialPortConnection> _logger = new();
 
     [Test]
     public async Task Can_Read_Firmware_Version()

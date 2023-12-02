@@ -13,7 +13,7 @@ namespace ErrorCalculatorApi.Actions.Device;
 
 public class SerialPortFGErrorCalculator : IErrorCalculator
 {
-    private readonly SerialPortConnection _device;
+    private readonly ISerialPortConnection _device;
 
     private readonly ILogger<SerialPortFGErrorCalculator> _logger;
 
@@ -22,7 +22,7 @@ public class SerialPortFGErrorCalculator : IErrorCalculator
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
     /// <param name="logger">Logging service for this device type.</param>
-    public SerialPortFGErrorCalculator(SerialPortConnection device, ILogger<SerialPortFGErrorCalculator> logger)
+    public SerialPortFGErrorCalculator(ISerialPortConnection device, ILogger<SerialPortFGErrorCalculator> logger)
     {
         _device = device;
         _logger = logger;

@@ -21,7 +21,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     /// <summary>
     /// 
     /// </summary>
-    protected readonly SerialPortConnection Device;
+    protected readonly ISerialPortConnection Device;
 
     /// <summary>
     /// 
@@ -43,7 +43,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="device"></param>
-    protected CommonSource(ILogger<CommonSource<T>> logger, SerialPortConnection device)
+    protected CommonSource(ILogger<CommonSource<T>> logger, ISerialPortConnection device)
     {
         Device = device;
         Logger = logger;

@@ -62,12 +62,12 @@ public class ErrorMeasurementTests
 
     private readonly PortMock _port = new();
 
-    private SerialPortConnection Device = null!;
+    private ISerialPortConnection Device = null!;
 
     [SetUp]
     public void Setup()
     {
-        Device = SerialPortConnection.FromPortInstance(_port, new NullLogger<SerialPortConnection>());
+        Device = SerialPortConnection.FromPortInstance(_port, new NullLogger<ISerialPortConnection>());
     }
 
     [TearDown]

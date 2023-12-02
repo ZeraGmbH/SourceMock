@@ -100,7 +100,7 @@ class EmptyVersionMock : PortMock
 [TestFixture]
 public class DeviceTests
 {
-    private readonly NullLogger<SerialPortConnection> _logger = new();
+    private readonly NullLogger<ISerialPortConnection> _logger = new();
 
     private readonly NullLogger<SerialPortMTSource> _portLogger = new();
 

@@ -25,8 +25,8 @@ public static class Configuration
     {
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(ErrorMeasurementController).Assembly.GetName().Name}.xml"));
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(FrequencyGeneratorCapabilities).Assembly.GetName().Name}.xml"));
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(ISerialPortConnection).Assembly.GetName().Name}.xml"));
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(RefMeterController).Assembly.GetName().Name}.xml"));
-        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SerialPortConnection).Assembly.GetName().Name}.xml"));
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SourceController).Assembly.GetName().Name}.xml"));
     }
 
@@ -75,10 +75,10 @@ public static class Configuration
                 switch (deviceType)
                 {
                     case "FG":
-                        services.AddSingleton(ctx => SerialPortConnection.FromMock<SerialPortFGMock>(ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
+                        services.AddSingleton(ctx => SerialPortConnection.FromMock<SerialPortFGMock>(ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
                         break;
                     default:
-                        services.AddSingleton(ctx => SerialPortConnection.FromMock<SerialPortMTMock>(ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
+                        services.AddSingleton(ctx => SerialPortConnection.FromMock<SerialPortMTMock>(ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
                         break;
                 }
             else
@@ -89,9 +89,9 @@ public static class Configuration
                     throw new NotSupportedException("serial port name must be set if not using serial port mock.");
 
                 if (portName.Contains(':'))
-                    services.AddSingleton(ctx => SerialPortConnection.FromNetwork(portName, ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
+                    services.AddSingleton(ctx => SerialPortConnection.FromNetwork(portName, ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
                 else
-                    services.AddSingleton(ctx => SerialPortConnection.FromSerialPort(portName, ctx.GetRequiredService<ILogger<SerialPortConnection>>()));
+                    services.AddSingleton(ctx => SerialPortConnection.FromSerialPort(portName, ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
             }
 
             switch (deviceType)

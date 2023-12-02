@@ -22,7 +22,7 @@ public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="device"></param>
-    public SerialPortFGSource(ILogger<SerialPortFGSource> logger, SerialPortConnection device) : base(logger, device)
+    public SerialPortFGSource(ILogger<SerialPortFGSource> logger, ISerialPortConnection device) : base(logger, device)
     {
     }
 

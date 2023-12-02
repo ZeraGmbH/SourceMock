@@ -105,7 +105,7 @@ class GroupMock : ISerialPort
 [TestFixture]
 public class QueueTests
 {
-    private readonly NullLogger<SerialPortConnection> _logger = new();
+    private readonly NullLogger<ISerialPortConnection> _logger = new();
 
     [Test]
     public async Task All_Commands_Are_Executed_On_The_Same_Thread()

@@ -12,7 +12,7 @@ namespace SourceApi.Tests.Actions.Dosage;
 [TestFixture]
 public class DosageTests
 {
-    private readonly NullLogger<SerialPortConnection> _portLogger = new();
+    private readonly NullLogger<ISerialPortConnection> _portLogger = new();
 
     private readonly DeviceLogger _deviceLogger = new();
 

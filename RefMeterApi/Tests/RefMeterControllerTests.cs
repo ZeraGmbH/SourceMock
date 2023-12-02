@@ -11,7 +11,7 @@ namespace RefMeterApiTests;
 [TestFixture]
 public class RefMeterControllerTests
 {
-    private readonly NullLogger<SerialPortConnection> _portLogger = new();
+    private readonly NullLogger<ISerialPortConnection> _portLogger = new();
 
     private readonly NullLogger<SerialPortMTRefMeter> _deviceLogger = new();
 

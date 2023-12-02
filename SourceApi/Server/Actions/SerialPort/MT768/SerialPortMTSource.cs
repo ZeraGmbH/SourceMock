@@ -23,7 +23,7 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>
     /// </summary>
     /// <param name="logger">Logger to use.</param>
     /// <param name="device">Access to the serial port.</param>
-    public SerialPortMTSource(ILogger<SerialPortMTSource> logger, SerialPortConnection device) : base(logger, device)
+    public SerialPortMTSource(ILogger<SerialPortMTSource> logger, ISerialPortConnection device) : base(logger, device)
     {
     }
 

@@ -42,9 +42,9 @@ public class MTSourceTests
 
     private readonly NullLogger<SerialPortMTSource> _portLogger = new();
 
-    private readonly NullLogger<SerialPortConnection> _connectionLogger = new();
+    private readonly NullLogger<ISerialPortConnection> _connectionLogger = new();
 
-    private SerialPortConnection _device;
+    private ISerialPortConnection _device;
 
     [SetUp]
     public void SetUp()

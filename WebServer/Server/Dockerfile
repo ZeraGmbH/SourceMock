@@ -19,7 +19,7 @@ COPY WebServer/Server/WebSamDeviceApis.csproj Server/WebSamDeviceApis/WebSamDevi
 RUN dotnet restore "Server/WebSamDeviceApis/WebSamDeviceApis.csproj"
 
 WORKDIR "/src/Server/WebSamDeviceApis"
-COPY SourceApi/Server .
+COPY WebServer/Server .
 RUN dotnet build "WebSamDeviceApis.csproj" -c Release -o /app/build
 
 FROM build AS publish

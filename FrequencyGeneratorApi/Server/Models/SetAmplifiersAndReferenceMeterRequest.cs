@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using RefMeterApi.Models;
+using SourceApi.Model;
 
 namespace FrequencyGeneratorApi.Models;
 

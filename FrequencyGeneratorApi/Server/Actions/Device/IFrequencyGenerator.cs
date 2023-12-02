@@ -1,4 +1,6 @@
 using FrequencyGeneratorApi.Models;
+using RefMeterApi.Models;
+using SourceApi.Model;
 
 namespace FrequencyGeneratorApi.Actions.Device;
 

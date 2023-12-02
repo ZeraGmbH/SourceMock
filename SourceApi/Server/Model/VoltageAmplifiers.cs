@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace FrequencyGeneratorApi.Models;
+namespace SourceApi.Model;
 
 /// <summary>
 /// 

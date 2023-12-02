@@ -1,139 +1,111 @@
 using System.Text.Json.Serialization;
 
-namespace FrequencyGeneratorApi.Models;
+namespace SourceApi.Model;
 
 /// <summary>
 /// 
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum ReferenceMeters
+public enum CurrentAmplifiers
 {
     /// <summary>
     /// 
     /// </summary>
-    COM3003 = 50,
+    N132x7 = 29,
     /// <summary>
     /// 
     /// </summary>
-    COM3003x1x2 = 54,
+    SCG1020 = 42,
     /// <summary>
     /// 
     /// </summary>
-    COM3003x1x3 = 55,
+    V115x1 = 24,
     /// <summary>
     /// 
     /// </summary>
-    COM3003DC = 51,
+    V115x2 = 25,
     /// <summary>
     /// 
     /// </summary>
-    COM3003DCx1x2 = 61,
+    V115x3 = 26,
     /// <summary>
     /// 
     /// </summary>
-    COM303x1 = 43,
+    V115x4 = 27,
     /// <summary>
     /// 
     /// </summary>
-    COM303x2 = 45,
+    V115x5 = 28,
     /// <summary>
     /// 
     /// </summary>
-    COM303x3 = 44,
+    V115x6 = 30,
     /// <summary>
     /// 
     /// </summary>
-    COM303x3x1 = 57,
+    V200x1 = 21,
     /// <summary>
     /// 
     /// </summary>
-    COM5003x1 = 65,
+    V200x1x3 = 33,
     /// <summary>
     /// 
     /// </summary>
-    COM5003x1x1 = 71,
+    V200x2 = 34,
     /// <summary>
     /// 
     /// </summary>
-    EPZ103x1 = 47,
+    V200x4 = 40,
     /// <summary>
     /// 
     /// </summary>
-    EPZ103x1x2 = 60,
+    VI201x0x1 = 39,
     /// <summary>
     /// 
     /// </summary>
-    EPZ103x3x1 = 68,
+    VI201x01 = 35,
     /// <summary>
     /// 
     /// </summary>
-    EPZ301x119x3 = 52,
+    VI202x0 = 36,
     /// <summary>
     /// 
     /// </summary>
-    EPZ301x119x3x2 = 53,
+    VI202x0x1 = 41,
     /// <summary>
     /// 
     /// </summary>
-    EPZ303 = 46,
+    VI202x0x2 = 43,
     /// <summary>
     /// 
     /// </summary>
-    EPZ303x1 = 41,
+    VI202x0x3 = 44,
     /// <summary>
     /// 
     /// </summary>
-    EPZ303x10 = 70,
+    VI202x0x4 = 45,
     /// <summary>
     /// 
     /// </summary>
-    EPZ303x10x1 = 72,
+    VI202x0x5 = 47,
     /// <summary>
     /// 
     /// </summary>
-    EPZ303x5 = 42,
+    VI220x1 = 22,
     /// <summary>
     /// 
     /// </summary>
-    EPZ303x5x1 = 56,
+    VI221x0 = 37,
     /// <summary>
     /// 
     /// </summary>
-    EPZ303x5x2 = 58,
+    VI222x0 = 38,
     /// <summary>
     /// 
     /// </summary>
-    EPZ303x6 = 59,
+    VI222x0x1 = 46,
     /// <summary>
     /// 
     /// </summary>
-    EPZ303x8 = 62,
-    /// <summary>
-    /// 
-    /// </summary>
-    EPZ303x8x1 = 64,
-    /// <summary>
-    /// 
-    /// </summary>
-    EPZ303x9 = 69,
-    /// <summary>
-    /// 
-    /// </summary>
-    EPZ350x0 = 66,
-    /// <summary>
-    /// 
-    /// </summary>
-    EPZ350x1 = 67,
-    /// <summary>
-    /// 
-    /// </summary>
-    RMM3000x1 = 63,
-    /// <summary>
-    /// 
-    /// </summary>
-    RMM303x6 = 48,
-    /// <summary>
-    /// 
-    /// </summary>
-    RMM303x8 = 49,
+    VI301x1 = 23,
 }

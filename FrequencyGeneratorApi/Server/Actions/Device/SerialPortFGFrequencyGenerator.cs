@@ -1,6 +1,8 @@
 using FrequencyGeneratorApi.Models;
 using Microsoft.Extensions.Logging;
+using RefMeterApi.Models;
 using SerialPortProxy;
+using SourceApi.Model;
 
 namespace FrequencyGeneratorApi.Actions.Device;
 

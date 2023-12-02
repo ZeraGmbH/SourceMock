@@ -2,7 +2,9 @@ using System.Text.RegularExpressions;
 using FrequencyGeneratorApi.Actions.Device;
 using FrequencyGeneratorApi.Models;
 using Microsoft.Extensions.Logging.Abstractions;
+using RefMeterApi.Models;
 using SerialPortProxy;
+using SourceApi.Model;
 
 namespace FrequencyGeneratorApiTests;
 

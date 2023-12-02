@@ -1,6 +1,6 @@
-using WebSamDeviceApis.Model;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Actions.SerialPort;
+namespace SourceApi.Actions.SerialPort;
 
 /// <summary>
 /// 

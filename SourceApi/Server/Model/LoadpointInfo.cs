@@ -1,4 +1,4 @@
-namespace WebSamDeviceApis.Model
+namespace SourceApi.Model
 {
     /// <summary>
     /// Information on the last loadpoint set.

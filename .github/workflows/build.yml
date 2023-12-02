@@ -29,23 +29,19 @@ jobs:
 
       - name: Build Windows
         run: |
-          dotnet publish SourceApi/Server -r win-x64 --self-contained false --configuration Release
+          dotnet publish WebServer/Server -r win-x64 --self-contained false --configuration Release
 
       - name: Build Linux
         run: |
-          dotnet publish SourceApi/Server -r linux-x64 --self-contained false --configuration Release
+          dotnet publish WebServer/Server -r linux-x64 --self-contained false --configuration Release
 
       - name: Run Unit-Tests
         run: |
-          dotnet test SourceApi --no-build
-          dotnet test ErrorCalculatorApi
-          dotnet test FrequencyGeneratorApi
-          dotnet test RefMeterApi
-          dotnet test SerialPortProxy
+          dotnet test
 
       - name: Start Service for Acceptance Tests
         run: |
-          cd SourceApi/Server/bin/Release/net7.0/linux-x64/publish
+          cd WebServer/Server/bin/Release/net7.0/linux-x64/publish
           ./WebSamDeviceApis&
           echo "SOURCE_MOCK_PID=$!" >> $GITHUB_ENV
 
@@ -57,7 +53,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-win-x64
-          path: "SourceApi/Server/bin/Release/net7.0/win-x64/publish/"
+          path: "WebServer/Server/bin/Release/net7.0/win-x64/publish/"
           if-no-files-found: error
           retention-days: 1
 
@@ -65,14 +61,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-linux-x64
-          path: "SourceApi/Server/bin/Release/net7.0/linux-x64/publish/"
+          path: "WebServer/Server/bin/Release/net7.0/linux-x64/publish/"
           if-no-files-found: error
           retention-days: 1
 
       - name: Docker build
         if: github.event.inputs.docker_images == 'true'
         run: |
-          docker build . -f SourceApi/Server/Dockerfile -t=device-api
+          docker build . -f WebServer/Server/Dockerfile -t=device-api
           docker save -o device-api.tar device-api
 
       - name: Upload Docker Artifacts

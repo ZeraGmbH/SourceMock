@@ -1,4 +1,4 @@
-namespace WebSamDeviceApis.Actions.Source
+namespace SourceApi.Actions.Source
 {
     public static partial class SourceResultExtension
     {

@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
 
-using WebSamDeviceApis.Actions.SerialPort.MT768;
+using SourceApi.Actions.SerialPort.MT768;
 
-namespace WebSamDeviceApis.Tests.Actions.Dosage;
+namespace SourceApi.Tests.Actions.Dosage;
 
 public class DeviceLogger : ILogger<SerialPortMTSource>
 {

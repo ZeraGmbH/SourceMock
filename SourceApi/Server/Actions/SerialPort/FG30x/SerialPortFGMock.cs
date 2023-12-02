@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 using SerialPortProxy;
 
-namespace WebSamDeviceApis.Actions.SerialPort.FG30x;
+namespace SourceApi.Actions.SerialPort.FG30x;
 
 /// <summary>
 /// 

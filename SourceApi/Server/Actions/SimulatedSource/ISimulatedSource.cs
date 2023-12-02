@@ -1,6 +1,6 @@
-using WebSamDeviceApis.Model;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Actions.Source
+namespace SourceApi.Actions.Source
 {
     /// <summary>
     /// Extends <see cref="ISource"/> by functions to influece the sources behaviour.

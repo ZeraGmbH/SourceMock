@@ -3,11 +3,11 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
 
-using WebSamDeviceApis.Actions.SerialPort.MT768;
-using WebSamDeviceApis.Actions.Source;
-using WebSamDeviceApis.Tests.Actions.Dosage.PortMocks;
+using SourceApi.Actions.SerialPort.MT768;
+using SourceApi.Actions.Source;
+using SourceApi.Tests.Actions.Dosage.PortMocks;
 
-namespace WebSamDeviceApis.Tests.Actions.Dosage;
+namespace SourceApi.Tests.Actions.Dosage;
 
 [TestFixture]
 public class DosageTests

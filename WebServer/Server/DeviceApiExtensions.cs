@@ -11,11 +11,11 @@ using SerialPortProxy;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-using WebSamDeviceApis.Actions.SerialPort.FG30x;
-using WebSamDeviceApis.Actions.SerialPort.MT768;
-using WebSamDeviceApis.Actions.Source;
-using WebSamDeviceApis.Actions.VeinSource;
-using WebSamDeviceApis.Controllers;
+using SourceApi.Actions.SerialPort.FG30x;
+using SourceApi.Actions.SerialPort.MT768;
+using SourceApi.Actions.Source;
+using SourceApi.Actions.VeinSource;
+using SourceApi.Controllers;
 
 namespace WebSamDeviceApis;
 

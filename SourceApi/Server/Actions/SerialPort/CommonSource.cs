@@ -1,10 +1,11 @@
 
+using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 
-using WebSamDeviceApis.Actions.Source;
-using WebSamDeviceApis.Model;
+using SourceApi.Actions.Source;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Actions.SerialPort;
+namespace SourceApi.Actions.SerialPort;
 
 /// <summary>
 /// 

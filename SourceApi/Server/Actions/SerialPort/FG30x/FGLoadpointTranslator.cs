@@ -1,8 +1,8 @@
 using SerialPortProxy;
 
-using WebSamDeviceApis.Model;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Actions.SerialPort.FG30x;
+namespace SourceApi.Actions.SerialPort.FG30x;
 
 /// <summary>
 /// 

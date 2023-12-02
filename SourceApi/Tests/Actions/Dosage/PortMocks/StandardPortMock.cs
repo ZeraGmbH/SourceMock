@@ -1,6 +1,6 @@
 using SerialPortProxy;
 
-namespace WebSamDeviceApis.Tests.Actions.Dosage.PortMocks;
+namespace SourceApi.Tests.Actions.Dosage.PortMocks;
 
 public class StandardPortMock : ISerialPort
 {

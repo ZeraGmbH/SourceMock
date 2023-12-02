@@ -1,6 +1,6 @@
-using WebSamDeviceApis.Model;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Tests.Actions.LoadpointValidator
+namespace SourceApi.Tests.Actions.LoadpointValidator
 {
     public static class LoadpointValidatorTestData
     {

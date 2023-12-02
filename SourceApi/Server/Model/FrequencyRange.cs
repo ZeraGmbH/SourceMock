@@ -1,4 +1,4 @@
-namespace WebSamDeviceApis.Model
+namespace SourceApi.Model
 {
     public class FrequencyRange : QuantizedRange
     {

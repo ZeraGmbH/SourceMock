@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace WebSamDeviceApis.Model
+namespace SourceApi.Model
 {
     /// <summary>
     /// Describes how the frequency should be generated.

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace WebSamDeviceApis.Model
+namespace SourceApi.Model
 {
     /// <summary>
     /// Objects of this class are to represent electical quantities typically displayed in vector form, 

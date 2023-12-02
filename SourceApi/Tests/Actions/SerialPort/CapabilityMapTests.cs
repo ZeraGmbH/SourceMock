@@ -1,6 +1,6 @@
-using WebSamDeviceApis.Actions.SerialPort;
+using SourceApi.Actions.SerialPort;
 
-namespace WebSamDeviceApis.Tests.Actions.SerialPort;
+namespace SourceApi.Tests.Actions.SerialPort;
 
 [TestFixture]
 public class CapabilitiesMapTests

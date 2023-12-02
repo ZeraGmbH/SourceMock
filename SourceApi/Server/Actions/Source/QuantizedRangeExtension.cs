@@ -1,6 +1,6 @@
-using WebSamDeviceApis.Model;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Actions.Source
+namespace SourceApi.Actions.Source
 {
     public static partial class QuantizedRangeExtension
     {

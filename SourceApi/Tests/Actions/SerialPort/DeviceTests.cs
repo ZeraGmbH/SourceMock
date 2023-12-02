@@ -2,9 +2,9 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
 
-using WebSamDeviceApis.Actions.SerialPort.MT768;
+using SourceApi.Actions.SerialPort.MT768;
 
-namespace WebSamDeviceApis.Tests.Actions.SerialPort;
+namespace SourceApi.Tests.Actions.SerialPort;
 
 /// <summary>
 /// General mock for validating command reply interpretation.

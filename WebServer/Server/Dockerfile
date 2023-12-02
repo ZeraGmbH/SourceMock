@@ -8,7 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY SerialPortProxy SerialPortProxy
-COPY SourceApi/Server/WebSamDeviceApis.csproj Server/WebSamDeviceApis/WebSamDeviceApis.csproj
+COPY WebServer/Server/WebSamDeviceApis.csproj Server/WebSamDeviceApis/WebSamDeviceApis.csproj
 RUN dotnet restore "Server/WebSamDeviceApis/WebSamDeviceApis.csproj"
 WORKDIR "/src/Server/WebSamDeviceApis"
 COPY SourceApi/Server .

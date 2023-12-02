@@ -1,6 +1,8 @@
-using WebSamDeviceApis.Model;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Actions.Source
+namespace SourceApi.Actions.Source
 {
     /// <summary>
     /// Simulatetes the behaviour of a ZERA source.

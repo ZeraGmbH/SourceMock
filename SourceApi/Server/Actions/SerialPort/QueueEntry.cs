@@ -1,4 +1,4 @@
-namespace WebSamDeviceApis.Actions.SerialPort;
+namespace SourceApi.Actions.SerialPort;
 
 /// <summary>
 /// Represents a single reply from the device.

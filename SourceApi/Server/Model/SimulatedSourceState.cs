@@ -1,4 +1,4 @@
-namespace WebSamDeviceApis.Model
+namespace SourceApi.Model
 {
     /// <summary>
     /// Contains the information about a simulated source

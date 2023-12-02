@@ -1,6 +1,6 @@
-using WebSamDeviceApis.Model;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Actions.Source
+namespace SourceApi.Actions.Source
 {
     /// <summary>
     /// Interface of a class that simbulates the behaviour of a ZERA source.

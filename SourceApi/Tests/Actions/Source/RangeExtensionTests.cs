@@ -1,7 +1,7 @@
-using WebSamDeviceApis.Actions.Source;
-using WebSamDeviceApis.Model;
+using SourceApi.Actions.Source;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Tests.Actions.Source
+namespace SourceApi.Tests.Actions.Source
 {
     [TestFixture]
     internal class RangeExtensionTests

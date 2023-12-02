@@ -1,6 +1,6 @@
-using WebSamDeviceApis.Model;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Tests.Actions.Source
+namespace SourceApi.Tests.Actions.Source
 {
     public static class SimulatedSourceTestData
     {

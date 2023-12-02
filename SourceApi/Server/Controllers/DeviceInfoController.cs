@@ -1,11 +1,12 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Swashbuckle.AspNetCore.Annotations;
 
-using WebSamDeviceApis.Actions.Source;
-using WebSamDeviceApis.Model;
+using SourceApi.Actions.Source;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Controllers;
+namespace SourceApi.Controllers;
 
 /// <summary>
 /// Request device dependant information.

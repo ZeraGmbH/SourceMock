@@ -1,6 +1,6 @@
-using WebSamDeviceApis.Model;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Actions.Source
+namespace SourceApi.Actions.Source
 {
     /// <summary>
     /// Verifies wheather or not a loadpoint is suitable for a given source.

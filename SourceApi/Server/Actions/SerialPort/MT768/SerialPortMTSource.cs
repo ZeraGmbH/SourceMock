@@ -1,11 +1,11 @@
 using System.Text.RegularExpressions;
-
+using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 
-using WebSamDeviceApis.Actions.Source;
-using WebSamDeviceApis.Model;
+using SourceApi.Actions.Source;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Actions.SerialPort.MT768;
+namespace SourceApi.Actions.SerialPort.MT768;
 
 /// <summary>
 /// A ISource implenmentation to access a (potentially mocked) device. This

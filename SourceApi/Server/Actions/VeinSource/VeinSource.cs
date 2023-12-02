@@ -1,11 +1,11 @@
 using System.Net;
-
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
-using WebSamDeviceApis.Actions.Source;
-using WebSamDeviceApis.Model;
+using SourceApi.Actions.Source;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Actions.VeinSource
+namespace SourceApi.Actions.VeinSource
 {
     /// <summary>
     /// Communicates with a ZENUX/Vein Source

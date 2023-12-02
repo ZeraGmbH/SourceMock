@@ -1,9 +1,9 @@
 using System.Net;
 
-using WebSamDeviceApis.Actions.VeinSource;
-using WebSamDeviceApis.Tests.Misc;
+using SourceApi.Actions.VeinSource;
+using SourceApi.Tests.Misc;
 
-namespace WebSamDeviceApis.Tests.Actions.VeinSource
+namespace SourceApi.Tests.Actions.VeinSource
 {
     [TestFixture]
     internal class VeinSourceTests

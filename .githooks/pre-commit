@@ -1,8 +1,4 @@
 #!/bin/sh
 
-dotnet test SerialPortProxy
-dotnet test RefMeterApi
-dotnet test SourceApi
-dotnet test ErrorCalculatorApi
-dotnet test FrequencyGeneratorApi
+dotnet test
 

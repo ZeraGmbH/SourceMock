@@ -2,10 +2,10 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
 
-using WebSamDeviceApis.Actions.SerialPort.MT768;
-using WebSamDeviceApis.Actions.Source;
+using SourceApi.Actions.SerialPort.MT768;
+using SourceApi.Actions.Source;
 
-namespace WebSamDeviceApis.Tests.Actions.SerialPort;
+namespace SourceApi.Tests.Actions.SerialPort;
 
 [TestFixture]
 public class MTSourceTests

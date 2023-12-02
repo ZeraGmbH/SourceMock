@@ -2,9 +2,9 @@ using System.Text.RegularExpressions;
 
 using SerialPortProxy;
 
-using WebSamDeviceApis.Model;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Actions.SerialPort.MT768;
+namespace SourceApi.Actions.SerialPort.MT768;
 
 partial class SerialPortMTSource
 {

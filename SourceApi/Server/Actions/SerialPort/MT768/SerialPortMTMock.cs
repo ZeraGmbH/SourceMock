@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 using SerialPortProxy;
 
-namespace WebSamDeviceApis.Actions.SerialPort.MT768;
+namespace SourceApi.Actions.SerialPort.MT768;
 
 public static class AMEReplyEmulator
 {

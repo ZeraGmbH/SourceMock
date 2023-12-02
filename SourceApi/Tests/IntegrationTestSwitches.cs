@@ -1,4 +1,4 @@
-namespace WebSamDeviceApis.Tests
+namespace SourceApi.Tests
 {
     static class IntegrationTestSwitches
     {

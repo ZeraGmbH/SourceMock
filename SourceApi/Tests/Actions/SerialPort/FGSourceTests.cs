@@ -2,10 +2,10 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
 
-using WebSamDeviceApis.Actions.SerialPort.FG30x;
-using WebSamDeviceApis.Actions.Source;
+using SourceApi.Actions.SerialPort.FG30x;
+using SourceApi.Actions.Source;
 
-namespace WebSamDeviceApis.Tests.Actions.SerialPort;
+namespace SourceApi.Tests.Actions.SerialPort;
 
 [TestFixture]
 public class FGSourceTests

@@ -1,4 +1,4 @@
-namespace WebSamDeviceApis.Actions.Source
+namespace SourceApi.Actions.Source
 {
     /// <summary>
     /// Possible results of source operations.

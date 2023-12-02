@@ -1,8 +1,8 @@
 using Newtonsoft.Json.Linq;
 
-using WebSamDeviceApis.Model;
+using SourceApi.Model;
 
-namespace WebSamDeviceApis.Actions.VeinSource
+namespace SourceApi.Actions.VeinSource
 {
     /// <summary>
     /// Maps VEIN and SourceAPIs LoadPoint values

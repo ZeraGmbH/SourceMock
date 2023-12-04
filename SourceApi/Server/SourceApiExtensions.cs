@@ -8,6 +8,7 @@ using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.SerialPort.MT768;
 using SerialPortProxy;
 using Microsoft.Extensions.Logging;
+using SourceApi.Actions.SerialPort;
 
 namespace SourceApi;
 
@@ -36,6 +37,8 @@ public static class Configuration
     /// </summary>
     public static void UseSourceApi(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSingleton<ICapabilitiesMap, CapabilitiesMap>();
+
         var deviceType = configuration["SerialPort:DeviceType"];
 
         if (deviceType != "MT" && deviceType != "FG")

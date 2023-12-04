@@ -26,6 +26,11 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     /// <summary>
     /// 
     /// </summary>
+    protected readonly ICapabilitiesMap Capabilities;
+
+    /// <summary>
+    /// 
+    /// </summary>
     protected Loadpoint? Loadpoint { get; private set; }
 
     /// <summary>
@@ -43,8 +48,10 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="device"></param>
-    protected CommonSource(ILogger<CommonSource<T>> logger, ISerialPortConnection device)
+    /// <param name="capabilities"></param>
+    protected CommonSource(ILogger<CommonSource<T>> logger, ISerialPortConnection device, ICapabilitiesMap capabilities)
     {
+        Capabilities = capabilities;
         Device = device;
         Logger = logger;
     }

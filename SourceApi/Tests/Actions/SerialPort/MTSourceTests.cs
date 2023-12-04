@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
-
+using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
 
@@ -61,7 +61,7 @@ public class MTSourceTests
     [Test]
     public async Task Can_Get_Capabilities()
     {
-        var sut = new SerialPortMTSource(_portLogger, _device);
+        var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap());
 
         var caps = await sut.GetCapabilities();
 
@@ -72,7 +72,7 @@ public class MTSourceTests
     [TestCase(0.5, "SIPAAR000.500000.00S001.000120.00T001.500240.00")]
     public async Task Can_Set_Valid_Loadpoint(double baseAngle, string current)
     {
-        var sut = new SerialPortMTSource(_portLogger, _device);
+        var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap());
 
         Assert.That(sut.GetCurrentLoadpoint(), Is.Null);
 
@@ -116,7 +116,7 @@ public class MTSourceTests
     [TestCase(220, 1, 700, SourceResult.LOADPOINT_ANGLE_INVALID)]
     public async Task Can_Set_Invalid_Loadpoint(int voltage, int current, int angle, SourceResult expectedError)
     {
-        var sut = new SerialPortMTSource(_portLogger, _device);
+        var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap());
 
         Assert.That(sut.GetCurrentLoadpoint(), Is.Null);
 

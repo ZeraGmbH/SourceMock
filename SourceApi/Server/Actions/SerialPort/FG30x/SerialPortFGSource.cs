@@ -22,7 +22,8 @@ public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="device"></param>
-    public SerialPortFGSource(ILogger<SerialPortFGSource> logger, ISerialPortConnection device) : base(logger, device)
+    /// <param name="capabilities"></param>
+    public SerialPortFGSource(ILogger<SerialPortFGSource> logger, ISerialPortConnection device, ICapabilitiesMap capabilities) : base(logger, device, capabilities)
     {
     }
 
@@ -37,7 +38,7 @@ public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>
     public override Task<SourceCapabilities> GetCapabilities()
     {
         /* Currently we assume MT768, future versions may read the firmware from the device. */
-        return Task.FromResult(CapabilitiesMap.GetCapabilitiesByModel("MT786"));
+        return Task.FromResult(Capabilities.GetCapabilitiesByModel("MT786"));
     }
 
     /// <inheritdoc/>

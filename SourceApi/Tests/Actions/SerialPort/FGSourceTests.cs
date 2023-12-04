@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
-
+using NUnit.Framework.Constraints;
 using SerialPortProxy;
-
+using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.Source;
 
@@ -37,7 +37,7 @@ public class FGSourceTests
     {
         _port = new();
         _device = SerialPortConnection.FromPortInstance(_port, _connectionLogger);
-        _source = new(_portLogger, _device);
+        _source = new(_portLogger, _device, new CapabilitiesMap());
     }
 
     [TearDown]

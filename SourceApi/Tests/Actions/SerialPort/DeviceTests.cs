@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
-
+using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.MT768;
 
 namespace SourceApi.Tests.Actions.SerialPort;
@@ -109,7 +109,7 @@ public class DeviceTests
     {
         using var device = SerialPortConnection.FromMock<CorrectVersionMock>(_logger);
 
-        var dut = new SerialPortMTSource(_portLogger, device);
+        var dut = new SerialPortMTSource(_portLogger, device, new CapabilitiesMap());
 
         var version = await dut.GetFirmwareVersion();
 
@@ -129,7 +129,7 @@ public class DeviceTests
     {
         using var device = SerialPortConnection.FromMock(mockType, _logger);
 
-        var dut = new SerialPortMTSource(_portLogger, device);
+        var dut = new SerialPortMTSource(_portLogger, device, new CapabilitiesMap());
 
         var ex = Assert.ThrowsAsync(exception ?? typeof(InvalidOperationException), async () => await dut.GetFirmwareVersion());
 

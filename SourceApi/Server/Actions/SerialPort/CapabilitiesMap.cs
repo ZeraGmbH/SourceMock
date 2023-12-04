@@ -5,14 +5,14 @@ namespace SourceApi.Actions.SerialPort;
 /// <summary>
 /// 
 /// </summary>
-public static class CapabilitiesMap
+public interface ICapabilitiesMap
 {
     /// <summary>
     /// 
     /// </summary>
     /// <param name="modelName"></param>
     /// <returns></returns>
-    public static SourceCapabilities GetCapabilitiesByModel(string modelName) => GetCapabilitiesByAmplifiers(modelName, modelName);
+    SourceCapabilities GetCapabilitiesByModel(string modelName);
 
     /// <summary>
     /// 
@@ -20,7 +20,19 @@ public static class CapabilitiesMap
     /// <param name="voltageAmplifier"></param>
     /// <param name="currentAmplifier"></param>
     /// <returns></returns>
-    public static SourceCapabilities GetCapabilitiesByAmplifiers(VoltageAmplifiers voltageAmplifier, CurrentAmplifiers currentAmplifier) =>
+    public SourceCapabilities GetCapabilitiesByAmplifiers(VoltageAmplifiers voltageAmplifier, CurrentAmplifiers currentAmplifier);
+}
+
+/// <summary>
+/// 
+/// </summary>
+public class CapabilitiesMap : ICapabilitiesMap
+{
+    /// <inheritdoc/>
+    public SourceCapabilities GetCapabilitiesByModel(string modelName) => GetCapabilitiesByAmplifiers(modelName, modelName);
+
+    /// <inheritdoc/>
+    public SourceCapabilities GetCapabilitiesByAmplifiers(VoltageAmplifiers voltageAmplifier, CurrentAmplifiers currentAmplifier) =>
         GetCapabilitiesByAmplifiers(GetVoltageAmplifierKey(voltageAmplifier), GetCurrentAmplifierKey(currentAmplifier));
 
 

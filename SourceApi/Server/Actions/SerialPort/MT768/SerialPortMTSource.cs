@@ -23,7 +23,8 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>
     /// </summary>
     /// <param name="logger">Logger to use.</param>
     /// <param name="device">Access to the serial port.</param>
-    public SerialPortMTSource(ILogger<SerialPortMTSource> logger, ISerialPortConnection device) : base(logger, device)
+    /// <param name="capabilities">Static capabilities lookup table.</param>
+    public SerialPortMTSource(ILogger<SerialPortMTSource> logger, ISerialPortConnection device, ICapabilitiesMap capabilities) : base(logger, device, capabilities)
     {
     }
 
@@ -31,7 +32,7 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>
     public override Task<SourceCapabilities> GetCapabilities()
     {
         /* Currently we assume MT768, future versions may read the firmware from the device. */
-        return Task.FromResult(CapabilitiesMap.GetCapabilitiesByModel("MT786"));
+        return Task.FromResult(Capabilities.GetCapabilitiesByModel("MT786"));
     }
 
     /// <inheritdoc/>

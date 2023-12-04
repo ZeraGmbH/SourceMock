@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
-
+using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
 using SourceApi.Tests.Actions.Dosage.PortMocks;
@@ -16,7 +16,7 @@ public class DosageTests
 
     private readonly DeviceLogger _deviceLogger = new();
 
-    private ISource CreateDevice(params string[] replies) => new SerialPortMTSource(_deviceLogger, SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger));
+    private ISource CreateDevice(params string[] replies) => new SerialPortMTSource(_deviceLogger, SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap());
 
     [Test]
     public async Task Can_Turn_Off_DOS_Mode()
@@ -86,7 +86,7 @@ public class DosageTests
             "SOK3PS46"
         });
 
-        var device = new SerialPortMTSource(_deviceLogger, SerialPortConnection.FromPortInstance(mock, _portLogger));
+        var device = new SerialPortMTSource(_deviceLogger, SerialPortConnection.FromPortInstance(mock, _portLogger), new CapabilitiesMap());
 
         await device.SetDosageEnergy(energy);
 

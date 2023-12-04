@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using ErrorCalculatorApi.Actions.Device;
 using MeteringSystemApi.Actions.Device;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -82,7 +83,13 @@ public class MeteringSystemTests
 
         Services = services.BuildServiceProvider();
 
-        Generator = new SerialPortFGMeteringSystem(Device, new SerialPortFGRefMeter(Device, new NullLogger<SerialPortFGRefMeter>()), _meterLogger, Services);
+        Generator = new SerialPortFGMeteringSystem(
+            Device,
+            new SerialPortFGRefMeter(Device, new NullLogger<SerialPortFGRefMeter>()),
+            new SerialPortFGErrorCalculator(Device, new NullLogger<SerialPortFGErrorCalculator>()),
+            _meterLogger,
+            Services
+        );
     }
 
     [TearDown]
@@ -105,6 +112,7 @@ public class MeteringSystemTests
     {
         var generator = new SerialPortMTMeteringSystem(Device,
             new SerialPortMTRefMeter(Device, new NullLogger<SerialPortMTRefMeter>()),
+            new SerialPortMTErrorCalculator(Device, new NullLogger<SerialPortMTErrorCalculator>()),
             new NullLogger<SerialPortMTMeteringSystem>(),
             new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), Device, new CapabilitiesMap()));
 
@@ -118,6 +126,7 @@ public class MeteringSystemTests
     {
         var generator = new SerialPortMTMeteringSystem(Device,
             new SerialPortMTRefMeter(Device, new NullLogger<SerialPortMTRefMeter>()),
+            new SerialPortMTErrorCalculator(Device, new NullLogger<SerialPortMTErrorCalculator>()),
             new NullLogger<SerialPortMTMeteringSystem>(),
             new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), Device, new CapabilitiesMap()));
 

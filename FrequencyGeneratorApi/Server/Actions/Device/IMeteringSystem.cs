@@ -1,3 +1,4 @@
+using ErrorCalculatorApi.Actions.Device;
 using MeteringSystemApi.Model;
 using MeteringSystemApi.Models;
 using RefMeterApi.Actions.Device;
@@ -42,4 +43,9 @@ public interface IMeteringSystem
     /// The related reference meter.
     /// </summary>
     IRefMeter RefMeter { get; }
+
+    /// <summary>
+    /// The error calculator associated with this metering system.
+    /// </summary>
+    IErrorCalculator ErrorCalculator { get; }
 }

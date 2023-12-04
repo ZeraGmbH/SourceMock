@@ -1,3 +1,4 @@
+using ErrorCalculatorApi.Actions.Device;
 using MeteringSystemApi.Actions.Device;
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
@@ -116,6 +117,7 @@ public class VersionTests
 
         var dut = new SerialPortMTMeteringSystem(device,
             new SerialPortMTRefMeter(device, new NullLogger<SerialPortMTRefMeter>()),
+            new SerialPortMTErrorCalculator(device, new NullLogger<SerialPortMTErrorCalculator>()),
             _portLogger,
             new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), device, new CapabilitiesMap()));
 

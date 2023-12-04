@@ -31,19 +31,7 @@ public static class Configuration
     /// </summary>
     public static void UseErrorCalculatorApi(this IServiceCollection services, IConfiguration configuration)
     {
-        var deviceType = configuration["SerialPort:DeviceType"];
-
-        if (deviceType != "MT" && deviceType != "FG")
-            return;
-
-        switch (deviceType)
-        {
-            case "FG":
-                services.AddSingleton<IErrorCalculator, SerialPortFGErrorCalculator>();
-                break;
-            case "MT":
-                services.AddSingleton<IErrorCalculator, SerialPortMTErrorCalculator>();
-                break;
-        }
+        services.AddTransient<ISerialPortFGErrorCalculator, SerialPortFGErrorCalculator>();
+        services.AddTransient<ISerialPortMTErrorCalculator, SerialPortMTErrorCalculator>();
     }
 }

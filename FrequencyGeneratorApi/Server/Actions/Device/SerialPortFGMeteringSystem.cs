@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using ErrorCalculatorApi.Actions.Device;
 using MeteringSystemApi.Model;
 using MeteringSystemApi.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,15 +37,20 @@ public class SerialPortFGMeteringSystem : IMeteringSystem
     /// <inheritdoc/>
     public IRefMeter RefMeter { get; private set; }
 
+    /// <inheritdoc/>
+    public IErrorCalculator ErrorCalculator { get; private set; }
+
     /// <summary>
     /// Initialize device manager.
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
     /// <param name="refMeter">The related reference meter.</param>
+    /// <param name="errorCalculator">The error calculator of this metering system.</param>
     /// <param name="logger">Logging service for this device type.</param>
     /// <param name="services">Dependency injection system.</param>
-    public SerialPortFGMeteringSystem(ISerialPortConnection device, ISerialPortFGRefMeter refMeter, ILogger<SerialPortFGMeteringSystem> logger, IServiceProvider services)
+    public SerialPortFGMeteringSystem(ISerialPortConnection device, ISerialPortFGRefMeter refMeter, ISerialPortFGErrorCalculator errorCalculator, ILogger<SerialPortFGMeteringSystem> logger, IServiceProvider services)
     {
+        ErrorCalculator = errorCalculator;
         RefMeter = refMeter;
 
         _device = device;

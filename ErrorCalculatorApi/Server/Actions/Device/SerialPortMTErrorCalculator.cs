@@ -4,9 +4,16 @@ using SerialPortProxy;
 namespace ErrorCalculatorApi.Actions.Device;
 
 /// <summary>
+/// 
+/// </summary>
+public interface ISerialPortMTErrorCalculator : IErrorCalculator
+{
+}
+
+/// <summary>
 /// Handle all requests to a MT compatible device.
 /// </summary>
-public partial class SerialPortMTErrorCalculator : IErrorCalculator
+public partial class SerialPortMTErrorCalculator : ISerialPortMTErrorCalculator
 {
     private readonly ISerialPortConnection _device;
 

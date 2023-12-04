@@ -45,7 +45,8 @@ public static class Configuration
                 return;
         }
 
-        services.AddTransient(di => di.GetRequiredService<IMeteringSystem>().Source);
+        services.AddTransient(di => di.GetRequiredService<IMeteringSystem>().ErrorCalculator);
         services.AddTransient(di => di.GetRequiredService<IMeteringSystem>().RefMeter);
+        services.AddTransient(di => di.GetRequiredService<IMeteringSystem>().Source);
     }
 }

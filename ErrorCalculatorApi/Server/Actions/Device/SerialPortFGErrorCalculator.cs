@@ -5,13 +5,20 @@ using SerialPortProxy;
 namespace ErrorCalculatorApi.Actions.Device;
 
 /// <summary>
+/// 
+/// </summary>
+public interface ISerialPortFGErrorCalculator : IErrorCalculator
+{
+}
+
+/// <summary>
 /// Handle all requests to a FG30x compatible device. There is
 /// no error calculaor available using the serial port communication,
 /// it has to be connected separatly (via network and Koala XML 
 /// protocol).
 /// </summary>
 
-public class SerialPortFGErrorCalculator : IErrorCalculator
+public class SerialPortFGErrorCalculator : ISerialPortFGErrorCalculator
 {
     private readonly ISerialPortConnection _device;
 

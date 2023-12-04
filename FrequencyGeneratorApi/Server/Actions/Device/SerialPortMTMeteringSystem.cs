@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using ErrorCalculatorApi.Actions.Device;
 using MeteringSystemApi.Model;
 using MeteringSystemApi.Models;
 using Microsoft.Extensions.Logging;
@@ -33,15 +34,20 @@ public class SerialPortMTMeteringSystem : IMeteringSystem
     /// <inheritdoc/>
     public IRefMeter RefMeter { get; private set; }
 
+    /// <inheritdoc/>
+    public IErrorCalculator ErrorCalculator { get; private set; }
+
     /// <summary>
     /// Initialize device manager.
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
     /// <param name="refMeter">The related reference meter.</param>
+    /// <param name="errorCalculator">The error calculator of this metering system.</param>
     /// <param name="logger">Logging service for this device type.</param>
     /// <param name="source">Source to use to access the metering system.</param>
-    public SerialPortMTMeteringSystem(ISerialPortConnection device, ISerialPortMTRefMeter refMeter, ILogger<SerialPortMTMeteringSystem> logger, ISerialPortMTSource source)
+    public SerialPortMTMeteringSystem(ISerialPortConnection device, ISerialPortMTRefMeter refMeter, ISerialPortMTErrorCalculator errorCalculator, ILogger<SerialPortMTMeteringSystem> logger, ISerialPortMTSource source)
     {
+        ErrorCalculator = errorCalculator;
         RefMeter = refMeter;
 
         _device = device;

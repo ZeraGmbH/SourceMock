@@ -1,10 +1,10 @@
-using FrequencyGeneratorApi.Actions.Device;
-using FrequencyGeneratorApi.Models;
+using MeteringSystemApi.Actions.Device;
+using MeteringSystemApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace FrequencyGeneratorApi.Controllers;
+namespace MeteringSystemApi.Controllers;
 
 /// <summary>
 /// 
@@ -12,15 +12,15 @@ namespace FrequencyGeneratorApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class FrequencyGeneratorController : ControllerBase
+public class MeteringSystemController : ControllerBase
 {
-    private readonly IFrequencyGenerator _device;
+    private readonly IMeteringSystem _device;
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="device"></param>
-    public FrequencyGeneratorController(IFrequencyGenerator device)
+    public MeteringSystemController(IMeteringSystem device)
     {
         _device = device;
     }
@@ -30,10 +30,10 @@ public class FrequencyGeneratorController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    [SwaggerOperation(OperationId = "GetFrequencyGeneratorCapabilities")]
+    [SwaggerOperation(OperationId = "GetMeteringSystemCapabilities")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<FrequencyGeneratorCapabilities>> GetCapabilities() =>
+    public Task<ActionResult<MeteringSystemCapabilities>> GetCapabilities() =>
         Utils.SafeExecuteSerialPortCommand(() => _device.GetCapabilities());
 
     /// <summary>

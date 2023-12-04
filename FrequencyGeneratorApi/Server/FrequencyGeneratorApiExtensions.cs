@@ -1,10 +1,10 @@
-using FrequencyGeneratorApi.Actions.Device;
+using MeteringSystemApi.Actions.Device;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace FrequencyGeneratorApi;
+namespace MeteringSystemApi;
 
 /// <summary>
 /// 
@@ -14,7 +14,7 @@ public static class Configuration
     /// <summary>
     /// 
     /// </summary>
-    public static void UseFrequencyGeneratorApi(this SwaggerGenOptions options)
+    public static void UseMeteringSystemApi(this SwaggerGenOptions options)
     {
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(Configuration).Assembly.GetName().Name}.xml"));
     }
@@ -22,14 +22,14 @@ public static class Configuration
     /// <summary>
     /// 
     /// </summary>
-    public static void UseFrequencyGeneratorApi(this IEndpointRouteBuilder app)
+    public static void UseMeteringSystemApi(this IEndpointRouteBuilder app)
     {
     }
 
     /// <summary>
     /// 
     /// </summary>
-    public static void UseFrequencyGeneratorApi(this IServiceCollection services, IConfiguration configuration)
+    public static void UseMeteringSystemApi(this IServiceCollection services, IConfiguration configuration)
     {
         var deviceType = configuration["SerialPort:DeviceType"];
 
@@ -39,10 +39,10 @@ public static class Configuration
         switch (deviceType)
         {
             case "FG":
-                services.AddSingleton<IFrequencyGenerator, SerialPortFGFrequencyGenerator>();
+                services.AddSingleton<IMeteringSystem, SerialPortFGMeteringSystem>();
                 break;
             default:
-                services.AddSingleton<IFrequencyGenerator, SerialPortMTFrequencyGenerator>();
+                services.AddSingleton<IMeteringSystem, SerialPortMTMeteringSystem>();
                 break;
         }
     }

@@ -1,7 +1,7 @@
 
 using ErrorCalculatorApi;
 
-using FrequencyGeneratorApi;
+using MeteringSystemApi;
 
 using RefMeterApi;
 
@@ -16,7 +16,7 @@ public static class Configuration
     public static void UseDeviceApi(this SwaggerGenOptions options)
     {
         options.UseErrorCalculatorApi();
-        options.UseFrequencyGeneratorApi();
+        options.UseMeteringSystemApi();
         options.UseRefMeterApi();
         options.UseSourceApi();
     }
@@ -24,7 +24,7 @@ public static class Configuration
     public static void UseDeviceApi(this IEndpointRouteBuilder app)
     {
         app.UseErrorCalculatorApi();
-        app.UseFrequencyGeneratorApi();
+        app.UseMeteringSystemApi();
         app.UseRefMeterApi();
         app.UseSourceApi();
     }
@@ -32,7 +32,7 @@ public static class Configuration
     public static void UseDeviceApi(this IServiceCollection services, IConfiguration configuration)
     {
         services.UseErrorCalculatorApi(configuration);
-        services.UseFrequencyGeneratorApi(configuration);
+        services.UseMeteringSystemApi(configuration);
         services.UseRefMeterApi(configuration);
         services.UseSourceApi(configuration);
     }

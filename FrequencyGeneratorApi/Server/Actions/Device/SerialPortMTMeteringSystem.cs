@@ -1,16 +1,16 @@
-using FrequencyGeneratorApi.Models;
+using MeteringSystemApi.Models;
 using RefMeterApi.Models;
 using SourceApi.Model;
 
-namespace FrequencyGeneratorApi.Actions.Device;
+namespace MeteringSystemApi.Actions.Device;
 
 /// <summary>
 /// 
 /// </summary>
-public class SerialPortMTFrequencyGenerator : IFrequencyGenerator
+public class SerialPortMTMeteringSystem : IMeteringSystem
 {
     /// <inheritdoc/>
-    public Task<FrequencyGeneratorCapabilities> GetCapabilities() => Task.FromResult<FrequencyGeneratorCapabilities>(null!);
+    public Task<MeteringSystemCapabilities> GetCapabilities() => Task.FromResult<MeteringSystemCapabilities>(null!);
 
     /// <inheritdoc/>
     public Task SetAmplifiersAndReferenceMeter(VoltageAmplifiers voltage, CurrentAmplifiers current, ReferenceMeters referenceMeter)

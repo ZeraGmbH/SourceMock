@@ -3,12 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 using RefMeterApi.Models;
 using SourceApi.Model;
 
-namespace FrequencyGeneratorApi.Models;
+namespace MeteringSystemApi.Models;
 
 /// <summary>
 /// 
 /// </summary>
-public class FrequencyGeneratorCapabilities
+public class MeteringSystemCapabilities
 {
     /// <summary>
     /// 

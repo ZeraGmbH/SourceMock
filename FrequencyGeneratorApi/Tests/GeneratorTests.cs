@@ -1,12 +1,11 @@
 using System.Text.RegularExpressions;
-using FrequencyGeneratorApi.Actions.Device;
-using FrequencyGeneratorApi.Models;
+using MeteringSystemApi.Actions.Device;
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Models;
 using SerialPortProxy;
 using SourceApi.Model;
 
-namespace FrequencyGeneratorApiTests;
+namespace MeteringSystemApiTests;
 
 [TestFixture]
 public class GeneratorTests
@@ -36,13 +35,13 @@ public class GeneratorTests
         }
     }
 
-    private readonly NullLogger<SerialPortFGFrequencyGenerator> _logger = new();
+    private readonly NullLogger<SerialPortFGMeteringSystem> _logger = new();
 
     private PortMock _port = null!;
 
     private ISerialPortConnection Device = null!;
 
-    private IFrequencyGenerator Generator = null!;
+    private IMeteringSystem Generator = null!;
 
     [SetUp]
     public void Setup()
@@ -51,7 +50,7 @@ public class GeneratorTests
 
         Device = SerialPortConnection.FromPortInstance(_port, new NullLogger<ISerialPortConnection>());
 
-        Generator = new SerialPortFGFrequencyGenerator(Device, _logger);
+        Generator = new SerialPortFGMeteringSystem(Device, _logger);
     }
 
     [TearDown]
@@ -74,7 +73,7 @@ public class GeneratorTests
     [Test]
     public async Task Can_Not_Get_Capabilities_For_MT()
     {
-        var generator = new SerialPortMTFrequencyGenerator();
+        var generator = new SerialPortMTMeteringSystem();
 
         var caps = await generator.GetCapabilities();
 

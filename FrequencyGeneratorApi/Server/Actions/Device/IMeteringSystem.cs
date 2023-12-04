@@ -1,19 +1,19 @@
-using FrequencyGeneratorApi.Models;
+using MeteringSystemApi.Models;
 using RefMeterApi.Models;
 using SourceApi.Model;
 
-namespace FrequencyGeneratorApi.Actions.Device;
+namespace MeteringSystemApi.Actions.Device;
 
 /// <summary>
 /// 
 /// </summary>
-public interface IFrequencyGenerator
+public interface IMeteringSystem
 {
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
-    Task<FrequencyGeneratorCapabilities> GetCapabilities();
+    Task<MeteringSystemCapabilities> GetCapabilities();
 
     /// <summary>
     /// 

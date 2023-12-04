@@ -1,34 +1,34 @@
-using FrequencyGeneratorApi.Models;
+using MeteringSystemApi.Models;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
 using SerialPortProxy;
 using SourceApi.Model;
 
-namespace FrequencyGeneratorApi.Actions.Device;
+namespace MeteringSystemApi.Actions.Device;
 
 /// <summary>
 /// 
 /// </summary>
-public class SerialPortFGFrequencyGenerator : IFrequencyGenerator
+public class SerialPortFGMeteringSystem : IMeteringSystem
 {
     private readonly ISerialPortConnection _device;
 
-    private readonly ILogger<SerialPortFGFrequencyGenerator> _logger;
+    private readonly ILogger<SerialPortFGMeteringSystem> _logger;
 
     /// <summary>
     /// Initialize device manager.
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
     /// <param name="logger">Logging service for this device type.</param>
-    public SerialPortFGFrequencyGenerator(ISerialPortConnection device, ILogger<SerialPortFGFrequencyGenerator> logger)
+    public SerialPortFGMeteringSystem(ISerialPortConnection device, ILogger<SerialPortFGMeteringSystem> logger)
     {
         _device = device;
         _logger = logger;
     }
 
     /// <inheritdoc/>
-    public Task<FrequencyGeneratorCapabilities> GetCapabilities() =>
-        Task.FromResult(new FrequencyGeneratorCapabilities
+    public Task<MeteringSystemCapabilities> GetCapabilities() =>
+        Task.FromResult(new MeteringSystemCapabilities
         {
             SupportedCurrentAmplifiers = {
                 CurrentAmplifiers.VI201x0x1,

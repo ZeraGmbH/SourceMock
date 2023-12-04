@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FrequencyGeneratorApi.Controllers;
+namespace MeteringSystemApi.Controllers;
 
 class Utils
 {

@@ -43,6 +43,16 @@ public class SerialPortFGMock : ISerialPort
             case "TS":
                 _replies.Enqueue("TSFG399   V703");
                 break;
+            case "SAW":
+                _replies.Enqueue("CPU-Modul;Xilinx-FG-Version;18");
+                _replies.Enqueue("U1: MT781_U1  ;Serial:50021475a   ;PIC:27;Platine:VE5611C01 ");
+                _replies.Enqueue("U2: MT781_U1  ;Serial:50021475b   ;PIC:27;Platine:VE5611C01 ");
+                _replies.Enqueue("U3: MT781_U1  ;Serial:50021475c   ;PIC:27;Platine:VE5611C01 ");
+                _replies.Enqueue("I1: MT781_I   ;Serial:50021475d   ;PIC:22;Platine:VE5611C   ");
+                _replies.Enqueue("I2: MT781_I   ;Serial:50021475e   ;PIC:22;Platine:VE5611C   ");
+                _replies.Enqueue("I3: MT781_I   ;Serial:50021475f   ;PIC:22;Platine:VE5611C   ");
+                _replies.Enqueue("SOKAW");
+                break;
             default:
                 {
                     /* Set voltage. */

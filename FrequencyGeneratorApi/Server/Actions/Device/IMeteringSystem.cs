@@ -1,6 +1,7 @@
 using MeteringSystemApi.Model;
 using MeteringSystemApi.Models;
 using RefMeterApi.Models;
+using SourceApi.Actions.Source;
 using SourceApi.Model;
 
 namespace MeteringSystemApi.Actions.Device;
@@ -30,4 +31,9 @@ public interface IMeteringSystem
     /// <param name="referenceMeter"></param>
     /// <returns></returns>
     Task SetAmplifiersAndReferenceMeter(VoltageAmplifiers voltage, CurrentAmplifiers current, ReferenceMeters referenceMeter);
+
+    /// <summary>
+    /// The corresponding source.
+    /// </summary>
+    ISource Source { get; }
 }

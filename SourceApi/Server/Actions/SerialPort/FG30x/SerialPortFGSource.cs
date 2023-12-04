@@ -10,8 +10,29 @@ namespace SourceApi.Actions.SerialPort.FG30x;
 /// <summary>
 /// 
 /// </summary>
-public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>
+public interface ISerialPortFGSource : ISource
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="voltage"></param>
+    /// <param name="current"></param>
+    /// <returns></returns>
+    void SetAmplifiers(VoltageAmplifiers voltage, CurrentAmplifiers current);
+}
+
+/// <summary>
+/// 
+/// </summary>
+public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, ISerialPortFGSource
+{
+    private VoltageAmplifiers? VoltageAmplifier;
+
+    private CurrentAmplifiers? CurrentAmplifier;
+
+    /// <inheritdoc/>
+    public override bool Available => VoltageAmplifier.HasValue && CurrentAmplifier.HasValue;
+
     /// <summary>
     /// 
     /// </summary>
@@ -32,8 +53,7 @@ public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>
     /// <inheritdoc/>
     public override Task<SourceCapabilities> GetCapabilities()
     {
-        /* Currently we assume MT768, future versions may read the firmware from the device. */
-        return Task.FromResult(Capabilities.GetCapabilitiesByModel("MT786"));
+        return Task.FromResult(Available ? Capabilities.GetCapabilitiesByAmplifiers(VoltageAmplifier!.Value, CurrentAmplifier!.Value) : null!);
     }
 
     /// <inheritdoc/>
@@ -41,6 +61,14 @@ public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>
     {
         // 243/252 or 3SA/3MA
         throw new NotImplementedException();
+    }
+
+    public void SetAmplifiers(VoltageAmplifiers voltage, CurrentAmplifiers current)
+    {
+        if (Available) throw new InvalidOperationException("Source already initialized");
+
+        CurrentAmplifier = current;
+        VoltageAmplifier = voltage;
     }
 
     /// <inheritdoc/>

@@ -44,6 +44,16 @@ namespace SourceApi.Controllers
         }
 
         /// <summary>
+        /// Gets the capabilities of this source.
+        /// </summary>
+        /// <returns>The corresponding<see cref="SourceCapabilities"/>-Object for this source.</returns>
+        /// /// <response code="200">If the capabilities could be returned successfully.</response>
+        [HttpGet("Available")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "SourceIsAvailable")]
+        public ActionResult<bool> IsAvailable() => Ok(_source.Available);
+
+        /// <summary>
         /// Sets a loadpoint without turning on the source.
         /// </summary>
         /// <param name="loadpoint">The loadpoint to be set.</param>

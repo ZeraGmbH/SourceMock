@@ -114,4 +114,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
 
     /// <inheritdoc/>
     public abstract Task<DosageProgress> GetDosageProgress();
+
+    /// <inheritdoc/>
+    public abstract bool Available { get; }
 }

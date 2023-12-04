@@ -8,11 +8,21 @@ using SourceApi.Model;
 namespace SourceApi.Actions.SerialPort.MT768;
 
 /// <summary>
+/// 
+/// </summary>
+public interface ISerialPortMTSource : ISource
+{
+}
+
+/// <summary>
 /// A ISource implenmentation to access a (potentially mocked) device. This
 /// should be a singleton because it manages the loadpoint.
 /// </summary>
-public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>
+public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, ISerialPortMTSource
 {
+    /// <inheritdoc/>
+    public override bool Available => true;
+
     /// <summary>
     /// Initialize a new source implementation.
     /// </summary>

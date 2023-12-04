@@ -22,6 +22,8 @@ namespace SourceApi.Actions.VeinSource
             _veinClient = veinClient;
         }
 
+        public bool Available => true;
+
         public Task CancelDosage()
         {
             throw new NotImplementedException();

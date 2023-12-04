@@ -1,8 +1,12 @@
 using System.Text.RegularExpressions;
 using MeteringSystemApi.Actions.Device;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SourceApi.Actions.SerialPort;
+using SourceApi.Actions.SerialPort.FG30x;
+using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Model;
 
 namespace MeteringSystemApiTests;
@@ -48,13 +52,19 @@ public class MeteringSystemTests
         }
     }
 
-    private readonly NullLogger<SerialPortFGMeteringSystem> _logger = new();
+    private readonly NullLogger<SerialPortFGMeteringSystem> _meterLogger = new();
+
+    private readonly NullLogger<SerialPortFGSource> _sourceLogger = new();
 
     private PortMock _port = null!;
 
     private ISerialPortConnection Device = null!;
 
     private IMeteringSystem Generator = null!;
+
+    private ISerialPortFGSource Source = null!;
+
+    private IServiceProvider Services = null!;
 
     [SetUp]
     public void Setup()
@@ -63,14 +73,21 @@ public class MeteringSystemTests
 
         Device = SerialPortConnection.FromPortInstance(_port, new NullLogger<ISerialPortConnection>());
 
-        Generator = new SerialPortFGMeteringSystem(Device, _logger);
+        Source = new SerialPortFGSource(_sourceLogger, Device, new CapabilitiesMap());
+
+        var services = new ServiceCollection();
+
+        services.AddSingleton(Source);
+
+        Services = services.BuildServiceProvider();
+
+        Generator = new SerialPortFGMeteringSystem(Device, _meterLogger, Services);
     }
 
     [TearDown]
     public void Teardown()
     {
         _port?.Dispose();
-
         Device?.Dispose();
     }
 
@@ -82,11 +99,12 @@ public class MeteringSystemTests
         Assert.That(caps, Is.Not.Null);
     }
 
-
     [Test]
     public async Task Can_Not_Get_Capabilities_For_MT()
     {
-        var generator = new SerialPortMTMeteringSystem(Device, new NullLogger<SerialPortMTMeteringSystem>());
+        var generator = new SerialPortMTMeteringSystem(Device,
+            new NullLogger<SerialPortMTMeteringSystem>(),
+            new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), Device, new CapabilitiesMap()));
 
         var caps = await generator.GetCapabilities();
 
@@ -96,7 +114,9 @@ public class MeteringSystemTests
     [Test]
     public async Task Can_Get_Firmware_Version_For_MT()
     {
-        var generator = new SerialPortMTMeteringSystem(Device, new NullLogger<SerialPortMTMeteringSystem>());
+        var generator = new SerialPortMTMeteringSystem(Device,
+            new NullLogger<SerialPortMTMeteringSystem>(),
+            new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), Device, new CapabilitiesMap()));
 
         var version = await generator.GetFirmwareVersion();
 

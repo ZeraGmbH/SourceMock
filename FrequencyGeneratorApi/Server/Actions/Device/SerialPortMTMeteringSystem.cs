@@ -4,6 +4,8 @@ using MeteringSystemApi.Models;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SourceApi.Actions.SerialPort.MT768;
+using SourceApi.Actions.Source;
 using SourceApi.Model;
 
 namespace MeteringSystemApi.Actions.Device;
@@ -22,15 +24,22 @@ public class SerialPortMTMeteringSystem : IMeteringSystem
 
     private readonly ILogger<SerialPortMTMeteringSystem> _logger;
 
+    private readonly ISerialPortMTSource _source;
+
+    /// <inheritdoc/>
+    public ISource Source => _source;
+
     /// <summary>
     /// Initialize device manager.
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
     /// <param name="logger">Logging service for this device type.</param>
-    public SerialPortMTMeteringSystem(ISerialPortConnection device, ILogger<SerialPortMTMeteringSystem> logger)
+    /// <param name="source">Source to use to access the metering system.</param>
+    public SerialPortMTMeteringSystem(ISerialPortConnection device, ILogger<SerialPortMTMeteringSystem> logger, ISerialPortMTSource source)
     {
         _device = device;
         _logger = logger;
+        _source = source;
     }
 
     /// <inheritdoc/>

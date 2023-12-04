@@ -33,17 +33,18 @@ public static class Configuration
     {
         var deviceType = configuration["SerialPort:DeviceType"];
 
-        if (deviceType != "MT" && deviceType != "FG")
-            throw new NotImplementedException($"Unknown DeviceType: {deviceType}");
-
         switch (deviceType)
         {
             case "FG":
                 services.AddSingleton<IMeteringSystem, SerialPortFGMeteringSystem>();
                 break;
-            default:
+            case "MT":
                 services.AddSingleton<IMeteringSystem, SerialPortMTMeteringSystem>();
                 break;
+            default:
+                return;
         }
+
+        services.AddTransient(di => di.GetRequiredService<IMeteringSystem>().Source);
     }
 }

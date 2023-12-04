@@ -2,6 +2,8 @@ using MeteringSystemApi.Actions.Device;
 using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
+using SourceApi.Actions.SerialPort;
+using SourceApi.Actions.SerialPort.MT768;
 
 namespace MeteringSystemApiTests;
 
@@ -112,7 +114,7 @@ public class VersionTests
     {
         using var device = SerialPortConnection.FromMock(mockType, _logger);
 
-        var dut = new SerialPortMTMeteringSystem(device, _portLogger);
+        var dut = new SerialPortMTMeteringSystem(device, _portLogger, new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), device, new CapabilitiesMap()));
 
         var ex = Assert.ThrowsAsync(exception ?? typeof(InvalidOperationException), dut.GetFirmwareVersion);
 

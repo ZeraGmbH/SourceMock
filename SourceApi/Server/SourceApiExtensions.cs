@@ -41,15 +41,12 @@ public static class Configuration
 
         var deviceType = configuration["SerialPort:DeviceType"];
 
-        if (deviceType != "MT" && deviceType != "FG")
-            throw new NotImplementedException($"Unknown DeviceType: {deviceType}");
-
         switch (configuration["SourceType"])
         {
             case "simulated":
                 services.AddSingleton<SimulatedSource>();
-                services.AddSingleton<ISource>(x => x.GetRequiredService<SimulatedSource>());
                 services.AddSingleton<ISimulatedSource>(x => x.GetRequiredService<SimulatedSource>());
+                services.AddSingleton<ISource>(x => x.GetRequiredService<SimulatedSource>());
                 break;
             case "vein":
                 services.AddSingleton(new VeinClient(new(), "localhost", 8080));
@@ -57,15 +54,12 @@ public static class Configuration
                 services.AddSingleton<ISource>(x => x.GetRequiredService<VeinSource>());
                 break;
             case "serial":
-                switch (deviceType)
-                {
-                    case "FG":
-                        services.AddSingleton<ISource, SerialPortFGSource>();
-                        break;
-                    default:
-                        services.AddSingleton<ISource, SerialPortMTSource>();
-                        break;
-                }
+                if (deviceType != "MT" && deviceType != "FG")
+                    throw new NotImplementedException($"Unknown DeviceType: {deviceType}");
+
+                services.AddTransient<ISerialPortFGSource, SerialPortFGSource>();
+                services.AddTransient<ISerialPortMTSource, SerialPortMTSource>();
+
                 break;
             default:
                 throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");

@@ -1,9 +1,12 @@
 using System.Text.RegularExpressions;
 using MeteringSystemApi.Model;
 using MeteringSystemApi.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SourceApi.Actions.SerialPort.FG30x;
+using SourceApi.Actions.Source;
 using SourceApi.Model;
 
 namespace MeteringSystemApi.Actions.Device;
@@ -22,15 +25,24 @@ public class SerialPortFGMeteringSystem : IMeteringSystem
 
     private readonly ILogger<SerialPortFGMeteringSystem> _logger;
 
+    private ISource _source = new UnavailableSource();
+
+    private readonly IServiceProvider _services;
+
+    /// <inheritdoc/>
+    public ISource Source => _source;
+
     /// <summary>
     /// Initialize device manager.
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
     /// <param name="logger">Logging service for this device type.</param>
-    public SerialPortFGMeteringSystem(ISerialPortConnection device, ILogger<SerialPortFGMeteringSystem> logger)
+    /// <param name="services">Dependency injection system.</param>
+    public SerialPortFGMeteringSystem(ISerialPortConnection device, ILogger<SerialPortFGMeteringSystem> logger, IServiceProvider services)
     {
         _device = device;
         _logger = logger;
+        _services = services;
     }
 
     /// <inheritdoc/>
@@ -85,7 +97,25 @@ public class SerialPortFGMeteringSystem : IMeteringSystem
         if (!capabilities.SupportedReferenceMeters.Contains(referenceMeter))
             throw new ArgumentException(nameof(referenceMeter));
 
-        await _device.Execute(SerialPortRequest.Create($"ZP{(int)voltage:00}{(int)current:00}{(int)voltage:00}{(int)current:00}{(int)referenceMeter:00}", "OKZP"))[0];
+        var source = _services.GetRequiredService<ISerialPortFGSource>();
+
+        source.SetAmplifiers(voltage, current);
+
+        try
+        {
+            await _device.Execute(SerialPortRequest.Create($"ZP{(int)voltage:00}{(int)current:00}{(int)voltage:00}{(int)current:00}{(int)referenceMeter:00}", "OKZP"))[0];
+        }
+        catch (Exception)
+        {
+            source = null;
+
+            throw;
+        }
+        finally
+        {
+            if (source != null)
+                _source = source;
+        }
     }
 
     /// <inheritdoc/>

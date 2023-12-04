@@ -137,5 +137,7 @@ namespace SourceApi.Actions.Source
         }
 
         public LoadpointInfo GetActiveLoadpointInfo() => _info;
+
+        public bool Available => true;
     }
 }

@@ -8,6 +8,11 @@ namespace SourceApi.Actions.Source
     public interface ISource
     {
         /// <summary>
+        /// Set if the source is fully configured and can be used.
+        /// </summary>
+        bool Available { get; }
+
+        /// <summary>
         /// Gets the capabilities of this source.
         /// </summary>
         /// <returns>The corresponding <see cref="SourceCapabilities"/>-Object for this source.</returns>

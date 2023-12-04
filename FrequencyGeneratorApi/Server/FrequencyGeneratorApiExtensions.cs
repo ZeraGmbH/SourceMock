@@ -46,5 +46,6 @@ public static class Configuration
         }
 
         services.AddTransient(di => di.GetRequiredService<IMeteringSystem>().Source);
+        services.AddTransient(di => di.GetRequiredService<IMeteringSystem>().RefMeter);
     }
 }

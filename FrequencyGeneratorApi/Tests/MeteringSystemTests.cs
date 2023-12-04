@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using MeteringSystemApi.Actions.Device;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
+using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SerialPortProxy;
 using SourceApi.Actions.SerialPort;
@@ -81,7 +82,7 @@ public class MeteringSystemTests
 
         Services = services.BuildServiceProvider();
 
-        Generator = new SerialPortFGMeteringSystem(Device, _meterLogger, Services);
+        Generator = new SerialPortFGMeteringSystem(Device, new SerialPortFGRefMeter(Device, new NullLogger<SerialPortFGRefMeter>()), _meterLogger, Services);
     }
 
     [TearDown]
@@ -103,6 +104,7 @@ public class MeteringSystemTests
     public async Task Can_Not_Get_Capabilities_For_MT()
     {
         var generator = new SerialPortMTMeteringSystem(Device,
+            new SerialPortMTRefMeter(Device, new NullLogger<SerialPortMTRefMeter>()),
             new NullLogger<SerialPortMTMeteringSystem>(),
             new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), Device, new CapabilitiesMap()));
 
@@ -115,6 +117,7 @@ public class MeteringSystemTests
     public async Task Can_Get_Firmware_Version_For_MT()
     {
         var generator = new SerialPortMTMeteringSystem(Device,
+            new SerialPortMTRefMeter(Device, new NullLogger<SerialPortMTRefMeter>()),
             new NullLogger<SerialPortMTMeteringSystem>(),
             new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), Device, new CapabilitiesMap()));
 

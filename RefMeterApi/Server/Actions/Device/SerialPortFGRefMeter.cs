@@ -5,9 +5,16 @@ using SerialPortProxy;
 namespace RefMeterApi.Actions.Device;
 
 /// <summary>
+/// 
+/// </summary>
+public interface ISerialPortFGRefMeter : IRefMeter
+{
+}
+
+/// <summary>
 /// Handle all requests to a FG30x compatible devices.
 /// </summary>
-public class SerialPortFGRefMeter : IRefMeter
+public class SerialPortFGRefMeter : ISerialPortFGRefMeter
 {
     private readonly ISerialPortConnection _device;
 

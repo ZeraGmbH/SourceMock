@@ -31,19 +31,7 @@ public static class Configuration
     /// </summary>
     public static void UseRefMeterApi(this IServiceCollection services, IConfiguration configuration)
     {
-        var deviceType = configuration["SerialPort:DeviceType"];
-
-        if (deviceType != "MT" && deviceType != "FG")
-            throw new NotImplementedException($"Unknown DeviceType: {deviceType}");
-
-        switch (deviceType)
-        {
-            case "FG":
-                services.AddSingleton<IRefMeter, SerialPortFGRefMeter>();
-                break;
-            default:
-                services.AddSingleton<IRefMeter, SerialPortMTRefMeter>();
-                break;
-        }
+        services.AddTransient<ISerialPortFGRefMeter, SerialPortFGRefMeter>();
+        services.AddTransient<ISerialPortMTRefMeter, SerialPortMTRefMeter>();
     }
 }

@@ -34,14 +34,14 @@ public static class Configuration
         var deviceType = configuration["SerialPort:DeviceType"];
 
         if (deviceType != "MT" && deviceType != "FG")
-            throw new NotImplementedException($"Unknown DeviceType: {deviceType}");
+            return;
 
         switch (deviceType)
         {
             case "FG":
                 services.AddSingleton<IErrorCalculator, SerialPortFGErrorCalculator>();
                 break;
-            default:
+            case "MT":
                 services.AddSingleton<IErrorCalculator, SerialPortMTErrorCalculator>();
                 break;
         }

@@ -1,5 +1,6 @@
 using MeteringSystemApi.Model;
 using MeteringSystemApi.Models;
+using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
@@ -36,4 +37,9 @@ public interface IMeteringSystem
     /// The corresponding source.
     /// </summary>
     ISource Source { get; }
+
+    /// <summary>
+    /// The related reference meter.
+    /// </summary>
+    IRefMeter RefMeter { get; }
 }

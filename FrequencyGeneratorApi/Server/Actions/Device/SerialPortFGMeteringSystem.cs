@@ -3,6 +3,7 @@ using MeteringSystemApi.Model;
 using MeteringSystemApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SerialPortProxy;
 using SourceApi.Actions.SerialPort.FG30x;
@@ -32,14 +33,20 @@ public class SerialPortFGMeteringSystem : IMeteringSystem
     /// <inheritdoc/>
     public ISource Source => _source;
 
+    /// <inheritdoc/>
+    public IRefMeter RefMeter { get; private set; }
+
     /// <summary>
     /// Initialize device manager.
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
+    /// <param name="refMeter">The related reference meter.</param>
     /// <param name="logger">Logging service for this device type.</param>
     /// <param name="services">Dependency injection system.</param>
-    public SerialPortFGMeteringSystem(ISerialPortConnection device, ILogger<SerialPortFGMeteringSystem> logger, IServiceProvider services)
+    public SerialPortFGMeteringSystem(ISerialPortConnection device, ISerialPortFGRefMeter refMeter, ILogger<SerialPortFGMeteringSystem> logger, IServiceProvider services)
     {
+        RefMeter = refMeter;
+
         _device = device;
         _logger = logger;
         _services = services;

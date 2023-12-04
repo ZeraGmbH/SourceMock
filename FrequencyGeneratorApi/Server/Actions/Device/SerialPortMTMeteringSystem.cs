@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using MeteringSystemApi.Model;
 using MeteringSystemApi.Models;
 using Microsoft.Extensions.Logging;
+using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SerialPortProxy;
 using SourceApi.Actions.SerialPort.MT768;
@@ -29,14 +30,20 @@ public class SerialPortMTMeteringSystem : IMeteringSystem
     /// <inheritdoc/>
     public ISource Source => _source;
 
+    /// <inheritdoc/>
+    public IRefMeter RefMeter { get; private set; }
+
     /// <summary>
     /// Initialize device manager.
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
+    /// <param name="refMeter">The related reference meter.</param>
     /// <param name="logger">Logging service for this device type.</param>
     /// <param name="source">Source to use to access the metering system.</param>
-    public SerialPortMTMeteringSystem(ISerialPortConnection device, ILogger<SerialPortMTMeteringSystem> logger, ISerialPortMTSource source)
+    public SerialPortMTMeteringSystem(ISerialPortConnection device, ISerialPortMTRefMeter refMeter, ILogger<SerialPortMTMeteringSystem> logger, ISerialPortMTSource source)
     {
+        RefMeter = refMeter;
+
         _device = device;
         _logger = logger;
         _source = source;

@@ -4,9 +4,16 @@ using SerialPortProxy;
 namespace RefMeterApi.Actions.Device;
 
 /// <summary>
+///
+/// </summary>
+public interface ISerialPortMTRefMeter : IRefMeter
+{
+}
+
+/// <summary>
 /// Handle all requests to a MT786 compatible devices.
 /// </summary>
-public partial class SerialPortMTRefMeter : IRefMeter
+public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
 {
     private readonly ISerialPortConnection _device;
 

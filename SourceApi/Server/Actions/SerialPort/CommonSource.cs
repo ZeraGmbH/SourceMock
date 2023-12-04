@@ -98,9 +98,6 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     public abstract Task<SourceResult> TurnOff();
 
     /// <inheritdoc/>
-    public abstract Task<DeviceFirmwareVersion> GetFirmwareVersion();
-
-    /// <inheritdoc/>
     public virtual LoadpointInfo GetActiveLoadpointInfo() => Info;
 
     /// <inheritdoc/>

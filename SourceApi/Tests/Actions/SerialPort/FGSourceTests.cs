@@ -46,18 +46,6 @@ public class FGSourceTests
         _device?.Dispose();
     }
 
-    [Test]
-    public async Task Can_Get_Firmware_Version()
-    {
-        var version = await _source.GetFirmwareVersion();
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(version.ModelName, Is.EqualTo("FG399"));
-            Assert.That(version.Version, Is.EqualTo("V703"));
-        });
-    }
-
     [TestCase(0.01, "IPAAR000.010000.00S000.020120.00T000.030240.00")]
     [TestCase(0.5, "IPAAR000.500000.00S001.000120.00T001.500240.00")]
     public async Task Can_Set_Valid_Loadpoint(double baseAngle, string current)

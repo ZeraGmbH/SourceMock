@@ -1,10 +1,9 @@
+using MeteringSystemApi.Actions.Device;
 using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
-using SourceApi.Actions.SerialPort;
-using SourceApi.Actions.SerialPort.MT768;
 
-namespace SourceApi.Tests.Actions.SerialPort;
+namespace MeteringSystemApiTests;
 
 /// <summary>
 /// General mock for validating command reply interpretation.
@@ -98,27 +97,11 @@ class EmptyVersionMock : PortMock
 }
 
 [TestFixture]
-public class DeviceTests
+public class VersionTests
 {
     private readonly NullLogger<ISerialPortConnection> _logger = new();
 
-    private readonly NullLogger<SerialPortMTSource> _portLogger = new();
-
-    [Test]
-    public async Task Can_Detect_Firmware_Version()
-    {
-        using var device = SerialPortConnection.FromMock<CorrectVersionMock>(_logger);
-
-        var dut = new SerialPortMTSource(_portLogger, device, new CapabilitiesMap());
-
-        var version = await dut.GetFirmwareVersion();
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(version.ModelName, Is.EqualTo("MT9123"));
-            Assert.That(version.Version, Is.EqualTo("19.129"));
-        });
-    }
+    private readonly NullLogger<SerialPortMTMeteringSystem> _portLogger = new();
 
     [TestCase(typeof(EmptyModelNameMock), "invalid response V19.129 from device")]
     [TestCase(typeof(EmptyVersionMock), "invalid response MT9123V from device")]
@@ -129,9 +112,9 @@ public class DeviceTests
     {
         using var device = SerialPortConnection.FromMock(mockType, _logger);
 
-        var dut = new SerialPortMTSource(_portLogger, device, new CapabilitiesMap());
+        var dut = new SerialPortMTMeteringSystem(device, _portLogger);
 
-        var ex = Assert.ThrowsAsync(exception ?? typeof(InvalidOperationException), async () => await dut.GetFirmwareVersion());
+        var ex = Assert.ThrowsAsync(exception ?? typeof(InvalidOperationException), dut.GetFirmwareVersion);
 
         Assert.That(ex.Message, Is.EqualTo(message));
     }

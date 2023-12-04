@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+using MeteringSystemApi.Model;
 using MeteringSystemApi.Models;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
@@ -11,6 +13,11 @@ namespace MeteringSystemApi.Actions.Device;
 /// </summary>
 public class SerialPortFGMeteringSystem : IMeteringSystem
 {
+    /// <summary>
+    /// Detect model name and version number.
+    /// </summary>
+    private static readonly Regex _versionReg = new("^TS(.{8})(.{4})$", RegexOptions.Singleline | RegexOptions.Compiled);
+
     private readonly ISerialPortConnection _device;
 
     private readonly ILogger<SerialPortFGMeteringSystem> _logger;
@@ -79,5 +86,28 @@ public class SerialPortFGMeteringSystem : IMeteringSystem
             throw new ArgumentException(nameof(referenceMeter));
 
         await _device.Execute(SerialPortRequest.Create($"ZP{(int)voltage:00}{(int)current:00}{(int)voltage:00}{(int)current:00}{(int)referenceMeter:00}", "OKZP"))[0];
+    }
+
+    /// <inheritdoc/>
+    public async Task<MeteringSystemFirmwareVersion> GetFirmwareVersion()
+    {
+        /* Send command and check reply. */
+        var reply = await _device.Execute(SerialPortRequest.Create("TS", _versionReg))[0];
+
+        if (reply.Length < 1)
+            throw new InvalidOperationException($"wrong number of response lines - expected at least 1 but got {reply.Length}");
+
+        /* Validate the response consisting of model name and version numner. */
+        var versionMatch = _versionReg.Match(reply[^1]);
+
+        if (versionMatch?.Success != true)
+            throw new InvalidOperationException($"invalid response {reply[0]} from device");
+
+        /* Create response structure. */
+        return new MeteringSystemFirmwareVersion
+        {
+            ModelName = versionMatch.Groups[1].Value.Trim(),
+            Version = versionMatch.Groups[2].Value.Trim()
+        };
     }
 }

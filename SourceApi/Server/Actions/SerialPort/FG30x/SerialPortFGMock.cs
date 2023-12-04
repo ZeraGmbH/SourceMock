@@ -41,7 +41,7 @@ public class SerialPortFGMock : ISerialPort
         switch (command)
         {
             case "TS":
-                _replies.Enqueue("TSFG399   V703");
+                _replies.Enqueue("TSFG301   V385");
                 break;
             default:
                 {

@@ -8,12 +8,6 @@ namespace SourceApi.Actions.Source
     public interface ISource
     {
         /// <summary>
-        /// Retrieve information on the firmware version.
-        /// </summary>
-        /// <returns>The firmware version.</returns>
-        Task<DeviceFirmwareVersion> GetFirmwareVersion();
-
-        /// <summary>
         /// Gets the capabilities of this source.
         /// </summary>
         /// <returns>The corresponding <see cref="SourceCapabilities"/>-Object for this source.</returns>

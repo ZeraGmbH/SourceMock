@@ -1,4 +1,5 @@
 using MeteringSystemApi.Actions.Device;
+using MeteringSystemApi.Model;
 using MeteringSystemApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +35,7 @@ public class MeteringSystemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<MeteringSystemCapabilities>> GetCapabilities() =>
-        Utils.SafeExecuteSerialPortCommand(() => _device.GetCapabilities());
+        Utils.SafeExecuteSerialPortCommand(_device.GetCapabilities);
 
     /// <summary>
     /// 
@@ -46,4 +47,15 @@ public class MeteringSystemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SetAmplifiersAndReferenceMeter([FromBody] SetAmplifiersAndReferenceMeterRequest request) =>
         Utils.SafeExecuteSerialPortCommand(() => _device.SetAmplifiersAndReferenceMeter(request.VoltageAmplifier, request.CurrentAmplifier, request.ReferenceMeter));
+
+    /// <summary>
+    /// Read the firmware from the metering system.
+    /// </summary>
+    /// <returns>Firmware version of the metering system.</returns>
+    [HttpGet("FirmwareVersion")]
+    [SwaggerOperation(OperationId = "GetFirmwareVersion")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult<MeteringSystemFirmwareVersion>> GetFirmwareVersion() =>
+        Utils.SafeExecuteSerialPortCommand(_device.GetFirmwareVersion);
 }

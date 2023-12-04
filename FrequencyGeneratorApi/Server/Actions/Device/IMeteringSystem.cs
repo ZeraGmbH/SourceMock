@@ -1,3 +1,4 @@
+using MeteringSystemApi.Model;
 using MeteringSystemApi.Models;
 using RefMeterApi.Models;
 using SourceApi.Model;
@@ -9,6 +10,12 @@ namespace MeteringSystemApi.Actions.Device;
 /// </summary>
 public interface IMeteringSystem
 {
+    /// <summary>
+    /// Retrieve information on the firmware version.
+    /// </summary>
+    /// <returns>The firmware version.</returns>
+    Task<MeteringSystemFirmwareVersion> GetFirmwareVersion();
+
     /// <summary>
     /// 
     /// </summary>

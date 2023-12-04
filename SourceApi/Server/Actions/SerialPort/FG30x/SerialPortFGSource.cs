@@ -13,11 +13,6 @@ namespace SourceApi.Actions.SerialPort.FG30x;
 public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>
 {
     /// <summary>
-    /// Detect model name and version number.
-    /// </summary>
-    private static readonly Regex _versionReg = new("^TS(.{8})(.{4})$", RegexOptions.Singleline | RegexOptions.Compiled);
-
-    /// <summary>
     /// 
     /// </summary>
     /// <param name="logger"></param>
@@ -46,29 +41,6 @@ public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>
     {
         // 243/252 or 3SA/3MA
         throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public override async Task<DeviceFirmwareVersion> GetFirmwareVersion()
-    {
-        /* Send command and check reply. */
-        var reply = await Device.Execute(SerialPortRequest.Create("TS", _versionReg))[0];
-
-        if (reply.Length < 1)
-            throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");
-
-        /* Validate the response consisting of model name and version numner. */
-        var versionMatch = _versionReg.Match(reply[^1]);
-
-        if (versionMatch?.Success != true)
-            throw new InvalidOperationException($"invalid response {reply[0]} from device");
-
-        /* Create response structure. */
-        return new DeviceFirmwareVersion
-        {
-            ModelName = versionMatch.Groups[1].Value.Trim(),
-            Version = versionMatch.Groups[2].Value.Trim()
-        };
     }
 
     /// <inheritdoc/>

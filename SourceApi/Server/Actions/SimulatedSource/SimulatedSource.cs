@@ -136,13 +136,6 @@ namespace SourceApi.Actions.Source
             throw new NotImplementedException();
         }
 
-        public Task<DeviceFirmwareVersion> GetFirmwareVersion() =>
-            Task.FromResult(new DeviceFirmwareVersion
-            {
-                ModelName = "SIM001",
-                Version = "0.1"
-            });
-
         public LoadpointInfo GetActiveLoadpointInfo() => _info;
     }
 }

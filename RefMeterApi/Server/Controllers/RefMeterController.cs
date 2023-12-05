@@ -68,4 +68,12 @@ public class RefMeterController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SetActualMeasurementMode(MeasurementModes mode) =>
         Utils.SafeExecuteSerialPortCommand(() => _device.SetActualMeasurementMode(mode));
+
+    /// <summary>
+    /// Report if the reference meter can be used.
+    /// </summary>
+    [HttpGet("Available")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [SwaggerOperation(OperationId = "ReferenceMeterIsAvailable")]
+    public ActionResult<bool> IsAvailable() => Ok(_device.Available);
 }

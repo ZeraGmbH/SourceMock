@@ -32,6 +32,9 @@ public class SerialPortFGRefMeter : ISerialPortFGRefMeter
     }
 
     /// <inheritdoc/>
+    public bool Available => true;
+
+    /// <inheritdoc/>
     public Task<MeasurementModes?> GetActualMeasurementMode()
     {
         // Could be MI, but maybe not queryable

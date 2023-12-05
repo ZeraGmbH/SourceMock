@@ -27,32 +27,25 @@ public class SerialPortFGMeteringSystem : IMeteringSystem
 
     private readonly ILogger<SerialPortFGMeteringSystem> _logger;
 
-    private ISource _source = new UnavailableSource();
-
     private readonly IServiceProvider _services;
 
     /// <inheritdoc/>
-    public ISource Source => _source;
+    public ISource Source { get; private set; } = new UnavailableSource();
 
     /// <inheritdoc/>
-    public IRefMeter RefMeter { get; private set; }
+    public IRefMeter RefMeter { get; private set; } = new UnavailableReferenceMeter();
 
     /// <inheritdoc/>
-    public IErrorCalculator ErrorCalculator { get; private set; }
+    public IErrorCalculator ErrorCalculator { get; private set; } = new UnavailableErrorCalculator();
 
     /// <summary>
     /// Initialize device manager.
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
-    /// <param name="refMeter">The related reference meter.</param>
-    /// <param name="errorCalculator">The error calculator of this metering system.</param>
     /// <param name="logger">Logging service for this device type.</param>
     /// <param name="services">Dependency injection system.</param>
-    public SerialPortFGMeteringSystem(ISerialPortConnection device, ISerialPortFGRefMeter refMeter, ISerialPortFGErrorCalculator errorCalculator, ILogger<SerialPortFGMeteringSystem> logger, IServiceProvider services)
+    public SerialPortFGMeteringSystem(ISerialPortConnection device, ILogger<SerialPortFGMeteringSystem> logger, IServiceProvider services)
     {
-        ErrorCalculator = errorCalculator;
-        RefMeter = refMeter;
-
         _device = device;
         _logger = logger;
         _services = services;
@@ -147,6 +140,8 @@ public class SerialPortFGMeteringSystem : IMeteringSystem
         if (!capabilities.SupportedReferenceMeters.Contains(referenceMeter))
             throw new ArgumentException(nameof(referenceMeter));
 
+        var errorCalculator = _services.GetRequiredService<ISerialPortFGErrorCalculator>();
+        var refMeter = _services.GetRequiredService<ISerialPortFGRefMeter>();
         var source = _services.GetRequiredService<ISerialPortFGSource>();
 
         source.SetAmplifiers(voltage, current, voltageAux, currentAux);
@@ -157,14 +152,22 @@ public class SerialPortFGMeteringSystem : IMeteringSystem
         }
         catch (Exception)
         {
+            errorCalculator = null;
+            refMeter = null;
             source = null;
 
             throw;
         }
         finally
         {
+            if (refMeter != null)
+                RefMeter = refMeter;
+
+            if (errorCalculator != null)
+                ErrorCalculator = errorCalculator;
+
             if (source != null)
-                _source = source;
+                Source = source;
         }
     }
 

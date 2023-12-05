@@ -84,16 +84,12 @@ public class MeteringSystemTests
         var services = new ServiceCollection();
 
         services.AddSingleton(Source);
+        services.AddSingleton<ISerialPortFGRefMeter>(new SerialPortFGRefMeter(Device, new NullLogger<SerialPortFGRefMeter>()));
+        services.AddSingleton<ISerialPortFGErrorCalculator>(new SerialPortFGErrorCalculator(Device, new NullLogger<SerialPortFGErrorCalculator>()));
 
         Services = services.BuildServiceProvider();
 
-        Generator = new SerialPortFGMeteringSystem(
-            Device,
-            new SerialPortFGRefMeter(Device, new NullLogger<SerialPortFGRefMeter>()),
-            new SerialPortFGErrorCalculator(Device, new NullLogger<SerialPortFGErrorCalculator>()),
-            _meterLogger,
-            Services
-        );
+        Generator = new SerialPortFGMeteringSystem(Device, _meterLogger, Services);
     }
 
     [TearDown]

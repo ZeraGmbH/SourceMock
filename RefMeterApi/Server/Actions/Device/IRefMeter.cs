@@ -8,6 +8,11 @@ namespace RefMeterApi.Actions.Device;
 public interface IRefMeter
 {
     /// <summary>
+    /// Set if the reference meter is fully configured and can be used.
+    /// </summary>
+    bool Available { get; }
+
+    /// <summary>
     /// Queries a device connected to the serial port for the current
     /// measurement results.
     /// </summary>

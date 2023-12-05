@@ -8,6 +8,11 @@ namespace ErrorCalculatorApi.Actions.Device;
 public interface IErrorCalculator
 {
     /// <summary>
+    /// Set if the reference meter is fully configured and can be used.
+    /// </summary>
+    bool Available { get; }
+
+    /// <summary>
     /// Configure the error measurement.
     /// </summary>
     /// <param name="meterConstant">The meter constant of the device under test - impulses per kWh.</param>

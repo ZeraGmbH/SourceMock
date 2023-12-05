@@ -32,4 +32,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
         /* Setup caches for shared request results. */
         _actualValues = new(CreateActualValueRequest);
     }
+
+    /// <inheritdoc/>
+    public bool Available => true;
 }

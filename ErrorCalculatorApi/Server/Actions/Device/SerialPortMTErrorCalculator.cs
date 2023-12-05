@@ -29,4 +29,7 @@ public partial class SerialPortMTErrorCalculator : ISerialPortMTErrorCalculator
         _device = device;
         _logger = logger;
     }
+
+    /// <inheritdoc/>
+    public bool Available => true;
 }

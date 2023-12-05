@@ -77,4 +77,12 @@ public class ErrorMeasurementController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> Abort() =>
         Utils.SafeExecuteSerialPortCommand(_device.AbortErrorMeasurement);
+
+    /// <summary>
+    /// Report if the error calculator can be used.
+    /// </summary>
+    [HttpGet("Available")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [SwaggerOperation(OperationId = "ErrorCalculatorIsAvailable")]
+    public ActionResult<bool> IsAvailable() => Ok(_device.Available);
 }

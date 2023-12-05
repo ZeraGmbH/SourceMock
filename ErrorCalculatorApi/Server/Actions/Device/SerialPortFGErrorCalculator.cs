@@ -36,6 +36,9 @@ public class SerialPortFGErrorCalculator : ISerialPortFGErrorCalculator
     }
 
     /// <inheritdoc/>
+    public bool Available => false;
+
+    /// <inheritdoc/>
     public Task AbortErrorMeasurement()
     {
         throw new NotImplementedException();

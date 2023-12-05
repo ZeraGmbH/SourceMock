@@ -195,20 +195,10 @@ public class SerialPortConnection : ISerialPortConnection
                     return false;
                 }
 
-                /* Error handling for S commands. */
-                if (reply == "SERROR" || reply.StartsWith("SER-"))
-                {
-                    _logger.LogError($"Command {request.Command} reported SER*");
-
-                    request.Result.SetException(new ArgumentException(request.Command));
-
-                    return false;
-                }
-
                 /* Error handling for ERR commands. */
-                if (reply.StartsWith("ER-") || reply.StartsWith("ERR-") || reply.StartsWith("ERROR-"))
+                if (reply.Contains("ER-") || reply.Contains("ERR-") || reply.Contains("ERROR"))
                 {
-                    _logger.LogError($"Command {request.Command} reported ER*");
+                    _logger.LogError($"Command {request.Command} reported ERROR {reply}");
 
                     request.Result.SetException(new ArgumentException(request.Command));
 

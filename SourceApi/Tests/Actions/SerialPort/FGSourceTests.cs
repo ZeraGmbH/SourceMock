@@ -39,7 +39,7 @@ public class FGSourceTests
         _device = SerialPortConnection.FromPortInstance(_port, _connectionLogger);
         _source = new(_portLogger, _device, new CapabilitiesMap());
 
-        _source.SetAmplifiers(Model.VoltageAmplifiers.VU221x0, Model.CurrentAmplifiers.VI221x0);
+        _source.SetAmplifiers(Model.VoltageAmplifiers.VU220, Model.CurrentAmplifiers.VI220, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
     }
 
     [TearDown]

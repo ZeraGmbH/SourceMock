@@ -3,95 +3,20 @@ using System.Text.Json.Serialization;
 namespace SourceApi.Model;
 
 /// <summary>
-/// All supported voltage amplifiers.
+/// 
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum VoltageAmplifiers
+public enum CurrentAuxiliaries
 {
     /// <summary>
     /// 
     /// </summary>
-    LABSMP21200,
+    V200,
 
     /// <summary>
     /// 
     /// </summary>
-    SVG1200x00,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    V210,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU211x0,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU211x1,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU211x2,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU220,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU220x01,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU220x02,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU220x03,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU220x04,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU221x0,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU221x0x2,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU221x0x3,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU221x1,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU221x2,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU221x3,
+    VI220,
 
     /// <summary>
     /// 
@@ -101,5 +26,46 @@ public enum VoltageAmplifiers
     /// <summary>
     /// 
     /// </summary>
+    V200x2,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    VI201x0,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    VI201x1,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    VI202x0,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    VI221x0,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    VI222x0,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    VI201x0x1,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    VI200x4,
+
+    /// <summary>
+    /// 
+    /// </summary>
     VUI302,
 }
+

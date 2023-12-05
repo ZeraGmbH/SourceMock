@@ -20,7 +20,19 @@ public class SetAmplifiersAndReferenceMeterRequest
     /// 
     /// </summary>
     [NotNull, Required]
+    public VoltageAuxiliaries VoltageAuxiliary { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [NotNull, Required]
     public CurrentAmplifiers CurrentAmplifier { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [NotNull, Required]
+    public CurrentAuxiliaries CurrentAuxiliary { get; set; }
 
     /// <summary>
     /// 

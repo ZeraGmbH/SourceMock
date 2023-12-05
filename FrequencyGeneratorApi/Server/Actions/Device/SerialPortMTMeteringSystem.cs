@@ -82,7 +82,7 @@ public class SerialPortMTMeteringSystem : IMeteringSystem
     public Task<MeteringSystemCapabilities> GetCapabilities() => Task.FromResult<MeteringSystemCapabilities>(null!);
 
     /// <inheritdoc/>
-    public Task SetAmplifiersAndReferenceMeter(VoltageAmplifiers voltage, CurrentAmplifiers current, ReferenceMeters referenceMeter)
+    public Task SetAmplifiersAndReferenceMeter(VoltageAmplifiers voltage, VoltageAuxiliaries voltageAux, CurrentAmplifiers current, CurrentAuxiliaries currentAux, ReferenceMeters referenceMeter)
     {
         throw new NotImplementedException("SetAmplifiersAndReferenceMeter");
     }

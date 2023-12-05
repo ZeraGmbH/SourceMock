@@ -11,129 +11,95 @@ public enum ReferenceMeters
     /// <summary>
     /// 
     /// </summary>
-    COM3003 = 50,
+    EPZ303x1,
+
     /// <summary>
     /// 
     /// </summary>
-    COM3003x1x2 = 54,
+    EPZ303x5,
+
     /// <summary>
     /// 
     /// </summary>
-    COM3003x1x3 = 55,
+    EPZ103,
+
     /// <summary>
     /// 
     /// </summary>
-    COM3003DC = 51,
+    RMM303x6,
+
     /// <summary>
     /// 
     /// </summary>
-    COM3003DCx1x2 = 61,
+    RMM303x8,
+
     /// <summary>
     /// 
     /// </summary>
-    COM303x1 = 43,
+    COM3000,
+
     /// <summary>
     /// 
     /// </summary>
-    COM303x2 = 45,
+    COM3003,
+
     /// <summary>
     /// 
     /// </summary>
-    COM303x3 = 44,
+    COM3003xDC,
+
     /// <summary>
     /// 
     /// </summary>
-    COM303x3x1 = 57,
+    EPZ303x8,
+
     /// <summary>
     /// 
     /// </summary>
-    COM5003x1 = 65,
+    EPZ303x8x1,
+
     /// <summary>
     /// 
     /// </summary>
-    COM5003x1x1 = 71,
+    RMM3000x1,
+
     /// <summary>
     /// 
     /// </summary>
-    EPZ103x1 = 47,
+    COM3003xDCx2x1,
+
     /// <summary>
     /// 
     /// </summary>
-    EPZ103x1x2 = 60,
+    COM5003x1,
+
     /// <summary>
     /// 
     /// </summary>
-    EPZ103x3x1 = 68,
+    EPZ350x00,
+
     /// <summary>
     /// 
     /// </summary>
-    EPZ301x119x3 = 52,
+    COM5003x0x1,
+
     /// <summary>
     /// 
     /// </summary>
-    EPZ301x119x3x2 = 53,
+    EPZ303x10,
+
     /// <summary>
     /// 
     /// </summary>
-    EPZ303 = 46,
+    EPZ303x10x1,
+
     /// <summary>
     /// 
     /// </summary>
-    EPZ303x1 = 41,
+    COM3003x1x2,
+
     /// <summary>
     /// 
     /// </summary>
-    EPZ303x10 = 70,
-    /// <summary>
-    /// 
-    /// </summary>
-    EPZ303x10x1 = 72,
-    /// <summary>
-    /// 
-    /// </summary>
-    EPZ303x5 = 42,
-    /// <summary>
-    /// 
-    /// </summary>
-    EPZ303x5x1 = 56,
-    /// <summary>
-    /// 
-    /// </summary>
-    EPZ303x5x2 = 58,
-    /// <summary>
-    /// 
-    /// </summary>
-    EPZ303x6 = 59,
-    /// <summary>
-    /// 
-    /// </summary>
-    EPZ303x8 = 62,
-    /// <summary>
-    /// 
-    /// </summary>
-    EPZ303x8x1 = 64,
-    /// <summary>
-    /// 
-    /// </summary>
-    EPZ303x9 = 69,
-    /// <summary>
-    /// 
-    /// </summary>
-    EPZ350x0 = 66,
-    /// <summary>
-    /// 
-    /// </summary>
-    EPZ350x1 = 67,
-    /// <summary>
-    /// 
-    /// </summary>
-    RMM3000x1 = 63,
-    /// <summary>
-    /// 
-    /// </summary>
-    RMM303x6 = 48,
-    /// <summary>
-    /// 
-    /// </summary>
-    RMM303x8 = 49,
+    MT310s2,
 }

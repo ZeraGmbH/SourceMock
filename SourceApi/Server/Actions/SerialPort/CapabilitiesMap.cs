@@ -40,15 +40,26 @@ public class CapabilitiesMap : ICapabilitiesMap
     {
         switch (amplifier)
         {
-            case VoltageAmplifiers.VU211x012:
+            case VoltageAmplifiers.VU211x0:
+            case VoltageAmplifiers.VU211x1:
+            case VoltageAmplifiers.VU211x2:
                 return "VU211";
             case VoltageAmplifiers.VU221x0:
-            case VoltageAmplifiers.VU221x0x1:
+            case VoltageAmplifiers.VU221x1:
+            case VoltageAmplifiers.VU221x2:
+            case VoltageAmplifiers.VU221x3:
             case VoltageAmplifiers.VU221x0x2:
             case VoltageAmplifiers.VU221x0x3:
-            case VoltageAmplifiers.VU221x13:
-            case VoltageAmplifiers.VU221x2:
                 return "VU221";
+            case VoltageAmplifiers.VU220:
+            case VoltageAmplifiers.VU220x01:
+            case VoltageAmplifiers.VU220x02:
+            case VoltageAmplifiers.VU220x03:
+            case VoltageAmplifiers.VU220x04:
+                return "VU220";
+            case VoltageAmplifiers.VUI301:
+            case VoltageAmplifiers.VUI302:
+                return "VUI302";
             default:
                 throw new NotSupportedException($"Unknown voltage amplifier {amplifier}");
         }
@@ -58,21 +69,25 @@ public class CapabilitiesMap : ICapabilitiesMap
     {
         switch (amplifier)
         {
-            case CurrentAmplifiers.VI201x01:
+            case CurrentAmplifiers.VI201x0:
             case CurrentAmplifiers.VI201x0x1:
+            case CurrentAmplifiers.VI201x1:
                 return "VI201";
             case CurrentAmplifiers.VI202x0:
             case CurrentAmplifiers.VI202x0x1:
             case CurrentAmplifiers.VI202x0x2:
-            case CurrentAmplifiers.VI202x0x3:
-            case CurrentAmplifiers.VI202x0x4:
             case CurrentAmplifiers.VI202x0x5:
                 return "VI202";
             case CurrentAmplifiers.VI221x0:
                 return "VI221";
+            case CurrentAmplifiers.VI220:
+                return "VI220";
             case CurrentAmplifiers.VI222x0:
             case CurrentAmplifiers.VI222x0x1:
                 return "VI222";
+            case CurrentAmplifiers.VUI301:
+            case CurrentAmplifiers.VUI302:
+                return "VUI302";
             default:
                 throw new NotSupportedException($"Unknown current amplifier {amplifier}");
         }
@@ -127,6 +142,10 @@ public class CapabilitiesMap : ICapabilitiesMap
         FrequencyRanges = new() { new(40, 70, 0.01, FrequencyMode.SYNTHETIC) },
         Phases = new () { new() { Voltage = new(30, 480, 0.001) } },
     } },
+    { "VU220", new () {
+        FrequencyRanges = new() { new(40, 70, 0.01, FrequencyMode.SYNTHETIC) },
+        Phases = new () { new() { Voltage = new(30, 320, 0.001) } },
+    } },
     { "VU221", new() {
         FrequencyRanges = new() { new(40, 70, 0.01, FrequencyMode.SYNTHETIC) },
         Phases = new() { new() { Voltage = new(30, 320, 0.001) } },
@@ -146,6 +165,10 @@ public class CapabilitiesMap : ICapabilitiesMap
         Phases = new() { new() { Current = new(500E-6, 160, 0.001) } },
     } },
     { "VI202", new() {
+        FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
+        Phases = new() { new() { Current = new(500E-6, 120, 0.001) } },
+    } },
+    { "VI220", new() {
         FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
         Phases = new() { new() { Current = new(500E-6, 120, 0.001) } },
     } },

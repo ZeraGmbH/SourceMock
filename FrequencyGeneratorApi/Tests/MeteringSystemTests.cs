@@ -18,6 +18,8 @@ public class MeteringSystemTests
 {
     class PortMock : ISerialPort
     {
+        public readonly List<string> Commands = new();
+
         private static readonly Regex ZpCommand = new(@"^ZP\d{10}$");
 
         private readonly Queue<string> _queue = new();
@@ -36,6 +38,8 @@ public class MeteringSystemTests
 
         public void WriteLine(string command)
         {
+            Commands.Add(command);
+
             switch (command)
             {
                 case "AAV":
@@ -151,19 +155,44 @@ public class MeteringSystemTests
         });
     }
 
-    [TestCase(VoltageAmplifiers.VU211x012, CurrentAmplifiers.VI202x0, ReferenceMeters.COM3003, "")]
-    [TestCase(VoltageAmplifiers.VU301x1, CurrentAmplifiers.VI202x0, ReferenceMeters.COM3003, "voltage")]
-    [TestCase(VoltageAmplifiers.VU211x012, CurrentAmplifiers.VI301x1, ReferenceMeters.COM3003, "current")]
-    [TestCase(VoltageAmplifiers.VU211x012, CurrentAmplifiers.VI202x0, ReferenceMeters.RMM303x6, "referenceMeter")]
-    public async Task Can_Set_Amplifiers(VoltageAmplifiers voltage, CurrentAmplifiers current, ReferenceMeters meter, string error)
+    [TestCase(VoltageAmplifiers.VU211x0, CurrentAmplifiers.VI202x0, ReferenceMeters.COM3003, "ZP3036012150")]
+    [TestCase(VoltageAmplifiers.LABSMP21200, CurrentAmplifiers.VI202x0, ReferenceMeters.COM3003, "voltage")]
+    [TestCase(VoltageAmplifiers.VU211x1, CurrentAmplifiers.LABSMP715, ReferenceMeters.COM3003, "current")]
+    [TestCase(VoltageAmplifiers.VU211x2, CurrentAmplifiers.VI202x0, ReferenceMeters.RMM303x6, "referenceMeter")]
+    public async Task Can_Set_Amplifiers(VoltageAmplifiers voltage, CurrentAmplifiers current, ReferenceMeters meter, string errorOrResponse)
     {
-        if (string.IsNullOrEmpty(error))
-            await Generator.SetAmplifiersAndReferenceMeter(voltage, current, meter);
+        if (errorOrResponse.StartsWith("ZP"))
+        {
+            await Generator.SetAmplifiersAndReferenceMeter(voltage, VoltageAuxiliaries.V210, current, CurrentAuxiliaries.V200, meter);
+
+            Assert.That(_port.Commands.Count, Is.EqualTo(1));
+            Assert.That(_port.Commands[0], Is.EqualTo(errorOrResponse));
+        }
         else
         {
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => Generator.SetAmplifiersAndReferenceMeter(voltage, current, meter));
+            var exception = Assert.ThrowsAsync<ArgumentException>(() => Generator.SetAmplifiersAndReferenceMeter(voltage, VoltageAuxiliaries.V210, current, CurrentAuxiliaries.V200, meter));
 
-            Assert.That(exception.Message, Is.EqualTo(error));
+            Assert.That(exception.Message, Is.EqualTo(errorOrResponse));
+        }
+    }
+
+    [TestCase(VoltageAuxiliaries.VU211x0, CurrentAuxiliaries.VI202x0, ReferenceMeters.COM3003, "ZP0323303650")]
+    [TestCase(VoltageAuxiliaries.SVG150x00, CurrentAuxiliaries.VI202x0, ReferenceMeters.COM3003, "voltageAux")]
+    [TestCase(VoltageAuxiliaries.VU211x1, CurrentAuxiliaries.VI200x4, ReferenceMeters.COM3003, "currentAux")]
+    public async Task Can_Set_Auxiliares(VoltageAuxiliaries voltage, CurrentAuxiliaries current, ReferenceMeters meter, string errorOrResponse)
+    {
+        if (errorOrResponse.StartsWith("ZP"))
+        {
+            await Generator.SetAmplifiersAndReferenceMeter(VoltageAmplifiers.VUI302, voltage, CurrentAmplifiers.VUI302, current, meter);
+
+            Assert.That(_port.Commands.Count, Is.EqualTo(1));
+            Assert.That(_port.Commands[0], Is.EqualTo(errorOrResponse));
+        }
+        else
+        {
+            var exception = Assert.ThrowsAsync<ArgumentException>(() => Generator.SetAmplifiersAndReferenceMeter(VoltageAmplifiers.VUI302, voltage, CurrentAmplifiers.VUI302, current, meter));
+
+            Assert.That(exception.Message, Is.EqualTo(errorOrResponse));
         }
     }
 }

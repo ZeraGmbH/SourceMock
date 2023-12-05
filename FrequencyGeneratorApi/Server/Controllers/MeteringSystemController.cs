@@ -46,7 +46,13 @@ public class MeteringSystemController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SetAmplifiersAndReferenceMeter([FromBody] SetAmplifiersAndReferenceMeterRequest request) =>
-        Utils.SafeExecuteSerialPortCommand(() => _device.SetAmplifiersAndReferenceMeter(request.VoltageAmplifier, request.CurrentAmplifier, request.ReferenceMeter));
+        Utils.SafeExecuteSerialPortCommand(() => _device.SetAmplifiersAndReferenceMeter(
+            request.VoltageAmplifier,
+            request.VoltageAuxiliary,
+            request.CurrentAmplifier,
+            request.CurrentAuxiliary,
+            request.ReferenceMeter
+        ));
 
     /// <summary>
     /// Read the firmware from the metering system.

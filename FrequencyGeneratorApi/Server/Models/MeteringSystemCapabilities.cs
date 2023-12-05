@@ -20,7 +20,19 @@ public class MeteringSystemCapabilities
     /// 
     /// </summary>
     [NotNull, Required]
+    public List<VoltageAuxiliaries> SupportedVoltageAuxiliaries { get; set; } = new();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [NotNull, Required]
     public List<CurrentAmplifiers> SupportedCurrentAmplifiers { get; set; } = new();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [NotNull, Required]
+    public List<CurrentAuxiliaries> SupportedCurrentAuxiliaries { get; set; } = new();
 
     /// <summary>
     /// 

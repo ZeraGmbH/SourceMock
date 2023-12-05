@@ -11,101 +11,100 @@ public enum CurrentAmplifiers
     /// <summary>
     /// 
     /// </summary>
-    N132x7 = 29,
+    LABSMP715,
+
     /// <summary>
     /// 
     /// </summary>
-    SCG1020 = 42,
+    SCG1000x00,
+
     /// <summary>
     /// 
     /// </summary>
-    V115x1 = 24,
+    SCG750x00,
+
     /// <summary>
     /// 
     /// </summary>
-    V115x2 = 25,
+    V200,
+
     /// <summary>
     /// 
     /// </summary>
-    V115x3 = 26,
+    V200x1x2,
+
     /// <summary>
     /// 
     /// </summary>
-    V115x4 = 27,
+    V200x2,
+
     /// <summary>
     /// 
     /// </summary>
-    V115x5 = 28,
+    V200x4,
+
     /// <summary>
     /// 
     /// </summary>
-    V115x6 = 30,
+    VI201x0,
+
     /// <summary>
     /// 
     /// </summary>
-    V200x1 = 21,
+    VI201x0x1,
+
     /// <summary>
     /// 
     /// </summary>
-    V200x1x3 = 33,
+    VI201x1,
+
     /// <summary>
     /// 
     /// </summary>
-    V200x2 = 34,
+    VI202x0,
+
     /// <summary>
     /// 
     /// </summary>
-    V200x4 = 40,
+    VI202x0x1,
+
     /// <summary>
     /// 
     /// </summary>
-    VI201x0x1 = 39,
+    VI202x0x2,
+
     /// <summary>
     /// 
     /// </summary>
-    VI201x01 = 35,
+    VI202x0x5,
+
     /// <summary>
     /// 
     /// </summary>
-    VI202x0 = 36,
+    VI220,
+
     /// <summary>
     /// 
     /// </summary>
-    VI202x0x1 = 41,
+    VI221x0,
+
     /// <summary>
     /// 
     /// </summary>
-    VI202x0x2 = 43,
+    VI222x0,
+
     /// <summary>
     /// 
     /// </summary>
-    VI202x0x3 = 44,
+    VI222x0x1,
+
     /// <summary>
     /// 
     /// </summary>
-    VI202x0x4 = 45,
+    VUI301,
+
     /// <summary>
     /// 
     /// </summary>
-    VI202x0x5 = 47,
-    /// <summary>
-    /// 
-    /// </summary>
-    VI220x1 = 22,
-    /// <summary>
-    /// 
-    /// </summary>
-    VI221x0 = 37,
-    /// <summary>
-    /// 
-    /// </summary>
-    VI222x0 = 38,
-    /// <summary>
-    /// 
-    /// </summary>
-    VI222x0x1 = 46,
-    /// <summary>
-    /// 
-    /// </summary>
-    VI301x1 = 23,
+    VUI302,
 }

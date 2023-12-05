@@ -17,8 +17,10 @@ public interface ISerialPortFGSource : ISource
     /// </summary>
     /// <param name="voltage"></param>
     /// <param name="current"></param>
+    /// <param name="voltageAux"></param>
+    /// <param name="currentAux"></param>
     /// <returns></returns>
-    void SetAmplifiers(VoltageAmplifiers voltage, CurrentAmplifiers current);
+    void SetAmplifiers(VoltageAmplifiers voltage, CurrentAmplifiers current, VoltageAuxiliaries voltageAux, CurrentAuxiliaries currentAux);
 }
 
 /// <summary>
@@ -30,8 +32,17 @@ public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, ISerialPo
 
     private CurrentAmplifiers? CurrentAmplifier;
 
+    private VoltageAuxiliaries? VoltageAuxiliary;
+
+    private CurrentAuxiliaries? CurrentAuxiliary;
+
+
     /// <inheritdoc/>
-    public override bool Available => VoltageAmplifier.HasValue && CurrentAmplifier.HasValue;
+    public override bool Available =>
+        VoltageAmplifier.HasValue &&
+        CurrentAmplifier.HasValue &&
+        VoltageAuxiliary.HasValue &&
+        CurrentAuxiliary.HasValue;
 
     /// <summary>
     /// 
@@ -63,12 +74,14 @@ public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, ISerialPo
         throw new NotImplementedException();
     }
 
-    public void SetAmplifiers(VoltageAmplifiers voltage, CurrentAmplifiers current)
+    public void SetAmplifiers(VoltageAmplifiers voltage, CurrentAmplifiers current, VoltageAuxiliaries voltageAux, CurrentAuxiliaries current8)
     {
         if (Available) throw new InvalidOperationException("Source already initialized");
 
         CurrentAmplifier = current;
         VoltageAmplifier = voltage;
+        VoltageAuxiliary = voltageAux;
+        CurrentAuxiliary = current8;
     }
 
     /// <inheritdoc/>

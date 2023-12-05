@@ -6,17 +6,12 @@ namespace SourceApi.Model;
 /// All supported voltage amplifiers.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum VoltageAmplifiers
+public enum VoltageAuxiliaries
 {
     /// <summary>
     /// 
     /// </summary>
-    LABSMP21200,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    SVG1200x00,
+    SVG150x00,
 
     /// <summary>
     /// 
@@ -66,17 +61,12 @@ public enum VoltageAmplifiers
     /// <summary>
     /// 
     /// </summary>
+    VU220x6,
+
+    /// <summary>
+    /// 
+    /// </summary>
     VU221x0,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU221x0x2,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    VU221x0x3,
 
     /// <summary>
     /// 

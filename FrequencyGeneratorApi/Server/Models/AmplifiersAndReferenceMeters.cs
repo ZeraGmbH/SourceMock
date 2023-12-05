@@ -8,7 +8,7 @@ namespace MeteringSystemApi.Models;
 /// <summary>
 /// 
 /// </summary>
-public class SetAmplifiersAndReferenceMeterRequest
+public class AmplifiersAndReferenceMeters
 {
     /// <summary>
     /// 

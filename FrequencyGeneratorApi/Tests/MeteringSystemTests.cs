@@ -159,14 +159,28 @@ public class MeteringSystemTests
     {
         if (errorOrResponse.StartsWith("ZP"))
         {
-            await Generator.SetAmplifiersAndReferenceMeter(voltage, VoltageAuxiliaries.V210, current, CurrentAuxiliaries.V200, meter);
+            await Generator.SetAmplifiersAndReferenceMeter(new()
+            {
+                CurrentAmplifier = current,
+                CurrentAuxiliary = CurrentAuxiliaries.V200,
+                ReferenceMeter = meter,
+                VoltageAmplifier = voltage,
+                VoltageAuxiliary = VoltageAuxiliaries.V210,
+            });
 
             Assert.That(_port.Commands.Count, Is.EqualTo(1));
             Assert.That(_port.Commands[0], Is.EqualTo(errorOrResponse));
         }
         else
         {
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => Generator.SetAmplifiersAndReferenceMeter(voltage, VoltageAuxiliaries.V210, current, CurrentAuxiliaries.V200, meter));
+            var exception = Assert.ThrowsAsync<ArgumentException>(() => Generator.SetAmplifiersAndReferenceMeter(new()
+            {
+                CurrentAmplifier = current,
+                CurrentAuxiliary = CurrentAuxiliaries.V200,
+                ReferenceMeter = meter,
+                VoltageAmplifier = voltage,
+                VoltageAuxiliary = VoltageAuxiliaries.V210,
+            }));
 
             Assert.That(exception.Message, Is.EqualTo(errorOrResponse));
         }
@@ -179,14 +193,28 @@ public class MeteringSystemTests
     {
         if (errorOrResponse.StartsWith("ZP"))
         {
-            await Generator.SetAmplifiersAndReferenceMeter(VoltageAmplifiers.VUI302, voltage, CurrentAmplifiers.VUI302, current, meter);
+            await Generator.SetAmplifiersAndReferenceMeter(new()
+            {
+                CurrentAmplifier = CurrentAmplifiers.VUI302,
+                CurrentAuxiliary = current,
+                ReferenceMeter = meter,
+                VoltageAmplifier = VoltageAmplifiers.VUI302,
+                VoltageAuxiliary = voltage,
+            });
 
             Assert.That(_port.Commands.Count, Is.EqualTo(1));
             Assert.That(_port.Commands[0], Is.EqualTo(errorOrResponse));
         }
         else
         {
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => Generator.SetAmplifiersAndReferenceMeter(VoltageAmplifiers.VUI302, voltage, CurrentAmplifiers.VUI302, current, meter));
+            var exception = Assert.ThrowsAsync<ArgumentException>(() => Generator.SetAmplifiersAndReferenceMeter(new()
+            {
+                CurrentAmplifier = CurrentAmplifiers.VUI302,
+                CurrentAuxiliary = current,
+                ReferenceMeter = meter,
+                VoltageAmplifier = VoltageAmplifiers.VUI302,
+                VoltageAuxiliary = voltage,
+            }));
 
             Assert.That(exception.Message, Is.EqualTo(errorOrResponse));
         }

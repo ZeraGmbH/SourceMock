@@ -41,18 +41,23 @@ public class MeteringSystemController : ControllerBase
     /// 
     /// </summary>
     /// <returns></returns>
-    [HttpPut]
+    [HttpPut("AmplifiersAndReferenceMeters")]
     [SwaggerOperation(OperationId = "SetAmplifiersAndReferenceMeter")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetAmplifiersAndReferenceMeter([FromBody] SetAmplifiersAndReferenceMeterRequest request) =>
-        Utils.SafeExecuteSerialPortCommand(() => _device.SetAmplifiersAndReferenceMeter(
-            request.VoltageAmplifier,
-            request.VoltageAuxiliary,
-            request.CurrentAmplifier,
-            request.CurrentAuxiliary,
-            request.ReferenceMeter
-        ));
+    public Task<ActionResult> SetAmplifiersAndReferenceMeter([FromBody] AmplifiersAndReferenceMeters request) =>
+        Utils.SafeExecuteSerialPortCommand(() => _device.SetAmplifiersAndReferenceMeter(request));
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("AmplifiersAndReferenceMeters")]
+    [SwaggerOperation(OperationId = "GetAmplifiersAndReferenceMeter")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult<AmplifiersAndReferenceMeters> GetAmplifiersAndReferenceMeter() =>
+        _device.AmplifiersAndReferenceMeters;
 
     /// <summary>
     /// Read the firmware from the metering system.

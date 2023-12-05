@@ -30,6 +30,9 @@ public class SerialPortFGMeteringSystem : IMeteringSystem
     private readonly IServiceProvider _services;
 
     /// <inheritdoc/>
+    public AmplifiersAndReferenceMeters AmplifiersAndReferenceMeters { get; private set; } = null!;
+
+    /// <inheritdoc/>
     public ISource Source { get; private set; } = new UnavailableSource();
 
     /// <inheritdoc/>
@@ -120,54 +123,51 @@ public class SerialPortFGMeteringSystem : IMeteringSystem
         });
 
     /// <inheritdoc/>
-    public async Task SetAmplifiersAndReferenceMeter(VoltageAmplifiers voltage, VoltageAuxiliaries voltageAux, CurrentAmplifiers current, CurrentAuxiliaries currentAux, ReferenceMeters referenceMeter)
+    public async Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeters settings)
     {
         var capabilities = await GetCapabilities();
 
-        if (!capabilities.SupportedVoltageAmplifiers.Contains(voltage))
-            throw new ArgumentException(nameof(voltage));
+        if (!capabilities.SupportedVoltageAmplifiers.Contains(settings.VoltageAmplifier))
+            throw new ArgumentException("voltage");
 
-        if (!capabilities.SupportedVoltageAuxiliaries.Contains(voltageAux))
-            throw new ArgumentException(nameof(voltageAux));
+        if (!capabilities.SupportedVoltageAuxiliaries.Contains(settings.VoltageAuxiliary))
+            throw new ArgumentException("voltageAux");
 
-        if (!capabilities.SupportedCurrentAmplifiers.Contains(current))
-            throw new ArgumentException(nameof(current));
+        if (!capabilities.SupportedCurrentAmplifiers.Contains(settings.CurrentAmplifier))
+            throw new ArgumentException("current");
 
-        if (!capabilities.SupportedCurrentAuxiliaries.Contains(currentAux))
-            throw new ArgumentException(nameof(currentAux));
+        if (!capabilities.SupportedCurrentAuxiliaries.Contains(settings.CurrentAuxiliary))
+            throw new ArgumentException("currentAux");
 
 
-        if (!capabilities.SupportedReferenceMeters.Contains(referenceMeter))
-            throw new ArgumentException(nameof(referenceMeter));
+        if (!capabilities.SupportedReferenceMeters.Contains(settings.ReferenceMeter))
+            throw new ArgumentException("referenceMeter");
 
         var errorCalculator = _services.GetRequiredService<ISerialPortFGErrorCalculator>();
         var refMeter = _services.GetRequiredService<ISerialPortFGRefMeter>();
         var source = _services.GetRequiredService<ISerialPortFGSource>();
 
-        source.SetAmplifiers(voltage, current, voltageAux, currentAux);
+        source.SetAmplifiers(settings.VoltageAmplifier, settings.CurrentAmplifier, settings.VoltageAuxiliary, settings.CurrentAuxiliary);
 
         try
         {
-            await _device.Execute(SerialPortRequest.Create($"ZP{CodeMappings.Voltage[voltage]:00}{CodeMappings.Current[current]:00}{CodeMappings.AuxVoltage[voltageAux]:00}{CodeMappings.AuxCurrent[currentAux]:00}{CodeMappings.RefMeter[referenceMeter]:00}", "OKZP"))[0];
+            await _device.Execute(SerialPortRequest.Create($"ZP{CodeMappings.Voltage[settings.VoltageAmplifier]:00}{CodeMappings.Current[settings.CurrentAmplifier]:00}{CodeMappings.AuxVoltage[settings.VoltageAuxiliary]:00}{CodeMappings.AuxCurrent[settings.CurrentAuxiliary]:00}{CodeMappings.RefMeter[settings.ReferenceMeter]:00}", "OKZP"))[0];
         }
         catch (Exception)
         {
-            errorCalculator = null;
-            refMeter = null;
             source = null;
 
             throw;
         }
         finally
         {
-            if (refMeter != null)
-                RefMeter = refMeter;
-
-            if (errorCalculator != null)
-                ErrorCalculator = errorCalculator;
-
             if (source != null)
+            {
+                AmplifiersAndReferenceMeters = settings;
+                ErrorCalculator = errorCalculator;
+                RefMeter = refMeter;
                 Source = source;
+            }
         }
     }
 

@@ -4,11 +4,9 @@ using MeteringSystemApi.Model;
 using MeteringSystemApi.Models;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions.Device;
-using RefMeterApi.Models;
 using SerialPortProxy;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
-using SourceApi.Model;
 
 namespace MeteringSystemApi.Actions.Device;
 
@@ -36,6 +34,9 @@ public class SerialPortMTMeteringSystem : IMeteringSystem
 
     /// <inheritdoc/>
     public IErrorCalculator ErrorCalculator { get; private set; }
+
+    /// <inheritdoc/>
+    public AmplifiersAndReferenceMeters AmplifiersAndReferenceMeters => throw new NotImplementedException();
 
     /// <summary>
     /// Initialize device manager.
@@ -82,7 +83,7 @@ public class SerialPortMTMeteringSystem : IMeteringSystem
     public Task<MeteringSystemCapabilities> GetCapabilities() => Task.FromResult<MeteringSystemCapabilities>(null!);
 
     /// <inheritdoc/>
-    public Task SetAmplifiersAndReferenceMeter(VoltageAmplifiers voltage, VoltageAuxiliaries voltageAux, CurrentAmplifiers current, CurrentAuxiliaries currentAux, ReferenceMeters referenceMeter)
+    public Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeters settings)
     {
         throw new NotImplementedException("SetAmplifiersAndReferenceMeter");
     }

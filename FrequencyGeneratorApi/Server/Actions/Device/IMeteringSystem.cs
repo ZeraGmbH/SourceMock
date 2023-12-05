@@ -28,13 +28,14 @@ public interface IMeteringSystem
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="voltage"></param>
-    /// <param name="voltageAux"></param>
-    /// <param name="current"></param>
-    /// <param name="currentAux"></param>
-    /// <param name="referenceMeter"></param>
+    /// <param name="settings"></param>
     /// <returns></returns>
-    Task SetAmplifiersAndReferenceMeter(VoltageAmplifiers voltage, VoltageAuxiliaries voltageAux, CurrentAmplifiers current, CurrentAuxiliaries currentAux, ReferenceMeters referenceMeter);
+    Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeters settings);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    AmplifiersAndReferenceMeters AmplifiersAndReferenceMeters { get; }
 
     /// <summary>
     /// The corresponding source.

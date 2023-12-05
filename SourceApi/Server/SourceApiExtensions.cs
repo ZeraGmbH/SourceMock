@@ -35,7 +35,7 @@ public static class Configuration
     /// <summary>
     /// 
     /// </summary>
-    public static void UseSourceApi(this IServiceCollection services, IConfiguration configuration)
+    public static void UseSourceApi(this IServiceCollection services, IConfiguration configuration, bool serialOnly)
     {
         services.AddSingleton<ICapabilitiesMap, CapabilitiesMap>();
 
@@ -44,11 +44,17 @@ public static class Configuration
         switch (configuration["SourceType"])
         {
             case "simulated":
+                if (serialOnly)
+                    throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
+
                 services.AddSingleton<SimulatedSource>();
                 services.AddSingleton<ISimulatedSource>(x => x.GetRequiredService<SimulatedSource>());
                 services.AddSingleton<ISource>(x => x.GetRequiredService<SimulatedSource>());
                 break;
             case "vein":
+                if (serialOnly)
+                    throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
+
                 services.AddSingleton(new VeinClient(new(), "localhost", 8080));
                 services.AddSingleton<VeinSource>();
                 services.AddSingleton<ISource>(x => x.GetRequiredService<VeinSource>());
@@ -57,13 +63,19 @@ public static class Configuration
                 if (deviceType != "MT" && deviceType != "FG")
                     throw new NotImplementedException($"Unknown DeviceType: {deviceType}");
 
-                services.AddTransient<ISerialPortFGSource, SerialPortFGSource>();
-                services.AddTransient<ISerialPortMTSource, SerialPortMTSource>();
+                if (serialOnly)
+                    services.AddSingleton<ISource>(ctx => ctx.GetRequiredService<ISerialPortMTSource>());
+                else
+                {
+                    services.AddTransient<ISerialPortFGSource, SerialPortFGSource>();
+                    services.AddTransient<ISerialPortMTSource, SerialPortMTSource>();
+                }
 
                 break;
             default:
                 throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
         }
+
 
         {
             var usePortMock = configuration["SerialPort:UsePortMock"];

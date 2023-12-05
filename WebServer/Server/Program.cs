@@ -2,7 +2,7 @@ using Microsoft.OpenApi.Models;
 
 using System.Globalization;
 
-using WebSamDeviceApis;
+using SourceApi;
 
 CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-us");
 
@@ -27,7 +27,7 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 
-    options.UseDeviceApi();
+    options.UseSourceApi();
 });
 
 builder.Services.AddApiVersioning();
@@ -51,11 +51,11 @@ builder.Services.AddCors(options =>
 });
 #pragma warning restore IDE0053
 
-builder.Services.UseDeviceApi(builder.Configuration);
+builder.Services.UseSourceApi(builder.Configuration, false);
 
 var app = builder.Build();
 
-app.UseDeviceApi();
+app.UseSourceApi();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

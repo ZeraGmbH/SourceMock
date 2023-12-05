@@ -60,5 +60,13 @@ class Utils
                 Status = StatusCodes.Status500InternalServerError
             });
         }
+        catch (Exception e)
+        {
+            return new ObjectResult(new ProblemDetails
+            {
+                Detail = $"Operation failed: {e.Message}.",
+                Status = StatusCodes.Status500InternalServerError
+            });
+        }
     }
 }

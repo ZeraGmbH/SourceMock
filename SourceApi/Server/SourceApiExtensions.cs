@@ -63,7 +63,7 @@ public static class Configuration
                 if (deviceType != "MT" && deviceType != "FG")
                     throw new NotImplementedException($"Unknown DeviceType: {deviceType}");
 
-                if (serialOnly)
+                if (!serialOnly)
                     services.AddSingleton<ISource>(ctx => ctx.GetRequiredService<ISerialPortMTSource>());
                 else
                 {

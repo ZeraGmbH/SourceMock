@@ -15,13 +15,13 @@ namespace MeteringSystemApi.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 public class MeteringSystemController : ControllerBase
 {
-    private readonly IMeteringSystem _device;
+    private readonly IMeterTestSystem _device;
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="device"></param>
-    public MeteringSystemController(IMeteringSystem device)
+    public MeteringSystemController(IMeterTestSystem device)
     {
         _device = device;
     }

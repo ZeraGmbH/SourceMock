@@ -13,7 +13,7 @@ namespace MeteringSystemApi.Actions.Device;
 /// <summary>
 /// 
 /// </summary>
-public class SerialPortMTMeteringSystem : IMeteringSystem
+public class SerialPortMTMeteringSystem : IMeterTestSystem
 {
     /// <summary>
     /// Detect model name and version number.

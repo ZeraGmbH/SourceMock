@@ -36,17 +36,17 @@ public static class MeteringSystemApiConfiguration
         switch (deviceType)
         {
             case "FG":
-                services.AddSingleton<IMeteringSystem, SerialPortFGMeteringSystem>();
+                services.AddSingleton<IMeterTestSystem, SerialPortFGMeteringSystem>();
                 break;
             case "MT":
-                services.AddSingleton<IMeteringSystem, SerialPortMTMeteringSystem>();
+                services.AddSingleton<IMeterTestSystem, SerialPortMTMeteringSystem>();
                 break;
             default:
                 return;
         }
 
-        services.AddTransient(di => di.GetRequiredService<IMeteringSystem>().ErrorCalculator);
-        services.AddTransient(di => di.GetRequiredService<IMeteringSystem>().RefMeter);
-        services.AddTransient(di => di.GetRequiredService<IMeteringSystem>().Source);
+        services.AddTransient(di => di.GetRequiredService<IMeterTestSystem>().ErrorCalculator);
+        services.AddTransient(di => di.GetRequiredService<IMeterTestSystem>().RefMeter);
+        services.AddTransient(di => di.GetRequiredService<IMeterTestSystem>().Source);
     }
 }

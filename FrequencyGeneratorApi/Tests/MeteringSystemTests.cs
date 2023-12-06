@@ -66,7 +66,7 @@ public class MeteringSystemTests
 
     private ISerialPortConnection Device = null!;
 
-    private IMeteringSystem Generator = null!;
+    private IMeterTestSystem Generator = null!;
 
     private ISerialPortFGSource Source = null!;
 

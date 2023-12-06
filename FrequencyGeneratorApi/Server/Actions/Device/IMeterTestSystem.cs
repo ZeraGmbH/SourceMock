@@ -11,7 +11,7 @@ namespace MeteringSystemApi.Actions.Device;
 /// <summary>
 /// 
 /// </summary>
-public interface IMeteringSystem
+public interface IMeterTestSystem
 {
     /// <summary>
     /// Retrieve information on the firmware version.

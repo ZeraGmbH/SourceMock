@@ -16,7 +16,7 @@ namespace MeteringSystemApi.Actions.Device;
 /// <summary>
 /// 
 /// </summary>
-public class SerialPortFGMeteringSystem : IMeteringSystem
+public class SerialPortFGMeteringSystem : IMeterTestSystem
 {
     /// <summary>
     /// Detect model name and version number.

@@ -1,10 +1,5 @@
-using System.IO.Ports;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
-using RefMeterApi.Controllers;
-using RefMeterApi.Models;
-using RefMeterApiTests.PortMocks;
 using SerialPortProxy;
 
 namespace RefMeterApiTests;

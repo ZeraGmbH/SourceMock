@@ -162,23 +162,23 @@ public class CapabilitiesMap : ICapabilitiesMap
     } },
     { "VI201", new() {
         FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Current = new(500E-6, 160, 0.001) } },
+        Phases = new() { new() { Current = new(500E-6, 160, 0.0001) } },
     } },
     { "VI202", new() {
         FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Current = new(500E-6, 120, 0.001) } },
+        Phases = new() { new() { Current = new(500E-6, 120, 0.0001) } },
     } },
     { "VI220", new() {
         FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Current = new(500E-6, 120, 0.001) } },
+        Phases = new() { new() { Current = new(500E-6, 120, 0.0001) } },
     } },
     { "VI221", new() {
         FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Current = new(500E-6, 120, 0.001) } },
+        Phases = new() { new() { Current = new(500E-6, 120, 0.0001) } },
     } },
     { "VI222", new() {
         FrequencyRanges = new() { new(40, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Current = new(500E-6, 120, 0.001) } },
+        Phases = new() { new() { Current = new(500E-6, 120, 0.0001) } },
     } },
     { "VUI302", new() {
         FrequencyRanges = new() { new(40, 70, 0.01, FrequencyMode.SYNTHETIC) },

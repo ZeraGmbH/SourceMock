@@ -9,14 +9,14 @@ namespace MeteringSystemApi;
 /// <summary>
 /// 
 /// </summary>
-public static class Configuration
+public static class MeteringSystemApiConfiguration
 {
     /// <summary>
     /// 
     /// </summary>
     public static void UseMeteringSystemApi(this SwaggerGenOptions options)
     {
-        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(Configuration).Assembly.GetName().Name}.xml"));
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(MeteringSystemApiConfiguration).Assembly.GetName().Name}.xml"));
     }
 
     /// <summary>

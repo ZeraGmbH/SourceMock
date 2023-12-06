@@ -15,14 +15,14 @@ namespace SourceApi;
 /// <summary>
 /// 
 /// </summary>
-public static class Configuration
+public static class SourceApiConfiguration
 {
     /// <summary>
     /// 
     /// </summary>
     public static void UseSourceApi(this SwaggerGenOptions options)
     {
-        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(Configuration).Assembly.GetName().Name}.xml"));
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SourceApiConfiguration).Assembly.GetName().Name}.xml"));
     }
 
     /// <summary>

@@ -9,14 +9,14 @@ namespace RefMeterApi;
 /// <summary>
 /// 
 /// </summary>
-public static class Configuration
+public static class RefMeterApiConfiguration
 {
     /// <summary>
     /// 
     /// </summary>
     public static void UseRefMeterApi(this SwaggerGenOptions options)
     {
-        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(Configuration).Assembly.GetName().Name}.xml"));
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(RefMeterApiConfiguration).Assembly.GetName().Name}.xml"));
     }
 
     /// <summary>

@@ -9,14 +9,14 @@ namespace ErrorCalculatorApi;
 /// <summary>
 /// 
 /// </summary>
-public static class Configuration
+public static class ErrorCalculatorApiConfiguration
 {
     /// <summary>
     /// 
     /// </summary>
     public static void UseErrorCalculatorApi(this SwaggerGenOptions options)
     {
-        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(Configuration).Assembly.GetName().Name}.xml"));
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(ErrorCalculatorApiConfiguration).Assembly.GetName().Name}.xml"));
     }
 
     /// <summary>

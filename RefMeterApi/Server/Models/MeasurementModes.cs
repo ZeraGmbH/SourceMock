@@ -67,4 +67,69 @@ public enum MeasurementModes
     /// 2WAP
     /// </summary>
     TwoWireApparentPower,
+
+    /// <summary>
+    /// 1PHA
+    /// </summary>
+    PhaseTApparentPower,
+
+    /// <summary>
+    /// 1PHR
+    /// </summary>
+    PhaseTReactivePower,
+
+    /// <summary>
+    /// 1PHT
+    /// </summary>
+    PhaseTPower,
+
+    /// <summary>
+    /// 3LBG
+    /// </summary>
+    ThreeWireReactiveGeometricPower,
+
+    /// <summary>
+    /// 3LQ6
+    /// </summary>
+    ThreeWireReactive60Power,
+
+    /// <summary>
+    /// 3LSG
+    /// </summary>
+    ThreeWireApparentGeometricPower,
+
+    /// <summary>
+    /// 3LWR
+    /// </summary>
+    ThreeWireSymmetricPower,
+
+    /// <summary>
+    /// 3Q6K
+    /// </summary>
+    ThreeWireReactive60SyntheticPower,
+
+    /// <summary>
+    /// 4LBF
+    /// </summary>
+    FourWireReactiveRtsPower,
+
+    /// <summary>
+    /// 4LQ6
+    /// </summary>
+    FourWireReactive60Power,
+
+    /// <summary>
+    /// 4LSG
+    /// </summary>
+    FourWireApparentGeometricPower,
+
+    /// <summary>
+    /// 4Q6K
+    /// </summary>
+    FourWireReactive60SyntheticPower,
+
+    /// <summary>
+    /// 4LDC
+    /// </summary>
+    FourWireDCPower,
 }

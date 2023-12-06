@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
 using SerialPortProxy;
@@ -14,7 +15,7 @@ public interface ISerialPortFGRefMeter : IRefMeter
 /// <summary>
 /// Handle all requests to a FG30x compatible devices.
 /// </summary>
-public class SerialPortFGRefMeter : ISerialPortFGRefMeter
+public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
 {
     private readonly ISerialPortConnection _device;
 
@@ -35,13 +36,6 @@ public class SerialPortFGRefMeter : ISerialPortFGRefMeter
     public bool Available => true;
 
     /// <inheritdoc/>
-    public Task<MeasurementModes?> GetActualMeasurementMode()
-    {
-        // Could be MI, but maybe not queryable
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
     public Task<MeasureOutput> GetActualValues()
     {
         // Must be requested separatly
@@ -58,20 +52,6 @@ public class SerialPortFGRefMeter : ISerialPortFGRefMeter
         //  Reactive Power - must be summed up from phases
         //  Apparent Power - must be summed up from phases
         //  Frequency: AF
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public Task<MeasurementModes[]> GetMeasurementModes()
-    {
-        // Should be MI
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public Task SetActualMeasurementMode(MeasurementModes mode)
-    {
-        // Should be MA
         throw new NotImplementedException();
     }
 }

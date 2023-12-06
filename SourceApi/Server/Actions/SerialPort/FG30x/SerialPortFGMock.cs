@@ -19,6 +19,8 @@ public class SerialPortFGMock : ISerialPort
 
     private static readonly Regex ZpCommand = new(@"^ZP\d{10}$");
 
+    private static readonly Regex MaCommand = new(@"^MA(.+)$");
+
     private readonly Queue<QueueEntry> _replies = new();
 
     /// <inheritdoc/>
@@ -43,6 +45,9 @@ public class SerialPortFGMock : ISerialPort
             case "TS":
                 _replies.Enqueue("TSFG301   V385");
                 break;
+            case "MI":
+                _replies.Enqueue("MI4LW;3LW;4LBK;4LBE;3LBK;3LBA;3BKB;3LBE;3LWR;4LBF;1PHT;1PHR;1PHA;4LS;3LS;4LQ6;3LQ6;4Q6K;3Q6K;4LSG;3LSG;4LBG;3LBG;");
+                break;
             default:
                 {
                     /* Set voltage. */
@@ -60,6 +65,9 @@ public class SerialPortFGMock : ISerialPort
                     /* Configure amplifiers and reference meter. */
                     else if (ZpCommand.IsMatch(command))
                         _replies.Enqueue("OKZP");
+                    /** Set the measuring mode. */
+                    else if (MaCommand.IsMatch(command))
+                        _replies.Enqueue("OKMA");
 
                     break;
                 }

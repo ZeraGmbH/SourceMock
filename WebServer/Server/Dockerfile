@@ -9,7 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 COPY ErrorCalculatorApi ErrorCalculatorApi 
-COPY FrequencyGeneratorApi FrequencyGeneratorApi
+COPY MeterTestSystemApi MeterTestSystemApi
 COPY RefMeterApi RefMeterApi
 COPY SerialPortProxy SerialPortProxy
 COPY SourceApi SourceApi

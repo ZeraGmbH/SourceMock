@@ -9,11 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorCalculatorApi", "Error
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorCalculatorApiTests", "ErrorCalculatorApi\Tests\ErrorCalculatorApiTests.csproj", "{88EF6A0C-EDEE-47F6-96F4-F41EA40E3F39}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FrequencyGeneratorApi", "FrequencyGeneratorApi", "{93B4138A-9BF0-426E-944A-B7F029F48DF0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MeterTestSystemApi", "MeterTestSystemApi", "{93B4138A-9BF0-426E-944A-B7F029F48DF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrequencyGeneratorApi", "FrequencyGeneratorApi\Server\FrequencyGeneratorApi.csproj", "{A5812304-6852-4F9E-B901-D35A53A90261}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeterTestSystemApi", "MeterTestSystemApi\Server\MeterTestSystemApi.csproj", "{A5812304-6852-4F9E-B901-D35A53A90261}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrequencyGeneratorApiTests", "FrequencyGeneratorApi\Tests\FrequencyGeneratorApiTests.csproj", "{CE75C10E-DF6C-4BF5-8DAA-BBB5E569FFAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeterTestSystemApiTests", "MeterTestSystemApi\Tests\MeterTestSystemApiTests.csproj", "{CE75C10E-DF6C-4BF5-8DAA-BBB5E569FFAD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RefMeterApi", "RefMeterApi", "{60812B97-568E-4C55-9A0F-D228C4CC0B25}"
 EndProject

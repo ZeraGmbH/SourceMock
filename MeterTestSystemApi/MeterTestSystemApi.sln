@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrequencyGeneratorApi", "Server\FrequencyGeneratorApi.csproj", "{CC185B36-DCD6-4640-94CD-BDE51411A58D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeterTestSystemApi", "Server\MeterTestSystemApi.csproj", "{CC185B36-DCD6-4640-94CD-BDE51411A58D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrequencyGeneratorApiTests", "Tests\FrequencyGeneratorApiTests.csproj", "{72CD3275-6954-4F11-A7D0-3917AEBD6EE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeterTestSystemApiTests", "Tests\MeterTestSystemApiTests.csproj", "{72CD3275-6954-4F11-A7D0-3917AEBD6EE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

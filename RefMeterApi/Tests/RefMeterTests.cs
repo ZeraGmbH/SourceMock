@@ -68,6 +68,6 @@ public class RefMeterTests
 
         var modes = await refMeter.GetMeasurementModes();
 
-        Assert.That(modes, Has.Length.EqualTo(21));
+        Assert.That(modes, Has.Length.EqualTo(9));
     }
 }

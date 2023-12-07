@@ -7,28 +7,15 @@ namespace RefMeterApi.Actions.Device;
 partial class SerialPortFGRefMeter
 {
     private static readonly Dictionary<string, MeasurementModes> SupportedModes = new() {
-        {"1PHA", MeasurementModes.PhaseTApparentPower},
-        {"1PHR", MeasurementModes.PhaseTReactivePower},
-        {"1PHT", MeasurementModes.PhaseTPower},
         {"3BKB", MeasurementModes.ThreeWireReactivePowerCrossConnectedA},
         {"3LBE", MeasurementModes.ThreeWireReactivePower},
-        {"3LBG", MeasurementModes.ThreeWireReactiveGeometricPower},
         {"3LBK", MeasurementModes.ThreeWireReactivePowerCrossConnectedB},
-        {"3LQ6", MeasurementModes.ThreeWireReactive60Power},
         {"3LS", MeasurementModes.ThreeWireApparentPower},
-        {"3LSG", MeasurementModes.ThreeWireApparentGeometricPower},
         {"3LW", MeasurementModes.ThreeWireActivePower},
-        {"3LWR", MeasurementModes.ThreeWireSymmetricPower},
-        {"3Q6K", MeasurementModes.ThreeWireReactive60SyntheticPower},
         {"4LBE", MeasurementModes.FourWireReactivePower},
-        {"4LBF", MeasurementModes.FourWireReactiveRtsPower},
         {"4LBK", MeasurementModes.FourWireReactivePowerCrossConnected},
-        {"4LDC", MeasurementModes.FourWireDCPower},
-        {"4LQ6", MeasurementModes.FourWireReactive60Power},
         {"4LS", MeasurementModes.FourWireApparentPower},
-        {"4LSG", MeasurementModes.FourWireApparentGeometricPower},
         {"4LW", MeasurementModes.FourWireActivePower},
-        {"4Q6K", MeasurementModes.FourWireReactive60SyntheticPower},
     };
 
     private static readonly Regex MiCommand = new(@"^MI([^;]+;)*$");

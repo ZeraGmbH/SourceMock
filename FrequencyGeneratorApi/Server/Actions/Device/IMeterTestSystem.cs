@@ -1,10 +1,10 @@
 using ErrorCalculatorApi.Actions.Device;
-using MeteringSystemApi.Model;
-using MeteringSystemApi.Models;
+using MeterTestSystemApi.Model;
+using MeterTestSystemApi.Models;
 using RefMeterApi.Actions.Device;
 using SourceApi.Actions.Source;
 
-namespace MeteringSystemApi.Actions.Device;
+namespace MeterTestSystemApi.Actions.Device;
 
 /// <summary>
 /// 
@@ -15,13 +15,13 @@ public interface IMeterTestSystem
     /// Retrieve information on the firmware version.
     /// </summary>
     /// <returns>The firmware version.</returns>
-    Task<MeteringSystemFirmwareVersion> GetFirmwareVersion();
+    Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion();
 
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
-    Task<MeteringSystemCapabilities> GetCapabilities();
+    Task<MeterTestSystemCapabilities> GetCapabilities();
 
     /// <summary>
     /// 

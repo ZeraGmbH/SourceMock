@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using ErrorCalculatorApi.Actions.Device;
-using MeteringSystemApi.Model;
-using MeteringSystemApi.Models;
+using MeterTestSystemApi.Model;
+using MeterTestSystemApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions.Device;
@@ -11,12 +11,12 @@ using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 
-namespace MeteringSystemApi.Actions.Device;
+namespace MeterTestSystemApi.Actions.Device;
 
 /// <summary>
 /// 
 /// </summary>
-public class SerialPortFGMeteringSystem : IMeterTestSystem
+public class SerialPortFGMeterTestSystem : IMeterTestSystem
 {
     /// <summary>
     /// Detect model name and version number.
@@ -25,7 +25,7 @@ public class SerialPortFGMeteringSystem : IMeterTestSystem
 
     private readonly ISerialPortConnection _device;
 
-    private readonly ILogger<SerialPortFGMeteringSystem> _logger;
+    private readonly ILogger<SerialPortFGMeterTestSystem> _logger;
 
     private readonly IServiceProvider _services;
 
@@ -47,7 +47,7 @@ public class SerialPortFGMeteringSystem : IMeterTestSystem
     /// <param name="device">Service to access the current serial port.</param>
     /// <param name="logger">Logging service for this device type.</param>
     /// <param name="services">Dependency injection system.</param>
-    public SerialPortFGMeteringSystem(ISerialPortConnection device, ILogger<SerialPortFGMeteringSystem> logger, IServiceProvider services)
+    public SerialPortFGMeterTestSystem(ISerialPortConnection device, ILogger<SerialPortFGMeterTestSystem> logger, IServiceProvider services)
     {
         _device = device;
         _logger = logger;
@@ -55,8 +55,8 @@ public class SerialPortFGMeteringSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public Task<MeteringSystemCapabilities> GetCapabilities() =>
-        Task.FromResult(new MeteringSystemCapabilities
+    public Task<MeterTestSystemCapabilities> GetCapabilities() =>
+        Task.FromResult(new MeterTestSystemCapabilities
         {
             SupportedCurrentAmplifiers = {
                 CurrentAmplifiers.VI201x0,
@@ -178,7 +178,7 @@ public class SerialPortFGMeteringSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public async Task<MeteringSystemFirmwareVersion> GetFirmwareVersion()
+    public async Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion()
     {
         /* Send command and check reply. */
         var reply = await _device.Execute(SerialPortRequest.Create("TS", _versionReg))[0];
@@ -193,7 +193,7 @@ public class SerialPortFGMeteringSystem : IMeterTestSystem
             throw new InvalidOperationException($"invalid response {reply[0]} from device");
 
         /* Create response structure. */
-        return new MeteringSystemFirmwareVersion
+        return new MeterTestSystemFirmwareVersion
         {
             ModelName = versionMatch.Groups[1].Value.Trim(),
             Version = versionMatch.Groups[2].Value.Trim()

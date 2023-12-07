@@ -1,7 +1,7 @@
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 
-namespace MeteringSystemApi;
+namespace MeterTestSystemApi;
 
 internal class UnavailableReferenceMeter : IRefMeter
 {

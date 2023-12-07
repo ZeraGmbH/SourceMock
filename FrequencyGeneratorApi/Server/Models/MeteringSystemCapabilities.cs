@@ -3,12 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 using RefMeterApi.Models;
 using SourceApi.Model;
 
-namespace MeteringSystemApi.Models;
+namespace MeterTestSystemApi.Models;
 
 /// <summary>
 /// 
 /// </summary>
-public class MeteringSystemCapabilities
+public class MeterTestSystemCapabilities
 {
     /// <summary>
     /// 

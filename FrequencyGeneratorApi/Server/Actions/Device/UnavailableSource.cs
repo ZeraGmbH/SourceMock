@@ -1,7 +1,7 @@
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 
-namespace MeteringSystemApi;
+namespace MeterTestSystemApi;
 
 internal class UnavailableSource : ISource
 {

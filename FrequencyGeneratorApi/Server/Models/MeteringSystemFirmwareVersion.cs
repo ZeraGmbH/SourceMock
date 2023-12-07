@@ -1,13 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace MeteringSystemApi.Model;
+namespace MeterTestSystemApi.Model;
 
 /// <summary>
 /// 
 /// </summary>
 [Serializable]
-public class MeteringSystemFirmwareVersion
+public class MeterTestSystemFirmwareVersion
 {
     /// <summary>
     /// 

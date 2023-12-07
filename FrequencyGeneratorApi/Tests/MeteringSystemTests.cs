@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 using ErrorCalculatorApi.Actions.Device;
-using MeteringSystemApi.Actions.Device;
+using MeterTestSystemApi.Actions.Device;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
@@ -11,10 +11,10 @@ using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Model;
 
-namespace MeteringSystemApiTests;
+namespace MeterTestSystemApiTests;
 
 [TestFixture]
-public class MeteringSystemTests
+public class MeterTestSystemTests
 {
     class PortMock : ISerialPort
     {
@@ -58,7 +58,7 @@ public class MeteringSystemTests
         }
     }
 
-    private readonly NullLogger<SerialPortFGMeteringSystem> _meterLogger = new();
+    private readonly NullLogger<SerialPortFGMeterTestSystem> _meterLogger = new();
 
     private readonly NullLogger<SerialPortFGSource> _sourceLogger = new();
 
@@ -89,7 +89,7 @@ public class MeteringSystemTests
 
         Services = services.BuildServiceProvider();
 
-        Generator = new SerialPortFGMeteringSystem(Device, _meterLogger, Services);
+        Generator = new SerialPortFGMeterTestSystem(Device, _meterLogger, Services);
     }
 
     [TearDown]
@@ -110,10 +110,10 @@ public class MeteringSystemTests
     [Test]
     public async Task Can_Not_Get_Capabilities_For_MT()
     {
-        var generator = new SerialPortMTMeteringSystem(Device,
+        var generator = new SerialPortMTMeterTestSystem(Device,
             new SerialPortMTRefMeter(Device, new NullLogger<SerialPortMTRefMeter>()),
             new SerialPortMTErrorCalculator(Device, new NullLogger<SerialPortMTErrorCalculator>()),
-            new NullLogger<SerialPortMTMeteringSystem>(),
+            new NullLogger<SerialPortMTMeterTestSystem>(),
             new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), Device, new CapabilitiesMap()));
 
         var caps = await generator.GetCapabilities();
@@ -124,10 +124,10 @@ public class MeteringSystemTests
     [Test]
     public async Task Can_Get_Firmware_Version_For_MT()
     {
-        var generator = new SerialPortMTMeteringSystem(Device,
+        var generator = new SerialPortMTMeterTestSystem(Device,
             new SerialPortMTRefMeter(Device, new NullLogger<SerialPortMTRefMeter>()),
             new SerialPortMTErrorCalculator(Device, new NullLogger<SerialPortMTErrorCalculator>()),
-            new NullLogger<SerialPortMTMeteringSystem>(),
+            new NullLogger<SerialPortMTMeterTestSystem>(),
             new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), Device, new CapabilitiesMap()));
 
         var version = await generator.GetFirmwareVersion();

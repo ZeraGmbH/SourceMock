@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MeteringSystemApi.Controllers;
+namespace MeterTestSystemApi.Controllers;
 
 class Utils
 {

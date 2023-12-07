@@ -1,7 +1,7 @@
 using ErrorCalculatorApi.Actions.Device;
 using ErrorCalculatorApi.Models;
 
-namespace MeteringSystemApi;
+namespace MeterTestSystemApi;
 
 internal class UnavailableErrorCalculator : IErrorCalculator
 {

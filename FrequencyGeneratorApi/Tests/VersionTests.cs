@@ -1,12 +1,12 @@
 using ErrorCalculatorApi.Actions.Device;
-using MeteringSystemApi.Actions.Device;
+using MeterTestSystemApi.Actions.Device;
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
 using SerialPortProxy;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.MT768;
 
-namespace MeteringSystemApiTests;
+namespace MeterTestSystemApiTests;
 
 /// <summary>
 /// General mock for validating command reply interpretation.
@@ -104,7 +104,7 @@ public class VersionTests
 {
     private readonly NullLogger<ISerialPortConnection> _logger = new();
 
-    private readonly NullLogger<SerialPortMTMeteringSystem> _portLogger = new();
+    private readonly NullLogger<SerialPortMTMeterTestSystem> _portLogger = new();
 
     [TestCase(typeof(EmptyModelNameMock), "invalid response V19.129 from device")]
     [TestCase(typeof(EmptyVersionMock), "invalid response MT9123V from device")]
@@ -115,7 +115,7 @@ public class VersionTests
     {
         using var device = SerialPortConnection.FromMock(mockType, _logger);
 
-        var dut = new SerialPortMTMeteringSystem(device,
+        var dut = new SerialPortMTMeterTestSystem(device,
             new SerialPortMTRefMeter(device, new NullLogger<SerialPortMTRefMeter>()),
             new SerialPortMTErrorCalculator(device, new NullLogger<SerialPortMTErrorCalculator>()),
             _portLogger,

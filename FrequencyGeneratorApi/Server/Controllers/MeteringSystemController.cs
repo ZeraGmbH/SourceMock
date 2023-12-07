@@ -1,11 +1,11 @@
-using MeteringSystemApi.Actions.Device;
-using MeteringSystemApi.Model;
-using MeteringSystemApi.Models;
+using MeterTestSystemApi.Actions.Device;
+using MeterTestSystemApi.Model;
+using MeterTestSystemApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace MeteringSystemApi.Controllers;
+namespace MeterTestSystemApi.Controllers;
 
 /// <summary>
 /// 
@@ -13,7 +13,7 @@ namespace MeteringSystemApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class MeteringSystemController : ControllerBase
+public class MeterTestSystemController : ControllerBase
 {
     private readonly IMeterTestSystem _device;
 
@@ -21,7 +21,7 @@ public class MeteringSystemController : ControllerBase
     /// 
     /// </summary>
     /// <param name="device"></param>
-    public MeteringSystemController(IMeterTestSystem device)
+    public MeterTestSystemController(IMeterTestSystem device)
     {
         _device = device;
     }
@@ -31,10 +31,10 @@ public class MeteringSystemController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    [SwaggerOperation(OperationId = "GetMeteringSystemCapabilities")]
+    [SwaggerOperation(OperationId = "GetMeterTestSystemCapabilities")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<MeteringSystemCapabilities>> GetCapabilities() =>
+    public Task<ActionResult<MeterTestSystemCapabilities>> GetCapabilities() =>
         Utils.SafeExecuteSerialPortCommand(_device.GetCapabilities);
 
     /// <summary>
@@ -67,6 +67,6 @@ public class MeteringSystemController : ControllerBase
     [SwaggerOperation(OperationId = "GetFirmwareVersion")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<MeteringSystemFirmwareVersion>> GetFirmwareVersion() =>
+    public Task<ActionResult<MeterTestSystemFirmwareVersion>> GetFirmwareVersion() =>
         Utils.SafeExecuteSerialPortCommand(_device.GetFirmwareVersion);
 }

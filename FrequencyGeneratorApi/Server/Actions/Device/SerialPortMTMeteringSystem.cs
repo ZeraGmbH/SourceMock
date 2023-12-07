@@ -1,19 +1,19 @@
 using System.Text.RegularExpressions;
 using ErrorCalculatorApi.Actions.Device;
-using MeteringSystemApi.Model;
-using MeteringSystemApi.Models;
+using MeterTestSystemApi.Model;
+using MeterTestSystemApi.Models;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions.Device;
 using SerialPortProxy;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
 
-namespace MeteringSystemApi.Actions.Device;
+namespace MeterTestSystemApi.Actions.Device;
 
 /// <summary>
 /// 
 /// </summary>
-public class SerialPortMTMeteringSystem : IMeterTestSystem
+public class SerialPortMTMeterTestSystem : IMeterTestSystem
 {
     /// <summary>
     /// Detect model name and version number.
@@ -22,7 +22,7 @@ public class SerialPortMTMeteringSystem : IMeterTestSystem
 
     private readonly ISerialPortConnection _device;
 
-    private readonly ILogger<SerialPortMTMeteringSystem> _logger;
+    private readonly ILogger<SerialPortMTMeterTestSystem> _logger;
 
     private readonly ISerialPortMTSource _source;
 
@@ -46,7 +46,7 @@ public class SerialPortMTMeteringSystem : IMeterTestSystem
     /// <param name="errorCalculator">The error calculator of this metering system.</param>
     /// <param name="logger">Logging service for this device type.</param>
     /// <param name="source">Source to use to access the metering system.</param>
-    public SerialPortMTMeteringSystem(ISerialPortConnection device, ISerialPortMTRefMeter refMeter, ISerialPortMTErrorCalculator errorCalculator, ILogger<SerialPortMTMeteringSystem> logger, ISerialPortMTSource source)
+    public SerialPortMTMeterTestSystem(ISerialPortConnection device, ISerialPortMTRefMeter refMeter, ISerialPortMTErrorCalculator errorCalculator, ILogger<SerialPortMTMeterTestSystem> logger, ISerialPortMTSource source)
     {
         ErrorCalculator = errorCalculator;
         RefMeter = refMeter;
@@ -57,7 +57,7 @@ public class SerialPortMTMeteringSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public async Task<MeteringSystemFirmwareVersion> GetFirmwareVersion()
+    public async Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion()
     {
         /* Execute the request and wait for the information string. */
         var reply = await _device.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
@@ -72,7 +72,7 @@ public class SerialPortMTMeteringSystem : IMeterTestSystem
             throw new InvalidOperationException($"invalid response {reply[0]} from device");
 
         /* Create response structure. */
-        return new MeteringSystemFirmwareVersion
+        return new MeterTestSystemFirmwareVersion
         {
             ModelName = versionMatch.Groups[1].Value,
             Version = versionMatch.Groups[2].Value
@@ -80,7 +80,7 @@ public class SerialPortMTMeteringSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public Task<MeteringSystemCapabilities> GetCapabilities() => Task.FromResult<MeteringSystemCapabilities>(null!);
+    public Task<MeterTestSystemCapabilities> GetCapabilities() => Task.FromResult<MeterTestSystemCapabilities>(null!);
 
     /// <inheritdoc/>
     public Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeters settings)

@@ -1,7 +1,7 @@
 using RefMeterApi.Models;
 using SourceApi.Model;
 
-namespace MeteringSystemApi;
+namespace MeterTestSystemApi;
 
 /// <summary>
 /// 

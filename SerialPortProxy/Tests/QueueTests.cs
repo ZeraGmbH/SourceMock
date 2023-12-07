@@ -1,6 +1,4 @@
-using System.Diagnostics;
 using Microsoft.Extensions.Logging.Abstractions;
-using NuGet.Frameworks;
 using NUnit.Framework.Internal;
 using SerialPortProxy;
 

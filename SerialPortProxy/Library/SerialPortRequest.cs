@@ -1,4 +1,3 @@
-using System.Dynamic;
 using System.Text.RegularExpressions;
 
 namespace SerialPortProxy;

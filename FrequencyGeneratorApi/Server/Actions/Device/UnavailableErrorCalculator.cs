@@ -1,7 +1,5 @@
 using ErrorCalculatorApi.Actions.Device;
 using ErrorCalculatorApi.Models;
-using RefMeterApi.Actions.Device;
-using RefMeterApi.Models;
 
 namespace MeteringSystemApi;
 

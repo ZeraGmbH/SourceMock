@@ -1,10 +1,6 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-using Swashbuckle.AspNetCore.Annotations;
-
 using SourceApi.Actions.Source;
-using SourceApi.Model;
 
 namespace SourceApi.Controllers;
 

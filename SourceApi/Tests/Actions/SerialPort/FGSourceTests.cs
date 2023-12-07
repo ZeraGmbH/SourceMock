@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using NUnit.Framework.Constraints;
 using SerialPortProxy;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.FG30x;

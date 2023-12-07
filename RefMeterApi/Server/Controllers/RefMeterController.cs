@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RefMeterApi.Actions.Device;

@@ -1,5 +1,7 @@
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
+using RefMeterApi.Models;
 using SerialPortProxy;
 
 namespace RefMeterApiTests;
@@ -9,12 +11,14 @@ public class RefMeterTests
 {
     class MeasuringModesMock : ISerialPort
     {
+        private static readonly Regex MaCommand = new(@"^MA(.+)$");
+
         private static string[] _modes = {
             "1PHA",
             "1PHR",
             "1PHT",
             "3BKB",
-            "3LBA",// Unknwon
+            "3LBA",
             "3LBE",
             "3LBG",
             "3LBK",
@@ -26,7 +30,7 @@ public class RefMeterTests
             "3Q6K",
             "4LBE",
             "4LBF",
-            "4LBG",// Unknown
+            "4LBG",
             "4LBK",
             "4LQ6",
             "4LS",
@@ -53,8 +57,14 @@ public class RefMeterTests
         {
             switch (command)
             {
+
                 case "MI":
                     _queue.Enqueue($"MI{string.Join(";", _modes)};");
+                    break;
+                default:
+                    if (MaCommand.IsMatch(command))
+                        _queue.Enqueue("OKMA");
+
                     break;
             }
         }
@@ -69,5 +79,20 @@ public class RefMeterTests
         var modes = await refMeter.GetMeasurementModes();
 
         Assert.That(modes, Has.Length.EqualTo(9));
+    }
+
+    [Test]
+    public async Task FG_RefMeter_Can_Set_And_Remeber_Measuring_Mode()
+    {
+        var device = SerialPortConnection.FromMock<MeasuringModesMock>(new NullLogger<SerialPortConnection>());
+        var refMeter = new SerialPortFGRefMeter(device, new NullLogger<SerialPortFGRefMeter>());
+
+        var mode = await refMeter.GetActualMeasurementMode();
+
+        Assert.That(mode, Is.Null);
+
+        await refMeter.SetActualMeasurementMode(MeasurementModes.FourWireApparentPower);
+
+        Assert.That(await refMeter.GetActualMeasurementMode(), Is.EqualTo(MeasurementModes.FourWireApparentPower));
     }
 }

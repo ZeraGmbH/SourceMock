@@ -20,6 +20,8 @@ partial class SerialPortFGRefMeter
 
     private static readonly Regex MiCommand = new(@"^MI([^;]+;)*$");
 
+    private MeasurementModes? _measurementMode = null;
+
     /// <inheritdoc/>
     public async Task<MeasurementModes[]> GetMeasurementModes()
     {
@@ -37,16 +39,17 @@ partial class SerialPortFGRefMeter
     }
 
     /// <inheritdoc/>
-    public Task<MeasurementModes?> GetActualMeasurementMode()
-    {
-        // Could be MI, but maybe not queryable
-        throw new NotImplementedException();
-    }
+    public Task<MeasurementModes?> GetActualMeasurementMode() => Task.FromResult(_measurementMode);
 
     /// <inheritdoc/>
     public Task SetActualMeasurementMode(MeasurementModes mode)
     {
-        // Should be MA
-        throw new NotImplementedException();
+        /* Reverse lookup the raw string for the mode - somewhat slow. */
+        var supported = SupportedModes.Single(m => m.Value == mode);
+
+        /* Send the command to the device. */
+        return _device
+            .Execute(SerialPortRequest.Create($"MA{supported.Key}", "OKMA"))[0]
+            .ContinueWith((_t) => _measurementMode = mode);
     }
 }

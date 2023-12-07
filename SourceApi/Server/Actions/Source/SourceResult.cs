@@ -37,5 +37,10 @@ namespace SourceApi.Actions.Source
         /// The loadpoint has been accepted but it could not be activated on the device.
         /// </summary>
         SUCCESS_NOT_ACTIVATED,
+
+        /// <summary>
+        /// The loadpoint was not set.
+        /// </summary>
+        LOADPOINT_NOT_SET
     }
 }

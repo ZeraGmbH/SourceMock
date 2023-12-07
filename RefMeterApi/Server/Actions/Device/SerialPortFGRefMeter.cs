@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using RefMeterApi.Models;
 using SerialPortProxy;
 
 namespace RefMeterApi.Actions.Device;
@@ -33,24 +32,4 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
 
     /// <inheritdoc/>
     public bool Available => true;
-
-    /// <inheritdoc/>
-    public Task<MeasureOutput> GetActualValues()
-    {
-        // Must be requested separatly
-        //  Phase Order: unknown, may be derivable
-        //  Phase
-        //  - Voltage: AU/AD and BU
-        //  - Current: AI and BI
-        //  - Angles: AW
-        //  - Power Factor: unknown, may be derivable
-        //  - Active Power: MP
-        //  - Reactive Power: MQ
-        //  - Apparent Power: MS
-        //  Active Power - must be summed up from phases
-        //  Reactive Power - must be summed up from phases
-        //  Apparent Power - must be summed up from phases
-        //  Frequency: AF
-        throw new NotImplementedException();
-    }
 }

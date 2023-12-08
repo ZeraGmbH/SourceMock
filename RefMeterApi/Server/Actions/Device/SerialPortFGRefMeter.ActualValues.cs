@@ -24,62 +24,52 @@ partial class SerialPortFGRefMeter
 
     private static readonly Regex BiReply = new(@"^BI(.+)$");
 
-    private static Tuple<double, double, double> GetAbsolutePhaseValues(string reply, Regex pattern)
-    {
-        var match = pattern.Match(reply);
-
-        return Tuple.Create(
-            double.Parse(match.Groups[1].Value),
-            double.Parse(match.Groups[2].Value),
-            double.Parse(match.Groups[3].Value)
-        );
-    }
-
-    private static Tuple<double, double, double> GetRelativePhaseValues(double bias, string reply, Regex pattern)
-    {
-        var match = pattern.Match(reply);
-
-        return Tuple.Create(
-            int.Parse(match.Groups[1].Value) * bias / 20000.0,
-            int.Parse(match.Groups[2].Value) * bias / 20000.0,
-            int.Parse(match.Groups[3].Value) * bias / 20000.0
-        );
-    }
-
     /// <inheritdoc/>
     public async Task<MeasureOutput> GetActualValues()
     {
-        var results = await Task.WhenAll(_device.Execute(
-            SerialPortRequest.Create("BU", BuReply), // 0
-            SerialPortRequest.Create("AU", AuReply), // 1
-            SerialPortRequest.Create("BI", BiReply), // 2
-            SerialPortRequest.Create("AI", AiReply), // 3
-            SerialPortRequest.Create("AW", AwReply), // 4
-            SerialPortRequest.Create("MP", MpReply), // 5
-            SerialPortRequest.Create("MQ", MqReply), // 6
-            SerialPortRequest.Create("MS", MsReply), // 7
-            SerialPortRequest.Create("AF", AfReply)  // 8
-        ));
+        var afRequest = SerialPortRequest.Create("AF", AfReply);
+        var aiRequest = SerialPortRequest.Create("AI", AiReply);
+        var auRequest = SerialPortRequest.Create("AU", AuReply);
+        var awRequest = SerialPortRequest.Create("AW", AwReply);
+        var biRequest = SerialPortRequest.Create("BI", BiReply);
+        var buRequest = SerialPortRequest.Create("BU", BuReply);
+        var mpRequest = SerialPortRequest.Create("MP", MpReply);
+        var mqRequest = SerialPortRequest.Create("MQ", MqReply);
+        var msRequest = SerialPortRequest.Create("MS", MsReply);
 
-        var voltageRange = double.Parse(BuReply.Match(results[0][^1]).Groups[1].Value);
-        var currentRange = double.Parse(BiReply.Match(results[2][^1]).Groups[1].Value);
+        await Task.WhenAll(_device.Execute(afRequest, aiRequest, auRequest, awRequest, biRequest, buRequest, mpRequest, mqRequest, msRequest));
 
-        var (voltage1, voltage2, voltage3) = GetRelativePhaseValues(voltageRange, results[1][^1], AuReply);
-        var (current1, current2, current3) = GetRelativePhaseValues(currentRange, results[3][^1], AiReply);
+        var voltageRange = double.Parse(buRequest.EndMatch!.Groups[1].Value);
+        var currentRange = double.Parse(biRequest.EndMatch!.Groups[1].Value);
 
-        var (active1, active2, active3) = GetAbsolutePhaseValues(results[5][^1], MpReply);
-        var (reactive1, reactive2, reactive3) = GetAbsolutePhaseValues(results[6][^1], MqReply);
-        var (apparent1, apparent2, apparent3) = GetAbsolutePhaseValues(results[7][^1], MsReply);
+        var voltage1 = int.Parse(auRequest.EndMatch!.Groups[1].Value) * voltageRange / 20000.0;
+        var voltage2 = int.Parse(auRequest.EndMatch!.Groups[2].Value) * voltageRange / 20000.0;
+        var voltage3 = int.Parse(auRequest.EndMatch!.Groups[3].Value) * voltageRange / 20000.0;
 
-        var frequency = double.Parse(AfReply.Match(results[8][^1]).Groups[1].Value);
+        var current1 = int.Parse(aiRequest.EndMatch!.Groups[1].Value) * currentRange / 20000.0;
+        var current2 = int.Parse(aiRequest.EndMatch!.Groups[2].Value) * currentRange / 20000.0;
+        var current3 = int.Parse(aiRequest.EndMatch!.Groups[3].Value) * currentRange / 20000.0;
 
-        var angles = AwReply.Match(results[4][^1]);
-        var voltage1Angle = double.Parse(angles.Groups[1].Value);
-        var current1Angle = double.Parse(angles.Groups[2].Value);
-        var voltage2Angle = double.Parse(angles.Groups[3].Value);
-        var current2Angle = double.Parse(angles.Groups[4].Value);
-        var voltage3Angle = double.Parse(angles.Groups[5].Value);
-        var current3Angle = double.Parse(angles.Groups[6].Value);
+        var active1 = double.Parse(mpRequest.EndMatch!.Groups[1].Value);
+        var active2 = double.Parse(mpRequest.EndMatch!.Groups[2].Value);
+        var active3 = double.Parse(mpRequest.EndMatch!.Groups[3].Value);
+
+        var reactive1 = double.Parse(mqRequest.EndMatch!.Groups[1].Value);
+        var reactive2 = double.Parse(mqRequest.EndMatch!.Groups[2].Value);
+        var reactive3 = double.Parse(mqRequest.EndMatch!.Groups[3].Value);
+
+        var apparent1 = double.Parse(msRequest.EndMatch!.Groups[1].Value);
+        var apparent2 = double.Parse(msRequest.EndMatch!.Groups[2].Value);
+        var apparent3 = double.Parse(msRequest.EndMatch!.Groups[3].Value);
+
+        var frequency = double.Parse(afRequest.EndMatch!.Groups[1].Value);
+
+        var voltage1Angle = double.Parse(awRequest.EndMatch!.Groups[1].Value);
+        var current1Angle = double.Parse(awRequest.EndMatch!.Groups[2].Value);
+        var voltage2Angle = double.Parse(awRequest.EndMatch!.Groups[3].Value);
+        var current2Angle = double.Parse(awRequest.EndMatch!.Groups[4].Value);
+        var voltage3Angle = double.Parse(awRequest.EndMatch!.Groups[5].Value);
+        var current3Angle = double.Parse(awRequest.EndMatch!.Groups[6].Value);
 
         // [TODO] Phase order
         return new()

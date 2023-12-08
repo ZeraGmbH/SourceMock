@@ -21,7 +21,13 @@ public class SerialPortFGMock : ISerialPort
 
     private static readonly Regex MaCommand = new(@"^MA(.+)$");
 
+    private static readonly Regex ThreePs45Command = new(@"^3PS45;(.+)$");
+
     private readonly Queue<QueueEntry> _replies = new();
+
+    private DateTime _dosageStart = DateTime.MinValue;
+
+    private double _energy = 0;
 
     /// <inheritdoc/>
     public virtual void Dispose()
@@ -36,6 +42,8 @@ public class SerialPortFGMock : ISerialPort
 
         return info.Reply;
     }
+
+    private int DosageProgress => Math.Min((int)((DateTime.Now - _dosageStart).TotalSeconds * 10), 100);
 
     /// <summary>
     /// Generate a random factor.
@@ -91,8 +99,35 @@ public class SerialPortFGMock : ISerialPort
                 /* Frequency: 50Hz */
                 _replies.Enqueue($"AF{MockNumber(50.0):00.00}");
                 break;
+            case "3CM1":
+                _dosageStart = DateTime.Now;
+                _replies.Enqueue("OK3CM1");
+                break;
+            case "3CM2":
+                _replies.Enqueue("OK3CM2");
+                break;
+            case "3CM3":
+                _replies.Enqueue("OK3CM3");
+                break;
+            case "3CM4":
+                _replies.Enqueue("OK3CM4");
+                break;
+            case "3SA1":
+                _replies.Enqueue($"OK3SA1;{(DosageProgress < 100 ? "2" : "1")}");
+                break;
+            case "3MA1":
+                _replies.Enqueue($"OK3MA1;{_energy * (100 - DosageProgress) / 100}");
+                break;
+            case "3SA4":
+                _replies.Enqueue($"OK3SA4;{_energy * DosageProgress / 100}");
+                break;
+            case "3PA45":
+                _replies.Enqueue($"OK3PA45;{_energy}");
+                break;
             default:
                 {
+                    Match? match;
+
                     /* Set voltage. */
                     if (UpCommand.IsMatch(command))
                         _replies.Enqueue("OKUP");
@@ -111,7 +146,13 @@ public class SerialPortFGMock : ISerialPort
                     /** Set the measuring mode. */
                     else if (MaCommand.IsMatch(command))
                         _replies.Enqueue("OKMA");
+                    /* Set dosage energy. */
+                    else if ((match = ThreePs45Command.Match(command)).Success)
+                    {
+                        _energy = double.Parse(match.Groups[1].Value);
 
+                        _replies.Enqueue("OK3PS45");
+                    }
                     break;
                 }
 

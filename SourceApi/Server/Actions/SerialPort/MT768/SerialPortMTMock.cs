@@ -236,9 +236,7 @@ public class SerialPortMTMock : ISerialPort
             /* Read dosage status. */
             case "S3SA1":
                 {
-                    var active = DosageProgress < 100 ? "2" : "1";
-
-                    _replies.Enqueue($"SOK3SA1;{active}");
+                    _replies.Enqueue($"SOK3SA1;{(DosageProgress < 100 ? "2" : "1")}");
 
                     break;
                 }

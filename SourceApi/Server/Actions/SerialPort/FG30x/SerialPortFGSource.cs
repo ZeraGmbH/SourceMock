@@ -25,7 +25,7 @@ public interface ISerialPortFGSource : ISource
 /// <summary>
 /// 
 /// </summary>
-public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, ISerialPortFGSource
+public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, ISerialPortFGSource
 {
     private VoltageAmplifiers? VoltageAmplifier;
 
@@ -54,23 +54,9 @@ public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, ISerialPo
     }
 
     /// <inheritdoc/>
-    public override Task CancelDosage()
-    {
-        // 290 or 3CM
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
     public override Task<SourceCapabilities> GetCapabilities()
     {
         return Task.FromResult(Available ? Capabilities.GetCapabilitiesByAmplifiers(VoltageAmplifier!.Value, CurrentAmplifier!.Value) : null!);
-    }
-
-    /// <inheritdoc/>
-    public override Task<DosageProgress> GetDosageProgress()
-    {
-        // 243/252 or 3SA/3MA
-        throw new NotImplementedException();
     }
 
     public void SetAmplifiers(VoltageAmplifiers voltage, CurrentAmplifiers current, VoltageAuxiliaries voltageAux, CurrentAuxiliaries current8)
@@ -81,27 +67,6 @@ public class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, ISerialPo
         VoltageAmplifier = voltage;
         VoltageAuxiliary = voltageAux;
         CurrentAuxiliary = current8;
-    }
-
-    /// <inheritdoc/>
-    public override Task SetDosageEnergy(double value)
-    {
-        // 210/211 or 3PS
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public override Task SetDosageMode(bool on)
-    {
-        // 3CM
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public override Task StartDosage()
-    {
-        // 242 or 3CM
-        throw new NotImplementedException();
     }
 
     /// <inheritdoc/>

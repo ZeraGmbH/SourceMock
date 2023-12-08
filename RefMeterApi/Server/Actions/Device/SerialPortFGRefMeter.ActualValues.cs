@@ -6,36 +6,18 @@ namespace RefMeterApi.Actions.Device;
 
 partial class SerialPortFGRefMeter
 {
-    private static readonly Regex AuReply = new(@"^AUR(.{5})S(.{5})T(.{5})$");
-
-    private static readonly Regex AiReply = new(@"^AIR(.{5})S(.{5})T(.{5})$");
-
-    private static readonly Regex MpReply = new(@"^MPR([^;]+);S([^;]+);T([^;]+)$");
-
-    private static readonly Regex MqReply = new(@"^MQR([^;]+);S([^;]+);T([^;]+)$");
-
-    private static readonly Regex MsReply = new(@"^MSR([^;]+);S([^;]+);T([^;]+)$");
-
-    private static readonly Regex AfReply = new(@"^AF(.+)$");
-
-    private static readonly Regex AwReply = new(@"^AWR(.{5})(.{5})S(.{5})(.{5})T(.{5})(.{5})$");
-
-    private static readonly Regex BuReply = new(@"^BU(.+)$");
-
-    private static readonly Regex BiReply = new(@"^BI(.+)$");
-
     /// <inheritdoc/>
     public async Task<MeasureOutput> GetActualValues()
     {
-        var afRequest = SerialPortRequest.Create("AF", AfReply);
-        var aiRequest = SerialPortRequest.Create("AI", AiReply);
-        var auRequest = SerialPortRequest.Create("AU", AuReply);
-        var awRequest = SerialPortRequest.Create("AW", AwReply);
-        var biRequest = SerialPortRequest.Create("BI", BiReply);
-        var buRequest = SerialPortRequest.Create("BU", BuReply);
-        var mpRequest = SerialPortRequest.Create("MP", MpReply);
-        var mqRequest = SerialPortRequest.Create("MQ", MqReply);
-        var msRequest = SerialPortRequest.Create("MS", MsReply);
+        var afRequest = SerialPortRequest.Create("AF", new Regex(@"^AF(.+)$"));
+        var aiRequest = SerialPortRequest.Create("AI", new Regex(@"^AIR(.{5})S(.{5})T(.{5})$"));
+        var auRequest = SerialPortRequest.Create("AU", new Regex(@"^AUR(.{5})S(.{5})T(.{5})$"));
+        var awRequest = SerialPortRequest.Create("AW", new Regex(@"^AWR(.{5})(.{5})S(.{5})(.{5})T(.{5})(.{5})$"));
+        var biRequest = SerialPortRequest.Create("BI", new Regex(@"^BI(.+)$"));
+        var buRequest = SerialPortRequest.Create("BU", new Regex(@"^BU(.+)$"));
+        var mpRequest = SerialPortRequest.Create("MP", new Regex(@"^MQR([^;]+);S([^;]+);T([^;]+)$"));
+        var mqRequest = SerialPortRequest.Create("MQ", new Regex(@"^MQR([^;]+);S([^;]+);T([^;]+)$"));
+        var msRequest = SerialPortRequest.Create("MS", new Regex(@"^MSR([^;]+);S([^;]+);T([^;]+)$"));
 
         await Task.WhenAll(_device.Execute(afRequest, aiRequest, auRequest, awRequest, biRequest, buRequest, mpRequest, mqRequest, msRequest));
 

@@ -9,7 +9,7 @@ using SourceApi.Tests.Actions.Dosage.PortMocks;
 
 namespace SourceApi.Tests.Actions.Dosage;
 
-[TestFixture, Ignore("not yet")]
+[TestFixture]
 public class DosageFGTests
 {
     private readonly NullLogger<ISerialPortConnection> _portLogger = new();
@@ -52,22 +52,18 @@ public class DosageFGTests
     {
         /* Warning: knows about internal sequence of requests. */
         var progress = await CreateDevice(new[] {
-            $"SOK3SA1;{dosage}",
-            $"SOK3MA4;{remaining}",
-            "SOK3MA5;303541",
-            "SOK3SA5;218375",
-            "UB=60",
-            "IB=2",
-            "M=4WA",
-            "ASTACK",
+            $"OK3SA1;{dosage}",
+            $"OK3MA1;{remaining}",
+            "OK3SA4;303541E-3",
+            "OK3PA45;918.375",
         }).GetDosageProgress();
 
         Assert.Multiple(() =>
         {
             Assert.That(progress.Active, Is.EqualTo(dosage == 2));
-            Assert.That(progress.Remaining, Is.EqualTo(double.Parse(remaining) / 600000d));
-            Assert.That(progress.Progress, Is.EqualTo(303541 / 600000d));
-            Assert.That(progress.Total, Is.EqualTo(218375 / 600000d));
+            Assert.That(progress.Remaining, Is.EqualTo(double.Parse(remaining) * 1000d));
+            Assert.That(progress.Progress, Is.EqualTo(303541));
+            Assert.That(progress.Total, Is.EqualTo(918375));
         });
     }
 
@@ -78,18 +74,12 @@ public class DosageFGTests
     [TestCase(3)]
     public async Task Can_Set_Impules_From_Energy(double energy)
     {
-        var mock = new CommandPeekMock(new[] {
-            "UB=60",
-            "IB=2",
-            "M=4WA",
-            "ASTACK",
-            "SOK3PS46"
-        });
+        var mock = new CommandPeekMock(new[] { "OK3PS45" });
 
         var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromPortInstance(mock, _portLogger), new CapabilitiesMap());
 
         await device.SetDosageEnergy(energy);
 
-        Assert.That(mock.Commands[1], Is.EqualTo($"S3PS46;{(long)(6000E5 * energy / 1000d):0000000000}"));
+        Assert.That(mock.Commands[0], Is.EqualTo($"3PS45;{energy / 1000d}"));
     }
 }

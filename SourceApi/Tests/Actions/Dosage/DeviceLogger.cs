@@ -4,7 +4,7 @@ using SourceApi.Actions.SerialPort.MT768;
 
 namespace SourceApi.Tests.Actions.Dosage;
 
-public class DeviceLogger : ILogger<SerialPortMTSource>
+public class DeviceLogger<T> : ILogger<T>
 {
     class Scope : IDisposable
     {

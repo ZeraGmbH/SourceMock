@@ -3,43 +3,43 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
 using SourceApi.Actions.SerialPort;
-using SourceApi.Actions.SerialPort.MT768;
+using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.Source;
 using SourceApi.Tests.Actions.Dosage.PortMocks;
 
 namespace SourceApi.Tests.Actions.Dosage;
 
-[TestFixture]
-public class DosageTests
+[TestFixture, Ignore("not yet")]
+public class DosageFGTests
 {
     private readonly NullLogger<ISerialPortConnection> _portLogger = new();
 
-    private readonly DeviceLogger<SerialPortMTSource> _deviceLogger = new();
+    private readonly DeviceLogger<SerialPortFGSource> _deviceLogger = new();
 
-    private ISource CreateDevice(params string[] replies) => new SerialPortMTSource(_deviceLogger, SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap());
+    private ISource CreateDevice(params string[] replies) => new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap());
 
     [Test]
     public async Task Can_Turn_Off_DOS_Mode()
     {
-        await CreateDevice(new[] { "SOK3CM4" }).SetDosageMode(false);
+        await CreateDevice(new[] { "OK3CM4" }).SetDosageMode(false);
     }
 
     [Test]
     public async Task Can_Turn_On_DOS_Mode()
     {
-        await CreateDevice(new[] { "SOK3CM3" }).SetDosageMode(true);
+        await CreateDevice(new[] { "OK3CM3" }).SetDosageMode(true);
     }
 
     [Test]
     public async Task Can_Start_Dosage()
     {
-        await CreateDevice(new[] { "SOK3CM1" }).StartDosage();
+        await CreateDevice(new[] { "OK3CM1" }).StartDosage();
     }
 
     [Test]
     public async Task Can_Abort_Dosage()
     {
-        await CreateDevice(new[] { "SOK3CM2" }).CancelDosage();
+        await CreateDevice(new[] { "OK3CM2" }).CancelDosage();
     }
 
     [TestCase(2, "113834")]
@@ -86,7 +86,7 @@ public class DosageTests
             "SOK3PS46"
         });
 
-        var device = new SerialPortMTSource(_deviceLogger, SerialPortConnection.FromPortInstance(mock, _portLogger), new CapabilitiesMap());
+        var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromPortInstance(mock, _portLogger), new CapabilitiesMap());
 
         await device.SetDosageEnergy(energy);
 

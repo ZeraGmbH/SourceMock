@@ -83,15 +83,15 @@ public class RefMeterTests
                     break;
                 case "MP":
                     /* Active Power: 398.014W, 234.899W, 896.617W => 1529.530W */
-                    _queue.Enqueue("MPR398.0;S234.9;T896.6");
+                    _queue.Enqueue("MPR398.0;S234.9;T896.6;");
                     break;
                 case "MQ":
                     /* Reactive Power: 34.849var, 85.461var, -78.603var => 41.708var */
-                    _queue.Enqueue("MQR34.8;S85.5;T-78.6");
+                    _queue.Enqueue("MQR34.8;S85.5;T-78.6;");
                     break;
                 case "MS":
                     /* Apparent power: 400.008VA, 249.968VA, 900.060VA => 1550.032VA */
-                    _queue.Enqueue("MSR400.0;S250.0;T900.0");
+                    _queue.Enqueue("MSR400.0;S250.0;T900.0;");
                     break;
                 case "AF":
                     /* Frequency: 50.01Hz */

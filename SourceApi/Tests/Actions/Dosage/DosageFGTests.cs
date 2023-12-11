@@ -54,15 +54,16 @@ public class DosageFGTests
         var progress = await CreateDevice(new[] {
             $"OK3SA1;{dosage}",
             $"OK3MA1;{remaining}",
-            "OK3SA4;303541E-3",
             "OK3PA45;918.375",
         }).GetDosageProgress();
+
+        var rest = double.Parse(remaining) * 1000d;
 
         Assert.Multiple(() =>
         {
             Assert.That(progress.Active, Is.EqualTo(dosage == 2));
-            Assert.That(progress.Remaining, Is.EqualTo(double.Parse(remaining) * 1000d));
-            Assert.That(progress.Progress, Is.EqualTo(303541));
+            Assert.That(progress.Remaining, Is.EqualTo(rest));
+            Assert.That(progress.Progress, Is.EqualTo(918375 - rest));
             Assert.That(progress.Total, Is.EqualTo(918375));
         });
     }

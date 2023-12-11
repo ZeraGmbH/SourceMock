@@ -14,20 +14,23 @@ partial class SerialPortFGSource
     public override async Task<DosageProgress> GetDosageProgress()
     {
         /* Get all actual values - unit is pulse interval. */
-        var active = SerialPortRequest.Create("3SA1", new Regex(@"^OK3SA1;([0123])$"));
-        var countdown = SerialPortRequest.Create("3MA1", new Regex(@"^OK3MA1;(.+)$"));
-        var progress = SerialPortRequest.Create("3SA4", new Regex(@"^OK3SA4;(.+)$"));
-        var total = SerialPortRequest.Create("3PA45", new Regex(@"^OK3PA45;(.+)$"));
+        var activeReq = SerialPortRequest.Create("3SA1", new Regex(@"^OK3SA1;([0123])$"));
+        var countdownReq = SerialPortRequest.Create("3MA1", new Regex(@"^OK3MA1;(.+)$"));
+        var totalReq = SerialPortRequest.Create("3PA45", new Regex(@"^OK3PA45;(.+)$"));
 
-        await Task.WhenAll(Device.Execute(active, countdown, progress, total));
+        await Task.WhenAll(Device.Execute(activeReq, countdownReq, totalReq));
 
         /* Scale actual values to energy - in Wh. */
+
+        double remaining = double.Parse(countdownReq.EndMatch!.Groups[1].Value) * 1000d;
+        double total = double.Parse(totalReq.EndMatch!.Groups[1].Value) * 1000d;
+
         return new()
         {
-            Active = active.EndMatch!.Groups[1].Value == "2",
-            Progress = double.Parse(progress.EndMatch!.Groups[1].Value) * 1000d,
-            Remaining = double.Parse(countdown.EndMatch!.Groups[1].Value) * 1000d,
-            Total = double.Parse(total.EndMatch!.Groups[1].Value) * 1000d,
+            Active = activeReq.EndMatch!.Groups[1].Value == "2",
+            Progress = total - remaining,
+            Remaining = remaining,
+            Total = total,
         };
     }
 

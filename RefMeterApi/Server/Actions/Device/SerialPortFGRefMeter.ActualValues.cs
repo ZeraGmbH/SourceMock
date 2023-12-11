@@ -15,9 +15,9 @@ partial class SerialPortFGRefMeter
         var awRequest = SerialPortRequest.Create("AW", new Regex(@"^AWR(.{5})(.{5})S(.{5})(.{5})T(.{5})(.{5})$"));
         var biRequest = SerialPortRequest.Create("BI", new Regex(@"^BI(.+)$"));
         var buRequest = SerialPortRequest.Create("BU", new Regex(@"^BU(.+)$"));
-        var mpRequest = SerialPortRequest.Create("MP", new Regex(@"^MPR([^;]+);S([^;]+);T([^;]+)$"));
-        var mqRequest = SerialPortRequest.Create("MQ", new Regex(@"^MQR([^;]+);S([^;]+);T([^;]+)$"));
-        var msRequest = SerialPortRequest.Create("MS", new Regex(@"^MSR([^;]+);S([^;]+);T([^;]+)$"));
+        var mpRequest = SerialPortRequest.Create("MP", new Regex(@"^MPR([^;]+);S([^;]+);T([^;]+);$"));
+        var mqRequest = SerialPortRequest.Create("MQ", new Regex(@"^MQR([^;]+);S([^;]+);T([^;]+);$"));
+        var msRequest = SerialPortRequest.Create("MS", new Regex(@"^MSR([^;]+);S([^;]+);T([^;]+);$"));
 
         await Task.WhenAll(_device.Execute(afRequest, aiRequest, auRequest, awRequest, biRequest, buRequest, mpRequest, mqRequest, msRequest));
 

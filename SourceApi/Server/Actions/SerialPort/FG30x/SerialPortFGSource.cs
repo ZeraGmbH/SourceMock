@@ -70,9 +70,12 @@ public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, I
     }
 
     /// <inheritdoc/>
-    public override Task<SourceResult> TurnOff()
+    public override async Task<SourceResult> TurnOff()
     {
-        // 2S0/2S1
-        throw new NotImplementedException();
+        Logger.LogTrace("Switching anything off.");
+
+        await Task.WhenAll(Device.Execute(SerialPortRequest.Create("UIAAAAAAAAA", "OKUI")));
+
+        return SourceResult.SUCCESS;
     }
 }

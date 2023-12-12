@@ -85,15 +85,15 @@ public class SerialPortFGMock : ISerialPort
                 break;
             case "MP":
                 /* Active Power: 400W, 235W, 900W => 1535W */
-                _replies.Enqueue($"MPR{MockNumber(400):0.0};S{MockNumber(235):0.0};T{MockNumber(900):0.0}");
+                _replies.Enqueue($"MPR{MockNumber(400):0.0};S{MockNumber(235):0.0};T{MockNumber(900):0.0};");
                 break;
             case "MQ":
                 /* Reactive Power: 35var, 85var, -80var => 40var */
-                _replies.Enqueue($"MQR{MockNumber(35):0.0};S{MockNumber(85):0.0};T{MockNumber(-80):0.0}");
+                _replies.Enqueue($"MQR{MockNumber(35):0.0};S{MockNumber(85):0.0};T{MockNumber(-80):0.0};");
                 break;
             case "MS":
                 /* Apparent power: 400VA, 250VA, 900VA => 1550VA */
-                _replies.Enqueue($"MSR{MockNumber(400):0.0};S{MockNumber(250):0.0};T{MockNumber(900):0.0}");
+                _replies.Enqueue($"MSR{MockNumber(400):0.0};S{MockNumber(250):0.0};T{MockNumber(900):0.0};");
                 break;
             case "AF":
                 /* Frequency: 50Hz */

@@ -70,7 +70,7 @@ partial class SerialPortFGRefMeter
                     AngleVoltage = voltage1Angle,
                     ApparentPower = apparent1,
                     Current = current1,
-                    PowerFactor = active1 == 0 ? null : active1/apparent1,
+                    PowerFactor = apparent1 == 0 ? null : active1/apparent1,
                     ReactivePower = reactive1,
                     Voltage = voltage1,
                 }, new() {
@@ -79,7 +79,7 @@ partial class SerialPortFGRefMeter
                     AngleVoltage = voltage2Angle,
                     ApparentPower = apparent2,
                     Current = current2,
-                    PowerFactor = active2 == 0 ? null : active2/apparent2,
+                    PowerFactor = apparent2 == 0 ? null : active2/apparent2,
                     ReactivePower = reactive2,
                     Voltage = voltage2,
                 }, new() {
@@ -88,7 +88,7 @@ partial class SerialPortFGRefMeter
                     AngleVoltage = voltage3Angle,
                     ApparentPower = apparent3,
                     Current = current3,
-                    PowerFactor = active3 == 0 ? null : active3/apparent3,
+                    PowerFactor = apparent3 == 0 ? null : active3/apparent3,
                     ReactivePower = reactive3,
                     Voltage = voltage3,
                 }

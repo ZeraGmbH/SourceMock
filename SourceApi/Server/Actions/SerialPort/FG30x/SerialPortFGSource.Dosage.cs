@@ -7,12 +7,18 @@ namespace SourceApi.Actions.SerialPort.FG30x;
 partial class SerialPortFGSource
 {
     /// <inheritdoc/>
-    public override Task CancelDosage() =>
-        Task.WhenAll(Device.Execute(SerialPortRequest.Create("3CM2", "OK3CM2")));
+    public override Task CancelDosage()
+    {
+        TestConfigured();
+
+        return Task.WhenAll(Device.Execute(SerialPortRequest.Create("3CM2", "OK3CM2")));
+    }
 
     /// <inheritdoc/>
     public override async Task<DosageProgress> GetDosageProgress()
     {
+        TestConfigured();
+
         /* Get all actual values - unit is pulse interval. */
         var activeReq = SerialPortRequest.Create("3SA1", new Regex(@"^OK3SA1;([0123])$"));
         var countdownReq = SerialPortRequest.Create("3MA1", new Regex(@"^OK3MA1;(.+)$"));
@@ -37,6 +43,8 @@ partial class SerialPortFGSource
     /// <inheritdoc/>
     public override Task SetDosageEnergy(double value)
     {
+        TestConfigured();
+
         if (value < 0)
             throw new ArgumentOutOfRangeException(nameof(value));
 
@@ -46,12 +54,18 @@ partial class SerialPortFGSource
     /// <inheritdoc/>
     public override Task SetDosageMode(bool on)
     {
+        TestConfigured();
+
         var onAsNumber = on ? 3 : 4;
 
         return Task.WhenAll(Device.Execute(SerialPortRequest.Create($"3CM{onAsNumber}", $"OK3CM{onAsNumber}")));
     }
 
     /// <inheritdoc/>
-    public override Task StartDosage() =>
-        Task.WhenAll(Device.Execute(SerialPortRequest.Create("3CM1", "OK3CM1")));
+    public override Task StartDosage()
+    {
+        TestConfigured();
+
+        return Task.WhenAll(Device.Execute(SerialPortRequest.Create("3CM1", "OK3CM1")));
+    }
 }

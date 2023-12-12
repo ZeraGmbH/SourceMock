@@ -16,7 +16,14 @@ public class DosageFGTests
 
     private readonly DeviceLogger<SerialPortFGSource> _deviceLogger = new();
 
-    private ISource CreateDevice(params string[] replies) => new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap());
+    private ISource CreateDevice(params string[] replies)
+    {
+        var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap());
+
+        device.SetAmplifiers(Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
+
+        return device;
+    }
 
     [Test]
     public async Task Can_Turn_Off_DOS_Mode()
@@ -78,6 +85,8 @@ public class DosageFGTests
         var mock = new CommandPeekMock(new[] { "OK3PS45" });
 
         var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromPortInstance(mock, _portLogger), new CapabilitiesMap());
+
+        device.SetAmplifiers(Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
 
         await device.SetDosageEnergy(energy);
 

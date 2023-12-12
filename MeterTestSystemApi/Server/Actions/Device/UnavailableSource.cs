@@ -1,4 +1,5 @@
 using SourceApi.Actions.Source;
+using SourceApi.Exceptions;
 using SourceApi.Model;
 
 namespace MeterTestSystemApi;
@@ -9,48 +10,48 @@ internal class UnavailableSource : ISource
 
     public Task CancelDosage()
     {
-        throw new NotImplementedException();
+        throw new SourceNotReadyException();
     }
 
     public LoadpointInfo GetActiveLoadpointInfo()
     {
-        throw new NotImplementedException();
+        throw new SourceNotReadyException();
     }
 
     public Task<SourceCapabilities> GetCapabilities() => Task.FromResult<SourceCapabilities>(null!);
 
     public Loadpoint? GetCurrentLoadpoint()
     {
-        throw new NotImplementedException();
+        throw new SourceNotReadyException();
     }
 
     public Task<DosageProgress> GetDosageProgress()
     {
-        throw new NotImplementedException();
+        throw new SourceNotReadyException();
     }
 
     public Task SetDosageEnergy(double value)
     {
-        throw new NotImplementedException();
+        throw new SourceNotReadyException();
     }
 
     public Task SetDosageMode(bool on)
     {
-        throw new NotImplementedException();
+        throw new SourceNotReadyException();
     }
 
     public Task<SourceResult> SetLoadpoint(Loadpoint loadpoint)
     {
-        throw new NotImplementedException();
+        throw new SourceNotReadyException();
     }
 
     public Task StartDosage()
     {
-        throw new NotImplementedException();
+        throw new SourceNotReadyException();
     }
 
     public Task<SourceResult> TurnOff()
     {
-        throw new NotImplementedException();
+        throw new SourceNotReadyException();
     }
 }

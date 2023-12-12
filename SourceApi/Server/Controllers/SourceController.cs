@@ -62,7 +62,7 @@ namespace SourceApi.Controllers
         /// <response code="400">If the loadpoint was (generally) malformed. The loadpoint cannot be set with any source.</response>
         /// <response code="422">If the loadpoint was wellformed but invalid. The loadpoint cannot be set with this source.</response>
         /// <response code="500">If an unexpected error occured.</response>
-        [HttpPost("Loadpoint")]
+        [HttpPut("Loadpoint")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
@@ -153,6 +153,7 @@ namespace SourceApi.Controllers
         /// Report information on the last loadpoint activated.
         /// </summary>
         /// <returns>The information including some dates.</returns>
+        /// <response code="200">If there is a loadpointinfo to be returned.</response>
         [HttpGet("LoadpointInfo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetLoadpointInfo")]

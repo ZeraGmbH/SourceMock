@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using RefMeterApi.Exceptions;
 using SerialPortProxy;
 
 namespace RefMeterApi.Actions.Device;
@@ -32,4 +33,9 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
 
     /// <inheritdoc/>
     public bool Available => true;
+
+    private void TestConfigured()
+    {
+        if (!Available) throw new RefMeterNotReadyException();
+    }
 }

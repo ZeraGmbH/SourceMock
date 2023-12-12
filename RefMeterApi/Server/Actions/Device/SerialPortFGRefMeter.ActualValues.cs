@@ -9,6 +9,8 @@ partial class SerialPortFGRefMeter
     /// <inheritdoc/>
     public async Task<MeasureOutput> GetActualValues()
     {
+        TestConfigured();
+
         var afRequest = SerialPortRequest.Create("AF", new Regex(@"^AF(.+)$"));
         var aiRequest = SerialPortRequest.Create("AI", new Regex(@"^AIR(.{5})S(.{5})T(.{5})$"));
         var auRequest = SerialPortRequest.Create("AU", new Regex(@"^AUR(.{5})S(.{5})T(.{5})$"));

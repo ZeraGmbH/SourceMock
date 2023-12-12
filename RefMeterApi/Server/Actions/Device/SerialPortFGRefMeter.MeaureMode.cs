@@ -25,6 +25,8 @@ partial class SerialPortFGRefMeter
     /// <inheritdoc/>
     public async Task<MeasurementModes[]> GetMeasurementModes()
     {
+        TestConfigured();
+
         /* Request from device. */
         var replies = await _device.Execute(SerialPortRequest.Create("MI", MiCommand))[0];
 
@@ -39,11 +41,19 @@ partial class SerialPortFGRefMeter
     }
 
     /// <inheritdoc/>
-    public Task<MeasurementModes?> GetActualMeasurementMode() => Task.FromResult(_measurementMode);
+    public Task<MeasurementModes?> GetActualMeasurementMode()
+    {
+        TestConfigured();
+
+
+        return Task.FromResult(_measurementMode);
+    }
 
     /// <inheritdoc/>
     public Task SetActualMeasurementMode(MeasurementModes mode)
     {
+        TestConfigured();
+
         /* Reverse lookup the raw string for the mode - somewhat slow. */
         var supported = SupportedModes.Single(m => m.Value == mode);
 

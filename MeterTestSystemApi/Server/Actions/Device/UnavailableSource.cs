@@ -15,7 +15,7 @@ internal class UnavailableSource : ISource
 
     public Task<bool> CurrentSwitchedOffForDosage()
     {
-        throw new NotImplementedException();
+        throw new SourceNotReadyException();
     }
 
     public LoadpointInfo GetActiveLoadpointInfo()

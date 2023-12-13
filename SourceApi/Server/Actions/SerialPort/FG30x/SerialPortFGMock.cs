@@ -27,6 +27,10 @@ public class SerialPortFGMock : ISerialPort
 
     private DateTime _dosageStart = DateTime.MinValue;
 
+    private bool _dosageActive = false;
+
+    private bool _dosageMode = false;
+
     private double _energy = 0;
 
     /// <inheritdoc/>
@@ -101,19 +105,26 @@ public class SerialPortFGMock : ISerialPort
                 break;
             case "3CM1":
                 _dosageStart = DateTime.Now;
+                _dosageActive = true;
                 _replies.Enqueue("OK3CM1");
                 break;
             case "3CM2":
+                _dosageActive = false;
                 _replies.Enqueue("OK3CM2");
                 break;
             case "3CM3":
+                _dosageMode = true;
                 _replies.Enqueue("OK3CM3");
                 break;
             case "3CM4":
+                _dosageMode = false;
                 _replies.Enqueue("OK3CM4");
                 break;
             case "3SA1":
-                _replies.Enqueue($"OK3SA1;{(DosageProgress < 100 ? "2" : "1")}");
+                _replies.Enqueue($"OK3SA1;{(_dosageActive && DosageProgress < 100 ? "2" : "1")}");
+                break;
+            case "3SA3":
+                _replies.Enqueue($"OK3SA3;{(_dosageMode ? "2" : "1")}");
                 break;
             case "3MA1":
                 _replies.Enqueue($"OK3MA1;{_energy * (100 - DosageProgress) / 100}");

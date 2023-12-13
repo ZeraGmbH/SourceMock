@@ -74,4 +74,13 @@ public class DosageController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SetEnergy(double energy) => Utils.SafeExecuteSerialPortCommand(() => _device.SetDosageEnergy(energy));
+
+    /// <summary>
+    /// Ask the server if the dosage is activated but the current is off.
+    /// </summary>
+    /// <returns>Dosage mode is on but current is off.</returns>
+    [HttpGet("IsDosageCurrentOff")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [SwaggerOperation(OperationId = "IsDosageCurrentOff")]
+    public Task<ActionResult<bool>> IsDosageCurrentOff() => Utils.SafeExecuteSerialPortCommand(() => _device.CurrentSwitchedOffForDosage());
 }

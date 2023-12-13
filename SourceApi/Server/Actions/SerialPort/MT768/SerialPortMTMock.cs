@@ -101,6 +101,10 @@ public class SerialPortMTMock : ISerialPort
 
     private DateTime _dosageStart = DateTime.MinValue;
 
+    private bool _dosageMode = false;
+
+    private bool _dosageActive = false;
+
     /// <summary>
     /// Outgoing messages.
     /// </summary>
@@ -207,6 +211,7 @@ public class SerialPortMTMock : ISerialPort
             case "S3CM1":
                 {
                     _dosageStart = DateTime.Now;
+                    _dosageActive = true;
 
                     _replies.Enqueue("SOK3CM1");
 
@@ -215,6 +220,8 @@ public class SerialPortMTMock : ISerialPort
             /* Abort dosage. */
             case "S3CM2":
                 {
+                    _dosageActive = false;
+
                     _replies.Enqueue("SOK3CM2");
 
                     break;
@@ -222,6 +229,8 @@ public class SerialPortMTMock : ISerialPort
             /* Set DOS mode. */
             case "S3CM3":
                 {
+                    _dosageMode = true;
+
                     _replies.Enqueue("SOK3CM3");
 
                     break;
@@ -229,6 +238,8 @@ public class SerialPortMTMock : ISerialPort
             /* Reset DOS mode. */
             case "S3CM4":
                 {
+                    _dosageMode = false;
+
                     _replies.Enqueue("SOK3CM4");
 
                     break;
@@ -236,7 +247,14 @@ public class SerialPortMTMock : ISerialPort
             /* Read dosage status. */
             case "S3SA1":
                 {
-                    _replies.Enqueue($"SOK3SA1;{(DosageProgress < 100 ? "2" : "1")}");
+                    _replies.Enqueue($"SOK3SA1;{(_dosageActive && DosageProgress < 100 ? "2" : "1")}");
+
+                    break;
+                }
+            /* Read dosage mode. */
+            case "S3SA3":
+                {
+                    _replies.Enqueue($"SOK3SA3;{(_dosageMode ? "2" : "1")}");
 
                     break;
                 }

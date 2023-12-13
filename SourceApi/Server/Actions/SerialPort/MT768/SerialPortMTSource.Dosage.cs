@@ -98,8 +98,15 @@ partial class SerialPortMTSource
         Task.WhenAll(Device.Execute(SerialPortRequest.Create("S3CM1", "SOK3CM1")));
 
     /// <inheritdoc/>
-    public override Task<bool> CurrentSwitchedOffForDosage()
+    public override async Task<bool> CurrentSwitchedOffForDosage()
     {
-        throw new NotImplementedException();
+        /* Ask device. */
+        var dosage = SerialPortRequest.Create("S3SA1", new Regex(@"^SOK3SA1;([0123])$"));
+        var mode = SerialPortRequest.Create("S3SA3", new Regex(@"^SOK3SA3;([012])$"));
+
+        await Task.WhenAll(Device.Execute(dosage, mode));
+
+        /* Current should be switched off if dosage mode is on mode dosage itself is not yet active. */
+        return mode.EndMatch?.Groups[1].Value == "2" && dosage.EndMatch?.Groups[1].Value == "1";
     }
 }

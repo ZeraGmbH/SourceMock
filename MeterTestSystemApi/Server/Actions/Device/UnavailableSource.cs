@@ -13,6 +13,11 @@ internal class UnavailableSource : ISource
         throw new SourceNotReadyException();
     }
 
+    public Task<bool> CurrentSwitchedOffForDosage()
+    {
+        throw new NotImplementedException();
+    }
+
     public LoadpointInfo GetActiveLoadpointInfo()
     {
         throw new SourceNotReadyException();

@@ -102,4 +102,9 @@ public enum VoltageAmplifiers
     /// 
     /// </summary>
     VUI302,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    SVG3020,
 }

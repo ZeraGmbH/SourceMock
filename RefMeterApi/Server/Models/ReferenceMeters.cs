@@ -56,6 +56,11 @@ public enum ReferenceMeters
     /// <summary>
     /// 
     /// </summary>
+    EPZ303x9,
+
+    /// <summary>
+    /// 
+    /// </summary>
     EPZ303x8x1,
 
     /// <summary>

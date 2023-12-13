@@ -57,6 +57,8 @@ public class CapabilitiesMap : ICapabilitiesMap
             case VoltageAmplifiers.VU220x03:
             case VoltageAmplifiers.VU220x04:
                 return "VU220";
+            case VoltageAmplifiers.SVG3020:
+                return "SVG3020";
             case VoltageAmplifiers.VUI301:
             case VoltageAmplifiers.VUI302:
                 return "VUI302";
@@ -85,6 +87,8 @@ public class CapabilitiesMap : ICapabilitiesMap
             case CurrentAmplifiers.VI222x0:
             case CurrentAmplifiers.VI222x0x1:
                 return "VI222";
+            case CurrentAmplifiers.SCG1020:
+                return "SCG1020";
             case CurrentAmplifiers.VUI301:
             case CurrentAmplifiers.VUI302:
                 return "VUI302";
@@ -153,6 +157,10 @@ public class CapabilitiesMap : ICapabilitiesMap
     { "VUI302", new() {
         FrequencyRanges = new() { new(40, 70, 0.01, FrequencyMode.SYNTHETIC) },
         Phases = new() { new() { Voltage = new(30, 320, 0.001) } },
+    } },
+    { "SVG3020", new() {
+        FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
+        Phases = new() { new() { Voltage = new(75, 600, 0.001) } },
     } } };
 
     private static readonly Dictionary<string, SourceCapabilities> CurrentByAmplifier = new() {
@@ -183,5 +191,9 @@ public class CapabilitiesMap : ICapabilitiesMap
     { "VUI302", new() {
         FrequencyRanges = new() { new(40, 70, 0.01, FrequencyMode.SYNTHETIC) },
         Phases = new() { new() { Current = new(12E-3, 120, 0.001) } },
+    } },
+    { "SCG1020", new() {
+        FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
+        Phases = new() { new() { Current = new(0.0125, 120, 0.0001)} },
     } } };
 }

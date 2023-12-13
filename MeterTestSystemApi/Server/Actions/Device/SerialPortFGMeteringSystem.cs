@@ -72,6 +72,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
                 CurrentAmplifiers.VI222x0x1,
                 CurrentAmplifiers.VUI301,
                 CurrentAmplifiers.VUI302,
+                CurrentAmplifiers.SCG1020,
             },
             SupportedCurrentAuxiliaries = {
                 CurrentAuxiliaries.V200,
@@ -95,6 +96,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
                 ReferenceMeters.EPZ303x5,
                 ReferenceMeters.EPZ303x8,
                 ReferenceMeters.EPZ303x8x1,
+                ReferenceMeters.EPZ303x9
             },
             SupportedVoltageAmplifiers = {
                 VoltageAmplifiers.VU220,
@@ -113,6 +115,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
                 VoltageAmplifiers.VU221x3,
                 VoltageAmplifiers.VUI301,
                 VoltageAmplifiers.VUI302,
+                VoltageAmplifiers.SVG3020,
             },
             SupportedVoltageAuxiliaries = {
                 VoltageAuxiliaries.V210,

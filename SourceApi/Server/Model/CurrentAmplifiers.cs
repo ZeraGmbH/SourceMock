@@ -107,4 +107,9 @@ public enum CurrentAmplifiers
     /// 
     /// </summary>
     VUI302,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    SCG1020,
 }

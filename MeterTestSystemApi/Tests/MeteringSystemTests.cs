@@ -70,7 +70,7 @@ public class MeterTestSystemTests
 
     private ISerialPortFGSource Source = null!;
 
-    private IServiceProvider Services = null!;
+    private ServiceProvider Services = null!;
 
     [SetUp]
     public void Setup()
@@ -97,6 +97,7 @@ public class MeterTestSystemTests
     {
         _port?.Dispose();
         Device?.Dispose();
+        Services?.Dispose();
     }
 
     [Test]

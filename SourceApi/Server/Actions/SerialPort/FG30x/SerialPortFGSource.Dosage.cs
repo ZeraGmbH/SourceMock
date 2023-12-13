@@ -68,4 +68,10 @@ partial class SerialPortFGSource
 
         return Task.WhenAll(Device.Execute(SerialPortRequest.Create("3CM1", "OK3CM1")));
     }
+
+    /// <inheritdoc/>
+    public override Task<bool> CurrentSwitchedOffForDosage()
+    {
+        throw new NotImplementedException();
+    }
 }

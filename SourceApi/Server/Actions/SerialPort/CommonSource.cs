@@ -117,4 +117,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
 
     /// <inheritdoc/>
     public abstract bool Available { get; }
+
+    /// <inheritdoc/>
+    public abstract Task<bool> CurrentSwitchedOffForDosage();
 }

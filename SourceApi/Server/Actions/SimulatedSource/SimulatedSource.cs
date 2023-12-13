@@ -136,6 +136,11 @@ namespace SourceApi.Actions.Source
             throw new NotImplementedException();
         }
 
+        public Task<bool> CurrentSwitchedOffForDosage()
+        {
+            throw new NotImplementedException();
+        }
+
         public LoadpointInfo GetActiveLoadpointInfo() => _info;
 
         public bool Available => true;

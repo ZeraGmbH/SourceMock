@@ -5,6 +5,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 using SourceApi.Actions.Source;
 using SourceApi.Model;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace SourceApi.Controllers
 {
@@ -158,5 +159,15 @@ namespace SourceApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetLoadpointInfo")]
         public ActionResult<LoadpointInfo> GetLoadpointInfo() => _source.GetActiveLoadpointInfo();
+
+        /// <summary>
+        /// Ask the server if the dosage is activated but the current is off.
+        /// </summary>
+        /// <returns>Dosage mode is on but current is off.</returns>
+        [HttpGet("IsDosageCurrentOff")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "IsDosageCurrentOff")]
+        public async Task<ActionResult<bool>> IsDosageCurrentOff() =>
+            Ok(await _source.CurrentSwitchedOffForDosage());
     }
 }

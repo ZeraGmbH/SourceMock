@@ -78,6 +78,11 @@ namespace SourceApi.Actions.VeinSource
             throw new NotImplementedException();
         }
 
+        public Task<bool> CurrentSwitchedOffForDosage()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<SourceResult> TurnOff() => Task.FromException<SourceResult>(new NotImplementedException());
     }
 }

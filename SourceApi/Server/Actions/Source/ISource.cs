@@ -69,5 +69,10 @@ namespace SourceApi.Actions.Source
         /// </summary>
         /// <returns>Information on the current progress of the dosage measurement.</returns>
         Task<DosageProgress> GetDosageProgress();
+
+        /// <summary>
+        /// If set the dosage mode has been activated but current is switch off.
+        /// </summary>
+        Task<bool> CurrentSwitchedOffForDosage();
     }
 }

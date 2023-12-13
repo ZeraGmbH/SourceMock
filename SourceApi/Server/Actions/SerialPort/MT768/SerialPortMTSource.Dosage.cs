@@ -96,4 +96,10 @@ partial class SerialPortMTSource
     /// <inheritdoc/>
     public override Task StartDosage() =>
         Task.WhenAll(Device.Execute(SerialPortRequest.Create("S3CM1", "SOK3CM1")));
+
+    /// <inheritdoc/>
+    public override Task<bool> CurrentSwitchedOffForDosage()
+    {
+        throw new NotImplementedException();
+    }
 }

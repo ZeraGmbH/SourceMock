@@ -41,6 +41,11 @@ public static class SharedLibraryConfiguration
             {
                 options.Filters.Add<DatabaseErrorFilter>();
             });
+
+        services.AddSwaggerGen(options =>
+            {
+                options.DocumentFilter<ErrorSchemas>();
+            });
     }
 
     /// <summary>

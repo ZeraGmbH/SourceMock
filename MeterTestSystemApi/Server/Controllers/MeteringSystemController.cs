@@ -50,7 +50,7 @@ public class MeterTestSystemController(IMeterTestSystem device) : ControllerBase
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetAmplifiersAndReferenceMeter([FromBody] AmplifiersAndReferenceMeters request) =>
+    public Task<ActionResult> SetAmplifiersAndReferenceMeter([FromBody] AmplifiersAndReferenceMeter request) =>
         ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.SetAmplifiersAndReferenceMeter(request));
 
     /// <summary>
@@ -65,8 +65,8 @@ public class MeterTestSystemController(IMeterTestSystem device) : ControllerBase
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<AmplifiersAndReferenceMeters>> GetAmplifiersAndReferenceMeter() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => Task.FromResult(_device.AmplifiersAndReferenceMeters));
+    public Task<ActionResult<AmplifiersAndReferenceMeter>> GetAmplifiersAndReferenceMeter() =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => Task.FromResult(_device.AmplifiersAndReferenceMeter));
 
     /// <summary>
     /// Read the firmware from the metering system.

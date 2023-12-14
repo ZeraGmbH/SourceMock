@@ -9,7 +9,7 @@ namespace MeterTestSystemApi.Models;
 /// Physical configuration of a meter test system - not
 /// all types of tests systems allow configuraton.
 /// </summary>
-public class AmplifiersAndReferenceMeters
+public class AmplifiersAndReferenceMeter
 {
     /// <summary>
     /// The voltage amplifier connected to the meter test system.

@@ -36,7 +36,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     private readonly IServiceProvider _services;
 
     /// <inheritdoc/>
-    public AmplifiersAndReferenceMeters AmplifiersAndReferenceMeters { get; private set; } = null!;
+    public AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter { get; private set; } = null!;
 
     /// <inheritdoc/>
     public ISource Source { get; private set; } = new UnavailableSource();
@@ -138,7 +138,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         });
 
     /// <inheritdoc/>
-    public async Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeters settings)
+    public async Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeter settings)
     {
         /* Validate all input parameters against our own capabilities. */
         var capabilities = await GetCapabilities();
@@ -191,7 +191,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
             if (source != null)
             {
                 /* Update the implementation references if the frequency generator accepted the new configuration. */
-                AmplifiersAndReferenceMeters = settings;
+                AmplifiersAndReferenceMeter = settings;
                 ErrorCalculator = errorCalculator;
                 RefMeter = refMeter;
                 Source = source;

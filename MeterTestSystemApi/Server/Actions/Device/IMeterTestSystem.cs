@@ -26,12 +26,12 @@ public interface IMeterTestSystem
     /// Report the physical configuration to the meter test system implementation.
     /// </summary>
     /// <param name="settings">Physical configuration to use.</param>
-    Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeters settings);
+    Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeter settings);
 
     /// <summary>
     /// Request the current physical configuration used.
     /// </summary>
-    AmplifiersAndReferenceMeters AmplifiersAndReferenceMeters { get; }
+    AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter { get; }
 
     /// <summary>
     /// The corresponding source.

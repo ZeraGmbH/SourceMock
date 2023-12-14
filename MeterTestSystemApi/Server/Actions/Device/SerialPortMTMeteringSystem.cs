@@ -39,7 +39,7 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     public IErrorCalculator ErrorCalculator { get; private set; }
 
     /// <inheritdoc/>
-    public AmplifiersAndReferenceMeters AmplifiersAndReferenceMeters => throw new NotImplementedException();
+    public AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter => throw new NotImplementedException();
 
     /// <summary>
     /// Initialize device manager.
@@ -90,7 +90,7 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeters settings)
+    public Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeter settings)
     {
         /* The MT line systems do not support amplifier configurations. */
         throw new InvalidOperationException();

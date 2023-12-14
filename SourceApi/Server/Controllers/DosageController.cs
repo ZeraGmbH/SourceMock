@@ -5,27 +5,26 @@ using Swashbuckle.AspNetCore.Annotations;
 
 using SourceApi.Actions.Source;
 using SourceApi.Model;
+using SerialPortProxy;
 
 namespace SourceApi.Controllers;
 
 /// <summary>
-/// Request device dependant information.
+/// Execute dosage functions on source.
 /// </summary>
+/// <remarks>
+/// Initialize a new controller.
+/// </remarks>
+/// <param name="device">Serial port connected device to use.</param>
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/Source/[controller]")]
-public class DosageController : ControllerBase
+public class DosageController(ISource device) : ControllerBase
 {
-    private readonly ISource _device;
-
     /// <summary>
-    /// Initialize a new controller.
+    /// The current source to use for this frequest.
     /// </summary>
-    /// <param name="device">Serial port connected device to use.</param>
-    public DosageController(ISource device)
-    {
-        _device = device;
-    }
+    private readonly ISource _device = device;
 
     /// <summary>
     /// Start a dosage meaurement.
@@ -33,8 +32,13 @@ public class DosageController : ControllerBase
     [HttpPost("Start")]
     [SwaggerOperation(OperationId = "Start")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> StartDosage() => Utils.SafeExecuteSerialPortCommand(_device.StartDosage);
+    public Task<ActionResult> StartDosage() =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(_device.StartDosage);
 
     /// <summary>
     /// Start a dosage meaurement.
@@ -42,8 +46,13 @@ public class DosageController : ControllerBase
     [HttpPost("Cancel")]
     [SwaggerOperation(OperationId = "Cancel")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> CancelDosage() => Utils.SafeExecuteSerialPortCommand(_device.CancelDosage);
+    public Task<ActionResult> CancelDosage() =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(_device.CancelDosage);
 
     /// <summary>
     /// Change the DOS mode.
@@ -52,8 +61,13 @@ public class DosageController : ControllerBase
     [HttpPost("DOSMode")]
     [SwaggerOperation(OperationId = "SetDOSMode")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetDOSMode(bool on) => Utils.SafeExecuteSerialPortCommand(() => _device.SetDosageMode(on));
+    public Task<ActionResult> SetDOSMode(bool on) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.SetDosageMode(on));
 
     /// <summary>
     /// Read the current progress of a dosage operation.
@@ -62,8 +76,13 @@ public class DosageController : ControllerBase
     [HttpGet("Progress")]
     [SwaggerOperation(OperationId = "GetProgress")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<DosageProgress>> GetProgress() => Utils.SafeExecuteSerialPortCommand(_device.GetDosageProgress);
+    public Task<ActionResult<DosageProgress>> GetProgress() =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetDosageProgress);
 
     /// <summary>
     /// Set the dosage energy.
@@ -72,8 +91,13 @@ public class DosageController : ControllerBase
     [HttpPut("Energy")]
     [SwaggerOperation(OperationId = "SetEnergy")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetEnergy(double energy) => Utils.SafeExecuteSerialPortCommand(() => _device.SetDosageEnergy(energy));
+    public Task<ActionResult> SetEnergy(double energy) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.SetDosageEnergy(energy));
 
     /// <summary>
     /// Ask the server if the dosage is activated but the current is off.
@@ -82,5 +106,12 @@ public class DosageController : ControllerBase
     [HttpGet("IsDosageCurrentOff")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "IsDosageCurrentOff")]
-    public Task<ActionResult<bool>> IsDosageCurrentOff() => Utils.SafeExecuteSerialPortCommand(() => _device.CurrentSwitchedOffForDosage());
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult<bool>> IsDosageCurrentOff() =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.CurrentSwitchedOffForDosage());
 }

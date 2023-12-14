@@ -2,61 +2,71 @@ using MeterTestSystemApi.Actions.Device;
 using MeterTestSystemApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SerialPortProxy;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace MeterTestSystemApi.Controllers;
 
 /// <summary>
-/// 
+/// Controller to access the current meter test system.
 /// </summary>
+/// <remarks>
+/// Initialize a new meter test system controller.
+/// </remarks>
+/// <param name="device">Meter test system to use.</param>
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class MeterTestSystemController : ControllerBase
+public class MeterTestSystemController(IMeterTestSystem device) : ControllerBase
 {
-    private readonly IMeterTestSystem _device;
+    /// <summary>
+    /// The meter test system to use during this request.
+    /// </summary>
+    private readonly IMeterTestSystem _device = device;
 
     /// <summary>
-    /// 
+    /// Report the capabilities of the current meter test system.
     /// </summary>
-    /// <param name="device"></param>
-    public MeterTestSystemController(IMeterTestSystem device)
-    {
-        _device = device;
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
+    /// <returns>May be null if the meter test system does not allow configuration.</returns>
     [HttpGet]
     [SwaggerOperation(OperationId = "GetMeterTestSystemCapabilities")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<MeterTestSystemCapabilities>> GetCapabilities() =>
-        Utils.SafeExecuteSerialPortCommand(_device.GetCapabilities);
+        ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetCapabilities);
 
     /// <summary>
-    /// 
+    /// Set the physical configuration of a meter test system.
     /// </summary>
-    /// <returns></returns>
     [HttpPut("AmplifiersAndReferenceMeters")]
     [SwaggerOperation(OperationId = "SetAmplifiersAndReferenceMeter")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SetAmplifiersAndReferenceMeter([FromBody] AmplifiersAndReferenceMeters request) =>
-        Utils.SafeExecuteSerialPortCommand(() => _device.SetAmplifiersAndReferenceMeter(request));
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.SetAmplifiersAndReferenceMeter(request));
 
     /// <summary>
-    /// 
+    /// Report the current pysical configuration of the meter test system.
     /// </summary>
     /// <returns></returns>
     [HttpGet("AmplifiersAndReferenceMeters")]
     [SwaggerOperation(OperationId = "GetAmplifiersAndReferenceMeter")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<AmplifiersAndReferenceMeters> GetAmplifiersAndReferenceMeter() =>
-        _device.AmplifiersAndReferenceMeters;
+    public Task<ActionResult<AmplifiersAndReferenceMeters>> GetAmplifiersAndReferenceMeter() =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => Task.FromResult(_device.AmplifiersAndReferenceMeters));
 
     /// <summary>
     /// Read the firmware from the metering system.
@@ -65,7 +75,11 @@ public class MeterTestSystemController : ControllerBase
     [HttpGet("FirmwareVersion")]
     [SwaggerOperation(OperationId = "GetFirmwareVersion")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<MeterTestSystemFirmwareVersion>> GetFirmwareVersion() =>
-        Utils.SafeExecuteSerialPortCommand(_device.GetFirmwareVersion);
+        ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetFirmwareVersion);
 }

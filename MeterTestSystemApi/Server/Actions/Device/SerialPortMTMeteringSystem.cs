@@ -10,7 +10,7 @@ using SourceApi.Actions.Source;
 namespace MeterTestSystemApi.Actions.Device;
 
 /// <summary>
-/// 
+/// Representation of a movable meter test system connected through a serial port line.
 /// </summary>
 public class SerialPortMTMeterTestSystem : IMeterTestSystem
 {
@@ -19,14 +19,18 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     /// </summary>
     private static readonly Regex _versionReg = new("^(.+)V([^V]+)$", RegexOptions.Singleline | RegexOptions.Compiled);
 
+    /// <summary>
+    /// Serial port connection to the system.
+    /// </summary>
     private readonly ISerialPortConnection _device;
 
+    /// <summary>
+    /// Logging helper.
+    /// </summary>
     private readonly ILogger<SerialPortMTMeterTestSystem> _logger;
 
-    private readonly ISerialPortMTSource _source;
-
     /// <inheritdoc/>
-    public ISource Source => _source;
+    public ISource Source { get; private set; }
 
     /// <inheritdoc/>
     public IRefMeter RefMeter { get; private set; }
@@ -49,10 +53,10 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     {
         ErrorCalculator = errorCalculator;
         RefMeter = refMeter;
+        Source = source;
 
         _device = device;
         _logger = logger;
-        _source = source;
     }
 
     /// <inheritdoc/>
@@ -79,11 +83,16 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemCapabilities> GetCapabilities() => Task.FromResult<MeterTestSystemCapabilities>(null!);
+    public Task<MeterTestSystemCapabilities> GetCapabilities()
+    {
+        /* The MT line systems do not support amplifier configurations. */
+        return Task.FromResult<MeterTestSystemCapabilities>(null!);
+    }
 
     /// <inheritdoc/>
     public Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeters settings)
     {
-        throw new NotImplementedException("SetAmplifiersAndReferenceMeter");
+        /* The MT line systems do not support amplifier configurations. */
+        throw new InvalidOperationException();
     }
 }

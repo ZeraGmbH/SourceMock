@@ -160,7 +160,7 @@ public class CapabilitiesMap : ICapabilitiesMap
     } },
     { "SVG3020", new() {
         FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Voltage = new(75, 600, 0.001) } },
+        Phases = new() { new() { Voltage = new(30, 600, 0.001) } },
     } } };
 
     private static readonly Dictionary<string, SourceCapabilities> CurrentByAmplifier = new() {
@@ -194,6 +194,6 @@ public class CapabilitiesMap : ICapabilitiesMap
     } },
     { "SCG1020", new() {
         FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Current = new(0.0125, 120, 0.0001)} },
+        Phases = new() { new() { Current = new(0.001, 120, 0.0001)} },
     } } };
 }

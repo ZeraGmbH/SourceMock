@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SharedLibrary.Actions.Database;
@@ -35,5 +36,12 @@ public static class SharedLibraryConfiguration
     public static void UseSharedLibrary(this IServiceCollection services, IConfiguration configuration)
     {
         ConfigureDatabase(services, configuration);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static void UseSharedLibrary(this MvcOptions options)
+    {
     }
 }

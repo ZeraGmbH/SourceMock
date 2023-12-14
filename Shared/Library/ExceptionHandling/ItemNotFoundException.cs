@@ -7,7 +7,7 @@ namespace SharedLibrary.ExceptionHandling;
 /// 
 /// </remarks>
 /// <param name="id"></param>
-public class ItemNotFoundException(string id) : Exception($"Item with id '{id}' not nonofound in database")
+public class ItemNotFoundException(string id) : Exception($"Item with id '{id}' cannot be found in database")
 {
     /// <summary>
     /// 

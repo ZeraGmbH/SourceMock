@@ -15,7 +15,15 @@ public class DatabaseErrorFilter : IExceptionFilter
     /// <exception cref="NotImplementedException"></exception>
     public void OnException(ExceptionContext context)
     {
-        context.Result = ErrorHelper.CreateProblemDetails(context.Exception.Message, status: 422, samErrorCode: SamDatabaseError.ITEM_NOT_FOUND, "");
+        var exception = context.Exception;
+        if (exception is ItemNotFoundException)
+        {
+            context.Result = ErrorHelper.CreateProblemDetails(context.Exception.Message, status: 422, samErrorCode: SamDatabaseError.ITEM_NOT_FOUND, "");
+            context.ExceptionHandled = true;
+            return;
+        }
+
+        context.Result = ErrorHelper.CreateProblemDetails(context.Exception.Message, status: 400, samErrorCode: SamDatabaseError.DATABASE_ERROR, "");
         context.ExceptionHandled = true;
     }
 

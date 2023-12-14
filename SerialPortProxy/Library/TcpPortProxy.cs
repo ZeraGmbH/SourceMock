@@ -33,20 +33,33 @@ public class TcpPortProxy : ISerialPort
         var port = ushort.Parse(serverAndPort[(sep + 1)..]);
 
         /* Create the connection. */
-        _client = new TcpClient(server, port)
+        _client = new TcpClient(AddressFamily.InterNetwork)
         {
             SendTimeout = 30000,
             ReceiveTimeout = 30000,
         };
 
-        _stream = _client.GetStream();
+        try
+        {
+            _client.Connect(server, port);
+
+            /* Attach to the stream. */
+            _stream = _client.GetStream();
+        }
+        catch (System.Exception)
+        {
+            /* Proper cleanup. */
+            Dispose();
+
+            throw;
+        }
     }
 
     /// <inheritdoc/>
     public void Dispose()
     {
-        _stream.Dispose();
-        _client.Dispose();
+        _stream?.Dispose();
+        _client?.Dispose();
     }
 
     /// <inheritdoc/>

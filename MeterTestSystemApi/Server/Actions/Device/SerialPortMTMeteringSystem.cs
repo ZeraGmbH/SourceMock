@@ -1,6 +1,5 @@
 using System.Text.RegularExpressions;
 using ErrorCalculatorApi.Actions.Device;
-using MeterTestSystemApi.Model;
 using MeterTestSystemApi.Models;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions.Device;

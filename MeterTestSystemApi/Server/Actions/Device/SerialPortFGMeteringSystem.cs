@@ -1,6 +1,4 @@
-using System.Text.RegularExpressions;
 using ErrorCalculatorApi.Actions.Device;
-using MeterTestSystemApi.Model;
 using MeterTestSystemApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -10,23 +8,31 @@ using SerialPortProxy;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
+using System.Text.RegularExpressions;
 
 namespace MeterTestSystemApi.Actions.Device;
 
 /// <summary>
-/// 
+/// Implementation of a meter test system implementation using the
+/// serial port protocol against a frequency generator.
 /// </summary>
 public class SerialPortFGMeterTestSystem : IMeterTestSystem
 {
     /// <summary>
-    /// Detect model name and version number.
+    /// Physical connection to the frequency generator.
     /// </summary>
-    private static readonly Regex _versionReg = new("^TS(.{8})(.{4})$", RegexOptions.Singleline | RegexOptions.Compiled);
-
     private readonly ISerialPortConnection _device;
 
+    /// <summary>
+    /// Logging helper.
+    /// </summary>
     private readonly ILogger<SerialPortFGMeterTestSystem> _logger;
 
+    /// <summary>
+    /// Dependency injection system to allow dynamic switching of source, 
+    /// reference meter and error calclulator implemtations when the physical
+    /// configuration changes.
+    /// </summary>
     private readonly IServiceProvider _services;
 
     /// <inheritdoc/>
@@ -59,6 +65,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         Task.FromResult(new MeterTestSystemCapabilities
         {
             SupportedCurrentAmplifiers = {
+                CurrentAmplifiers.SCG1020,
                 CurrentAmplifiers.VI201x0,
                 CurrentAmplifiers.VI201x0x1,
                 CurrentAmplifiers.VI201x1,
@@ -72,7 +79,6 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
                 CurrentAmplifiers.VI222x0x1,
                 CurrentAmplifiers.VUI301,
                 CurrentAmplifiers.VUI302,
-                CurrentAmplifiers.SCG1020,
             },
             SupportedCurrentAuxiliaries = {
                 CurrentAuxiliaries.V200,
@@ -99,14 +105,15 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
                 ReferenceMeters.EPZ303x9
             },
             SupportedVoltageAmplifiers = {
+                VoltageAmplifiers.SVG3020,
+                VoltageAmplifiers.VU211x0,
+                VoltageAmplifiers.VU211x1,
+                VoltageAmplifiers.VU211x2,
                 VoltageAmplifiers.VU220,
                 VoltageAmplifiers.VU220x01,
                 VoltageAmplifiers.VU220x02,
                 VoltageAmplifiers.VU220x03,
                 VoltageAmplifiers.VU220x04,
-                VoltageAmplifiers.VU211x0,
-                VoltageAmplifiers.VU211x1,
-                VoltageAmplifiers.VU211x2,
                 VoltageAmplifiers.VU221x0,
                 VoltageAmplifiers.VU221x0x2,
                 VoltageAmplifiers.VU221x0x3,
@@ -115,7 +122,6 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
                 VoltageAmplifiers.VU221x3,
                 VoltageAmplifiers.VUI301,
                 VoltageAmplifiers.VUI302,
-                VoltageAmplifiers.SVG3020,
             },
             SupportedVoltageAuxiliaries = {
                 VoltageAuxiliaries.V210,
@@ -134,6 +140,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     /// <inheritdoc/>
     public async Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeters settings)
     {
+        /* Validate all input parameters against our own capabilities. */
         var capabilities = await GetCapabilities();
 
         if (!capabilities.SupportedVoltageAmplifiers.Contains(settings.VoltageAmplifier))
@@ -152,18 +159,29 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         if (!capabilities.SupportedReferenceMeters.Contains(settings.ReferenceMeter))
             throw new ArgumentException("referenceMeter");
 
+        /* Create new instances of all connected sub devices. */
         var errorCalculator = _services.GetRequiredService<ISerialPortFGErrorCalculator>();
         var refMeter = _services.GetRequiredService<ISerialPortFGRefMeter>();
         var source = _services.GetRequiredService<ISerialPortFGSource>();
 
+        /* Configure the sub devices if necessary. */
         source.SetAmplifiers(settings.VoltageAmplifier, settings.CurrentAmplifier, settings.VoltageAuxiliary, settings.CurrentAuxiliary);
 
         try
         {
-            await _device.Execute(SerialPortRequest.Create($"ZP{CodeMappings.Voltage[settings.VoltageAmplifier]:00}{CodeMappings.Current[settings.CurrentAmplifier]:00}{CodeMappings.AuxVoltage[settings.VoltageAuxiliary]:00}{CodeMappings.AuxCurrent[settings.CurrentAuxiliary]:00}{CodeMappings.RefMeter[settings.ReferenceMeter]:00}", "OKZP"))[0];
+            /* Get all API codes for amplifiers and reference meter - to make source code a bit more readable. */
+            var auxCurrentCode = CodeMappings.AuxCurrent[settings.CurrentAuxiliary];
+            var auxVoltageCode = CodeMappings.AuxVoltage[settings.VoltageAuxiliary];
+            var currentCode = CodeMappings.Current[settings.CurrentAmplifier];
+            var refMeterCode = CodeMappings.RefMeter[settings.ReferenceMeter];
+            var voltageCode = CodeMappings.Voltage[settings.VoltageAmplifier];
+
+            /* Send the combined command to the meter test system. */
+            await _device.Execute(SerialPortRequest.Create($"ZP{voltageCode:00}{currentCode:00}{auxVoltageCode:00}{auxCurrentCode:00}{refMeterCode:00}", "OKZP"))[0];
         }
         catch (Exception)
         {
+            /* Do not update the current configuration since the frequency generator rejected the new settings. */
             source = null;
 
             throw;
@@ -172,6 +190,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         {
             if (source != null)
             {
+                /* Update the implementation references if the frequency generator accepted the new configuration. */
                 AmplifiersAndReferenceMeters = settings;
                 ErrorCalculator = errorCalculator;
                 RefMeter = refMeter;
@@ -184,22 +203,15 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     public async Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion()
     {
         /* Send command and check reply. */
-        var reply = await _device.Execute(SerialPortRequest.Create("TS", _versionReg))[0];
+        var request = SerialPortRequest.Create("TS", new Regex("^TS(.{8})(.{4})$"));
 
-        if (reply.Length < 1)
-            throw new InvalidOperationException($"wrong number of response lines - expected at least 1 but got {reply.Length}");
-
-        /* Validate the response consisting of model name and version numner. */
-        var versionMatch = _versionReg.Match(reply[^1]);
-
-        if (versionMatch?.Success != true)
-            throw new InvalidOperationException($"invalid response {reply[0]} from device");
+        await _device.Execute(request)[0];
 
         /* Create response structure. */
-        return new MeterTestSystemFirmwareVersion
+        return new()
         {
-            ModelName = versionMatch.Groups[1].Value.Trim(),
-            Version = versionMatch.Groups[2].Value.Trim()
+            ModelName = request.EndMatch!.Groups[1].Value.Trim(),
+            Version = request.EndMatch!.Groups[2].Value.Trim()
         };
     }
 }

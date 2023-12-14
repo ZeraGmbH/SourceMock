@@ -1,5 +1,4 @@
 using MeterTestSystemApi.Actions.Device;
-using MeterTestSystemApi.Model;
 using MeterTestSystemApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

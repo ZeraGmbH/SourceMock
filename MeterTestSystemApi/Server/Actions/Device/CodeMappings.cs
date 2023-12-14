@@ -1,10 +1,11 @@
 using RefMeterApi.Models;
 using SourceApi.Model;
 
-namespace MeterTestSystemApi;
+namespace MeterTestSystemApi.Actions.Device;
 
 /// <summary>
-/// 
+/// Mapping of amplifier and reference meter types to the
+/// code used in the serial API of the frequency generators.
 /// </summary>
 public static class CodeMappings
 {
@@ -15,6 +16,7 @@ public static class CodeMappings
         {
             { CurrentAmplifiers.LABSMP715, 46 },
             { CurrentAmplifiers.SCG1000x00, 46 },
+            { CurrentAmplifiers.SCG1020, 42 },
             { CurrentAmplifiers.SCG750x00, 46 },
             { CurrentAmplifiers.V200, 21 },
             { CurrentAmplifiers.V200x1x2, 13 },
@@ -33,7 +35,6 @@ public static class CodeMappings
             { CurrentAmplifiers.VI222x0x1, 46 },
             { CurrentAmplifiers.VUI301, 23 },
             { CurrentAmplifiers.VUI302, 23 },
-            { CurrentAmplifiers.SCG1020, 42 },
         };
 
     /// <summary>
@@ -62,6 +63,7 @@ public static class CodeMappings
         {
             { VoltageAmplifiers.LABSMP21200, 36 },
             { VoltageAmplifiers.SVG1200x00, 36 },
+            { VoltageAmplifiers.SVG3020, 37 },
             { VoltageAmplifiers.V210, 1 },
             { VoltageAmplifiers.VU211x0, 30 },
             { VoltageAmplifiers.VU211x1, 30 },
@@ -79,7 +81,6 @@ public static class CodeMappings
             { VoltageAmplifiers.VU221x3, 32 },
             { VoltageAmplifiers.VUI301, 3 },
             { VoltageAmplifiers.VUI302, 3 },
-            { VoltageAmplifiers.SVG3020, 37 },
         };
 
     /// <summary>
@@ -124,8 +125,8 @@ public static class CodeMappings
         { ReferenceMeters.EPZ303x10x1, 72 },
         { ReferenceMeters.EPZ303x5, 42 },
         { ReferenceMeters.EPZ303x8, 62 },
-        { ReferenceMeters.EPZ303x9, 69 },
         { ReferenceMeters.EPZ303x8x1, 64 },
+        { ReferenceMeters.EPZ303x9, 69 },
         { ReferenceMeters.EPZ350x00, 66 },
         { ReferenceMeters.MT310s2, 73 },
         { ReferenceMeters.RMM3000x1, 63 },

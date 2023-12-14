@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SharedLibrary.Actions.Database;
+using SharedLibrary.ExceptionHandling;
 using SharedLibrary.Models;
 using SharedLibrary.Services;
 
@@ -36,6 +37,10 @@ public static class SharedLibraryConfiguration
     public static void UseSharedLibrary(this IServiceCollection services, IConfiguration configuration)
     {
         ConfigureDatabase(services, configuration);
+        services.AddControllers(options =>
+            {
+                options.Filters.Add<DatabaseErrorFilter>();
+            });
     }
 
     /// <summary>

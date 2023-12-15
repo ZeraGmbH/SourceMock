@@ -53,6 +53,9 @@ public static class SharedLibraryConfiguration
     /// </summary>
     public static void UseSharedLibrary(this SwaggerGenOptions options)
     {
-        options.DocumentFilter<ErrorSchemas>();
+        SwaggerModelExtender
+            .AddType<SamDetailExtensions>()
+            .AddType<SamDatabaseError>()
+            .Register(options);
     }
 }

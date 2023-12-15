@@ -17,7 +17,7 @@ public static class ErrorHelper
     /// <param name="samErrorCode"></param>
     /// <param name="args"></param>
     /// <returns></returns>
-    public static IActionResult CreateProblemDetails<T>(string detail, int status, T samErrorCode, params object[] args) where T : notnull
+    public static ActionResult CreateProblemDetails<T>(string detail, int status, T samErrorCode, params object[] args) where T : notnull
     {
         return new ObjectResult(new ProblemDetails
         {

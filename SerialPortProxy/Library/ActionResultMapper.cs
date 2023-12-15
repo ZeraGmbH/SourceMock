@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SharedLibrary.ExceptionHandling;
 
 namespace SerialPortProxy;
 
@@ -46,46 +47,40 @@ public class ActionResultMapper
         catch (TimeoutException)
         {
             /* No reply in the configured response time. */
-            return new ObjectResult(new ProblemDetails
-            {
-                Detail = "Source operation timed out.",
-                Status = StatusCodes.Status408RequestTimeout
-            });
+            return ErrorHelper.CreateProblemDetails(
+                "Source operation timed out.",
+                StatusCodes.Status408RequestTimeout,
+                SerialPortErrorCodes.SerialPortTimeOut
+            );
         }
         catch (InvalidOperationException e)
         {
             /* Bad command. */
-            return new ObjectResult(new ProblemDetails
-            {
-                Detail = $"Unable to execute request: {e.Message}.",
-                Status = StatusCodes.Status406NotAcceptable
-            });
+            return ErrorHelper.CreateProblemDetails(
+                $"Unable to execute request: {e.Message}.",
+                StatusCodes.Status406NotAcceptable,
+                SerialPortErrorCodes.SerialPortBadRequest,
+                e.Message
+            );
         }
         catch (ArgumentException e)
         {
-            return new ObjectResult(new ProblemDetails
-            {
-                Detail = $"Unable to execute request: {e.Message}.",
-                Status = StatusCodes.Status400BadRequest
-            });
+            return ErrorHelper.CreateProblemDetails(
+                $"Unable to execute request: {e.Message}.",
+                StatusCodes.Status400BadRequest,
+                SerialPortErrorCodes.SerialPortBadRequest,
+                e.Message
+            );
         }
         catch (OperationCanceledException e)
         {
             /* Command not executed because it has been canceled before it could be started. */
-            return new ObjectResult(new ProblemDetails
-            {
-                Detail = $"Execution has been cancelled: {e.Message}.",
-                Status = StatusCodes.Status410Gone
-            });
-        }
-        catch (Exception e)
-        {
-            /* General error while processing the command. */
-            return new ObjectResult(new ProblemDetails
-            {
-                Detail = $"Operation failed: {e.Message}.",
-                Status = StatusCodes.Status500InternalServerError
-            });
+            return ErrorHelper.CreateProblemDetails(
+                $"Execution has been cancelled: {e.Message}.",
+                StatusCodes.Status410Gone,
+                SerialPortErrorCodes.SerialPortAborted,
+                e.Message
+            );
         }
     }
 }

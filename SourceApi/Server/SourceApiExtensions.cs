@@ -9,7 +9,7 @@ using SourceApi.Actions.SerialPort.MT768;
 using SerialPortProxy;
 using Microsoft.Extensions.Logging;
 using SourceApi.Actions.SerialPort;
-using Microsoft.OpenApi.Models;
+using SharedLibrary;
 
 namespace SourceApi;
 
@@ -18,19 +18,6 @@ namespace SourceApi;
 /// </summary>
 public static class SourceApiConfiguration
 {
-    class ExtraSchemas : IDocumentFilter
-    {
-        private static void Apply<T>(DocumentFilterContext context)
-        {
-            context.SchemaGenerator.GenerateSchema(typeof(T), context.SchemaRepository);
-        }
-
-        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
-        {
-            Apply<SourceResult>(context);
-        }
-    }
-
     /// <summary>
     /// 
     /// </summary>
@@ -38,7 +25,7 @@ public static class SourceApiConfiguration
     {
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SourceApiConfiguration).Assembly.GetName().Name}.xml"));
 
-        options.DocumentFilter<ExtraSchemas>();
+        SwaggerModelExtender.AddType<SourceResult>().Register(options);
     }
 
     /// <summary>

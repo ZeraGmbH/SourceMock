@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Filters;
+using MongoDB.Driver;
 using SharedLibrary.Models;
 
 namespace SharedLibrary.ExceptionHandling;
@@ -16,15 +17,17 @@ public class DatabaseErrorFilter : IExceptionFilter
     public void OnException(ExceptionContext context)
     {
         var exception = context.Exception;
-        if (exception is ItemNotFoundException)
+        if (exception is ItemNotFoundException itemNotFoundException)
         {
-            context.Result = ErrorHelper.CreateProblemDetails(context.Exception.Message, status: 422, samErrorCode: SamDatabaseError.ITEM_NOT_FOUND, "");
+            context.Result = ErrorHelper.CreateProblemDetails(exception.Message, status: 422, samErrorCode: SamDatabaseError.ITEM_NOT_FOUND, itemNotFoundException.ItemId);
             context.ExceptionHandled = true;
             return;
         }
-
-        context.Result = ErrorHelper.CreateProblemDetails(context.Exception.Message, status: 400, samErrorCode: SamDatabaseError.DATABASE_ERROR, "");
-        context.ExceptionHandled = true;
+        if (exception is MongoException)
+        {
+            context.Result = ErrorHelper.CreateProblemDetails(exception.Message, status: 400, samErrorCode: SamDatabaseError.DATABASE_ERROR, "");
+            context.ExceptionHandled = true;
+        }
     }
 
 }

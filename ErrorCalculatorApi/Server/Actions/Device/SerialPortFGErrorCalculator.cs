@@ -5,7 +5,8 @@ using SerialPortProxy;
 namespace ErrorCalculatorApi.Actions.Device;
 
 /// <summary>
-/// 
+/// Configuration interface for an error calculator connected
+/// to a frequency configurator.
 /// </summary>
 public interface ISerialPortFGErrorCalculator : IErrorCalculator
 {
@@ -17,48 +18,36 @@ public interface ISerialPortFGErrorCalculator : IErrorCalculator
 /// it has to be connected separatly (via network and Koala XML 
 /// protocol).
 /// </summary>
+/// <remarks>
+/// Initialize device manager.
+/// </remarks>
+/// <param name="device">Service to access the current serial port.</param>
+/// <param name="logger">Logging service for this device type.</param>
 
-public class SerialPortFGErrorCalculator : ISerialPortFGErrorCalculator
+public class SerialPortFGErrorCalculator(ISerialPortConnection device, ILogger<SerialPortFGErrorCalculator> logger) : ISerialPortFGErrorCalculator
 {
-    private readonly ISerialPortConnection _device;
-
-    private readonly ILogger<SerialPortFGErrorCalculator> _logger;
+    /// <summary>
+    /// Serial port connection.
+    /// </summary>
+    private readonly ISerialPortConnection _device = device;
 
     /// <summary>
-    /// Initialize device manager.
+    /// Logging helper.
     /// </summary>
-    /// <param name="device">Service to access the current serial port.</param>
-    /// <param name="logger">Logging service for this device type.</param>
-    public SerialPortFGErrorCalculator(ISerialPortConnection device, ILogger<SerialPortFGErrorCalculator> logger)
-    {
-        _device = device;
-        _logger = logger;
-    }
+    private readonly ILogger<SerialPortFGErrorCalculator> _logger = logger;
 
     /// <inheritdoc/>
     public bool Available => false;
 
     /// <inheritdoc/>
-    public Task AbortErrorMeasurement()
-    {
-        throw new NotImplementedException();
-    }
+    public Task AbortErrorMeasurement() => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task<ErrorMeasurementStatus> GetErrorStatus()
-    {
-        throw new NotImplementedException();
-    }
+    public Task<ErrorMeasurementStatus> GetErrorStatus() => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(double meterConstant, long impulses)
-    {
-        throw new NotImplementedException();
-    }
+    public Task SetErrorMeasurementParameters(double meterConstant, long impulses) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task StartErrorMeasurement(bool continuous)
-    {
-        throw new NotImplementedException();
-    }
+    public Task StartErrorMeasurement(bool continuous) => throw new NotImplementedException();
 }

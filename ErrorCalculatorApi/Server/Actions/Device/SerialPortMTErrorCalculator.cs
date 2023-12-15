@@ -4,7 +4,7 @@ using SerialPortProxy;
 namespace ErrorCalculatorApi.Actions.Device;
 
 /// <summary>
-/// 
+/// Interface to configure an error calculator.
 /// </summary>
 public interface ISerialPortMTErrorCalculator : IErrorCalculator
 {
@@ -13,22 +13,22 @@ public interface ISerialPortMTErrorCalculator : IErrorCalculator
 /// <summary>
 /// Handle all requests to a MT compatible device.
 /// </summary>
-public partial class SerialPortMTErrorCalculator : ISerialPortMTErrorCalculator
+/// <remarks>
+/// Initialize device manager.
+/// </remarks>
+/// <param name="device">Service to access the current serial port.</param>
+/// <param name="logger">Logging service for this device type.</param>
+public partial class SerialPortMTErrorCalculator(ISerialPortConnection device, ILogger<SerialPortMTErrorCalculator> logger) : ISerialPortMTErrorCalculator
 {
-    private readonly ISerialPortConnection _device;
-
-    private readonly ILogger<SerialPortMTErrorCalculator> _logger;
+    /// <summary>
+    /// Communication interface to the device.
+    /// </summary>
+    private readonly ISerialPortConnection _device = device;
 
     /// <summary>
-    /// Initialize device manager.
+    /// Logging helper.
     /// </summary>
-    /// <param name="device">Service to access the current serial port.</param>
-    /// <param name="logger">Logging service for this device type.</param>
-    public SerialPortMTErrorCalculator(ISerialPortConnection device, ILogger<SerialPortMTErrorCalculator> logger)
-    {
-        _device = device;
-        _logger = logger;
-    }
+    private readonly ILogger<SerialPortMTErrorCalculator> _logger = logger;
 
     /// <inheritdoc/>
     public bool Available => true;

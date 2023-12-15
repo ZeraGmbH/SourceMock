@@ -16,7 +16,7 @@ public interface IErrorCalculator
     /// Configure the error measurement.
     /// </summary>
     /// <param name="meterConstant">The meter constant of the device under test - impulses per kWh.</param>
-    /// <param name="impulses"></param>
+    /// <param name="impulses">Number of impluses to sent.</param>
     Task SetErrorMeasurementParameters(double meterConstant, long impulses);
 
     /// <summary>

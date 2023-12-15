@@ -12,6 +12,7 @@ COPY ErrorCalculatorApi ErrorCalculatorApi
 COPY MeterTestSystemApi MeterTestSystemApi
 COPY RefMeterApi RefMeterApi
 COPY SerialPortProxy SerialPortProxy
+COPY Shared Shared
 COPY SourceApi SourceApi
 
 COPY WebServer/Server/WebSamDeviceApis.csproj Server/WebSamDeviceApis/WebSamDeviceApis.csproj

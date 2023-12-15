@@ -11,6 +11,7 @@ partial class SerialPortFGRefMeter
     {
         TestConfigured();
 
+        /* Request raw data from device. */
         var afRequest = SerialPortRequest.Create("AF", new Regex(@"^AF(.+)$"));
         var aiRequest = SerialPortRequest.Create("AI", new Regex(@"^AIR(.{5})S(.{5})T(.{5})$"));
         var auRequest = SerialPortRequest.Create("AU", new Regex(@"^AUR(.{5})S(.{5})T(.{5})$"));
@@ -23,6 +24,7 @@ partial class SerialPortFGRefMeter
 
         await Task.WhenAll(_device.Execute(afRequest, aiRequest, auRequest, awRequest, biRequest, buRequest, mpRequest, mqRequest, msRequest));
 
+        /* Convert text representations to numbers. */
         var voltageRange = double.Parse(buRequest.EndMatch!.Groups[1].Value);
         var currentRange = double.Parse(biRequest.EndMatch!.Groups[1].Value);
 
@@ -55,7 +57,6 @@ partial class SerialPortFGRefMeter
         var voltage3Angle = double.Parse(awRequest.EndMatch!.Groups[5].Value);
         var current3Angle = double.Parse(awRequest.EndMatch!.Groups[6].Value);
 
-        // [TODO] Phase order
         return new()
         {
             ActivePower = active1 + active2 + active3,

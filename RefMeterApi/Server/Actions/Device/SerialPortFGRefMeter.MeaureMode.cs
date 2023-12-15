@@ -6,6 +6,10 @@ namespace RefMeterApi.Actions.Device;
 
 partial class SerialPortFGRefMeter
 {
+    /// <summary>
+    /// All supported measurement modes - this is a minor restriction on what
+    /// e.g. the FG30x supports.
+    /// </summary>
     private static readonly Dictionary<string, MeasurementModes> SupportedModes = new() {
         {"3BKB", MeasurementModes.ThreeWireReactivePowerCrossConnectedA},
         {"3LBE", MeasurementModes.ThreeWireReactivePower},
@@ -18,8 +22,9 @@ partial class SerialPortFGRefMeter
         {"4LW", MeasurementModes.FourWireActivePower},
     };
 
-    private static readonly Regex MiCommand = new(@"^MI([^;]+;)*$");
-
+    /// <summary>
+    /// The current measurement mode - the device will not report the setting
+    /// so we have to remember it here./// </summary>
     private MeasurementModes? _measurementMode = null;
 
     /// <inheritdoc/>
@@ -28,7 +33,7 @@ partial class SerialPortFGRefMeter
         TestConfigured();
 
         /* Request from device. */
-        var replies = await _device.Execute(SerialPortRequest.Create("MI", MiCommand))[0];
+        var replies = await _device.Execute(SerialPortRequest.Create("MI", new Regex(@"^MI([^;]+;)*$")))[0];
 
         /* Analyse result and report all supported values. */
         var response = new List<MeasurementModes>();
@@ -45,7 +50,7 @@ partial class SerialPortFGRefMeter
     {
         TestConfigured();
 
-
+        /* We can only report what was last set using the interface. */
         return Task.FromResult(_measurementMode);
     }
 

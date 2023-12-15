@@ -7,6 +7,10 @@ namespace RefMeterApi.Actions.Device;
 
 partial class SerialPortMTRefMeter
 {
+    /// <summary>
+    /// All currently supported measurement modes - the meter test system
+    /// may provide additional modes.
+    /// </summary>
     private static readonly Dictionary<string, MeasurementModes> SupportedModes = new() {
         {"2WA", MeasurementModes.TwoWireActivePower},
         {"2WAP", MeasurementModes.TwoWireApparentPower},
@@ -22,6 +26,9 @@ partial class SerialPortMTRefMeter
         {"4WRC", MeasurementModes.FourWireReactivePowerCrossConnected},
     };
 
+    /// <summary>
+    /// Pattern to recognize a measurement mode reported by the device.
+    /// </summary>
     private static readonly Regex MeasurementModeReg = new Regex(@"^(\d{1,3});([^;]+);(.+)$");
 
     /// <inheritdoc/>
@@ -38,7 +45,7 @@ partial class SerialPortMTRefMeter
         if (modeAsString == null)
             return null;
 
-        return SupportedModes.TryGetValue(modeAsString.Substring(2), out var mode) ? mode : null;
+        return SupportedModes.TryGetValue(modeAsString[2..], out var mode) ? mode : null;
     }
 
     /// <inheritdoc/>

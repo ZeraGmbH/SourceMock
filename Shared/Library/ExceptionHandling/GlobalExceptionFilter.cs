@@ -7,9 +7,14 @@ namespace SharedLibrary.ExceptionHandling;
 /// <summary>
 /// 
 /// </summary>
-public class GlobalExceptionFilter : IExceptionFilter
+public class GlobalExceptionFilter : IExceptionFilter, IOrderedFilter
 {
     private ProblemDetailsFactory _problemDetailsFactory;
+
+    /// <summary>
+    /// GlobalExceptionFilter will be the last in the mvc pipeline
+    /// </summary>
+    public int Order => int.MaxValue - 10;
 
     /// <summary>
     /// 

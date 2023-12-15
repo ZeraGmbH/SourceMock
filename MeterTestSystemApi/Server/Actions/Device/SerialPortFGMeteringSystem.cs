@@ -144,20 +144,40 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         var capabilities = await GetCapabilities();
 
         if (!capabilities.SupportedVoltageAmplifiers.Contains(settings.VoltageAmplifier))
+        {
+            _logger.LogDebug($"Unsupported voltage amplifier {settings.VoltageAmplifier}");
+
             throw new ArgumentException("voltage");
+        }
+
 
         if (!capabilities.SupportedVoltageAuxiliaries.Contains(settings.VoltageAuxiliary))
+        {
+            _logger.LogDebug($"Unsupported auxiliary voltage amplifier {settings.VoltageAuxiliary}");
+
             throw new ArgumentException("voltageAux");
+        }
 
         if (!capabilities.SupportedCurrentAmplifiers.Contains(settings.CurrentAmplifier))
+        {
+            _logger.LogDebug($"Unsupported current amplifier {settings.CurrentAmplifier}");
+
             throw new ArgumentException("current");
+        }
 
         if (!capabilities.SupportedCurrentAuxiliaries.Contains(settings.CurrentAuxiliary))
-            throw new ArgumentException("currentAux");
+        {
+            _logger.LogDebug($"Unsupported auxiliary current amplifier {settings.CurrentAuxiliary}");
 
+            throw new ArgumentException("currentAux");
+        }
 
         if (!capabilities.SupportedReferenceMeters.Contains(settings.ReferenceMeter))
+        {
+            _logger.LogDebug($"Unsupported reference meter");
+
             throw new ArgumentException("referenceMeter");
+        }
 
         /* Create new instances of all connected sub devices. */
         var errorCalculator = _services.GetRequiredService<ISerialPortFGErrorCalculator>();
@@ -179,7 +199,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
             /* Send the combined command to the meter test system. */
             await _device.Execute(SerialPortRequest.Create($"ZP{voltageCode:00}{currentCode:00}{auxVoltageCode:00}{auxCurrentCode:00}{refMeterCode:00}", "OKZP"))[0];
         }
-        catch (Exception)
+        catch (Exception e)
         {
             /* Do not update the current configuration since the frequency generator rejected the new settings. */
             source = null;

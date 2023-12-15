@@ -42,7 +42,7 @@ public class MeterTestSystemController(IMeterTestSystem device) : ControllerBase
     /// <summary>
     /// Set the physical configuration of a meter test system.
     /// </summary>
-    [HttpPut("AmplifiersAndReferenceMeters")]
+    [HttpPut("AmplifiersAndReferenceMeter")]
     [SwaggerOperation(OperationId = "SetAmplifiersAndReferenceMeter")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -57,7 +57,7 @@ public class MeterTestSystemController(IMeterTestSystem device) : ControllerBase
     /// Report the current pysical configuration of the meter test system.
     /// </summary>
     /// <returns></returns>
-    [HttpGet("AmplifiersAndReferenceMeters")]
+    [HttpGet("AmplifiersAndReferenceMeter")]
     [SwaggerOperation(OperationId = "GetAmplifiersAndReferenceMeter")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

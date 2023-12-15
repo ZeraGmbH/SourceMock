@@ -224,7 +224,8 @@ public class ErrorMeasurementTests
     [TestCase(99999999, "100000", 3)]
     public void Can_Clip_Numbers_To_Protocol_Restriction(long number, string expectedString, int expectedScale)
     {
-        var (asString, power) = SerialPortMTErrorCalculator.ClipNumberToProtocol(number, 11);
+        var (asString, power) = new SerialPortMTErrorCalculator(null!, new NullLogger<SerialPortMTErrorCalculator>()).ClipNumberToProtocol(number, 11);
+
         Assert.Multiple(() =>
         {
             Assert.That(asString, Is.EqualTo(expectedString));

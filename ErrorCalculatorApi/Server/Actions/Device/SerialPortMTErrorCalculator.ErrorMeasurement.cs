@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using ErrorCalculatorApi.Models;
+using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 
 namespace ErrorCalculatorApi.Actions.Device;
@@ -45,7 +46,11 @@ partial class SerialPortMTErrorCalculator
                 var match = MatchErrorStatus1.Match(reply);
 
                 if (!match.Success)
+                {
+                    _logger.LogWarning($"Got unrecognized status line {reply} while waiting for status.");
+
                     continue;
+                }
 
                 switch (match.Groups[2].Value)
                 {
@@ -69,7 +74,11 @@ partial class SerialPortMTErrorCalculator
                 var match = MatchErrorStatus2.Match(reply);
 
                 if (!match.Success)
+                {
+                    _logger.LogWarning($"Got unrecognized status line {reply} while waiting for result.");
+
                     continue;
+                }
 
                 gotError = true;
 
@@ -86,8 +95,10 @@ partial class SerialPortMTErrorCalculator
                     else
                         result.ErrorValue = error;
                 }
-                catch (System.Exception)
+                catch (Exception e)
                 {
+                    _logger.LogWarning($"Unable to parse error from {reply}: {e.Message}");
+
                     gotError = false;
                 }
             }
@@ -97,7 +108,11 @@ partial class SerialPortMTErrorCalculator
                 var match = MatchErrorStatus3.Match(reply);
 
                 if (!match.Success)
+                {
+                    _logger.LogWarning($"Got unrecognized status line {reply} while waiting for progress.");
+
                     continue;
+                }
 
                 /* Try parse numbers. */
                 try
@@ -117,8 +132,10 @@ partial class SerialPortMTErrorCalculator
 
                     return result;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    _logger.LogWarning($"Unable to parse progress from {reply}: {e.Message}");
+
                     continue;
                 }
             }
@@ -133,13 +150,21 @@ partial class SerialPortMTErrorCalculator
         var (rawMeter, powMeter) = ClipNumberToProtocol((long)Math.Round(meterConstant * 1E5), 16);
 
         if (powMeter > 10)
-            throw new ArgumentOutOfRangeException(nameof(impulses));
+        {
+            _logger.LogDebug($"Invalid meter constant {meterConstant}");
+
+            throw new ArgumentOutOfRangeException(nameof(meterConstant));
+        }
 
         /* Create the text representation of the number of impulses and see if it fits the protocol requirements. */
         var (rawImpulses, powImpulses) = ClipNumberToProtocol(impulses, 11);
 
         if (powImpulses > 5)
+        {
+            _logger.LogDebug($"Invalid number of impluses {impulses}");
+
             throw new ArgumentOutOfRangeException(nameof(impulses));
+        }
 
         /* Now we can send the resulting texts and power factors to the device. */
         return _device.Execute(SerialPortRequest.Create($"AEP{rawMeter};{powMeter:00};{rawImpulses};{powImpulses}", "AEPACK"))[0];
@@ -153,16 +178,24 @@ partial class SerialPortMTErrorCalculator
     /// <param name="limit">The maximum number of digits allowed.</param>
     /// <returns>Text representation of the number and a scaling factor as a power of 10.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Number can not be converted to an appropriate string.</exception>
-    public static Tuple<string, int> ClipNumberToProtocol(long number, int limit)
+    public Tuple<string, int> ClipNumberToProtocol(long number, int limit)
     {
         if (number <= 0)
+        {
+            _logger.LogWarning($"Number {number} must be positive");
+
             throw new ArgumentOutOfRangeException(nameof(number));
+        }
 
         /* Make the number a string and see if fits the limit of digits. */
         var asString = number.ToString("".PadLeft(limit, '0')).TrimStart('0');
 
         if (asString.Length > limit)
+        {
+            _logger.LogDebug($"Number {number} too large");
+
             throw new ArgumentOutOfRangeException(nameof(number));
+        }
 
         /* Check for the scale factor to make the resulting string fit in 6 digits. */
         var power = asString.Length - 6;
@@ -179,7 +212,11 @@ partial class SerialPortMTErrorCalculator
         asString = number.ToString("".PadLeft(limit, '0')).TrimStart('0');
 
         if (asString.Length > limit)
+        {
+            _logger.LogDebug($"Number {number} too large");
+
             throw new ArgumentOutOfRangeException(nameof(number));
+        }
 
         /* Recalculate the power factor. */
         power = Math.Max(0, asString.Length - 6);

@@ -5,6 +5,7 @@ using SharedLibrary.Actions.Database;
 using SharedLibrary.ExceptionHandling;
 using SharedLibrary.Models;
 using SharedLibrary.Services;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SharedLibrary;
 
@@ -37,15 +38,6 @@ public static class SharedLibraryConfiguration
     public static void UseSharedLibrary(this IServiceCollection services, IConfiguration configuration)
     {
         ConfigureDatabase(services, configuration);
-        services.AddControllers(options =>
-            {
-                options.Filters.Add<DatabaseErrorFilter>();
-            });
-
-        services.AddSwaggerGen(options =>
-            {
-                options.DocumentFilter<ErrorSchemas>();
-            });
     }
 
     /// <summary>
@@ -53,5 +45,14 @@ public static class SharedLibraryConfiguration
     /// </summary>
     public static void UseSharedLibrary(this MvcOptions options)
     {
+        options.Filters.Add<DatabaseErrorFilter>();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static void UseSharedLibrary(this SwaggerGenOptions options)
+    {
+        options.DocumentFilter<ErrorSchemas>();
     }
 }

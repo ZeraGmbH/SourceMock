@@ -30,7 +30,7 @@ public class ActionResultMapperTests
 
     [TestCase(typeof(NotImplementedException))]
     [TestCase(typeof(NotSupportedException))]
-    [TestCase(typeof(ArgumentOutOfRangeException))]
+    [TestCase(typeof(NullReferenceException))]
     public void Will_Passthough_Unknown_Exception(Type exception)
     {
         var error = Assert.CatchAsync(() => ActionResultMapper.SafeExecuteSerialPortCommand(() => Task.FromException((Exception)Activator.CreateInstance(exception)!)));

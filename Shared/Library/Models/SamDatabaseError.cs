@@ -1,8 +1,11 @@
+using System.Text.Json.Serialization;
+
 namespace SharedLibrary.Models;
 
 /// <summary>
 /// Errors in database
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum SamDatabaseError
 {
     /// <summary>

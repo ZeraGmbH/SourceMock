@@ -22,6 +22,7 @@ public class ErrorSchemas : IDocumentFilter
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
         Apply<SamDetailExtensions>(context);
+        Apply<SamDatabaseError>(context);
     }
 
 }

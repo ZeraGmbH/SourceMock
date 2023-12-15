@@ -2,14 +2,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
-namespace SharedLibrary.ExceptionHandling;
+namespace WebSamDeviceApis.ExceptionHandling;
 
 /// <summary>
 /// 
 /// </summary>
 public class GlobalExceptionFilter : IExceptionFilter, IOrderedFilter
 {
-    private ProblemDetailsFactory _problemDetailsFactory;
+    private readonly ProblemDetailsFactory _problemDetailsFactory;
 
     /// <summary>
     /// GlobalExceptionFilter will be the last in the mvc pipeline

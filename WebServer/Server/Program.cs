@@ -5,7 +5,7 @@ using System.Globalization;
 using SerialPortProxy;
 using SharedLibrary;
 using SourceApi;
-using SharedLibrary.ExceptionHandling;
+using WebSamDeviceApis.ExceptionHandling;
 
 CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-us");
 

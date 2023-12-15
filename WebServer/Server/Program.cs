@@ -2,7 +2,10 @@ using Microsoft.OpenApi.Models;
 
 using System.Globalization;
 
+using SerialPortProxy;
+using SharedLibrary;
 using SourceApi;
+using SharedLibrary.ExceptionHandling;
 
 CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-us");
 
@@ -10,7 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<GlobalExceptionFilter>();
+
+    options.UseSharedLibrary();
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -27,6 +36,8 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 
+    options.UseSerialPortProxy();
+    options.UseSharedLibrary();
     options.UseSourceApi();
 });
 
@@ -51,6 +62,7 @@ builder.Services.AddCors(options =>
 });
 #pragma warning restore IDE0053
 
+builder.Services.UseSharedLibrary(builder.Configuration);
 builder.Services.UseSourceApi(builder.Configuration, false);
 
 var app = builder.Build();

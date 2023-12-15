@@ -199,7 +199,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
             /* Send the combined command to the meter test system. */
             await _device.Execute(SerialPortRequest.Create($"ZP{voltageCode:00}{currentCode:00}{auxVoltageCode:00}{auxCurrentCode:00}{refMeterCode:00}", "OKZP"))[0];
         }
-        catch (Exception e)
+        catch (Exception)
         {
             /* Do not update the current configuration since the frequency generator rejected the new settings. */
             source = null;

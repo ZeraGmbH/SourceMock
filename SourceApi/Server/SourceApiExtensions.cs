@@ -63,7 +63,7 @@ public static class SourceApiConfiguration
                 services.AddSingleton<ISource>(x => x.GetRequiredService<VeinSource>());
                 break;
             case "serial":
-                if (deviceType != "MT" && deviceType != "FG")
+                if (deviceType != "MT" && deviceType != "FG" && deviceType != "DeviceMock")
                     throw new NotImplementedException($"Unknown DeviceType: {deviceType}");
 
                 if (!serialOnly)

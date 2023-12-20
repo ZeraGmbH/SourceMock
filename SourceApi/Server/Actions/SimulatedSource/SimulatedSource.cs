@@ -138,7 +138,8 @@ namespace SourceApi.Actions.Source
 
         public Task<bool> CurrentSwitchedOffForDosage()
         {
-            throw new NotImplementedException();
+            _logger.LogTrace("Mock switches off the current for dosage");
+            return Task.FromResult(true);
         }
 
         public LoadpointInfo GetActiveLoadpointInfo() => _info;

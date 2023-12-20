@@ -59,14 +59,14 @@ public partial class RefMeterMock : IRefMeter
 
             var measureOutputPhase = new MeasureOutputPhase()
             {
-                Current = Math.Abs(GetRandomNumber(phase.Current.Rms, 0.02)),
-                AngleCurrent = GetRandomNumber(phase.Current.Angle, 0.02),
-                Voltage = Math.Abs(GetRandomNumber(phase.Voltage.Rms, 0.02)),
-                AngleVoltage = Math.Abs(GetRandomNumber(phase.Voltage.Angle, 0.02)),
-                ActivePower = GetRandomNumber(activePower, 0.02),
-                ReactivePower = GetRandomNumber(reactivePower, 0.02),
-                ApparentPower = GetRandomNumber(apparentPower, 0.02),
-                PowerFactor = apparentPower != 0 ? GetRandomNumber(activePower / apparentPower, 0.02) : 0,
+                Current = Math.Abs(GetRandomNumberWithPercentageDeviation(phase.Current.Rms, 0.01)),
+                AngleCurrent = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.Angle, 0.1)),
+                Voltage = Math.Abs(GetRandomNumberWithPercentageDeviation(phase.Voltage.Rms, 0.05)),
+                AngleVoltage = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.Angle, 0.1)),
+                ActivePower = GetRandomNumberWithAbsoluteDeviation(activePower, 0.02),
+                ReactivePower = GetRandomNumberWithAbsoluteDeviation(reactivePower, 0.02),
+                ApparentPower = GetRandomNumberWithAbsoluteDeviation(apparentPower, 0.02),
+                PowerFactor = apparentPower != 0 ? GetRandomNumberWithAbsoluteDeviation(activePower / apparentPower, 0.02) : 0,
             };
             activePowerSum += activePower;
             reactivePowerSum += reactivePower;
@@ -76,12 +76,12 @@ public partial class RefMeterMock : IRefMeter
 
         MeasureOutput measureOutput = new()
         {
-            Frequency = GetRandomNumber(loadpoint.Frequency.Value, 0.02),
+            Frequency = GetRandomNumberWithPercentageDeviation(loadpoint.Frequency.Value, 0.02),
             PhaseOrder = "123",
             Phases = measureOutputPhases,
-            ActivePower = GetRandomNumber(activePowerSum, 0.02),
-            ApparentPower = GetRandomNumber(apparentPowerSum, 0.02),
-            ReactivePower = GetRandomNumber(reactivePowerSum, 0.02)
+            ActivePower = GetRandomNumberWithAbsoluteDeviation(activePowerSum, 0.02),
+            ApparentPower = GetRandomNumberWithAbsoluteDeviation(apparentPowerSum, 0.02),
+            ReactivePower = GetRandomNumberWithAbsoluteDeviation(reactivePowerSum, 0.02)
         };
 
         return Task.FromResult(measureOutput);
@@ -130,10 +130,18 @@ public partial class RefMeterMock : IRefMeter
         };
     }
 
-    private static double GetRandomNumber(double value, double deviation)
+    private static double GetRandomNumberWithAbsoluteDeviation(double value, double deviation)
     {
         var maximum = value + deviation;
         var minimum = value - deviation;
+        Random random = new Random();
+        return random.NextDouble() * (maximum - minimum) + minimum;
+    }
+
+    private static double GetRandomNumberWithPercentageDeviation(double value, double deviation)
+    {
+        var maximum = value + value * deviation / 100;
+        var minimum = value - value * deviation / 100;
         Random random = new Random();
         return random.NextDouble() * (maximum - minimum) + minimum;
     }

@@ -40,47 +40,37 @@ public partial class RefMeterMock : IRefMeter
     /// <returns></returns>
     public Task<MeasureOutput> GetActualValues()
     {
-        Random r = new Random();
-        var loadpoint = _source.GetCurrentLoadpoint() ?? new Loadpoint()
-        {
-            Frequency = new Frequency() { Value = 0 },
-            Phases = new List<PhaseLoadpoint>(){
-                new PhaseLoadpoint(){
-                    Current = new() {Rms = 0, Angle=r.Next(0,360)},
-                    Voltage = new() {Rms = 0, Angle=r.Next(0,360)},
-                },
-                new PhaseLoadpoint(){
-                    Current = new() {Rms = 0, Angle=r.Next(0,360)},
-                    Voltage = new() {Rms = 0, Angle=r.Next(0,360)},
-                },
-                new PhaseLoadpoint(){
-                    Current = new() {Rms = 0, Angle=r.Next(0,360)},
-                    Voltage = new() {Rms = 0, Angle=r.Next(0,360)},
-                }
-            }
-        };
-        var activePower = loadpoint.Phases[0].Current.Rms * loadpoint.Phases[0].Voltage.Rms * Math.Cos(Math.Abs(loadpoint.Phases[0].Current.Angle - loadpoint.Phases[0].Voltage.Angle));
-        var reactivePower = loadpoint.Phases[0].Current.Rms * loadpoint.Phases[0].Voltage.Rms * Math.Sin(Math.Abs(loadpoint.Phases[0].Current.Angle - loadpoint.Phases[0].Voltage.Angle));
-        var apparentPower = Math.Sqrt(activePower * activePower + reactivePower * reactivePower);
+        Loadpoint loadpoint = GetLoadpoint();
+
+        double activePowerSum = 0;
+        double reactivePowerSum = 0;
+        double apparentPowerSum = 0;
 
         var measureOutputPhases = new List<MeasureOutputPhase>();
         foreach (var phase in loadpoint.Phases)
         {
+            var current = phase.Current.Rms;
+            var voltage = phase.Voltage.Rms;
+            var angle = Math.Abs(phase.Current.Angle - phase.Voltage.Angle);
+
+            var activePower = current * voltage * Math.Cos(angle);
+            var reactivePower = current * voltage * Math.Sin(angle);
+            var apparentPower = Math.Sqrt(activePower * activePower + reactivePower * reactivePower);
+
             var measureOutputPhase = new MeasureOutputPhase()
             {
                 Current = Math.Abs(GetRandomNumber(phase.Current.Rms, 0.02)),
                 AngleCurrent = GetRandomNumber(phase.Current.Angle, 0.02),
                 Voltage = Math.Abs(GetRandomNumber(phase.Voltage.Rms, 0.02)),
                 AngleVoltage = Math.Abs(GetRandomNumber(phase.Voltage.Angle, 0.02)),
-                // P=U*I*cos(phi) phi -> Angle Current - Angle Voltage
-                ActivePower = GetRandomNumber(phase.Current.Rms * phase.Voltage.Rms * Math.Cos(Math.Abs(phase.Current.Angle - phase.Voltage.Angle)), 0.02),
-                // Q=U*I*sin(phi) phi -> Angle Current - Angle Voltage
+                ActivePower = GetRandomNumber(activePower, 0.02),
                 ReactivePower = GetRandomNumber(reactivePower, 0.02),
-                // S= Wurzel(P^2 + Q^2)
                 ApparentPower = GetRandomNumber(apparentPower, 0.02),
-                // Lambda = P/Q
                 PowerFactor = apparentPower != 0 ? GetRandomNumber(activePower / apparentPower, 0.02) : 0,
             };
+            activePowerSum += activePower;
+            reactivePowerSum += reactivePower;
+            apparentPowerSum += apparentPower;
             measureOutputPhases.Add(measureOutputPhase);
         }
 
@@ -88,7 +78,10 @@ public partial class RefMeterMock : IRefMeter
         {
             Frequency = GetRandomNumber(loadpoint.Frequency.Value, 0.02),
             PhaseOrder = "123",
-            Phases = measureOutputPhases
+            Phases = measureOutputPhases,
+            ActivePower = GetRandomNumber(activePowerSum, 0.02),
+            ApparentPower = GetRandomNumber(apparentPowerSum, 0.02),
+            ReactivePower = GetRandomNumber(reactivePowerSum, 0.02)
         };
 
         return Task.FromResult(measureOutput);
@@ -112,6 +105,29 @@ public partial class RefMeterMock : IRefMeter
     {
         _measurementMode = mode;
         return Task.FromResult<MeasurementModes>(mode);
+    }
+
+    private Loadpoint GetLoadpoint()
+    {
+        Random r = new();
+        return _source.GetCurrentLoadpoint() ?? new Loadpoint()
+        {
+            Frequency = new Frequency() { Value = 0 },
+            Phases = new List<PhaseLoadpoint>(){
+                new PhaseLoadpoint(){
+                    Current = new() {Rms = 0, Angle=r.Next(0,360)},
+                    Voltage = new() {Rms = 0, Angle=r.Next(0,360)},
+                },
+                new PhaseLoadpoint(){
+                    Current = new() {Rms = 0, Angle=r.Next(0,360)},
+                    Voltage = new() {Rms = 0, Angle=r.Next(0,360)},
+                },
+                new PhaseLoadpoint(){
+                    Current = new() {Rms = 0, Angle=r.Next(0,360)},
+                    Voltage = new() {Rms = 0, Angle=r.Next(0,360)},
+                }
+            }
+        };
     }
 
     private static double GetRandomNumber(double value, double deviation)

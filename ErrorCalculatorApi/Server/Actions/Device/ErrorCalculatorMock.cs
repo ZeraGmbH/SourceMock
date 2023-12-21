@@ -35,7 +35,6 @@ public class ErrorCalculatorMock : IErrorCalculator
     /// 
     /// </summary>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     public Task AbortErrorMeasurement()
     {
         return Task<bool>.FromResult(true);

@@ -14,6 +14,9 @@ namespace SourceApi.Actions.Source
         private readonly IConfiguration _configuration;
         private readonly SourceCapabilities _sourceCapabilities;
         private readonly LoadpointInfo _info = new();
+        private DosageProgress _status = new();
+        private DateTime _startTime;
+        private double _dosageEnergy;
 
         /// <summary>
         /// Constructor that injects logger and configuration and uses default source capablities.
@@ -113,27 +116,50 @@ namespace SourceApi.Actions.Source
 
         public Task SetDosageMode(bool on)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(true);
         }
 
         public Task SetDosageEnergy(double value)
         {
-            throw new NotImplementedException();
+            _dosageEnergy = value;
+            return Task.FromResult(value);
         }
 
         public Task StartDosage()
         {
-            throw new NotImplementedException();
+            _startTime = DateTime.Now;
+            _status.Active = true;
+
+            return Task.FromResult(true);
         }
 
         public Task CancelDosage()
         {
-            throw new NotImplementedException();
+            return Task.FromResult(true);
         }
 
         public Task<DosageProgress> GetDosageProgress()
         {
-            throw new NotImplementedException();
+            double power = 0;
+            foreach (var phase in _loadpoint!.Phases)
+            {
+                power += phase.Voltage.Rms * phase.Current.Rms * Math.Cos((phase.Voltage.Angle - phase.Current.Angle) * Math.PI / 180d);
+            }
+            var timeInSeconds = (DateTime.Now - _startTime).TotalSeconds;
+
+            double energy = power * timeInSeconds / 3600;
+
+            if (energy > _dosageEnergy)
+            {
+                _status.Active = false;
+                energy = _dosageEnergy;
+            }
+
+            _status.Progress = energy;
+            _status.Remaining = _dosageEnergy - energy;
+            _status.Total = _dosageEnergy;
+
+            return Task.FromResult(_status);
         }
 
         public Task<bool> CurrentSwitchedOffForDosage()

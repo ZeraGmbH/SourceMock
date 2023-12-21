@@ -14,7 +14,6 @@ public class DatabaseErrorFilter : IExceptionFilter
     /// 
     /// </summary>
     /// <param name="context"></param>
-    /// <exception cref="NotImplementedException"></exception>
     public void OnException(ExceptionContext context)
     {
         var exception = context.Exception;
@@ -34,8 +33,7 @@ public class DatabaseErrorFilter : IExceptionFilter
             context.Result = ErrorHelper.CreateProblemDetails(
                 exception.Message,
                 status: StatusCodes.Status400BadRequest,
-                samErrorCode: SamDatabaseError.DATABASE_ERROR,
-                ""
+                samErrorCode: SamDatabaseError.DATABASE_ERROR
                 );
             context.ExceptionHandled = true;
         }

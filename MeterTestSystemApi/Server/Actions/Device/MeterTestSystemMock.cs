@@ -27,6 +27,7 @@ public class MeterTestSystemMock : IMeterTestSystem
         _configuration = configuration;
         Source = new SimulatedSource(_logger, _configuration);
         RefMeter = new RefMeterMock(Source);
+        ErrorCalculator = new ErrorCalculatorMock(Source);
     }
 
     /// <summary>
@@ -47,7 +48,7 @@ public class MeterTestSystemMock : IMeterTestSystem
     /// <summary>
     /// 
     /// </summary>
-    public IErrorCalculator ErrorCalculator { get; } = new ErrorCalculatorMock();
+    public IErrorCalculator ErrorCalculator { get; }
 
     /// <summary>
     /// 

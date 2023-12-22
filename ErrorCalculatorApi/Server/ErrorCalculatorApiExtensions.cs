@@ -1,7 +1,9 @@
 using ErrorCalculatorApi.Actions.Device;
+using ErrorCalculatorApi.Models;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SharedLibrary;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace ErrorCalculatorApi;
@@ -18,6 +20,8 @@ public static class ErrorCalculatorApiConfiguration
     public static void UseErrorCalculatorApi(this SwaggerGenOptions options)
     {
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(ErrorCalculatorApiConfiguration).Assembly.GetName().Name}.xml"));
+
+        SwaggerModelExtender.AddType<ErrorCalculatorApiErrorCodes>().Register(options);
     }
 
     /// <summary>

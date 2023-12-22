@@ -10,7 +10,8 @@ using SerialPortProxy;
 using Microsoft.Extensions.Logging;
 using SourceApi.Actions.SerialPort;
 using SharedLibrary;
-using SourceApi.Model;
+using SourceApi.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SourceApi;
 
@@ -34,6 +35,14 @@ public static class SourceApiConfiguration
     /// </summary>
     public static void UseSourceApi(this IEndpointRouteBuilder app)
     {
+    }
+
+    /// <summary>
+    /// Add SourceApiExceptionFilter to local scope
+    /// </summary>
+    public static void UseErrorCalculatorApi(this MvcOptions options)
+    {
+        options.Filters.Add<SourceApiExceptionFilter>();
     }
 
     /// <summary>

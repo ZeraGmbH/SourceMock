@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RefMeterApi.Actions.Device;
+using RefMeterApi.Exceptions;
 using RefMeterApi.Models;
 using SerialPortProxy;
 using Swashbuckle.AspNetCore.Annotations;
@@ -17,6 +18,7 @@ namespace RefMeterApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
+[TypeFilter<RefMeterApiExceptionFilter>]
 public class RefMeterController(IRefMeter device) : ControllerBase
 {
     /// <summary>

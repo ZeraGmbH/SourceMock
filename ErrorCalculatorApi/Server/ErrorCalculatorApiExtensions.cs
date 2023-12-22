@@ -1,5 +1,7 @@
 using ErrorCalculatorApi.Actions.Device;
+using ErrorCalculatorApi.Exceptions;
 using ErrorCalculatorApi.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +24,14 @@ public static class ErrorCalculatorApiConfiguration
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(ErrorCalculatorApiConfiguration).Assembly.GetName().Name}.xml"));
 
         SwaggerModelExtender.AddType<ErrorCalculatorApiErrorCodes>().Register(options);
+    }
+
+    /// <summary>
+    /// Add ErrorCalculatorExceptionFilter to local scope
+    /// </summary>
+    public static void UseErrorCalculatorApi(this MvcOptions options)
+    {
+        options.Filters.Add<ErrorCalculatorExceptionFilter>();
     }
 
     /// <summary>

@@ -126,6 +126,48 @@ namespace SourceApi.Tests.Actions.Source
 
             return new SimulatedSource(loggerMock.Object, configMock.Object, capabilities);
         }
+        #endregion
+
+        [Test]
+        public async Task Returns_Correct_Dosage_Progress()
+        {
+            Mock<ILogger<SimulatedSource>> logger = new();
+            Mock<IConfiguration> configs = new();
+
+            SimulatedSource mock = new(logger.Object, configs.Object);
+
+            await mock.SetLoadpoint(GetLoadpoint());
+            await mock.SetDosageEnergy(20);
+            await mock.StartDosage();
+
+            DosageProgress result = await mock.GetDosageProgress();
+
+            Assert.That(result.Active, Is.EqualTo(true));
+            Assert.That(result.Remaining, Is.LessThan(20));
+            Assert.That(result.Progress, Is.GreaterThan(0));
+        }
+
+        private static Loadpoint GetLoadpoint()
+        {
+            return new()
+            {
+                Frequency = new() { Value = 50 },
+                Phases = new List<PhaseLoadpoint>(){
+                    new PhaseLoadpoint(){
+                        Current = new(){Angle=0, Rms=10},
+                        Voltage = new(){Angle=0, Rms=220}
+                    },
+                    new PhaseLoadpoint(){
+                        Current = new(){Angle=120, Rms=10},
+                        Voltage = new(){Angle=120, Rms=220}
+                    },
+                    new PhaseLoadpoint(){
+                        Current = new(){Angle=240, Rms=10},
+                        Voltage = new(){Angle=240, Rms=220}
+                    }
+                }
+            };
+        }
     }
-    #endregion
+
 }

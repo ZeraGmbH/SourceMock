@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Actions.Device;
+using RefMeterApi.Models;
+using SharedLibrary;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace RefMeterApi;
@@ -18,6 +20,8 @@ public static class RefMeterApiConfiguration
     public static void UseRefMeterApi(this SwaggerGenOptions options)
     {
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(RefMeterApiConfiguration).Assembly.GetName().Name}.xml"));
+
+        SwaggerModelExtender.AddType<RefMeterApiErrorCodes>().Register(options);
     }
 
     /// <summary>

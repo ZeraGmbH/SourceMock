@@ -6,7 +6,7 @@ using SharedLibrary.Models;
 namespace SharedLibrary.ExceptionHandling;
 
 /// <summary>
-/// 
+/// Handles all exceptions that are related to the database
 /// </summary>
 public class DatabaseErrorFilter : IExceptionFilter
 {

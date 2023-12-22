@@ -26,7 +26,7 @@ public partial class RefMeterMock : IRefMeter
     public bool Available => true;
 
     /// <summary>
-    /// 
+    /// MeasurementMode
     /// </summary>
     /// <returns></returns>
     public Task<MeasurementModes?> GetActualMeasurementMode()
@@ -37,7 +37,7 @@ public partial class RefMeterMock : IRefMeter
     /// <summary>
     /// 
     /// </summary>
-    /// <returns></returns>
+    /// <returns>ActualValues that fluctuate around the set loadpoint</returns>
     public Task<MeasureOutput> GetActualValues()
     {
         Loadpoint loadpoint = GetLoadpoint();
@@ -91,7 +91,7 @@ public partial class RefMeterMock : IRefMeter
     }
 
     /// <summary>
-    /// 
+    /// Returns all entrys in enum MeasurementModes
     /// </summary>
     /// <returns></returns>
     public Task<MeasurementModes[]> GetMeasurementModes()
@@ -100,10 +100,10 @@ public partial class RefMeterMock : IRefMeter
     }
 
     /// <summary>
-    /// 
+    /// Measurement mode is not relevant for mock logic but frontent requeires an implementation
     /// </summary>
-    /// <param name="mode"></param>
-    /// <returns>Must return something - no task requeired without device</returns>
+    /// <param name="mode">Real RefMeter requieres a mode</param>
+    /// <returns>Must return something - no async task requeired without device</returns>
     public Task SetActualMeasurementMode(MeasurementModes mode)
     {
         _measurementMode = mode;

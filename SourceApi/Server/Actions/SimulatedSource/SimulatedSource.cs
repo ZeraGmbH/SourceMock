@@ -135,6 +135,8 @@ namespace SourceApi.Actions.Source
 
         public Task CancelDosage()
         {
+            _status.Active = false;
+            _status.Remaining = 0;
             return Task.FromResult(true);
         }
 

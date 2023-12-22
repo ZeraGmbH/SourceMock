@@ -37,6 +37,7 @@ public class ErrorCalculatorMock : IErrorCalculator
     /// <returns></returns>
     public Task AbortErrorMeasurement()
     {
+        _status.State = ErrorMeasurementStates.Finished;
         return Task<bool>.FromResult(true);
     }
 

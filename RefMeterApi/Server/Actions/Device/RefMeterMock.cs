@@ -59,14 +59,17 @@ public partial class RefMeterMock : IRefMeter
 
             var measureOutputPhase = new MeasureOutputPhase()
             {
-                Current = Math.Abs(GetRandomNumberWithPercentageDeviation(phase.Current.Rms, 0.01)),
+                Current = current != 0 ? GetRandomNumberWithPercentageDeviation(phase.Current.Rms, 0.01)
+                                        : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.Rms, 0.01)),
                 AngleCurrent = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.Angle, 0.1)),
-                Voltage = Math.Abs(GetRandomNumberWithPercentageDeviation(phase.Voltage.Rms, 0.05)),
+                Voltage = voltage != 0 ? GetRandomNumberWithPercentageDeviation(phase.Voltage.Rms, 0.05)
+                                        : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.Rms, 0.05)),
                 AngleVoltage = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.Angle, 0.1)),
                 ActivePower = GetRandomNumberWithAbsoluteDeviation(activePower, 0.02),
                 ReactivePower = GetRandomNumberWithAbsoluteDeviation(reactivePower, 0.02),
                 ApparentPower = GetRandomNumberWithAbsoluteDeviation(apparentPower, 0.02),
-                PowerFactor = apparentPower != 0 ? GetRandomNumberWithAbsoluteDeviation(activePower / apparentPower, 0.02) : 0,
+                PowerFactor = apparentPower != 0 ? GetRandomNumberWithAbsoluteDeviation(activePower / apparentPower, 0.02)
+                                        : GetRandomNumberWithAbsoluteDeviation(0, 0.01),
             };
             activePowerSum += activePower;
             reactivePowerSum += reactivePower;

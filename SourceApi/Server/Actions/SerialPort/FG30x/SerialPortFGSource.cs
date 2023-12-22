@@ -86,7 +86,7 @@ public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, I
     }
 
     /// <inheritdoc/>
-    public override async Task<SourceResult> TurnOff()
+    public override async Task<SourceApiErrorCodes> TurnOff()
     {
         TestConfigured();
 
@@ -94,6 +94,6 @@ public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, I
 
         await Task.WhenAll(Device.Execute(SerialPortRequest.Create("UIAAAAAAAAA", "OKUI")));
 
-        return SourceResult.SUCCESS;
+        return SourceApiErrorCodes.SUCCESS;
     }
 }

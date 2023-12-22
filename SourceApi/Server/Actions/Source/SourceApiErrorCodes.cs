@@ -6,7 +6,7 @@ namespace SourceApi.Actions.Source
     /// Possible results of source operations.
     /// </summary>
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum SourceResult
+    public enum SourceApiErrorCodes
     {
         /// <summary>
         /// The operation was successful.
@@ -44,6 +44,12 @@ namespace SourceApi.Actions.Source
         /// <summary>
         /// The loadpoint was not set.
         /// </summary>
-        LOADPOINT_NOT_SET
+        LOADPOINT_NOT_SET,
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        SOURCE_NOT_READY
     }
 }

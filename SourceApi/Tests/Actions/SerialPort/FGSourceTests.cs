@@ -77,7 +77,7 @@ public class FGSourceTests
             VoltageNeutralConnected = true,
         });
 
-        Assert.That(result, Is.EqualTo(SourceResult.SUCCESS));
+        Assert.That(result, Is.EqualTo(SourceApiErrorCodes.SUCCESS));
 
         Assert.That(_port.Commands, Is.EqualTo(new string[] {
             "FR50.00",

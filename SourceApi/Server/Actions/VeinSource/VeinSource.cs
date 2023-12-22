@@ -61,7 +61,7 @@ namespace SourceApi.Actions.VeinSource
             throw new NotImplementedException();
         }
 
-        public Task<SourceResult> SetLoadpoint(Loadpoint loadpoint)
+        public Task<SourceApiErrorCodes> SetLoadpoint(Loadpoint loadpoint)
         {
             JObject veinRequest = VeinLoadpointMapper.ConvertToZeraJson(loadpoint);
 
@@ -70,7 +70,7 @@ namespace SourceApi.Actions.VeinSource
             HttpStatusCode veinStatusCode = _veinClient.SetLoadpoint(veinRequest.ToString());
 
 
-            return Task.FromResult(SourceResult.SUCCESS);
+            return Task.FromResult(SourceApiErrorCodes.SUCCESS);
         }
 
         public Task StartDosage()
@@ -83,6 +83,6 @@ namespace SourceApi.Actions.VeinSource
             throw new NotImplementedException();
         }
 
-        public Task<SourceResult> TurnOff() => Task.FromException<SourceResult>(new NotImplementedException());
+        public Task<SourceApiErrorCodes> TurnOff() => Task.FromException<SourceApiErrorCodes>(new NotImplementedException());
     }
 }

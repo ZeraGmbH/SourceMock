@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SharedLibrary.ExceptionHandling;
+using SourceApi.Actions.Source;
 using SourceApi.Model;
 
 namespace SourceApi.Exceptions;
@@ -19,7 +20,6 @@ public class SourceApiExceptionFilter : IExceptionFilter
         var exception = context.Exception;
         if (exception is SourceNotReadyException)
         {
-
             context.Result = ErrorHelper.CreateProblemDetails(
                 detail: exception.Message,
                 status: StatusCodes.Status400BadRequest,

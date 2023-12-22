@@ -7,24 +7,24 @@ namespace SourceApi.Actions.Source
     /// </summary>
     public static class SourceCapabilityValidator
     {
-        public static SourceResult IsValid(Loadpoint loadpoint, SourceCapabilities capabilities)
+        public static SourceApiErrorCodes IsValid(Loadpoint loadpoint, SourceCapabilities capabilities)
         {
             if (CheckNumberOfPhasesAreEqual(loadpoint, capabilities))
-                return SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES;
+                return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES;
 
             var currentResult = CheckCurrents(loadpoint, capabilities);
-            if (currentResult != SourceResult.SUCCESS)
+            if (currentResult != SourceApiErrorCodes.SUCCESS)
                 return currentResult;
 
             var voltageResult = CheckVoltages(loadpoint, capabilities);
-            if (voltageResult != SourceResult.SUCCESS)
+            if (voltageResult != SourceApiErrorCodes.SUCCESS)
                 return voltageResult;
 
             var frequencyResult = CheckFrequencies(loadpoint, capabilities);
-            if (frequencyResult != SourceResult.SUCCESS)
+            if (frequencyResult != SourceApiErrorCodes.SUCCESS)
                 return frequencyResult;
 
-            return SourceResult.SUCCESS;
+            return SourceApiErrorCodes.SUCCESS;
         }
 
         private static bool CheckNumberOfPhasesAreEqual(Loadpoint loadpoint, SourceCapabilities capabilities)
@@ -33,15 +33,15 @@ namespace SourceApi.Actions.Source
                 loadpoint.Phases.Count() != capabilities.Phases.Count;
         }
 
-        private static SourceResult CheckAngle(double actualAngle)
+        private static SourceApiErrorCodes CheckAngle(double actualAngle)
         {
             if (actualAngle < 0 || actualAngle >= 360)
-                return SourceResult.LOADPOINT_ANGLE_INVALID;
+                return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
 
-            return SourceResult.SUCCESS;
+            return SourceApiErrorCodes.SUCCESS;
         }
 
-        private static SourceResult CheckCurrents(Loadpoint loadpoint, SourceCapabilities capabilities)
+        private static SourceApiErrorCodes CheckCurrents(Loadpoint loadpoint, SourceCapabilities capabilities)
         {
             for (int i = 0; i < loadpoint.Phases.Count; ++i)
             {
@@ -49,16 +49,16 @@ namespace SourceApi.Actions.Source
                 var allowedRange = capabilities.Phases[i].Current;
 
                 if (!allowedRange.IsIncluded(actualRms))
-                    return SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
+                    return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
 
                 var isAngleValue = CheckAngle(loadpoint.Phases[i].Current.Angle);
-                if (isAngleValue != SourceResult.SUCCESS)
-                    return SourceResult.LOADPOINT_ANGLE_INVALID;
+                if (isAngleValue != SourceApiErrorCodes.SUCCESS)
+                    return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
             }
-            return SourceResult.SUCCESS;
+            return SourceApiErrorCodes.SUCCESS;
         }
 
-        private static SourceResult CheckVoltages(Loadpoint loadpoint, SourceCapabilities capabilities)
+        private static SourceApiErrorCodes CheckVoltages(Loadpoint loadpoint, SourceCapabilities capabilities)
         {
             for (int i = 0; i < loadpoint.Phases.Count; ++i)
             {
@@ -72,30 +72,30 @@ namespace SourceApi.Actions.Source
                 var allowedRange = capabilities.Phases[i].Voltage;
 
                 if (!allowedRange.IsIncluded(actualRms))
-                    return SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID;
+                    return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID;
 
 
                 var isAngleValue = CheckAngle(loadpoint.Phases[i].Voltage.Angle);
-                if (isAngleValue != SourceResult.SUCCESS)
-                    return SourceResult.LOADPOINT_ANGLE_INVALID;
+                if (isAngleValue != SourceApiErrorCodes.SUCCESS)
+                    return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
 
             }
-            return SourceResult.SUCCESS;
+            return SourceApiErrorCodes.SUCCESS;
         }
 
-        private static SourceResult CheckFrequencies(Loadpoint loadpoint, SourceCapabilities capabilities)
+        private static SourceApiErrorCodes CheckFrequencies(Loadpoint loadpoint, SourceCapabilities capabilities)
         {
             if (loadpoint.Frequency.Mode != FrequencyMode.SYNTHETIC)
-                return SourceResult.SUCCESS;
+                return SourceApiErrorCodes.SUCCESS;
 
             var frequency = loadpoint.Frequency.Value;
 
             foreach (var range in capabilities.FrequencyRanges)
                 if (range.Mode == FrequencyMode.SYNTHETIC)
                     if (frequency >= range.Min && frequency <= range.Max)
-                        return SourceResult.SUCCESS;
+                        return SourceApiErrorCodes.SUCCESS;
 
-            return SourceResult.LOADPOINT_NOT_SUITABLE_FREQUENCY_INVALID;
+            return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_FREQUENCY_INVALID;
         }
     }
 }

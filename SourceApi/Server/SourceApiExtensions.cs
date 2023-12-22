@@ -26,7 +26,6 @@ public static class SourceApiConfiguration
     {
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SourceApiConfiguration).Assembly.GetName().Name}.xml"));
 
-        SwaggerModelExtender.AddType<SourceResult>().Register(options);
         SwaggerModelExtender.AddType<SourceApiErrorCodes>().Register(options);
     }
 

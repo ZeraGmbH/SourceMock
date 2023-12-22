@@ -96,7 +96,7 @@ public class MTSourceTests
             VoltageNeutralConnected = true,
         });
 
-        Assert.That(result, Is.EqualTo(SourceResult.SUCCESS));
+        Assert.That(result, Is.EqualTo(SourceApiErrorCodes.SUCCESS));
 
         Assert.That(PortMock.Commands, Is.EqualTo(new string[] {
             "SFR50.00",
@@ -111,10 +111,10 @@ public class MTSourceTests
         Assert.That(loadpoint.Frequency.Value, Is.EqualTo(50));
     }
 
-    [TestCase(600, 1, 0, SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID)]
-    [TestCase(220, 1000, 0, SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID)]
-    [TestCase(220, 1, 700, SourceResult.LOADPOINT_ANGLE_INVALID)]
-    public async Task Can_Set_Invalid_Loadpoint(int voltage, int current, int angle, SourceResult expectedError)
+    [TestCase(600, 1, 0, SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID)]
+    [TestCase(220, 1000, 0, SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID)]
+    [TestCase(220, 1, 700, SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID)]
+    public async Task Can_Set_Invalid_Loadpoint(int voltage, int current, int angle, SourceApiErrorCodes expectedError)
     {
         var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap());
 

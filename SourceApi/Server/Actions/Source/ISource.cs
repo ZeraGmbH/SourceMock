@@ -22,14 +22,14 @@ namespace SourceApi.Actions.Source
         /// Sets a specified loadpoint imediatly.
         /// </summary>
         /// <param name="loadpoint">The loadpoint to be set.</param>
-        /// <returns>The corresponding value of <see cref="SourceResult"/> with regard to the success of the operation.</returns>
-        public Task<SourceResult> SetLoadpoint(Loadpoint loadpoint);
+        /// <returns>The corresponding value of <see cref="SourceApiErrorCodes"/> with regard to the success of the operation.</returns>
+        public Task<SourceApiErrorCodes> SetLoadpoint(Loadpoint loadpoint);
 
         /// <summary>
         /// Turns off the source.
         /// </summary>
-        /// <returns>The corresponding value of <see cref="SourceResult"/> with regard to the success of the operation.</returns>
-        public Task<SourceResult> TurnOff();
+        /// <returns>The corresponding value of <see cref="SourceApiErrorCodes"/> with regard to the success of the operation.</returns>
+        public Task<SourceApiErrorCodes> TurnOff();
 
         /// <summary>
         /// Gets the currently set loadpoint.

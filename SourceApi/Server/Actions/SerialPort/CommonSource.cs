@@ -63,12 +63,12 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     public virtual Loadpoint? GetCurrentLoadpoint() => Loadpoint;
 
     /// <inheritdoc/>
-    public virtual async Task<SourceResult> SetLoadpoint(Loadpoint loadpoint)
+    public virtual async Task<SourceApiErrorCodes> SetLoadpoint(Loadpoint loadpoint)
     {
         /* Always validate the loadpoint against the device capabilities. */
         var isValid = SourceCapabilityValidator.IsValid(loadpoint, await GetCapabilities());
 
-        if (isValid != SourceResult.SUCCESS)
+        if (isValid != SourceApiErrorCodes.SUCCESS)
             return isValid;
 
         Logger.LogTrace("Loadpoint set, source turned on.");
@@ -88,14 +88,14 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
             /* At least one request in the transaction failed, transaction was aborted and device not turned on - this would be the last request in the transaction. */
             Logger.LogWarning("Loadpoint set, but source could not be turned on: {0}", e);
 
-            return SourceResult.SUCCESS_NOT_ACTIVATED;
+            return SourceApiErrorCodes.SUCCESS_NOT_ACTIVATED;
         }
 
-        return SourceResult.SUCCESS;
+        return SourceApiErrorCodes.SUCCESS;
     }
 
     /// <inheritdoc/>
-    public abstract Task<SourceResult> TurnOff();
+    public abstract Task<SourceApiErrorCodes> TurnOff();
 
     /// <inheritdoc/>
     public virtual LoadpointInfo GetActiveLoadpointInfo() => Info;

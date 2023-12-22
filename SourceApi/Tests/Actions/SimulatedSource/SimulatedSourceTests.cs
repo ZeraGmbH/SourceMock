@@ -30,7 +30,7 @@ namespace SourceApi.Tests.Actions.Source
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
 
-            Assert.That(result, Is.EqualTo(SourceResult.SUCCESS));
+            Assert.That(result, Is.EqualTo(SourceApiErrorCodes.SUCCESS));
             Assert.That(loadpoint, Is.EqualTo(currentLoadpoint));
         }
 
@@ -51,7 +51,7 @@ namespace SourceApi.Tests.Actions.Source
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
 
-            Assert.That(result, Is.EqualTo(SourceResult.SUCCESS));
+            Assert.That(result, Is.EqualTo(SourceApiErrorCodes.SUCCESS));
             Assert.That(currentLoadpoint, Is.Null);
         }
         #endregion
@@ -72,7 +72,7 @@ namespace SourceApi.Tests.Actions.Source
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
 
-            Assert.That(result, Is.EqualTo(SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES));
+            Assert.That(result, Is.EqualTo(SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES));
             Assert.That(currentLoadpoint, Is.Null);
         }
         #endregion
@@ -92,7 +92,7 @@ namespace SourceApi.Tests.Actions.Source
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
 
-            Assert.That(result, Is.EqualTo(SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID));
+            Assert.That(result, Is.EqualTo(SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID));
             Assert.That(currentLoadpoint, Is.Null);
         }
 
@@ -110,7 +110,7 @@ namespace SourceApi.Tests.Actions.Source
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
 
-            Assert.That(result, Is.EqualTo(SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID));
+            Assert.That(result, Is.EqualTo(SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID));
             Assert.That(currentLoadpoint, Is.Null);
         }
         #endregion

@@ -40,12 +40,12 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, I
     }
 
     /// <inheritdoc/>
-    public override async Task<SourceResult> TurnOff()
+    public override async Task<SourceApiErrorCodes> TurnOff()
     {
         Logger.LogTrace("Switching anything off.");
 
         await Task.WhenAll(Device.Execute(SerialPortRequest.Create("SUIAAAAAAAAA", "SOKUI")));
 
-        return SourceResult.SUCCESS;
+        return SourceApiErrorCodes.SUCCESS;
     }
 }

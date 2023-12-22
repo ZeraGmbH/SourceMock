@@ -77,16 +77,16 @@ namespace SourceApi.Controllers
 
             switch (srcResult)
             {
-                case SourceResult.SUCCESS:
+                case SourceApiErrorCodes.SUCCESS:
                     _logger.LogTrace("Loadpoint was successfully set.");
                     return Ok();
-                case SourceResult.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES:
-                case SourceResult.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID:
-                case SourceResult.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID:
-                case SourceResult.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS:
-                case SourceResult.LOADPOINT_NOT_SUITABLE_FREQUENCY_INVALID:
-                case SourceResult.LOADPOINT_ANGLE_INVALID:
-                case SourceResult.SUCCESS_NOT_ACTIVATED:
+                case SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES:
+                case SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID:
+                case SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID:
+                case SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS:
+                case SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_FREQUENCY_INVALID:
+                case SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID:
+                case SourceApiErrorCodes.SUCCESS_NOT_ACTIVATED:
                     _logger.LogInformation(srcResult.ToString());
                     return Problem(
                         detail: srcResult.ToUserFriendlyString(),
@@ -119,7 +119,7 @@ namespace SourceApi.Controllers
 #pragma warning disable IDE0066 // Not all enum values are appicable here
             switch (srcResult)
             {
-                case SourceResult.SUCCESS:
+                case SourceApiErrorCodes.SUCCESS:
                     _logger.LogTrace("Source was turned off.");
                     return Ok();
                 default:

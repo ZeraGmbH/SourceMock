@@ -27,9 +27,9 @@ internal class UnavailableSource : ISource
 
     public Task SetDosageMode(bool on) => throw new SourceNotReadyException();
 
-    public Task<SourceResult> SetLoadpoint(Loadpoint loadpoint) => throw new SourceNotReadyException();
+    public Task<SourceApiErrorCodes> SetLoadpoint(Loadpoint loadpoint) => throw new SourceNotReadyException();
 
     public Task StartDosage() => throw new SourceNotReadyException();
 
-    public Task<SourceResult> TurnOff() => throw new SourceNotReadyException();
+    public Task<SourceApiErrorCodes> TurnOff() => throw new SourceNotReadyException();
 }

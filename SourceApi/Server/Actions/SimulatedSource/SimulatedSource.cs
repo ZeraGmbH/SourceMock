@@ -69,11 +69,11 @@ namespace SourceApi.Actions.Source
         private SimulatedSourceState? _simulatedSourceState;
 
         /// <inheritdoc/>
-        public Task<SourceResult> SetLoadpoint(Loadpoint loadpoint)
+        public Task<SourceApiErrorCodes> SetLoadpoint(Loadpoint loadpoint)
         {
             var isValid = SourceCapabilityValidator.IsValid(loadpoint, _sourceCapabilities);
 
-            if (isValid == SourceResult.SUCCESS)
+            if (isValid == SourceApiErrorCodes.SUCCESS)
             {
                 _logger.LogTrace("Loadpoint set, source turned on.");
                 _loadpoint = loadpoint;
@@ -83,12 +83,12 @@ namespace SourceApi.Actions.Source
         }
 
         /// <inheritdoc/>
-        public Task<SourceResult> TurnOff()
+        public Task<SourceApiErrorCodes> TurnOff()
         {
             _logger.LogTrace("Source turned off.");
             _loadpoint = null;
 
-            return Task.FromResult(SourceResult.SUCCESS);
+            return Task.FromResult(SourceApiErrorCodes.SUCCESS);
         }
 
         /// <inheritdoc/>

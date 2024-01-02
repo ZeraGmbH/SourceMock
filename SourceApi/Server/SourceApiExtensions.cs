@@ -89,7 +89,7 @@ public static class SourceApiConfiguration
                 throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
         }
 
-
+        if (deviceType != "DeviceMock")
         {
             var usePortMock = configuration["SerialPort:UsePortMock"];
 

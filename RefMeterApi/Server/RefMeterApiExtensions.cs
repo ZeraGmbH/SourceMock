@@ -49,7 +49,7 @@ public static class RefMeterApiConfiguration
     /// <summary>
     /// Add RefMeterApiExceptionFilter to local scope
     /// </summary>
-    public static void UseErrorCalculatorApi(this MvcOptions options)
+    public static void UseRefMeterApi(this MvcOptions options)
     {
         options.Filters.Add<RefMeterApiExceptionFilter>();
     }

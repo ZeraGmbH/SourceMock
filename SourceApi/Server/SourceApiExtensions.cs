@@ -40,7 +40,7 @@ public static class SourceApiConfiguration
     /// <summary>
     /// Add SourceApiExceptionFilter to local scope
     /// </summary>
-    public static void UseErrorCalculatorApi(this MvcOptions options)
+    public static void UseSourceApi(this MvcOptions options)
     {
         options.Filters.Add<SourceApiExceptionFilter>();
     }

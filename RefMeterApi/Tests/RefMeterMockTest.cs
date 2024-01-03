@@ -3,6 +3,7 @@ using Moq;
 using SourceApi.Actions.Source;
 using RefMeterApi.Models;
 using SourceApi.Model;
+using Amazon.SecurityToken.Model;
 
 namespace RefMeterApiTests;
 
@@ -50,6 +51,116 @@ public class RefMeterMockTest
         Assert.That(measureOutput.Phases[0].AngleCurrent, Is.InRange(GetAbsoluteMinValue(currentAngle, 0.1), GetAbsoluteMaxValue(current, 0.1)));
         Assert.That(measureOutput.Phases[0].Voltage, Is.InRange(GetMinValue(voltage, 0.1), GetMaxValue(voltage, 0.0005)));
         Assert.That(measureOutput.Phases[0].AngleVoltage, Is.InRange(GetAbsoluteMinValue(voltageAngle, 0.1), GetAbsoluteMaxValue(voltageAngle, 0.1)));
+    }
+        
+    [Test]
+    public void Transfers_Data_Correctly_To_Measure_Output() {
+        // Arrange
+        Loadpoint lp = RefMeterMockTestData.Loadpoint_OnlyActivePower;
+
+        // Act
+        var mo = RefMeterMock.CalcMeasureOutput(lp);
+
+        // Assert
+        Assert.That(mo.Frequency, Is.EqualTo(50).Within(double.Epsilon));
+
+        Assert.That(mo.Phases.Count, Is.EqualTo(3));
+
+        Assert.That(mo.Phases[0].Voltage, Is.EqualTo(230).Within(double.Epsilon));
+        Assert.That(mo.Phases[0].AngleVoltage, Is.EqualTo(0).Within(double.Epsilon));
+        Assert.That(mo.Phases[0].Current, Is.EqualTo(100).Within(double.Epsilon));
+        Assert.That(mo.Phases[0].AngleCurrent, Is.EqualTo(0).Within(double.Epsilon));
+
+        Assert.That(mo.Phases[1].Voltage, Is.EqualTo(235).Within(double.Epsilon));
+        Assert.That(mo.Phases[1].AngleVoltage, Is.EqualTo(120).Within(double.Epsilon));
+        Assert.That(mo.Phases[1].Current, Is.EqualTo(80).Within(double.Epsilon));
+        Assert.That(mo.Phases[1].AngleCurrent, Is.EqualTo(120).Within(double.Epsilon));
+
+        Assert.That(mo.Phases[2].Voltage, Is.EqualTo(240).Within(double.Epsilon));
+        Assert.That(mo.Phases[2].AngleVoltage, Is.EqualTo(240).Within(double.Epsilon));
+        Assert.That(mo.Phases[2].Current, Is.EqualTo(60).Within(double.Epsilon));
+        Assert.That(mo.Phases[2].AngleCurrent, Is.EqualTo(240).Within(double.Epsilon));
+    }
+
+    [Test]
+    public void Calculates_Measure_Output_Correctly_Only_Active_Power()
+    {
+        // Arrange
+        Loadpoint lp = RefMeterMockTestData.Loadpoint_OnlyActivePower;
+
+        // Act
+        var mo = RefMeterMock.CalcMeasureOutput(lp);
+
+        // Assert
+        Assert.That(mo.Phases[0].ActivePower, Is.EqualTo(23000).Within(10e-10));
+        Assert.That(mo.Phases[0].ReactivePower, Is.EqualTo(0).Within(10e-10));
+        Assert.That(mo.Phases[0].ApparentPower, Is.EqualTo(23000).Within(10e-10));
+
+        Assert.That(mo.Phases[1].ActivePower, Is.EqualTo(18800).Within(10e-10));
+        Assert.That(mo.Phases[1].ReactivePower, Is.EqualTo(0).Within(10e-10));
+        Assert.That(mo.Phases[1].ApparentPower, Is.EqualTo(18800).Within(10e-10));
+
+        Assert.That(mo.Phases[2].ActivePower, Is.EqualTo(14400).Within(10e-10));
+        Assert.That(mo.Phases[2].ReactivePower, Is.EqualTo(0).Within(10e-10));
+        Assert.That(mo.Phases[2].ApparentPower, Is.EqualTo(14400).Within(10e-10));
+    
+        Assert.That(mo.ActivePower, Is.EqualTo(56200).Within(10e-10));
+        Assert.That(mo.ReactivePower, Is.EqualTo(0).Within(10e-10));
+        Assert.That(mo.ApparentPower, Is.EqualTo(56200).Within(10e-10));
+    }
+
+    [Test]
+    public void Calculates_Measure_Output_Correctly_Only_Rective_Power()
+    {
+        // Arrange
+        Loadpoint lp = RefMeterMockTestData.Loadpoint_OnlyReactivePower;
+
+        // Act
+        var mo = RefMeterMock.CalcMeasureOutput(lp);
+
+        // Assert
+        Assert.That(mo.Phases[0].ActivePower, Is.EqualTo(0).Within(10e-10));
+        Assert.That(mo.Phases[0].ReactivePower, Is.EqualTo(23000).Within(10e-10));
+        Assert.That(mo.Phases[0].ApparentPower, Is.EqualTo(23000).Within(10e-10));
+
+        Assert.That(mo.Phases[1].ActivePower, Is.EqualTo(0).Within(10e-10));
+        Assert.That(mo.Phases[1].ReactivePower, Is.EqualTo(18800).Within(10e-10));
+        Assert.That(mo.Phases[1].ApparentPower, Is.EqualTo(18800).Within(10e-10));
+
+        Assert.That(mo.Phases[2].ActivePower, Is.EqualTo(0).Within(10e-10));
+        Assert.That(mo.Phases[2].ReactivePower, Is.EqualTo(14400).Within(10e-10));
+        Assert.That(mo.Phases[2].ApparentPower, Is.EqualTo(14400).Within(10e-10));
+    
+        Assert.That(mo.ActivePower, Is.EqualTo(0).Within(10e-10));
+        Assert.That(mo.ReactivePower, Is.EqualTo(56200).Within(10e-10));
+        Assert.That(mo.ApparentPower, Is.EqualTo(56200).Within(10e-10));
+    }
+
+    [Test]
+    public void Calculates_Measure_Output_Correctly_Active_Rective_Mixed_Power()
+    {
+        // Arrange
+        Loadpoint lp = RefMeterMockTestData.Loadpoint_CosPhi0_5;
+
+        // Act
+        var mo = RefMeterMock.CalcMeasureOutput(lp);
+
+        // Assert
+        Assert.That(mo.Phases[0].ActivePower, Is.EqualTo(11500).Within(10e-10));
+        Assert.That(mo.Phases[0].ReactivePower, Is.EqualTo(19918.58).Within(0.01));
+        Assert.That(mo.Phases[0].ApparentPower, Is.EqualTo(23000).Within(10e-10));
+
+        Assert.That(mo.Phases[1].ActivePower, Is.EqualTo(9400).Within(10e-10));
+        Assert.That(mo.Phases[1].ReactivePower, Is.EqualTo(16281.27).Within(0.01));
+        Assert.That(mo.Phases[1].ApparentPower, Is.EqualTo(18800).Within(10e-10));
+
+        Assert.That(mo.Phases[2].ActivePower, Is.EqualTo(7200).Within(10e-10));
+        Assert.That(mo.Phases[2].ReactivePower, Is.EqualTo(12470.765814496).Within(10e-10));
+        Assert.That(mo.Phases[2].ApparentPower, Is.EqualTo(14400).Within(10e-10));
+    
+        Assert.That(mo.ActivePower, Is.EqualTo(28100).Within(10e-10));
+        Assert.That(mo.ReactivePower, Is.EqualTo(48670.62).Within(0.01));
+        Assert.That(mo.ApparentPower, Is.EqualTo(56200).Within(10e-10));
     }
 
     private double GetMinValue(double value, double deviation)

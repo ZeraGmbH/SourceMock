@@ -1,3 +1,4 @@
+using MongoDB.Driver.Core.Operations;
 using RefMeterApi.Models;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
@@ -34,6 +35,8 @@ public partial class RefMeterMock : IRefMeter
         return Task.FromResult(_measurementMode);
     }
 
+    private const double PI_BY_180 = Math.PI / 180;
+
     /// <summary>
     /// 
     /// </summary>
@@ -41,53 +44,95 @@ public partial class RefMeterMock : IRefMeter
     public Task<MeasureOutput> GetActualValues()
     {
         Loadpoint loadpoint = GetLoadpoint();
+        MeasureOutput mo = CalcMeasureOutput(loadpoint);
 
+        foreach (var phase in mo.Phases)
+        {
+            _ = phase.Current ?? throw new ArgumentNullException();
+            _ = phase.AngleCurrent ?? throw new ArgumentNullException();
+            _ = phase.Voltage ?? throw new ArgumentNullException();
+            _ = phase.ActivePower ?? throw new ArgumentNullException();
+            _ = phase.ReactivePower ?? throw new ArgumentNullException();
+            _ = phase.ApparentPower ?? throw new ArgumentNullException();
+            _ = phase.PowerFactor ?? throw new ArgumentNullException();
+            
+            phase.Current = phase.Current != 0 
+                ? GetRandomNumberWithPercentageDeviation(phase.Current.Value, 0.01)
+                : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.Value, 0.01));
+            phase.AngleCurrent = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.Value, 0.1));
+            phase.Voltage = phase.Voltage != 0 
+                ? GetRandomNumberWithPercentageDeviation(phase.Voltage.Value, 0.05)
+                : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.Value, 0.05));
+            phase.ActivePower = GetRandomNumberWithAbsoluteDeviation(phase.ActivePower.Value, 0.02);
+            phase.ReactivePower = GetRandomNumberWithAbsoluteDeviation(phase.ReactivePower.Value, 0.02);
+            phase.ApparentPower = GetRandomNumberWithAbsoluteDeviation(phase.ApparentPower.Value, 0.02);
+            phase.PowerFactor = phase.PowerFactor != 0 
+                ? GetRandomNumberWithAbsoluteDeviation(phase.PowerFactor.Value, 0.02)
+                : GetRandomNumberWithAbsoluteDeviation(0, 0.01);
+        }
+
+        _ = mo.ActivePower ?? throw new ArgumentNullException();
+        _ = mo.ApparentPower ?? throw new ArgumentNullException();
+        _ = mo.ReactivePower ?? throw new ArgumentNullException();
+
+        mo.Frequency = GetRandomNumberWithPercentageDeviation(loadpoint.Frequency.Value, 0.02);
+        mo.PhaseOrder = "123";
+        mo.ActivePower = GetRandomNumberWithAbsoluteDeviation(mo.ActivePower.Value, 0.02);
+        mo.ApparentPower = GetRandomNumberWithAbsoluteDeviation(mo.ApparentPower.Value, 0.02);
+        mo.ReactivePower = GetRandomNumberWithAbsoluteDeviation(mo.ReactivePower.Value, 0.02);
+
+        return Task.FromResult(mo);
+    }
+
+    /// <summary>
+    /// Calculates an expected Measure Output from a given loadpoint.
+    /// </summary>
+    /// <param name="lp">The loadpoint.</param>
+    /// <returns>The according measure output.</returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public static MeasureOutput CalcMeasureOutput(Loadpoint lp) {
         double activePowerSum = 0;
         double reactivePowerSum = 0;
         double apparentPowerSum = 0;
 
         var measureOutputPhases = new List<MeasureOutputPhase>();
-        foreach (var phase in loadpoint.Phases)
+        foreach (var phase in lp.Phases)
         {
             var current = phase.Current.Rms;
             var voltage = phase.Voltage.Rms;
             var angle = Math.Abs(phase.Current.Angle - phase.Voltage.Angle);
 
-            var activePower = current * voltage * Math.Cos(angle);
-            var reactivePower = current * voltage * Math.Sin(angle);
+            var activePower = current * voltage * Math.Cos(angle * PI_BY_180);
+            var reactivePower = current * voltage * Math.Sin(angle * PI_BY_180);
             var apparentPower = Math.Sqrt(activePower * activePower + reactivePower * reactivePower);
 
             var measureOutputPhase = new MeasureOutputPhase()
             {
-                Current = current != 0 ? GetRandomNumberWithPercentageDeviation(phase.Current.Rms, 0.01)
-                                        : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.Rms, 0.01)),
-                AngleCurrent = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.Angle, 0.1)),
-                Voltage = voltage != 0 ? GetRandomNumberWithPercentageDeviation(phase.Voltage.Rms, 0.05)
-                                        : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.Rms, 0.05)),
-                AngleVoltage = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.Angle, 0.1)),
-                ActivePower = GetRandomNumberWithAbsoluteDeviation(activePower, 0.02),
-                ReactivePower = GetRandomNumberWithAbsoluteDeviation(reactivePower, 0.02),
-                ApparentPower = GetRandomNumberWithAbsoluteDeviation(apparentPower, 0.02),
-                PowerFactor = apparentPower != 0 ? GetRandomNumberWithAbsoluteDeviation(activePower / apparentPower, 0.02)
-                                        : GetRandomNumberWithAbsoluteDeviation(0, 0.01),
+                Current = phase.Current.Rms,
+                AngleCurrent = phase.Current.Angle,
+                Voltage = phase.Voltage.Rms,
+                AngleVoltage = phase.Voltage.Angle,
+                ActivePower = current * voltage * Math.Cos(angle * PI_BY_180),
+                ReactivePower = current * voltage * Math.Sin(angle * PI_BY_180),
+                ApparentPower = Math.Sqrt(activePower * activePower + reactivePower * reactivePower),
+                PowerFactor = activePower / apparentPower
             };
+
             activePowerSum += activePower;
             reactivePowerSum += reactivePower;
             apparentPowerSum += apparentPower;
             measureOutputPhases.Add(measureOutputPhase);
         }
 
-        MeasureOutput measureOutput = new()
+        return new()
         {
-            Frequency = GetRandomNumberWithPercentageDeviation(loadpoint.Frequency.Value, 0.02),
+            Frequency = lp.Frequency.Value,
             PhaseOrder = "123",
             Phases = measureOutputPhases,
-            ActivePower = GetRandomNumberWithAbsoluteDeviation(activePowerSum, 0.02),
-            ApparentPower = GetRandomNumberWithAbsoluteDeviation(apparentPowerSum, 0.02),
-            ReactivePower = GetRandomNumberWithAbsoluteDeviation(reactivePowerSum, 0.02)
-        };
-
-        return Task.FromResult(measureOutput);
+            ActivePower = activePowerSum,
+            ApparentPower = apparentPowerSum,
+            ReactivePower = reactivePowerSum
+        };   
     }
 
     /// <summary>

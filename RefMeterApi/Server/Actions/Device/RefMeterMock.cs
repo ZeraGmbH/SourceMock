@@ -102,10 +102,6 @@ public partial class RefMeterMock : IRefMeter
             var voltage = phase.Voltage.Rms;
             var angle = Math.Abs(phase.Current.Angle - phase.Voltage.Angle);
 
-            var activePower = current * voltage * Math.Cos(angle * PI_BY_180);
-            var reactivePower = current * voltage * Math.Sin(angle * PI_BY_180);
-            var apparentPower = Math.Sqrt(activePower * activePower + reactivePower * reactivePower);
-
             var measureOutputPhase = new MeasureOutputPhase()
             {
                 Current = phase.Current.Rms,
@@ -114,13 +110,13 @@ public partial class RefMeterMock : IRefMeter
                 AngleVoltage = phase.Voltage.Angle,
                 ActivePower = current * voltage * Math.Cos(angle * PI_BY_180),
                 ReactivePower = current * voltage * Math.Sin(angle * PI_BY_180),
-                ApparentPower = Math.Sqrt(activePower * activePower + reactivePower * reactivePower),
-                PowerFactor = activePower / apparentPower
+                ApparentPower = phase.Current.Rms * phase.Voltage.Rms
             };
+            measureOutputPhase.PowerFactor = measureOutputPhase.ActivePower / measureOutputPhase.ApparentPower;
 
-            activePowerSum += activePower;
-            reactivePowerSum += reactivePower;
-            apparentPowerSum += apparentPower;
+            activePowerSum += measureOutputPhase.ActivePower.Value;
+            reactivePowerSum += measureOutputPhase.ReactivePower.Value;
+            apparentPowerSum += measureOutputPhase.ApparentPower.Value;
             measureOutputPhases.Add(measureOutputPhase);
         }
 

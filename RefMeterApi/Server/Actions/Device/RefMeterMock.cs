@@ -59,7 +59,7 @@ public partial class RefMeterMock : IRefMeter
             phase.Current = phase.Current != 0 
                 ? GetRandomNumberWithPercentageDeviation(phase.Current.Value, 0.01)
                 : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.Value, 0.01));
-            phase.AngleCurrent = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.Value, 0.1));
+            phase.AngleCurrent = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.AngleCurrent.Value, 0.1));
             phase.Voltage = phase.Voltage != 0 
                 ? GetRandomNumberWithPercentageDeviation(phase.Voltage.Value, 0.05)
                 : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.Value, 0.05));

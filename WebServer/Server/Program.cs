@@ -7,7 +7,7 @@ using SharedLibrary;
 using SourceApi;
 using SharedLibrary.ExceptionHandling;
 
-CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-us");
+CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo(string.Empty);
 
 var builder = WebApplication.CreateBuilder(args);
 

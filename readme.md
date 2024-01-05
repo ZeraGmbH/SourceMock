@@ -4,5 +4,5 @@ This Repo is meant to contain the APIs for everything that is intended to run on
 
 The existing implementations wrap old interfaces to the devices mentiond above or simulate their behaiviour.
 
-This repository is primarily meant to be used as a submodule to other projects, namely [WebSAM](https://github.com/ZeraGmbH/websam) and [ZENUX](https://github.com/ZeraGmbH/meta-zera).
+This repository is primarily serves as a submodule to other projects, namely [WebSAM](https://github.com/ZeraGmbH/websam) and [ZENUX](https://github.com/ZeraGmbH/meta-zera). For information on how to set this project up, refer to these projects.
 

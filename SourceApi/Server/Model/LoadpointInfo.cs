@@ -12,7 +12,7 @@ namespace SourceApi.Model
         public DateTime? SavedAt { get; set; }
 
         /// <summary>
-        /// The time the loadpoint has been sucessfully activated.
+        /// The time the loadpoint has been successfully activated.
         /// </summary>
         public DateTime? ActivatedAt { get; set; }
     }

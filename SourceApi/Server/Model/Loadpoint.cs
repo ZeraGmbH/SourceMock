@@ -12,7 +12,7 @@ namespace SourceApi.Model
         /// <summary>
         /// The phases of this loadpoint.
         /// </summary>
-        public List<PhaseLoadpoint> Phases { get; set; } = new();
+        public List<PhaseLoadpoint> Phases { get; set; } = [];
 
         /// <summary>
         /// Determines whether or not the voltages neutral conductor is to be connected.

@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-
+using SourceApi.Actions.Source;
 using SourceApi.Model;
 
 namespace SourceApi.Tests.Actions.LoadpointValidator
@@ -19,6 +19,31 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
 
             // Assert
             Assert.That(errCount, Is.Zero);
+        }
+
+        [Test]
+        [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.InvalidLoadpoints))]
+        public void TestInvalidLoadpoints(Loadpoint loadpoint)
+        {
+            // Arrange
+            // loadpoint set in parameter
+
+            // Act
+            var error = SourceCapabilityValidator.IsValid(loadpoint, new()
+            {
+                FrequencyRanges = { new() { Max = 100, Min = 0, PrecisionStepSize = 1 } },
+                Phases = loadpoint.Phases
+                    .Select(
+                        p => new PhaseCapability
+                        {
+                            Current = new() { Min = 0, Max = 100, PrecisionStepSize = 1 },
+                            Voltage = new() { Min = 0, Max = 1000, PrecisionStepSize = 1 }
+                        }
+                    ).ToList()
+            });
+
+            // Assert
+            Assert.That(error, Is.EqualTo(SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID));
         }
         #endregion
 
@@ -76,6 +101,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
             // Assert
             Assert.That(errCount, Is.EqualTo(1));
         }
+
         #endregion
 
         /// <summary>

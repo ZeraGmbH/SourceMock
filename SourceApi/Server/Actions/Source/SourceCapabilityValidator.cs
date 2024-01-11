@@ -62,11 +62,9 @@ namespace SourceApi.Actions.Source
         {
             for (int i = 0; i < loadpoint.Phases.Count; ++i)
             {
+                // Is a current-only source
                 if (capabilities.Phases[i].Voltage == null)
-                {
-                    // Is a current-only source
                     continue;
-                }
 
                 var actualRms = loadpoint.Phases[i].Voltage.Rms;
                 var allowedRange = capabilities.Phases[i].Voltage;
@@ -78,8 +76,13 @@ namespace SourceApi.Actions.Source
                 var isAngleValue = CheckAngle(loadpoint.Phases[i].Voltage.Angle);
                 if (isAngleValue != SourceApiErrorCodes.SUCCESS)
                     return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
-
             }
+
+            var firstActive = loadpoint.Phases.FirstOrDefault(p => p.Voltage?.On == true);
+
+            if (firstActive != null && firstActive.Voltage.Angle != 0)
+                return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
+
             return SourceApiErrorCodes.SUCCESS;
         }
 

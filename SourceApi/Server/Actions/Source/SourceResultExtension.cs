@@ -19,7 +19,7 @@ namespace SourceApi.Actions.Source
                 case SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_TOO_MANY_HARMONICS:
                     return "The number of harmonics given in the loadpoint is higher than what the source can provide.";
                 case SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID:
-                    return "The angle must be between 0 (inclusive) and 360 (exclusive) degrees.";
+                    return "The angle must be between 0 (inclusive) and 360 (exclusive) degrees and the angle of the first active voltage phase must be 0.";
                 case SourceApiErrorCodes.SUCCESS_NOT_ACTIVATED:
                     return "The loadpoint is valid and has been saved but it could not be activated on the device.";
                 default:

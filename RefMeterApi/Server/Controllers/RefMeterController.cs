@@ -39,7 +39,7 @@ public class RefMeterController(IRefMeter device) : ControllerBase
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<MeasureOutput>> GetActualValues() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetActualValues);
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetActualValues());
 
     /// <summary>
     /// Get the list of supported measurement modes.

@@ -1,5 +1,9 @@
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
+using Newtonsoft.Json;
 using RefMeterApi.Models;
 using SerialPortProxy;
 
@@ -13,7 +17,32 @@ partial class SerialPortMTRefMeter
     private readonly ResponseShare<MeasureOutput> _actualValues;
 
     /// <inheritdoc/>
-    public Task<MeasureOutput> GetActualValues() => _actualValues.Execute();
+    public async Task<MeasureOutput> GetActualValues(int firstActiveVoltagePhase = -1)
+    {
+        /* Request the cached values and clone the result - so the caller must not care for accessing shared data. */
+        var values = JsonConvert.DeserializeObject<MeasureOutput>(JsonConvert.SerializeObject(await _actualValues.Execute()))!;
+
+        /* No need to correct for active phase. */
+        if (firstActiveVoltagePhase < 0 || firstActiveVoltagePhase >= values.Phases.Count) return values;
+
+        /* Get the angle of the first active voltage. */
+        var angle = values.Phases[firstActiveVoltagePhase].AngleVoltage;
+
+        if (!angle.HasValue) return values;
+
+        /* Correct all angles accordingly. */
+        foreach (var phase in values.Phases)
+        {
+            if (phase.AngleCurrent.HasValue)
+                phase.AngleCurrent = (phase.AngleCurrent - angle + 720) % 360;
+
+            if (phase.AngleVoltage.HasValue)
+                phase.AngleVoltage = (phase.AngleVoltage - angle + 720) % 360;
+        }
+
+        /* Report the corrected result. */
+        return values;
+    }
 
     /// <summary>
     /// Begin reading the actual values - this may take some time.

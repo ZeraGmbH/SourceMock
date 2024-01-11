@@ -52,9 +52,10 @@ public class RefMeterMockTest
         Assert.That(measureOutput.Phases[0].Voltage, Is.InRange(GetMinValue(voltage, 0.0005), GetMaxValue(voltage, 0.0005)));
         Assert.That(measureOutput.Phases[0].AngleVoltage, Is.InRange(GetAbsoluteMinValue(voltageAngle, 0.1), GetAbsoluteMaxValue(voltageAngle, 0.1)));
     }
-        
+
     [Test]
-    public void Transfers_Data_Correctly_To_Measure_Output() {
+    public void Transfers_Data_Correctly_To_Measure_Output()
+    {
         // Arrange
         Loadpoint lp = RefMeterMockTestData.Loadpoint_OnlyActivePower;
 
@@ -103,7 +104,7 @@ public class RefMeterMockTest
         Assert.That(mo.Phases[2].ActivePower, Is.EqualTo(14400).Within(10e-10));
         Assert.That(mo.Phases[2].ReactivePower, Is.EqualTo(0).Within(10e-10));
         Assert.That(mo.Phases[2].ApparentPower, Is.EqualTo(14400).Within(10e-10));
-    
+
         Assert.That(mo.ActivePower, Is.EqualTo(56200).Within(10e-10));
         Assert.That(mo.ReactivePower, Is.EqualTo(0).Within(10e-10));
         Assert.That(mo.ApparentPower, Is.EqualTo(56200).Within(10e-10));
@@ -130,7 +131,7 @@ public class RefMeterMockTest
         Assert.That(mo.Phases[2].ActivePower, Is.EqualTo(0).Within(10e-10));
         Assert.That(mo.Phases[2].ReactivePower, Is.EqualTo(14400).Within(10e-10));
         Assert.That(mo.Phases[2].ApparentPower, Is.EqualTo(14400).Within(10e-10));
-    
+
         Assert.That(mo.ActivePower, Is.EqualTo(0).Within(10e-10));
         Assert.That(mo.ReactivePower, Is.EqualTo(56200).Within(10e-10));
         Assert.That(mo.ApparentPower, Is.EqualTo(56200).Within(10e-10));
@@ -157,7 +158,7 @@ public class RefMeterMockTest
         Assert.That(mo.Phases[2].ActivePower, Is.EqualTo(7200).Within(10e-10));
         Assert.That(mo.Phases[2].ReactivePower, Is.EqualTo(12470.765814496).Within(10e-10));
         Assert.That(mo.Phases[2].ApparentPower, Is.EqualTo(14400).Within(10e-10));
-    
+
         Assert.That(mo.ActivePower, Is.EqualTo(28100).Within(10e-10));
         Assert.That(mo.ReactivePower, Is.EqualTo(48670.62).Within(0.01));
         Assert.That(mo.ApparentPower, Is.EqualTo(56200).Within(10e-10));

@@ -7,7 +7,7 @@ namespace RefMeterApi.Actions.Device;
 partial class SerialPortFGRefMeter
 {
     /// <inheritdoc/>
-    public async Task<MeasureOutput> GetActualValues()
+    public async Task<MeasureOutput> GetActualValues(int firstActiveVoltagePhase = -1)
     {
         TestConfigured();
 

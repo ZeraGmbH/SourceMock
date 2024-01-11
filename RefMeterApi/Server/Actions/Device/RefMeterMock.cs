@@ -41,7 +41,7 @@ public partial class RefMeterMock : IRefMeter
     /// 
     /// </summary>
     /// <returns>ActualValues that fluctuate around the set loadpoint</returns>
-    public Task<MeasureOutput> GetActualValues()
+    public Task<MeasureOutput> GetActualValues(int firstActiveVoltagePhase = -1)
     {
         Loadpoint loadpoint = GetLoadpoint();
         MeasureOutput mo = CalcMeasureOutput(loadpoint);
@@ -55,18 +55,18 @@ public partial class RefMeterMock : IRefMeter
             _ = phase.ReactivePower ?? throw new ArgumentNullException();
             _ = phase.ApparentPower ?? throw new ArgumentNullException();
             _ = phase.PowerFactor ?? throw new ArgumentNullException();
-            
-            phase.Current = phase.Current != 0 
+
+            phase.Current = phase.Current != 0
                 ? GetRandomNumberWithPercentageDeviation(phase.Current.Value, 0.01)
                 : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.Value, 0.01));
             phase.AngleCurrent = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.AngleCurrent.Value, 0.1));
-            phase.Voltage = phase.Voltage != 0 
+            phase.Voltage = phase.Voltage != 0
                 ? GetRandomNumberWithPercentageDeviation(phase.Voltage.Value, 0.05)
                 : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.Value, 0.05));
             phase.ActivePower = GetRandomNumberWithAbsoluteDeviation(phase.ActivePower.Value, 0.02);
             phase.ReactivePower = GetRandomNumberWithAbsoluteDeviation(phase.ReactivePower.Value, 0.02);
             phase.ApparentPower = GetRandomNumberWithAbsoluteDeviation(phase.ApparentPower.Value, 0.02);
-            phase.PowerFactor = phase.PowerFactor != 0 
+            phase.PowerFactor = phase.PowerFactor != 0
                 ? GetRandomNumberWithAbsoluteDeviation(phase.PowerFactor.Value, 0.02)
                 : GetRandomNumberWithAbsoluteDeviation(0, 0.01);
         }
@@ -90,7 +90,8 @@ public partial class RefMeterMock : IRefMeter
     /// <param name="lp">The loadpoint.</param>
     /// <returns>The according measure output.</returns>
     /// <exception cref="NotImplementedException"></exception>
-    public static MeasureOutput CalcMeasureOutput(Loadpoint lp) {
+    public static MeasureOutput CalcMeasureOutput(Loadpoint lp)
+    {
         double activePowerSum = 0;
         double reactivePowerSum = 0;
         double apparentPowerSum = 0;
@@ -128,7 +129,7 @@ public partial class RefMeterMock : IRefMeter
             ActivePower = activePowerSum,
             ApparentPower = apparentPowerSum,
             ReactivePower = reactivePowerSum
-        };   
+        };
     }
 
     /// <summary>

@@ -348,7 +348,7 @@ public class SerialPortMTMock : ISerialPort
             /* Error conditions. */
             case "SSM":
                 {
-                    _replies.Enqueue("SSM42000002002000000800");
+                    _replies.Enqueue((DateTime.Now.Minute % 2 == 0) ? "SSM42000002002000000800" : "SSM00000000000000000000");
 
                     break;
                 }

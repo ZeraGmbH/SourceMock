@@ -136,7 +136,7 @@ public class SerialPortFGMock : ISerialPort
                 _replies.Enqueue($"OK3PA45;{_energy}");
                 break;
             case "SM":
-                _replies.Enqueue("SM4200000200200000080000");
+                _replies.Enqueue((DateTime.Now.Minute % 2 == 0) ? "SM4200000200200000080000" : "SM0000000000000000000000");
                 break;
             default:
                 {

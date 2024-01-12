@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace MeterTestSystemApi;
+namespace MeterTestSystemApi.Models;
 
 /// <summary>
 /// All types of amplifiers.

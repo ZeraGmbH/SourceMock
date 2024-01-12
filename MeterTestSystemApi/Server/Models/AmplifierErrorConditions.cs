@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace MeterTestSystemApi;
+namespace MeterTestSystemApi.Models;
 
 /// <summary>
 /// All possible error conditions of an amplifier.

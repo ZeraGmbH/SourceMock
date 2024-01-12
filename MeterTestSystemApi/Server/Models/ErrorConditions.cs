@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace MeterTestSystemApi.Models;
 
 /// <summary>
+/// Error status for a meter test system.
 /// </summary>
 public class ErrorConditions
 {

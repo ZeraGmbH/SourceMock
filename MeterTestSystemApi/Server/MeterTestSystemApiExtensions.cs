@@ -22,6 +22,7 @@ public static class MeterTestSystemApiConfiguration
         /* Add all XML documentation to OpenAPI schema. */
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(MeterTestSystemApiConfiguration).Assembly.GetName().Name}.xml"));
 
+        /* Must add enumeration explicitly because it is only used as a dictionary key class. */
         SwaggerModelExtender.AddType<Amplifiers>().Register(options);
     }
 

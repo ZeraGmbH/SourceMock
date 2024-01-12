@@ -82,4 +82,19 @@ public class MeterTestSystemController(IMeterTestSystem device) : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<MeterTestSystemFirmwareVersion>> GetFirmwareVersion() =>
         ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetFirmwareVersion);
+
+    /// <summary>
+    /// Read the current error conditions of the meter test system.
+    /// </summary>
+    /// <returns>All current error conditions.</returns>
+    [HttpGet("ErrorConditions")]
+    [SwaggerOperation(OperationId = "GetErrorConditions")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult<ErrorConditions>> GetErrorConditions() =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetErrorConditions);
 }

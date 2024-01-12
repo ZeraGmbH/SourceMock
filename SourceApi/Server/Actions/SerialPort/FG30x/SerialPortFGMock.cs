@@ -135,6 +135,9 @@ public class SerialPortFGMock : ISerialPort
             case "3PA45":
                 _replies.Enqueue($"OK3PA45;{_energy}");
                 break;
+            case "SM":
+                _replies.Enqueue("SM4200000200200000080000");
+                break;
             default:
                 {
                     Match? match;

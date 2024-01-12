@@ -345,6 +345,13 @@ public class SerialPortMTMock : ISerialPort
                 _replies.Enqueue("I3: MT781_I   ;Serial:50021475f   ;PIC:22;Platine:VE5611C   ");
                 _replies.Enqueue("SOKAW");
                 break;
+            /* Error conditions. */
+            case "SSM":
+                {
+                    _replies.Enqueue("SSM42000002002000000800");
+
+                    break;
+                }
             default:
                 {
                     Match? match;

@@ -16,14 +16,16 @@ public static class ErrorConditionParser
         public Flags(string pattern, bool fg)
         {
             /* Must all be hex numbers. */
-            _flags = pattern.Select(p => Byte.Parse(new string(p, 1), NumberStyles.HexNumber)).ToArray();
+            _flags = pattern.Select(p => byte.Parse(new string(p, 1), NumberStyles.HexNumber)).ToArray();
 
             /* Must have a minimum length. */
-            if (_flags.Length < (fg ? 21 : 20)) throw new ArgumentException(nameof(pattern));
+            if (_flags.Length < 20) throw new ArgumentException("too few flags", nameof(pattern));
 
         }
 
         public bool this[int index, byte mask] => (_flags[index] & mask) == mask;
+
+        public bool? GetOptionalFlag(int index, byte mask) => (index < _flags.Length) ? (_flags[index] & mask) == mask : null;
     }
 
     private static readonly Dictionary<Amplifiers, byte>[] _AmplifierMasks = [
@@ -78,8 +80,8 @@ public static class ErrorConditionParser
 
         if (fg)
         {
-            result.IctFailure = flags[20, 0x8];
-            result.WrongRangeReferenceMeter = flags[20, 0x4];
+            result.IctFailure = flags.GetOptionalFlag(20, 0x8);
+            result.WrongRangeReferenceMeter = flags.GetOptionalFlag(20, 0x4);
         }
 
         /* Report result. */

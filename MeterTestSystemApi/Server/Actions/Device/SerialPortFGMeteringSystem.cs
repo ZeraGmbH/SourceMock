@@ -234,4 +234,16 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
             Version = request.EndMatch!.Groups[2].Value.Trim()
         };
     }
+
+    /// <inheritdoc/>
+    public async Task<ErrorConditions> GetErrorConditions()
+    {
+        /* Send command and check reply. */
+        var request = SerialPortRequest.Create("SM", new Regex("^SM([0-9A-Fa-f]+)$"));
+
+        await _device.Execute(request)[0];
+
+        /* Create response structure. */
+        return ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, true);
+    }
 }

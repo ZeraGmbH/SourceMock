@@ -1,7 +1,9 @@
 using MeterTestSystemApi.Actions.Device;
+using MeterTestSystemApi.Models;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SharedLibrary;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MeterTestSystemApi;
@@ -19,6 +21,8 @@ public static class MeterTestSystemApiConfiguration
     {
         /* Add all XML documentation to OpenAPI schema. */
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(MeterTestSystemApiConfiguration).Assembly.GetName().Name}.xml"));
+
+        SwaggerModelExtender.AddType<Amplifiers>().Register(options);
     }
 
     /// <summary>

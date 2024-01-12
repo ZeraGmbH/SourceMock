@@ -136,15 +136,12 @@ public class MeterTestSystemMock : IMeterTestSystem
     /// 
     /// </summary>
     /// <returns></returns>
-    public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion()
-    {
-        return Task.FromResult(new MeterTestSystemFirmwareVersion()
+    public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion() =>
+        Task.FromResult(new MeterTestSystemFirmwareVersion
         {
             ModelName = "DeviceMock",
             Version = "1.0"
-        }
-        );
-    }
+        });
 
     /// <summary>
     /// 
@@ -156,4 +153,7 @@ public class MeterTestSystemMock : IMeterTestSystem
     {
         throw new NotImplementedException();
     }
+
+    /// <inheritdoc/>
+    public Task<ErrorConditions> GetErrorConditions() => Task.FromResult(new ErrorConditions { HasFuseError = true, });
 }

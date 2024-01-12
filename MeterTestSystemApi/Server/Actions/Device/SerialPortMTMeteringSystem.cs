@@ -95,4 +95,16 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
         /* The MT line systems do not support amplifier configurations. */
         throw new InvalidOperationException();
     }
+
+    /// <inheritdoc/>
+    public async Task<ErrorConditions> GetErrorConditions()
+    {
+        /* Send command and check reply. */
+        var request = SerialPortRequest.Create("SSM", new Regex("^SSM([0-9A-Fa-f]+)$"));
+
+        await _device.Execute(request)[0];
+
+        /* Create response structure. */
+        return ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, false);
+    }
 }

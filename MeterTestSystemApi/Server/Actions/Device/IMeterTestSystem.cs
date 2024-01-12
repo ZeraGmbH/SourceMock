@@ -29,6 +29,12 @@ public interface IMeterTestSystem
     Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeter settings);
 
     /// <summary>
+    /// Retrive the current error condition overview for the meter test system.
+    /// </summary>
+    /// <returns>All available error conditions.</returns>
+    Task<ErrorConditions> GetErrorConditions();
+
+    /// <summary>
     /// Request the current physical configuration used.
     /// </summary>
     AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter { get; }

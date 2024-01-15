@@ -21,6 +21,20 @@ public interface ICapabilitiesMap
     /// <param name="currentAmplifier"></param>
     /// <returns></returns>
     public SourceCapabilities GetCapabilitiesByAmplifiers(VoltageAmplifiers voltageAmplifier, CurrentAmplifiers currentAmplifier);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="voltageAmplifier"></param>
+    /// <returns></returns>
+    public double[] GetRangesByAmplifier(VoltageAmplifiers voltageAmplifier);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="currentAmplifier"></param>
+    /// <returns></returns>
+    public double[] GetRangesByAmplifier(CurrentAmplifiers currentAmplifier);
 }
 
 /// <summary>
@@ -100,11 +114,14 @@ public class CapabilitiesMap : ICapabilitiesMap
     private static SourceCapabilities GetCapabilitiesByAmplifiers(string voltageAmplifier, string currentAmplifier)
     {
         /* See if there are configurations for the amplifiers. */
-        if (!VoltageByAmplifier.TryGetValue(voltageAmplifier, out var voltage))
-            throw new ArgumentException(nameof(voltageAmplifier));
+        if (!VoltageByAmplifier.TryGetValue(voltageAmplifier, out var voltageInfo))
+            throw new ArgumentException($"unknown voltage amplifier {voltageAmplifier}", nameof(voltageAmplifier));
 
-        if (!CurrentByAmplifier.TryGetValue(currentAmplifier, out var current))
-            throw new ArgumentException(nameof(currentAmplifier));
+        if (!CurrentByAmplifier.TryGetValue(currentAmplifier, out var currentInfo))
+            throw new ArgumentException($"unknown current amplifier {currentAmplifier}", nameof(currentAmplifier));
+
+        var (current, _) = currentInfo;
+        var (voltage, _) = voltageInfo;
 
         var capabilties = new SourceCapabilities();
 
@@ -137,63 +154,79 @@ public class CapabilitiesMap : ICapabilitiesMap
         return capabilties;
     }
 
-    private static readonly Dictionary<string, SourceCapabilities> VoltageByAmplifier = new() {
-    { "MT786", new() {
-        FrequencyRanges = new() { new(45, 65, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Voltage = new(20, 500, 0.001) } },
-    } },
-    { "VU211", new () {
-        FrequencyRanges = new() { new(40, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new () { new() { Voltage = new(30, 480, 0.001) } },
-    } },
-    { "VU220", new () {
-        FrequencyRanges = new() { new(40, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new () { new() { Voltage = new(30, 320, 0.001) } },
-    } },
-    { "VU221", new() {
-        FrequencyRanges = new() { new(40, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Voltage = new(30, 320, 0.001) } },
-    } },
-    { "VUI302", new() {
-        FrequencyRanges = new() { new(40, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Voltage = new(30, 320, 0.001) } },
-    } },
-    { "SVG3020", new() {
-        FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Voltage = new(30, 600, 0.001) } },
-    } } };
+    public double[] GetRangesByAmplifier(VoltageAmplifiers voltageAmplifier)
+    {
+        if (!VoltageByAmplifier.TryGetValue(GetVoltageAmplifierKey(voltageAmplifier), out var voltageInfo))
+            throw new ArgumentException($"unknown voltage amplifier {voltageAmplifier}", nameof(voltageAmplifier));
 
-    private static readonly Dictionary<string, SourceCapabilities> CurrentByAmplifier = new() {
-    { "MT786", new() {
-        FrequencyRanges = new() { new(45, 65, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Current = new(0.001, 120, 0.001) } },
-    } },
-    { "VI201", new() {
-        FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Current = new(500E-6, 160, 0.0001) } },
-    } },
-    { "VI202", new() {
-        FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Current = new(500E-6, 120, 0.0001) } },
-    } },
-    { "VI220", new() {
-        FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Current = new(500E-6, 120, 0.0001) } },
-    } },
-    { "VI221", new() {
-        FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Current = new(500E-6, 120, 0.0001) } },
-    } },
-    { "VI222", new() {
-        FrequencyRanges = new() { new(40, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Current = new(500E-6, 120, 0.0001) } },
-    } },
-    { "VUI302", new() {
-        FrequencyRanges = new() { new(40, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Current = new(12E-3, 120, 0.001) } },
-    } },
-    { "SCG1020", new() {
-        FrequencyRanges = new() { new(15, 70, 0.01, FrequencyMode.SYNTHETIC) },
-        Phases = new() { new() { Current = new(0.001, 120, 0.0001)} },
-    } } };
+        return voltageInfo.Item2.Order().ToArray();
+    }
+
+    public double[] GetRangesByAmplifier(CurrentAmplifiers currentAmplifier)
+    {
+        if (!CurrentByAmplifier.TryGetValue(GetCurrentAmplifierKey(currentAmplifier), out var currentInfo))
+            throw new ArgumentException($"unknown current amplifier {currentAmplifier}", nameof(currentAmplifier));
+
+        return currentInfo.Item2.Order().ToArray();
+    }
+
+    private static readonly Dictionary<string, Tuple<SourceCapabilities, double[]>> VoltageByAmplifier = new() {
+    { "MT786",  Tuple.Create<SourceCapabilities,double[]>(new () {
+        FrequencyRanges = [new(45, 65, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Voltage = new(20, 500, 0.001) }],
+    }, [ 5d, 60d, 125d, 250d, 420d ] )},
+    { "VU211", Tuple.Create<SourceCapabilities,double[]>(new () {
+        FrequencyRanges = [new(40, 70, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Voltage = new(30, 480, 0.001) }],
+    }, [ 5d, 60d, 125d, 250d, 420d ]) },
+    { "VU220",Tuple.Create<SourceCapabilities,double[]>(new () {
+        FrequencyRanges = [new(40, 70, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Voltage = new(30, 320, 0.001) }],
+    }, [ 5d, 60d, 125d, 250d ]) },
+    { "VU221", Tuple.Create<SourceCapabilities,double[]>(new ()  {
+        FrequencyRanges = [new(40, 70, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Voltage = new(30, 320, 0.001) }],
+    }, [ 5d, 60d, 125d, 250d ]) },
+    { "VUI302", Tuple.Create<SourceCapabilities,double[]>(new ()  {
+        FrequencyRanges = [new(40, 70, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Voltage = new(30, 320, 0.001) }],
+    }, [ 5d, 60d, 125d, 250d ] )},
+    { "SVG3020",Tuple.Create<SourceCapabilities,double[]>(new ()  {
+        FrequencyRanges = [new(15, 70, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Voltage = new(30, 600, 0.001) }],
+    }, [ 5d, 60d, 125d, 250d, 420d ] )} };
+
+    private static readonly Dictionary<string, Tuple<SourceCapabilities, double[]>> CurrentByAmplifier = new() {
+    { "MT786", Tuple.Create<SourceCapabilities,double[]>(new () {
+        FrequencyRanges = [new(45, 65, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Current = new(0.001, 120, 0.001) }],
+    }, [ 0.02d, 0.05d, 0.1d, 0.2d, 0.5d, 1d, 2d, 5d, 10d, 20d, 50d, 100d ] )},
+    { "VI201",Tuple.Create<SourceCapabilities,double[]>(new ()  {
+        FrequencyRanges = [new(15, 70, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Current = new(500E-6, 160, 0.0001) }],
+    }, [ 0.02d, 0.05d, 0.1d, 0.2d, 0.5d, 1d, 2d, 5d, 10d, 20d, 50d, 100d ] )},
+    { "VI202", Tuple.Create<SourceCapabilities,double[]>(new ()  {
+        FrequencyRanges = [new(15, 70, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Current = new(500E-6, 120, 0.0001) }],
+    }, [ 0.02d, 0.05d, 0.1d, 0.2d, 0.5d, 1d, 2d, 5d, 10d, 20d, 50d, 100d ] )},
+    { "VI220",Tuple.Create<SourceCapabilities,double[]>(new ()  {
+        FrequencyRanges = [new(15, 70, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Current = new(500E-6, 120, 0.0001) }],
+    }, [ 0.02d, 0.05d, 0.1d, 0.2d, 0.5d, 1d, 2d, 5d, 10d, 20d, 50d, 100d ] )},
+    { "VI221", Tuple.Create<SourceCapabilities,double[]>(new ()  {
+        FrequencyRanges = [new(15, 70, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Current = new(500E-6, 120, 0.0001) }],
+    }, [ 0.02d, 0.05d, 0.1d, 0.2d, 0.5d, 1d, 2d, 5d, 10d, 20d, 50d, 100d ] )},
+    { "VI222", Tuple.Create<SourceCapabilities,double[]>(new () {
+        FrequencyRanges = [new(40, 70, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Current = new(500E-6, 120, 0.0001) }],
+    }, [ 0.02d, 0.05d, 0.1d, 0.2d, 0.5d, 1d, 2d, 5d, 10d, 20d, 50d, 100d ]) },
+    { "VUI302", Tuple.Create<SourceCapabilities,double[]>(new () {
+        FrequencyRanges = [new(40, 70, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Current = new(12E-3, 120, 0.001) }],
+    }, [ 0.02d, 0.05d, 0.1d, 0.2d, 0.5d, 1d, 2d, 5d, 10d, 20d, 50d, 100d ])},
+    { "SCG1020", Tuple.Create<SourceCapabilities,double[]>(new () {
+        FrequencyRanges = [new(15, 70, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Current = new(0.001, 120, 0.0001)}],
+    }, [ 0.02d, 0.05d, 0.1d, 0.2d, 0.5d, 1d, 2d, 5d, 10d, 20d, 50d, 100d ] )} };
 }

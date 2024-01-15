@@ -74,5 +74,17 @@ namespace SourceApi.Actions.Source
         /// If set the dosage mode has been activated but current is switch off.
         /// </summary>
         Task<bool> CurrentSwitchedOffForDosage();
+
+        /// <summary>
+        /// Retrieve the voltage support range boundaries.
+        /// </summary>
+        /// <returns>All voltage ranges sorted from low to high.</returns>
+        Task<double[]> GetVoltageRanges();
+
+        /// <summary>
+        /// Retrieve the current support range boundaries.
+        /// </summary>
+        /// <returns>All current ranges sorted from low to high.</returns>
+        Task<double[]> GetCurrentRanges();
     }
 }

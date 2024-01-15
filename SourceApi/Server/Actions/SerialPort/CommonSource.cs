@@ -120,4 +120,10 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
 
     /// <inheritdoc/>
     public abstract Task<bool> CurrentSwitchedOffForDosage();
+
+    /// <inheritdoc/>
+    public abstract Task<double[]> GetVoltageRanges();
+
+    /// <inheritdoc/>
+    public abstract Task<double[]> GetCurrentRanges();
 }

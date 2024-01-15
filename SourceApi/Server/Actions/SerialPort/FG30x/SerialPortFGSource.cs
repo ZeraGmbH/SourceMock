@@ -96,4 +96,20 @@ public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, I
 
         return SourceApiErrorCodes.SUCCESS;
     }
+
+    /// <inheritdoc/>
+    public override Task<double[]> GetVoltageRanges()
+    {
+        TestConfigured();
+
+        return Task.FromResult(Available ? Capabilities.GetRangesByAmplifier(VoltageAmplifier!.Value) : null!);
+    }
+
+    /// <inheritdoc/>
+    public override Task<double[]> GetCurrentRanges()
+    {
+        TestConfigured();
+
+        return Task.FromResult(Available ? Capabilities.GetRangesByAmplifier(CurrentAmplifier!.Value) : null!);
+    }
 }

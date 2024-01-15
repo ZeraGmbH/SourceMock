@@ -172,6 +172,16 @@ namespace SourceApi.Actions.Source
 
         public LoadpointInfo GetActiveLoadpointInfo() => _info;
 
+        public Task<double[]> GetVoltageRanges()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<double[]> GetCurrentRanges()
+        {
+            throw new NotImplementedException();
+        }
+
         public bool Available => true;
     }
 }

@@ -143,4 +143,22 @@ public class MTSourceTests
         Assert.That(result, Is.EqualTo(expectedError));
         Assert.That(sut.GetCurrentLoadpoint(), Is.Null);
     }
+
+    [Test]
+    public async Task Can_Get_Voltage_Ranges_From_Mock()
+    {
+        var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap());
+        var ranges = await sut.GetVoltageRanges();
+
+        Assert.That(ranges, Is.EqualTo(new[] { 0.25d, 5d, 60d, 125d, 250d, 420d }));
+    }
+
+    [Test]
+    public async Task Can_Get_Current_Ranges_From_Mock()
+    {
+        var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap());
+        var ranges = await sut.GetCurrentRanges();
+
+        Assert.That(ranges, Is.EqualTo(new[] { 0.02d, 0.05d, 0.1d, 0.2d, 0.5d, 1d, 2d, 5d, 10d, 20d, 50d, 100d }));
+    }
 }

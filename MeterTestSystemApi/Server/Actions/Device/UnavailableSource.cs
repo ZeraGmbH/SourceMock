@@ -21,7 +21,11 @@ internal class UnavailableSource : ISource
 
     public Loadpoint? GetCurrentLoadpoint() => throw new SourceNotReadyException();
 
+    public Task<double[]> GetCurrentRanges() => throw new NotImplementedException();
+
     public Task<DosageProgress> GetDosageProgress() => throw new SourceNotReadyException();
+
+    public Task<double[]> GetVoltageRanges() => throw new NotImplementedException();
 
     public Task SetDosageEnergy(double value) => throw new SourceNotReadyException();
 

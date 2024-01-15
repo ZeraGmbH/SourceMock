@@ -344,11 +344,44 @@ public class SerialPortMTMock : ISerialPort
                 _replies.Enqueue("I2: MT781_I   ;Serial:50021475e   ;PIC:22;Platine:VE5611C   ");
                 _replies.Enqueue("I3: MT781_I   ;Serial:50021475f   ;PIC:22;Platine:VE5611C   ");
                 _replies.Enqueue("SOKAW");
+
                 break;
             /* Error conditions. */
             case "SSM":
                 {
                     _replies.Enqueue((DateTime.Now.Minute % 2 == 0) ? "SSM42000002002000000800" : "SSM00000000000000000000");
+
+                    break;
+                }
+            /* Ranges for voltage. */
+            case "AVI":
+                {
+                    _replies.Enqueue("420");
+                    _replies.Enqueue("250");
+                    _replies.Enqueue("125");
+                    _replies.Enqueue("60");
+                    _replies.Enqueue("5");
+                    _replies.Enqueue("0.25");
+                    _replies.Enqueue("AVIACK");
+
+                    break;
+                }
+            /* Ranges for current. */
+            case "ACI":
+                {
+                    _replies.Enqueue("100");
+                    _replies.Enqueue("50");
+                    _replies.Enqueue("20");
+                    _replies.Enqueue("10");
+                    _replies.Enqueue("5");
+                    _replies.Enqueue("2");
+                    _replies.Enqueue("1");
+                    _replies.Enqueue("0.5");
+                    _replies.Enqueue("0.2");
+                    _replies.Enqueue("0.1");
+                    _replies.Enqueue("0.05");
+                    _replies.Enqueue("0.02");
+                    _replies.Enqueue("ACIACK");
 
                     break;
                 }

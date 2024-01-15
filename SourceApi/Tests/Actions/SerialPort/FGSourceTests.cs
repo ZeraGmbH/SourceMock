@@ -92,4 +92,19 @@ public class FGSourceTests
         Assert.That(loadpoint.Frequency.Value, Is.EqualTo(50));
     }
 
+    [Test]
+    public async Task Can_Get_Voltage_Ranges_From_Mock()
+    {
+        var ranges = await _source.GetVoltageRanges();
+
+        Assert.That(ranges, Is.EqualTo(new[] { 5d, 60d, 125d, 250d }));
+    }
+
+    [Test]
+    public async Task Can_Get_Current_Ranges_From_Mock()
+    {
+        var ranges = await _source.GetCurrentRanges();
+
+        Assert.That(ranges, Is.EqualTo(new[] { 0.02d, 0.05d, 0.1d, 0.2d, 0.5d, 1d, 2d, 5d, 10d, 20d, 50d, 100d }));
+    }
 }

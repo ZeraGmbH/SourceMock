@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 
@@ -47,5 +48,49 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, I
         await Task.WhenAll(Device.Execute(SerialPortRequest.Create("SUIAAAAAAAAA", "SOKUI")));
 
         return SourceApiErrorCodes.SUCCESS;
+    }
+
+    /// <inheritdoc/>
+    public override async Task<double[]> GetVoltageRanges()
+    {
+        Logger.LogTrace("Requesting voltage ranges.");
+
+        var replies = await Device.Execute(SerialPortRequest.Create("AVI", "AVIACK"))[0];
+        var result = new List<double>();
+
+        foreach (var reply in replies)
+            try
+            {
+                if (reply != "AVIACK" && double.TryParse(reply, out var bound))
+                    result.Add(bound);
+            }
+            catch (Exception)
+            {
+                /* Just ignore anything not looking like a number. */
+            }
+
+        return result.Order().ToArray();
+    }
+
+    /// <inheritdoc/>
+    public override async Task<double[]> GetCurrentRanges()
+    {
+        Logger.LogTrace("Requesting voltage ranges.");
+
+        var replies = await Device.Execute(SerialPortRequest.Create("ACI", "ACIACK"))[0];
+        var result = new List<double>();
+
+        foreach (var reply in replies)
+            try
+            {
+                if (reply != "ACIACK" && double.TryParse(reply, out var bound))
+                    result.Add(bound);
+            }
+            catch (Exception)
+            {
+                /* Just ignore anything not looking like a number. */
+            }
+
+        return result.Order().ToArray();
     }
 }

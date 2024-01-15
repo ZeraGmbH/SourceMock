@@ -159,5 +159,29 @@ namespace SourceApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetLoadpointInfo")]
         public ActionResult<LoadpointInfo> GetLoadpointInfo() => _source.GetActiveLoadpointInfo();
+
+        /// <summary>
+        /// Get all the voltages range boundaries.
+        /// </summary>
+        /// <returns>All range boundaries sorted ascendingly.</returns>
+        [HttpGet("VoltageRanges")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(OperationId = "GetVoltageRanges")]
+        public async Task<ActionResult<double[]>> GetVoltageRanges() => Ok(await _source.GetVoltageRanges());
+
+        /// <summary>
+        /// Get all the current range boundaries.
+        /// </summary>
+        /// <returns>All range boundaries sorted ascendingly.</returns>
+        [HttpGet("CurrentRanges")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(OperationId = "GetCurrentRanges")]
+        public async Task<ActionResult<double[]>> GetCurrentRanges() => Ok(await _source.GetCurrentRanges());
     }
 }

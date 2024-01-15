@@ -84,5 +84,15 @@ namespace SourceApi.Actions.VeinSource
         }
 
         public Task<SourceApiErrorCodes> TurnOff() => Task.FromException<SourceApiErrorCodes>(new NotImplementedException());
+
+        public Task<double[]> GetVoltageRanges()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<double[]> GetCurrentRanges()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

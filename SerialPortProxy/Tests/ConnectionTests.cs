@@ -20,6 +20,8 @@ class PortMock : ISerialPort
         if (_replies.TryDequeue(out var reply))
             return reply;
 
+        Thread.Sleep(1000);
+
         throw new TimeoutException("no reply in queue");
     }
 

@@ -24,6 +24,11 @@ public class SerialPortConnection : ISerialPortConnection
     private bool _running = true;
 
     /// <summary>
+    /// All queued incoming data.
+    /// </summary>
+    private readonly Queue<string> _incoming = [];
+
+    /// <summary>
     /// Logger to use, esp. for communication tracing.
     /// </summary>
     private readonly ILogger<ISerialPortConnection> _logger;
@@ -43,6 +48,11 @@ public class SerialPortConnection : ISerialPortConnection
         var executor = new Thread(ProcessFromQueue);
 
         executor.Start();
+
+        /* Create and start a thread handling input from the serial port. */
+        var reader = new Thread(ProcessInput);
+
+        reader.Start();
     }
 
     /// <summary>
@@ -181,7 +191,7 @@ public class SerialPortConnection : ISerialPortConnection
                 /* Read a single response line from the device. */
                 _logger.LogDebug($"Wait for command {request.Command} reply");
 
-                var reply = _port.ReadLine();
+                var reply = ReadInput();
 
                 _logger.LogDebug($"Got reply {reply} for command {request.Command}");
 
@@ -274,5 +284,52 @@ public class SerialPortConnection : ISerialPortConnection
                 else
                     failed = !ExecuteCommand(request);
         }
+    }
+
+    /// <summary>
+    /// Get the next line from the input queue.
+    /// </summary>
+    /// <returns>The next line.</returns>
+    private string ReadInput()
+    {
+        lock (_incoming)
+        {
+            /* Maybe data is already available. */
+            if (_incoming.TryDequeue(out var line))
+                return line;
+
+            /* Wait for new data. */
+            if (!Monitor.Wait(_incoming, 30000))
+                throw new TimeoutException("no reply from serial port");
+
+            /* There is now definitly at least one entry. */
+            return _incoming.Dequeue();
+        }
+    }
+
+    /// <summary>
+    /// Process data from the serial port connection.
+    /// </summary>
+    private void ProcessInput()
+    {
+        while (_running)
+            try
+            {
+                /* Try to read the next line - may report some timeout. */
+                var line = _port.ReadLine();
+
+                /* Add to queue. */
+                lock (_incoming)
+                {
+                    _incoming.Enqueue(line);
+
+                    /* Wakeup pending reader - if any. */
+                    Monitor.PulseAll(_incoming);
+                }
+            }
+            catch (Exception)
+            {
+                /* Ignore any error. */
+            }
     }
 }

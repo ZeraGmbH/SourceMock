@@ -25,9 +25,23 @@ public interface ICapabilitiesMap
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="modelName"></param>
+    /// <returns></returns>
+    public double[] GetVoltageRangesByModel(string modelName);
+
+    /// <summary>
+    /// 
+    /// </summary>
     /// <param name="voltageAmplifier"></param>
     /// <returns></returns>
     public double[] GetRangesByAmplifier(VoltageAmplifiers voltageAmplifier);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="modelName"></param>
+    /// <returns></returns>
+    public double[] GetCurrentRangesByModel(string modelName);
 
     /// <summary>
     /// 
@@ -154,18 +168,24 @@ public class CapabilitiesMap : ICapabilitiesMap
         return capabilties;
     }
 
-    public double[] GetRangesByAmplifier(VoltageAmplifiers voltageAmplifier)
+    public double[] GetRangesByAmplifier(VoltageAmplifiers voltageAmplifier) =>
+        GetVoltageRangesByModel(GetVoltageAmplifierKey(voltageAmplifier));
+
+    public double[] GetRangesByAmplifier(CurrentAmplifiers currentAmplifier) =>
+        GetCurrentRangesByModel(GetCurrentAmplifierKey(currentAmplifier));
+
+    public double[] GetVoltageRangesByModel(string modelName)
     {
-        if (!VoltageByAmplifier.TryGetValue(GetVoltageAmplifierKey(voltageAmplifier), out var voltageInfo))
-            throw new ArgumentException($"unknown voltage amplifier {voltageAmplifier}", nameof(voltageAmplifier));
+        if (!VoltageByAmplifier.TryGetValue(modelName, out var voltageInfo))
+            throw new ArgumentException($"unknown voltage amplifier {modelName}", nameof(modelName));
 
         return voltageInfo.Item2.Order().ToArray();
     }
 
-    public double[] GetRangesByAmplifier(CurrentAmplifiers currentAmplifier)
+    public double[] GetCurrentRangesByModel(string modelName)
     {
-        if (!CurrentByAmplifier.TryGetValue(GetCurrentAmplifierKey(currentAmplifier), out var currentInfo))
-            throw new ArgumentException($"unknown current amplifier {currentAmplifier}", nameof(currentAmplifier));
+        if (!CurrentByAmplifier.TryGetValue(modelName, out var currentInfo))
+            throw new ArgumentException($"unknown current amplifier {modelName}", nameof(modelName));
 
         return currentInfo.Item2.Order().ToArray();
     }
@@ -174,7 +194,7 @@ public class CapabilitiesMap : ICapabilitiesMap
     { "MT786",  Tuple.Create<SourceCapabilities,double[]>(new () {
         FrequencyRanges = [new(45, 65, 0.01, FrequencyMode.SYNTHETIC)],
         Phases = [new() { Voltage = new(20, 500, 0.001) }],
-    }, [ 5d, 60d, 125d, 250d, 420d ] )},
+    }, [ 5d, 250d ] )},
     { "VU211", Tuple.Create<SourceCapabilities,double[]>(new () {
         FrequencyRanges = [new(40, 70, 0.01, FrequencyMode.SYNTHETIC)],
         Phases = [new() { Voltage = new(30, 480, 0.001) }],
@@ -200,7 +220,7 @@ public class CapabilitiesMap : ICapabilitiesMap
     { "MT786", Tuple.Create<SourceCapabilities,double[]>(new () {
         FrequencyRanges = [new(45, 65, 0.01, FrequencyMode.SYNTHETIC)],
         Phases = [new() { Current = new(0.001, 120, 0.001) }],
-    }, [ 0.02d, 0.05d, 0.1d, 0.2d, 0.5d, 1d, 2d, 5d, 10d, 20d, 50d, 100d ] )},
+    }, [ 1d, 5d ] )},
     { "VI201",Tuple.Create<SourceCapabilities,double[]>(new ()  {
         FrequencyRanges = [new(15, 70, 0.01, FrequencyMode.SYNTHETIC)],
         Phases = [new() { Current = new(500E-6, 160, 0.0001) }],

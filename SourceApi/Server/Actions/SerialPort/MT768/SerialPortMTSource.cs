@@ -51,46 +51,14 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, I
     }
 
     /// <inheritdoc/>
-    public override async Task<double[]> GetVoltageRanges()
+    public override Task<double[]> GetVoltageRanges()
     {
-        Logger.LogTrace("Requesting voltage ranges.");
-
-        var replies = await Device.Execute(SerialPortRequest.Create("AVI", "AVIACK"))[0];
-        var result = new List<double>();
-
-        foreach (var reply in replies)
-            try
-            {
-                if (reply != "AVIACK" && double.TryParse(reply, out var bound))
-                    result.Add(bound);
-            }
-            catch (Exception)
-            {
-                /* Just ignore anything not looking like a number. */
-            }
-
-        return result.Order().ToArray();
+        return Task.FromResult(Available ? Capabilities.GetVoltageRangesByModel("MT786") : null!);
     }
 
     /// <inheritdoc/>
-    public override async Task<double[]> GetCurrentRanges()
+    public override Task<double[]> GetCurrentRanges()
     {
-        Logger.LogTrace("Requesting voltage ranges.");
-
-        var replies = await Device.Execute(SerialPortRequest.Create("ACI", "ACIACK"))[0];
-        var result = new List<double>();
-
-        foreach (var reply in replies)
-            try
-            {
-                if (reply != "ACIACK" && double.TryParse(reply, out var bound))
-                    result.Add(bound);
-            }
-            catch (Exception)
-            {
-                /* Just ignore anything not looking like a number. */
-            }
-
-        return result.Order().ToArray();
+        return Task.FromResult(Available ? Capabilities.GetCurrentRangesByModel("MT786") : null!);
     }
 }

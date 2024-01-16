@@ -61,4 +61,19 @@ public class AmplifierErrorConditions
     /// </summary>
     [NotNull, Required]
     public bool UndefinedError { get; set; }
+
+    /// <summary>
+    /// Set if there is any error consition active.
+    /// </summary>
+    [NotNull, Required]
+    public bool HasAnyError =>
+       ConnectionMissing ||
+       DataTransmission ||
+       GroupError ||
+       HasError ||
+       Overload ||
+       PowerSupply ||
+       ShortOrOpen ||
+       Temperature ||
+       UndefinedError;
 }

@@ -76,4 +76,20 @@ public class ErrorConditions
         { Models.Amplifiers.Auxiliary1, new() },
         { Models.Amplifiers.Auxiliary2, new() },
     };
+
+    /// <summary>
+    /// Set if there is any error condition active.
+    /// </summary>
+    [NotNull, Required]
+    public bool HasAnyError =>
+        EmergencyStop ||
+        HasAmplifierError ||
+        HasFuseError ||
+        IctFailure == true ||
+        IsolationFailure ||
+        LwlIdentCorrupted ||
+        ReferenceMeterDataTransmissionError ||
+        VoltageCurrentIsShort ||
+        WrongRangeReferenceMeter == true ||
+        Amplifiers.Values.Any(a => a.HasAnyError);
 }

@@ -136,13 +136,7 @@ public class SerialPortMTMock : ISerialPort
         return info.Reply;
     }
 
-    private int DosageProgress
-    {
-        get
-        {
-            return Math.Min((int)((DateTime.Now - _dosageStart).TotalSeconds * 10), 100);
-        }
-    }
+    private int DosageProgress => Math.Min((int)((DateTime.Now - _dosageStart).TotalSeconds * 10), 100);
 
     /// <summary>
     /// Simulate a command.
@@ -166,7 +160,7 @@ public class SerialPortMTMock : ISerialPort
                     foreach (var reply in AMEReplyEmulator.GetReplies())
                         _replies.Enqueue(reply);
 
-                    _replies.Enqueue(new QueueEntry("AMEACK", 1000));
+                    _replies.Enqueue("AMEACK");
                 }
                 break;
             /* Read the list of supported measurement modes. */
@@ -400,7 +394,7 @@ public class SerialPortMTMock : ISerialPort
                         _replies.Enqueue("SOKFR");
                     /* Activate phases. */
                     else if (SuiCommand.IsMatch(command))
-                        _replies.Enqueue(new QueueEntry("SOKUI", 5000));
+                        _replies.Enqueue("SOKUI");
                     /* Set integration time. */
                     else if (AtiCommand.IsMatch(command))
                         _replies.Enqueue("ATIACK");

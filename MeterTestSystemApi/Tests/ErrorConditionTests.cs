@@ -148,6 +148,8 @@ public class ErrorConditionTests
 
         var errors = await cut.GetErrorConditions();
 
+        Thread.Sleep(500);
+
         Assert.That(byEvent, Has.Count.EqualTo(1));
         Assert.That(byEvent[0], Is.SameAs(errors));
 
@@ -197,6 +199,8 @@ public class ErrorConditionTests
         };
 
         var errors = await cut.GetErrorConditions();
+
+        Thread.Sleep(500);
 
         Assert.That(byEvent, Has.Count.EqualTo(1));
         Assert.That(byEvent[0], Is.Not.SameAs(errors));

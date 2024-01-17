@@ -7,7 +7,7 @@ namespace SourceApi.Actions.Source
     /// <summary>
     /// Simulatetes the behaviour of a ZERA source.
     /// </summary>
-    public class SimulatedSource : ISource, ISimulatedSource
+    public class SimulatedSource : ISource
     {
         #region ContructorAndDependencyInjection
         private readonly ILogger<SimulatedSource> _logger;
@@ -17,6 +17,7 @@ namespace SourceApi.Actions.Source
         private DosageProgress _status = new();
         private DateTime _startTime;
         private double _dosageEnergy;
+        private bool _dosageMode = false;
 
         /// <summary>
         /// Constructor that injects logger and configuration and uses default source capablities.
@@ -66,7 +67,6 @@ namespace SourceApi.Actions.Source
         #endregion
 
         private Loadpoint? _loadpoint;
-        private SimulatedSourceState? _simulatedSourceState;
 
         /// <inheritdoc/>
         public Task<SourceApiErrorCodes> SetLoadpoint(Loadpoint loadpoint)
@@ -78,6 +78,8 @@ namespace SourceApi.Actions.Source
                 _logger.LogTrace("Loadpoint set, source turned on.");
                 _loadpoint = loadpoint;
             }
+
+            _dosageMode = true;
 
             return Task.FromResult(isValid);
         }
@@ -97,18 +99,6 @@ namespace SourceApi.Actions.Source
             return _loadpoint;
         }
 
-        /// <inheritdoc/>
-        public void SetSimulatedSourceState(SimulatedSourceState simulatedSourceState)
-        {
-            _simulatedSourceState = simulatedSourceState;
-        }
-
-        /// <inheritdoc/>
-        public SimulatedSourceState? GetSimulatedSourceState()
-        {
-            return _simulatedSourceState;
-        }
-
         public Task<SourceCapabilities> GetCapabilities()
         {
             return Task.FromResult(_sourceCapabilities);
@@ -116,7 +106,8 @@ namespace SourceApi.Actions.Source
 
         public Task SetDosageMode(bool on)
         {
-            return Task.FromResult(true);
+            _dosageMode = on;
+            return Task.FromResult(_dosageMode);
         }
 
         public Task SetDosageEnergy(double value)
@@ -129,6 +120,7 @@ namespace SourceApi.Actions.Source
         {
             _startTime = DateTime.Now;
             _status.Active = true;
+            _dosageMode = false;
 
             return Task.FromResult(true);
         }
@@ -155,6 +147,7 @@ namespace SourceApi.Actions.Source
             {
                 _status.Active = false;
                 energy = _dosageEnergy;
+                _dosageMode = false;
             }
 
             _status.Progress = energy;
@@ -167,7 +160,7 @@ namespace SourceApi.Actions.Source
         public Task<bool> CurrentSwitchedOffForDosage()
         {
             _logger.LogTrace("Mock switches off the current for dosage");
-            return Task.FromResult(true);
+            return Task.FromResult(false);
         }
 
         public LoadpointInfo GetActiveLoadpointInfo() => _info;

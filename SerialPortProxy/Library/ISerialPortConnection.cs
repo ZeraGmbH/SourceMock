@@ -1,4 +1,6 @@
-﻿namespace SerialPortProxy;
+﻿using System.Text.RegularExpressions;
+
+namespace SerialPortProxy;
 
 /// <summary>
 /// Interface for a single serial port connection..
@@ -12,4 +14,11 @@ public interface ISerialPortConnection : IDisposable
     /// <exception cref="ArgumentNullException">Parameter must not be null.</exception>
     /// <returns>All lines sent from the device as a task.</returns>
     Task<string[]>[] Execute(params SerialPortRequest[] requests);
+
+    /// <summary>
+    /// Registeres Out-Of-Band essage handling.
+    /// </summary>
+    /// <param name="pattern">Pattern to recognize.</param>
+    /// <param name="handler">Handler to process the message.</param>
+    void RegisterEvent(Regex pattern, Action<Match> handler);
 }

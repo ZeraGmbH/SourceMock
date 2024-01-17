@@ -50,6 +50,8 @@ public class RefMeterTests
             if (_queue.TryDequeue(out var reply))
                 return reply;
 
+            Thread.Sleep(100);
+
             throw new TimeoutException("queue is empty");
         }
 

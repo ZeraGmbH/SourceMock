@@ -1,5 +1,6 @@
 using MeterTestSystemApi.Actions.Device;
 using MeterTestSystemApi.Models;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
 
@@ -31,6 +32,8 @@ public class ErrorConditionTests
             if (_replies.TryDequeue(out var reply))
                 return reply;
 
+            Thread.Sleep(100);
+
             throw new TimeoutException("no reply in queue");
         }
 
@@ -39,9 +42,9 @@ public class ErrorConditionTests
             switch (command)
             {
                 case "SSM":
+                case "SM":
                     {
                         _replies.Enqueue(_reply);
-
                         break;
                     }
             }
@@ -128,13 +131,25 @@ public class ErrorConditionTests
     }
 
     [Test]
-    public async Task Can_Get_Error_Conditions_From_Serial_Port()
+    public async Task Can_Get_MT_Error_Conditions_From_Serial_Port()
     {
         using var port = new PortMock("SSM42000002002000000800");
         using var device = SerialPortConnection.FromPortInstance(port, new NullLogger<SerialPortConnection>());
 
         var cut = new SerialPortMTMeterTestSystem(device, null!, null!, new NullLogger<SerialPortMTMeterTestSystem>(), null!);
+
+        var byEvent = new List<ErrorConditions>();
+
+        cut.ErrorConditionsChanged += errors =>
+        {
+            lock (byEvent)
+                byEvent.Add(errors);
+        };
+
         var errors = await cut.GetErrorConditions();
+
+        Assert.That(byEvent, Has.Count.EqualTo(1));
+        Assert.That(byEvent[0], Is.SameAs(errors));
 
         Assert.Multiple(() =>
         {
@@ -163,5 +178,56 @@ public class ErrorConditionTests
                 Assert.That(amperrors.UndefinedError, Is.False);
             }
         });
+    }
+
+    [Test]
+    public async Task Can_Get_FG_Error_Conditions_From_Serial_Port()
+    {
+        using var port = new PortMock("SM42000002002000000800");
+        using var device = SerialPortConnection.FromPortInstance(port, new NullLogger<SerialPortConnection>());
+
+        var cut = new SerialPortFGMeterTestSystem(device, new NullLogger<SerialPortFGMeterTestSystem>(), null!);
+
+        var byEvent = new List<ErrorConditions>();
+
+        cut.ErrorConditionsChanged += errors =>
+        {
+            lock (byEvent)
+                byEvent.Add(errors);
+        };
+
+        var errors = await cut.GetErrorConditions();
+
+        Assert.That(byEvent, Has.Count.EqualTo(1));
+        Assert.That(byEvent[0], Is.Not.SameAs(errors));
+
+        foreach (var test in new[] { errors, byEvent[0] })
+            Assert.Multiple(() =>
+            {
+                Assert.That(test.EmergencyStop, Is.False);
+                Assert.That(test.HasAmplifierError, Is.False);
+                Assert.That(test.HasFuseError, Is.True);
+                Assert.That(test.IctFailure, Is.Null);
+                Assert.That(test.IsolationFailure, Is.False);
+                Assert.That(test.LwlIdentCorrupted, Is.True);
+                Assert.That(test.ReferenceMeterDataTransmissionError, Is.False);
+                Assert.That(test.VoltageCurrentIsShort, Is.False);
+                Assert.That(test.WrongRangeReferenceMeter, Is.Null);
+
+                foreach (var amplifier in Enum.GetValues<Amplifiers>())
+                {
+                    var amperrors = test.Amplifiers[amplifier];
+
+                    Assert.That(amperrors.HasError, Is.False);
+                    Assert.That(amperrors.ConnectionMissing, Is.False);
+                    Assert.That(amperrors.DataTransmission, Is.EqualTo(amplifier == Amplifiers.Current1));
+                    Assert.That(amperrors.GroupError, Is.False);
+                    Assert.That(amperrors.Overload, Is.EqualTo(amplifier == Amplifiers.Current3));
+                    Assert.That(amperrors.PowerSupply, Is.False);
+                    Assert.That(amperrors.ShortOrOpen, Is.False);
+                    Assert.That(amperrors.Temperature, Is.EqualTo(amplifier == Amplifiers.Voltage2));
+                    Assert.That(amperrors.UndefinedError, Is.False);
+                }
+            });
     }
 }

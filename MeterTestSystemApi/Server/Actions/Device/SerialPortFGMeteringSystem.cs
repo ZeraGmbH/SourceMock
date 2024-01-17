@@ -19,6 +19,11 @@ namespace MeterTestSystemApi.Actions.Device;
 public class SerialPortFGMeterTestSystem : IMeterTestSystem
 {
     /// <summary>
+    /// Pattern for error conditions.
+    /// </summary>
+    private static readonly Regex _smRegEx = new("^SM([0-9A-Fa-f]+)$");
+
+    /// <summary>
     /// Physical connection to the frequency generator.
     /// </summary>
     private readonly ISerialPortConnection _device;
@@ -47,6 +52,9 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     /// <inheritdoc/>
     public IErrorCalculator ErrorCalculator { get; private set; } = new UnavailableErrorCalculator();
 
+    /// <inheritdoc/>
+    public event Action<ErrorConditions> ErrorConditionsChanged = null!;
+
     /// <summary>
     /// Initialize device manager.
     /// </summary>
@@ -58,6 +66,9 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         _device = device;
         _logger = logger;
         _services = services;
+
+        /* Register out-of-band processing of error conditions. */
+        _device.RegisterEvent(_smRegEx, reply => ErrorConditionsChanged?.Invoke(ErrorConditionParser.Parse(reply.Groups[1].Value, true)));
     }
 
     /// <inheritdoc/>
@@ -239,7 +250,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     public async Task<ErrorConditions> GetErrorConditions()
     {
         /* Send command and check reply. */
-        var request = SerialPortRequest.Create("SM", new Regex("^SM([0-9A-Fa-f]+)$"));
+        var request = SerialPortRequest.Create("SM", _smRegEx);
 
         await _device.Execute(request)[0];
 

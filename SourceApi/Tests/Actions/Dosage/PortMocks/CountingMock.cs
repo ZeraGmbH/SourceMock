@@ -15,7 +15,11 @@ public class CountingMock : ISerialPort
     public string ReadLine()
     {
         if (!_queue.TryDequeue(out var reply))
+        {
+            Thread.Sleep(100);
+
             throw new TimeoutException("queue is empty");
+        }
 
         /* For this special test make sure that there is some delay on execution. */
         Thread.Sleep(100);

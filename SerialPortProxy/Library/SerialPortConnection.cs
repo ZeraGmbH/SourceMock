@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Collections.Concurrent;
+using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace SerialPortProxy;
@@ -43,6 +45,11 @@ public class SerialPortConnection : ISerialPortConnection
     /// Logger to use, esp. for communication tracing.
     /// </summary>
     private readonly ILogger<ISerialPortConnection> _logger;
+
+    /// <summary>
+    /// All registered out-of-band message handlers.
+    /// </summary>
+    private readonly ConcurrentBag<Tuple<Regex, Action<Match>>> _handlers = [];
 
     /// <summary>
     /// Initialize a serial connection manager.
@@ -322,6 +329,10 @@ public class SerialPortConnection : ISerialPortConnection
         }
     }
 
+    /// <inheritdoc/>
+    public void RegisterEvent(Regex pattern, Action<Match> handler) =>
+        _handlers.Add(Tuple.Create(pattern, handler));
+
     /// <summary>
     /// Process data from the serial port connection.
     /// </summary>
@@ -340,6 +351,23 @@ public class SerialPortConnection : ISerialPortConnection
 
                     /* Wakeup pending reader - if any. */
                     Monitor.PulseAll(_incoming);
+                }
+
+                /* Find all out of bound handlers. */
+                foreach (var (pattern, handler) in _handlers)
+                {
+                    try
+                    {
+                        /* Analyse and process. */
+                        var match = pattern.Match(line);
+
+                        if (match.Success) handler(match);
+                    }
+                    catch (Exception e)
+                    {
+                        /* Really bad, may decrease overall performance. */
+                        _logger.LogCritical("Failed to process reply {Reply} on pattern {Pattern}: {Exception}", line, pattern, e);
+                    }
                 }
             }
             catch (Exception)

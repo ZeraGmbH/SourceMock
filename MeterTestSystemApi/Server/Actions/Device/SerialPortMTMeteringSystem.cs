@@ -41,6 +41,9 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     /// <inheritdoc/>
     public AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter => throw new NotImplementedException();
 
+    /// <inheritdoc/>
+    public event Action<ErrorConditions> ErrorConditionsChanged = null!;
+
     /// <summary>
     /// Initialize device manager.
     /// </summary>
@@ -105,6 +108,11 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
         await _device.Execute(request)[0];
 
         /* Create response structure. */
-        return ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, false);
+        var errors = ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, false);
+
+        /* Report through event. */
+        ErrorConditionsChanged?.Invoke(errors);
+
+        return errors;
     }
 }

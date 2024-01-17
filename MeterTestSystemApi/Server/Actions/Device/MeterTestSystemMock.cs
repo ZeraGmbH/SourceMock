@@ -16,7 +16,11 @@ namespace MeterTestSystemApi;
 public class MeterTestSystemMock : IMeterTestSystem
 {
     private readonly ILogger<SimulatedSource> _logger;
+
     private readonly IConfiguration _configuration;
+
+    /// <inheritdoc/>
+    public event Action<ErrorConditions> ErrorConditionsChanged = null!;
 
     /// <summary>
     /// 
@@ -155,5 +159,12 @@ public class MeterTestSystemMock : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public Task<ErrorConditions> GetErrorConditions() => Task.FromResult(new ErrorConditions { HasFuseError = true, });
+    public Task<ErrorConditions> GetErrorConditions()
+    {
+        var errors = new ErrorConditions { HasFuseError = DateTime.Now.Minute % 2 == 0 };
+
+        ErrorConditionsChanged?.Invoke(errors);
+
+        return Task.FromResult(errors);
+    }
 }

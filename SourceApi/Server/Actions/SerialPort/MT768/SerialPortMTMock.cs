@@ -127,7 +127,11 @@ public class SerialPortMTMock : ISerialPort
     public virtual string ReadLine()
     {
         if (!_replies.TryDequeue(out var info))
+        {
+            Thread.Sleep(100);
+
             throw new TimeoutException("no reply in queue");
+        }
 
         /* Simulate delay. */
         if (UseDelay && info.Delay > 0)

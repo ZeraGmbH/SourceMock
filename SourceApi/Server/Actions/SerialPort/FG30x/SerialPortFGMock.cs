@@ -42,7 +42,11 @@ public class SerialPortFGMock : ISerialPort
     public virtual string ReadLine()
     {
         if (!_replies.TryDequeue(out var info))
+        {
+            Thread.Sleep(100);
+
             throw new TimeoutException("no reply in queue");
+        }
 
         return info.Reply;
     }

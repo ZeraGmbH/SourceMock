@@ -31,6 +31,8 @@ abstract class PortMock : ISerialPort
         if (_replies.TryDequeue(out var reply))
             return reply;
 
+        Thread.Sleep(100);
+
         throw new TimeoutException("no reply in queue");
     }
 
@@ -80,7 +82,12 @@ class VersionTimeoutMock : PortMock
 {
     public VersionTimeoutMock() : base("") { }
 
-    public override string ReadLine() => throw new TimeoutException("Timed out");
+    public override string ReadLine()
+    {
+        Thread.Sleep(100);
+
+        throw new TimeoutException("Timed out");
+    }
 }
 
 /// <summary>

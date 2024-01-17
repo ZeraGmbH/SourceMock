@@ -53,4 +53,9 @@ public interface IMeterTestSystem
     /// The error calculator associated with this metering system.
     /// </summary>
     IErrorCalculator ErrorCalculator { get; }
+
+    /// <summary>
+    /// Fired whenever a new error condition is detected.
+    /// </summary>
+    event Action<ErrorConditions> ErrorConditionsChanged;
 }

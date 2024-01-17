@@ -12,6 +12,11 @@ namespace SourceApi.Tests.Actions.Dosage;
 [TestFixture]
 public class DosageTests
 {
+    static DosageTests()
+    {
+        SerialPortConnection.ActivateUnitTestMode(2000);
+    }
+
     private readonly NullLogger<ISerialPortConnection> _portLogger = new();
 
     private readonly DeviceLogger<SerialPortMTSource> _deviceLogger = new();

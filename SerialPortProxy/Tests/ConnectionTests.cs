@@ -9,7 +9,7 @@ namespace Tests;
 /// </summary>
 class PortMock : ISerialPort
 {
-    private readonly Queue<string> _replies = new();
+    public readonly Queue<string> Replies = new();
 
     public void Dispose()
     {
@@ -17,10 +17,10 @@ class PortMock : ISerialPort
 
     public string ReadLine()
     {
-        if (_replies.TryDequeue(out var reply))
+        if (Replies.TryDequeue(out var reply))
             return reply;
 
-        Thread.Sleep(1000);
+        Thread.Sleep(100);
 
         throw new TimeoutException("no reply in queue");
     }
@@ -31,15 +31,15 @@ class PortMock : ISerialPort
         {
             case "AAV":
                 {
-                    _replies.Enqueue("MT786V06.33");
-                    _replies.Enqueue("AAVACK");
+                    Replies.Enqueue("MT786V06.33");
+                    Replies.Enqueue("AAVACK");
 
                     break;
                 }
             case "S3CM1":
                 {
-                    _replies.Enqueue("STUFF");
-                    _replies.Enqueue("SOK3CM1");
+                    Replies.Enqueue("STUFF");
+                    Replies.Enqueue("SOK3CM1");
 
                     break;
                 }
@@ -84,5 +84,30 @@ public class ConnectionTests
             Assert.That(reply[1], Is.EqualTo("SOK3CM1"));
             Assert.That(request.EndMatch!.Groups[1].Value, Is.EqualTo("1"));
         });
+    }
+
+    [Test]
+    public void Can_Process_Out_Of_Band_Messages()
+    {
+        var port = new PortMock();
+
+        using var cut = SerialPortConnection.FromPortInstance(port, _logger);
+
+        var oob = new List<string>();
+
+        cut.RegisterEvent(new Regex(@"^X(\d+)Y$"), m => oob.Add(m.Groups[1].Value));
+        cut.RegisterEvent(new Regex(@"^Z$"), m => oob.Add("*"));
+        cut.RegisterEvent(new Regex(@"^X12Y$"), m => oob.Add("!"));
+
+        port.Replies.Enqueue("X12Y");
+        port.Replies.Enqueue("X1-2Y");
+        port.Replies.Enqueue("X13Y");
+        port.Replies.Enqueue("Z");
+        port.Replies.Enqueue("A");
+        port.Replies.Enqueue("Z");
+
+        Thread.Sleep(1500);
+
+        Assert.That(oob, Is.EqualTo(new[] { "!", "12", "13", "*", "*" }));
     }
 }

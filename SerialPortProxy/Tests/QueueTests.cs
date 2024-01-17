@@ -20,7 +20,7 @@ class GroupMock : ISerialPort
         if (_replies.TryDequeue(out var reply))
             return reply;
 
-        Thread.Sleep(1000);
+        Thread.Sleep(100);
 
         throw new TimeoutException("no reply in quuue");
     }

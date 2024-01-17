@@ -47,45 +47,12 @@ public partial class RefMeterMock : IRefMeter
 
         foreach (var phase in mo.Phases)
         {
-            MeasureOutputNullCheck(phase);
-
-            phase.Current = phase.Current != 0
-                ? GetRandomNumberWithPercentageDeviation(phase.Current!.Value, 0.01)
-                : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.Value, 0.01));
-            phase.AngleCurrent = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.AngleCurrent!.Value, 0.1));
-            phase.Voltage = phase.Voltage != 0
-                ? GetRandomNumberWithPercentageDeviation(phase.Voltage!.Value, 0.05)
-                : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.Value, 0.05));
-            phase.ActivePower = GetRandomNumberWithAbsoluteDeviation(phase.ActivePower!.Value, 0.02);
-            phase.ReactivePower = GetRandomNumberWithAbsoluteDeviation(phase.ReactivePower!.Value, 0.02);
-            phase.ApparentPower = GetRandomNumberWithAbsoluteDeviation(phase.ApparentPower!.Value, 0.02);
-            phase.PowerFactor = PowerFactorIsNotNullOrNan(phase.PowerFactor)
-                ? GetRandomNumberWithAbsoluteDeviation(phase.PowerFactor!.Value, 0.02)
-                : GetRandomNumberWithAbsoluteDeviation(0, 0.01);
+            CalculatePhaseDeviations(phase);
         }
 
-        _ = mo.ActivePower ?? throw new ArgumentNullException();
-        _ = mo.ApparentPower ?? throw new ArgumentNullException();
-        _ = mo.ReactivePower ?? throw new ArgumentNullException();
-
-        mo.Frequency = GetRandomNumberWithPercentageDeviation(loadpoint.Frequency.Value, 0.02);
-        mo.PhaseOrder = "123";
-        mo.ActivePower = GetRandomNumberWithAbsoluteDeviation(mo.ActivePower.Value, 0.02);
-        mo.ApparentPower = GetRandomNumberWithAbsoluteDeviation(mo.ApparentPower.Value, 0.02);
-        mo.ReactivePower = GetRandomNumberWithAbsoluteDeviation(mo.ReactivePower.Value, 0.02);
+        CalculateDeviations(mo);
 
         return Task.FromResult(mo);
-
-        static void MeasureOutputNullCheck(MeasureOutputPhase phase)
-        {
-            _ = phase.Current ?? throw new ArgumentNullException();
-            _ = phase.AngleCurrent ?? throw new ArgumentNullException();
-            _ = phase.Voltage ?? throw new ArgumentNullException();
-            _ = phase.ActivePower ?? throw new ArgumentNullException();
-            _ = phase.ReactivePower ?? throw new ArgumentNullException();
-            _ = phase.ApparentPower ?? throw new ArgumentNullException();
-            _ = phase.PowerFactor ?? throw new ArgumentNullException();
-        }
     }
 
     /// <summary>
@@ -127,7 +94,7 @@ public partial class RefMeterMock : IRefMeter
         return new()
         {
             Frequency = lp.Frequency.Value,
-            PhaseOrder = "123",
+            PhaseOrder = CalculatePhaseOrder(lp),
             Phases = measureOutputPhases,
             ActivePower = activePowerSum,
             ApparentPower = apparentPowerSum,
@@ -178,11 +145,97 @@ public partial class RefMeterMock : IRefMeter
         };
     }
 
+    // Phases are sorted by the phase angles from lowest to highest
+    private static string CalculatePhaseOrder(Loadpoint lp)
+    {
+        Dictionary<double, int> anglesWithIndices = new();
+        List<double> orderedAngles = new();
+
+        CopyAngleValues(lp, anglesWithIndices, orderedAngles);
+
+        orderedAngles.Sort();
+
+        string result = GetPhaseOrder(anglesWithIndices, orderedAngles);
+
+        return result;
+    }
+
+    private static string GetPhaseOrder(Dictionary<double, int> anglesWithIndices, List<double> orderedAngles)
+    {
+        string result = "";
+        for (int i = 0; i < anglesWithIndices.Count; ++i)
+        {
+            result += (anglesWithIndices[orderedAngles[i]] + 1).ToString();
+        }
+
+        return result;
+    }
+
+    private static void CopyAngleValues(Loadpoint lp, Dictionary<double, int> angles, List<double> orderedAngles)
+    {
+        for (int i = 0; i < lp.Phases.Count; ++i)
+        {
+            angles.Add(lp.Phases[i].Voltage.Angle, i);
+            orderedAngles.Add(lp.Phases[i].Voltage.Angle);
+        }
+    }
+
+    private static void MeasureOutputPhaseNullCheck(MeasureOutputPhase phase)
+    {
+        _ = phase.Current ?? throw new ArgumentNullException();
+        _ = phase.AngleCurrent ?? throw new ArgumentNullException();
+        _ = phase.Voltage ?? throw new ArgumentNullException();
+        _ = phase.ActivePower ?? throw new ArgumentNullException();
+        _ = phase.ReactivePower ?? throw new ArgumentNullException();
+        _ = phase.ApparentPower ?? throw new ArgumentNullException();
+        _ = phase.PowerFactor ?? throw new ArgumentNullException();
+    }
+
+    private static void CalculateDeviations(MeasureOutput mo)
+    {
+        MeasureOutputNullCheck(mo);
+
+        mo.Frequency = GetRandomNumberWithPercentageDeviation(mo.Frequency!.Value, 0.02);
+        mo.ActivePower = GetRandomNumberWithAbsoluteDeviation(mo.ActivePower!.Value, 0.02);
+        mo.ApparentPower = GetRandomNumberWithAbsoluteDeviation(mo.ApparentPower!.Value, 0.02);
+        mo.ReactivePower = GetRandomNumberWithAbsoluteDeviation(mo.ReactivePower!.Value, 0.02);
+    }
+
+    private static void MeasureOutputNullCheck(MeasureOutput mo)
+    {
+        _ = mo.ActivePower ?? throw new ArgumentNullException();
+        _ = mo.ApparentPower ?? throw new ArgumentNullException();
+        _ = mo.ReactivePower ?? throw new ArgumentNullException();
+        _ = mo.Frequency ?? throw new ArgumentException();
+    }
+
+    private static void CalculatePhaseDeviations(MeasureOutputPhase phase)
+    {
+        MeasureOutputPhaseNullCheck(phase);
+
+        phase.Current = phase.Current != 0
+            ? GetRandomNumberWithPercentageDeviation(phase.Current!.Value, 0.01)
+            : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.Value, 0.01));
+        phase.AngleCurrent = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.AngleCurrent!.Value, 0.1));
+        phase.Voltage = phase.Voltage != 0
+            ? GetRandomNumberWithPercentageDeviation(phase.Voltage!.Value, 0.05)
+            : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.Value, 0.05));
+        phase.AngleVoltage = phase.AngleVoltage != 0
+            ? GetRandomNumberWithPercentageDeviation(phase.AngleVoltage!.Value, 0.05)
+            : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.AngleVoltage.Value, 0.05));
+        phase.ActivePower = GetRandomNumberWithAbsoluteDeviation(phase.ActivePower!.Value, 0.02);
+        phase.ReactivePower = GetRandomNumberWithAbsoluteDeviation(phase.ReactivePower!.Value, 0.02);
+        phase.ApparentPower = GetRandomNumberWithAbsoluteDeviation(phase.ApparentPower!.Value, 0.02);
+        phase.PowerFactor = PowerFactorIsNotNullOrNan(phase.PowerFactor)
+            ? GetRandomNumberWithAbsoluteDeviation(phase.PowerFactor!.Value, 0.02)
+            : GetRandomNumberWithAbsoluteDeviation(0, 0.01);
+    }
+
     private static bool PowerFactorIsNotNullOrNan(double? powerFactor)
     {
         if (powerFactor == null)
             return false;
-        return powerFactor != 0 && !Double.IsNaN((double)powerFactor);
+        return powerFactor != 0 && !double.IsNaN((double)powerFactor);
     }
 
     private static double GetRandomNumberWithAbsoluteDeviation(double value, double deviation)

@@ -56,6 +56,13 @@ public static class SourceApiConfiguration
 
         switch (configuration["SourceType"])
         {
+            case "simulated":
+                if (serialOnly)
+                    throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
+
+                services.AddSingleton<SimulatedSource>();
+                services.AddSingleton<ISource>(x => x.GetRequiredService<SimulatedSource>());
+                break;
             case "vein":
                 if (serialOnly)
                     throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");

@@ -1,5 +1,3 @@
-using System.Linq.Expressions;
-using Amazon.Runtime.Internal.Util;
 using Microsoft.AspNetCore.Mvc;
 using SerialPortProxy;
 using SharedLibrary.Models;

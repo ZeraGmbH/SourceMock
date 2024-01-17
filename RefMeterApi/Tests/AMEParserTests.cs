@@ -8,6 +8,11 @@ namespace RefMeterApiTests;
 [TestFixture]
 public class AMEParserTests
 {
+    static AMEParserTests()
+    {
+        SerialPortConnection.ActivateUnitTestMode(2000);
+    }
+
     private readonly NullLogger<ISerialPortConnection> _portLogger = new();
 
     private readonly DeviceLogger _deviceLogger = new();

@@ -102,6 +102,11 @@ class EmptyVersionMock : PortMock
 [TestFixture]
 public class VersionTests
 {
+    static VersionTests()
+    {
+        SerialPortConnection.ActivateUnitTestMode(2000);
+    }
+
     private readonly NullLogger<ISerialPortConnection> _logger = new();
 
     private readonly NullLogger<SerialPortMTMeterTestSystem> _portLogger = new();
@@ -110,7 +115,7 @@ public class VersionTests
     [TestCase(typeof(EmptyVersionMock), "invalid response MT9123V from device")]
     [TestCase(typeof(IncorrectVersionMock), "invalid response MT912319.129 from device")]
     [TestCase(typeof(NakVersionMock), "AAV", typeof(ArgumentException))]
-    [TestCase(typeof(VersionTimeoutMock), "Timed out", typeof(TimeoutException))]
+    [TestCase(typeof(VersionTimeoutMock), "no reply from serial port", typeof(TimeoutException))]
     public void Fails_On_Invalid_Reply(Type mockType, string message, Type? exception = null)
     {
         using var device = SerialPortConnection.FromMock(mockType, _logger);

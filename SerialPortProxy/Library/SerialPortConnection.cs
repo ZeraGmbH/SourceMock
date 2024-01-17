@@ -9,6 +9,17 @@ namespace SerialPortProxy;
 public class SerialPortConnection : ISerialPortConnection
 {
     /// <summary>
+    /// Read timeout - may be changed when running in unit test mode.
+    /// </summary>
+    private static int? UnitTest;
+
+    /// <summary>
+    /// Enter unit test mode.
+    /// </summary>
+    /// <param name="timeout">Timeout to use (in milliseconds).</param>
+    public static void ActivateUnitTestMode(int timeout) => UnitTest = timeout;
+
+    /// <summary>
     /// Non thread-safe queue - may use ConcurrentQueue or Producer/Consumer pattern with integrated locking.
     /// </summary>
     private readonly Queue<SerialPortRequest[]> _queue = new();
@@ -22,6 +33,11 @@ public class SerialPortConnection : ISerialPortConnection
     /// Unset a soon as the connection is disposed - _executer thread will terminate.
     /// </summary>
     private bool _running = true;
+
+    /// <summary>
+    /// All queued incoming data.
+    /// </summary>
+    private readonly Queue<string> _incoming = [];
 
     /// <summary>
     /// Logger to use, esp. for communication tracing.
@@ -43,6 +59,11 @@ public class SerialPortConnection : ISerialPortConnection
         var executor = new Thread(ProcessFromQueue);
 
         executor.Start();
+
+        /* Create and start a thread handling input from the serial port. */
+        var reader = new Thread(ProcessInput);
+
+        reader.Start();
     }
 
     /// <summary>
@@ -101,7 +122,7 @@ public class SerialPortConnection : ISerialPortConnection
         }
         catch (Exception e)
         {
-            _logger.LogWarning($"Unable to close port: {e}");
+            _logger.LogWarning("Unable to close port: {Exception}", e);
         }
 
         /* Get exclusive access to the queue. */
@@ -120,7 +141,7 @@ public class SerialPortConnection : ISerialPortConnection
             foreach (var requests in pending)
                 foreach (var request in requests)
                 {
-                    _logger.LogWarning($"Cancel command {request.Command}");
+                    _logger.LogWarning("Cancel command {Command}", request.Command);
 
                     request.Result.SetException(new OperationCanceledException());
                 }
@@ -130,8 +151,7 @@ public class SerialPortConnection : ISerialPortConnection
     /// <inheritdoc/>
     public Task<string[]>[] Execute(params SerialPortRequest[] requests)
     {
-        if (requests == null)
-            throw new ArgumentNullException(nameof(requests));
+        ArgumentNullException.ThrowIfNull(requests, nameof(requests));
 
         /* Since we are expecting multi-threaded access lock the queue. */
         lock (_queue)
@@ -157,16 +177,16 @@ public class SerialPortConnection : ISerialPortConnection
     {
         try
         {
-            _logger.LogDebug($"Sending command {request.Command}");
+            _logger.LogDebug("Sending command {Command}", request.Command);
 
             /* Send the command string to the device - <CR> is automatically added. */
             _port.WriteLine(request.Command);
 
-            _logger.LogDebug($"Command {request.Command} accepted by device");
+            _logger.LogDebug("Command {Command} accepted by device", request.Command);
         }
         catch (Exception e)
         {
-            _logger.LogError($"Command {request.Command} rejected: {e}");
+            _logger.LogError("Command {Command} rejected: {Exception}", request.Command, e);
 
             /* Unable to sent the command - report error to caller. */
             request.Result.SetException(e);
@@ -179,16 +199,16 @@ public class SerialPortConnection : ISerialPortConnection
             try
             {
                 /* Read a single response line from the device. */
-                _logger.LogDebug($"Wait for command {request.Command} reply");
+                _logger.LogDebug("Wait for command {Command} reply", request.Command);
 
-                var reply = _port.ReadLine();
+                var reply = ReadInput();
 
-                _logger.LogDebug($"Got reply {reply} for command {request.Command}");
+                _logger.LogDebug("Got reply {Reply} for command {Command}", reply, request.Command);
 
                 /* If a device response ends with NAK there are invalid arguments. */
                 if (reply.EndsWith("NAK"))
                 {
-                    _logger.LogError($"Command {request.Command} reported NAK");
+                    _logger.LogError("Command {Command} reported NAK", request.Command);
 
                     request.Result.SetException(new ArgumentException(request.Command));
 
@@ -198,7 +218,7 @@ public class SerialPortConnection : ISerialPortConnection
                 /* Error handling for ERR commands. */
                 if (reply.Contains("ER-") || reply.Contains("ERR-") || reply.Contains("ERROR"))
                 {
-                    _logger.LogError($"Command {request.Command} reported ERROR {reply}");
+                    _logger.LogError("Command {Command} reported ERROR {Reply}", request.Command, reply);
 
                     request.Result.SetException(new ArgumentException(request.Command));
 
@@ -211,7 +231,7 @@ public class SerialPortConnection : ISerialPortConnection
                 /* If the terminating string is detected the reply from the device is complete. */
                 if (request.Match(reply))
                 {
-                    _logger.LogDebug($"Command {request.Command} finished, replies: {answer.Count()}");
+                    _logger.LogDebug("Command {Command} finished, replies: {ReplyCount}", request.Command, answer.Count);
 
                     /* Set the task result to all strings collected and therefore finish the task with success. */
                     request.Result.SetResult(answer.ToArray());
@@ -221,7 +241,7 @@ public class SerialPortConnection : ISerialPortConnection
             }
             catch (Exception e)
             {
-                _logger.LogError($"Reading command {request.Command} reply failed: {e}");
+                _logger.LogError("Reading command {Command} reply failed: {Exception}", request.Command, e);
 
                 /* 
                     If it is not possible to read something from the device report exception to caller. 
@@ -242,6 +262,11 @@ public class SerialPortConnection : ISerialPortConnection
         /* Done if no longer running - i.e. connection is disposed. */
         while (_running)
         {
+            /* Always clear the input queue periodically. */
+            if (!UnitTest.HasValue)
+                lock (_incoming)
+                    _incoming.Clear();
+
             SerialPortRequest[]? requests;
 
             /* Must have exclusive access to the queue to avoid data corruption. */
@@ -257,14 +282,14 @@ public class SerialPortConnection : ISerialPortConnection
                     _logger.LogDebug("Queue is empty, waiting for next request");
 
                     /* If queue is empty wait until someone intentionally wakes us up (Monitor.Pulse) to avoid unnecessary processings. */
-                    Monitor.Wait(_queue);
+                    Monitor.Wait(_queue, 15000);
 
                     continue;
                 }
             }
 
             /* Process the transaction until finished or some request failed - important: ExecuteCommand MUST NOT throw an exception. */
-            _logger.LogDebug($"Starting transaction processing, commands: {requests.Length}");
+            _logger.LogDebug("Starting transaction processing, commands: {RequestCount}", requests.Length);
 
             var failed = false;
 
@@ -274,5 +299,52 @@ public class SerialPortConnection : ISerialPortConnection
                 else
                     failed = !ExecuteCommand(request);
         }
+    }
+
+    /// <summary>
+    /// Get the next line from the input queue.
+    /// </summary>
+    /// <returns>The next line.</returns>
+    private string ReadInput()
+    {
+        lock (_incoming)
+        {
+            /* Maybe data is already available. */
+            if (_incoming.TryDequeue(out var line))
+                return line;
+
+            /* Wait for new data. */
+            if (!Monitor.Wait(_incoming, UnitTest ?? 30000))
+                throw new TimeoutException("no reply from serial port");
+
+            /* There is now definitly at least one entry. */
+            return _incoming.Dequeue();
+        }
+    }
+
+    /// <summary>
+    /// Process data from the serial port connection.
+    /// </summary>
+    private void ProcessInput()
+    {
+        while (_running)
+            try
+            {
+                /* Try to read the next line - may report some timeout. */
+                var line = _port.ReadLine();
+
+                /* Add to queue. */
+                lock (_incoming)
+                {
+                    _incoming.Enqueue(line);
+
+                    /* Wakeup pending reader - if any. */
+                    Monitor.PulseAll(_incoming);
+                }
+            }
+            catch (Exception)
+            {
+                /* Ignore any error. */
+            }
     }
 }

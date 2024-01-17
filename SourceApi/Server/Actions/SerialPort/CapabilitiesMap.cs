@@ -212,9 +212,9 @@ public class CapabilitiesMap : ICapabilitiesMap
         Phases = [new() { Voltage = new(30, 320, 0.001) }],
     }, [ 320d, 160d, 80d ] )},
     { "SVG3020",Tuple.Create<SourceCapabilities,double[]>(new ()  {
-        FrequencyRanges = [new(15, 70, 0.01, FrequencyMode.SYNTHETIC)],
-        Phases = [new() { Voltage = new(30, 600, 0.001) }],
-    /* unconfirmed, no documentation found */}, [ 5d, 60d, 125d, 250d, 420d ] )} };
+        FrequencyRanges = [new(15, 400, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Voltage = new(30, 500, 0.001) }],
+    }, [ 75d, 150d, 300d, 600d ] )} };
 
     private static readonly Dictionary<string, Tuple<SourceCapabilities, double[]>> CurrentByAmplifier = new() {
     { "MT786", Tuple.Create<SourceCapabilities,double[]>(new () {
@@ -246,7 +246,7 @@ public class CapabilitiesMap : ICapabilitiesMap
         Phases = [new() { Current = new(12E-3, 120, 0.001) }],
     }, [ 120d, 12d, 1.2d, 0.12d, 60d, 6d, 0.6d, 0.06d, 30d, 3d, 0.3d, 0.03d ])},
     { "SCG1020", Tuple.Create<SourceCapabilities,double[]>(new () {
-        FrequencyRanges = [new(15, 70, 0.01, FrequencyMode.SYNTHETIC)],
-        Phases = [new() { Current = new(0.001, 120, 0.0001)}],
-    /* unconfirmed, no documentation found */}, [ 120d, 12d, 1.2d, 0.12d, 60d, 6d, 0.6d, 0.06d, 30d, 3d, 0.3d, 0.03d ] )} };
+        FrequencyRanges = [new(15, 400, 0.01, FrequencyMode.SYNTHETIC)],
+        Phases = [new() { Current = new(0.0005, 160, 0.0001)}],
+    }, [ 160d, 120d, 80d, 60d, 40d, 30d, 20d, 10d, 5d, 2d, 1d, 0.5d, 0.2d, 0.1d, 0.05d, 0.025d, 0.0125d ] )} };
 }

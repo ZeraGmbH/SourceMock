@@ -97,7 +97,7 @@ public class FGSourceTests
     {
         var ranges = await _source.GetVoltageRanges();
 
-        Assert.That(ranges, Is.EqualTo(new[] { 5d, 60d, 125d, 250d }));
+        Assert.That(ranges, Is.EqualTo(new[] { 160d, 320d }));
     }
 
     [Test]
@@ -105,6 +105,6 @@ public class FGSourceTests
     {
         var ranges = await _source.GetCurrentRanges();
 
-        Assert.That(ranges, Is.EqualTo(new[] { 0.02d, 0.05d, 0.1d, 0.2d, 0.5d, 1d, 2d, 5d, 10d, 20d, 50d, 100d }));
+        Assert.That(ranges, Is.EqualTo(new[] { 0.03d, 0.06d, 0.12d, 0.3d, 0.6d, 1.2d, 3d, 6d, 12d, 30d, 60d, 120d }));
     }
 }

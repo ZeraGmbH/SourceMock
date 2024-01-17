@@ -1,4 +1,3 @@
-using MongoDB.Driver.Core.Operations;
 using RefMeterApi.Models;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
@@ -48,26 +47,20 @@ public partial class RefMeterMock : IRefMeter
 
         foreach (var phase in mo.Phases)
         {
-            _ = phase.Current ?? throw new ArgumentNullException();
-            _ = phase.AngleCurrent ?? throw new ArgumentNullException();
-            _ = phase.Voltage ?? throw new ArgumentNullException();
-            _ = phase.ActivePower ?? throw new ArgumentNullException();
-            _ = phase.ReactivePower ?? throw new ArgumentNullException();
-            _ = phase.ApparentPower ?? throw new ArgumentNullException();
-            _ = phase.PowerFactor ?? throw new ArgumentNullException();
+            MeasureOutputNullCheck(phase);
 
             phase.Current = phase.Current != 0
-                ? GetRandomNumberWithPercentageDeviation(phase.Current.Value, 0.01)
+                ? GetRandomNumberWithPercentageDeviation(phase.Current!.Value, 0.01)
                 : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.Value, 0.01));
-            phase.AngleCurrent = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.AngleCurrent.Value, 0.1));
+            phase.AngleCurrent = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.AngleCurrent!.Value, 0.1));
             phase.Voltage = phase.Voltage != 0
-                ? GetRandomNumberWithPercentageDeviation(phase.Voltage.Value, 0.05)
+                ? GetRandomNumberWithPercentageDeviation(phase.Voltage!.Value, 0.05)
                 : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.Value, 0.05));
-            phase.ActivePower = GetRandomNumberWithAbsoluteDeviation(phase.ActivePower.Value, 0.02);
-            phase.ReactivePower = GetRandomNumberWithAbsoluteDeviation(phase.ReactivePower.Value, 0.02);
-            phase.ApparentPower = GetRandomNumberWithAbsoluteDeviation(phase.ApparentPower.Value, 0.02);
-            phase.PowerFactor = phase.PowerFactor != 0
-                ? GetRandomNumberWithAbsoluteDeviation(phase.PowerFactor.Value, 0.02)
+            phase.ActivePower = GetRandomNumberWithAbsoluteDeviation(phase.ActivePower!.Value, 0.02);
+            phase.ReactivePower = GetRandomNumberWithAbsoluteDeviation(phase.ReactivePower!.Value, 0.02);
+            phase.ApparentPower = GetRandomNumberWithAbsoluteDeviation(phase.ApparentPower!.Value, 0.02);
+            phase.PowerFactor = PowerFactorIsNotNullOrNan(phase.PowerFactor)
+                ? GetRandomNumberWithAbsoluteDeviation(phase.PowerFactor!.Value, 0.02)
                 : GetRandomNumberWithAbsoluteDeviation(0, 0.01);
         }
 
@@ -82,6 +75,17 @@ public partial class RefMeterMock : IRefMeter
         mo.ReactivePower = GetRandomNumberWithAbsoluteDeviation(mo.ReactivePower.Value, 0.02);
 
         return Task.FromResult(mo);
+
+        static void MeasureOutputNullCheck(MeasureOutputPhase phase)
+        {
+            _ = phase.Current ?? throw new ArgumentNullException();
+            _ = phase.AngleCurrent ?? throw new ArgumentNullException();
+            _ = phase.Voltage ?? throw new ArgumentNullException();
+            _ = phase.ActivePower ?? throw new ArgumentNullException();
+            _ = phase.ReactivePower ?? throw new ArgumentNullException();
+            _ = phase.ApparentPower ?? throw new ArgumentNullException();
+            _ = phase.PowerFactor ?? throw new ArgumentNullException();
+        }
     }
 
     /// <summary>
@@ -89,7 +93,6 @@ public partial class RefMeterMock : IRefMeter
     /// </summary>
     /// <param name="lp">The loadpoint.</param>
     /// <returns>The according measure output.</returns>
-    /// <exception cref="NotImplementedException"></exception>
     public static MeasureOutput CalcMeasureOutput(Loadpoint lp)
     {
         double activePowerSum = 0;
@@ -173,6 +176,13 @@ public partial class RefMeterMock : IRefMeter
                 }
             }
         };
+    }
+
+    private static bool PowerFactorIsNotNullOrNan(double? powerFactor)
+    {
+        if (powerFactor == null)
+            return false;
+        return powerFactor != 0 && !Double.IsNaN((double)powerFactor);
     }
 
     private static double GetRandomNumberWithAbsoluteDeviation(double value, double deviation)

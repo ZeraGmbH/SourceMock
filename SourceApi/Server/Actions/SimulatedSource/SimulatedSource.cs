@@ -145,9 +145,7 @@ namespace SourceApi.Actions.Source
 
             if (energy > _dosageEnergy)
             {
-                _status.Active = false;
-                energy = _dosageEnergy;
-                _dosageMode = false;
+                energy = StopDosage();
             }
 
             _status.Progress = energy;
@@ -170,5 +168,14 @@ namespace SourceApi.Actions.Source
         public Task<double[]> GetCurrentRanges() => Task.FromResult<double[]>([1d, 2d, 5d]);
 
         public bool Available => true;
+
+        private double StopDosage()
+        {
+            double energy;
+            _status.Active = false;
+            energy = _dosageEnergy;
+            _dosageMode = false;
+            return energy;
+        }
     }
 }

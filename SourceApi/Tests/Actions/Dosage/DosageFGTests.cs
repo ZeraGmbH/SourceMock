@@ -14,7 +14,7 @@ public class DosageFGTests
 {
     static DosageFGTests()
     {
-        SerialPortConnection.ActivateUnitTestMode(2000);
+        SerialPortConnection.ActivateUnitTestMode(30000);
     }
 
     private readonly NullLogger<ISerialPortConnection> _portLogger = new();

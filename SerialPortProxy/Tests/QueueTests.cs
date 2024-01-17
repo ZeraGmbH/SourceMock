@@ -35,6 +35,11 @@ class GroupMock : ISerialPort
 [TestFixture]
 public class QueueTests
 {
+    static QueueTests()
+    {
+        SerialPortConnection.ActivateUnitTestMode(2000);
+    }
+
     private readonly NullLogger<ISerialPortConnection> _logger = new();
 
     [Test]

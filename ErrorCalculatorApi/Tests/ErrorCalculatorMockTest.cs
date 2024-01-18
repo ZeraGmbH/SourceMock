@@ -9,9 +9,13 @@ namespace ErrorCalculatorApiTests;
 
 public class ErrorCalculatorMockTest
 {
-    [Test]
-    public async Task Returns_Correct_Error_Status()
+    private ServiceProvider Services;
+
+    [SetUp]
+    public void Setup()
     {
+        var services = new ServiceCollection();
+
         Mock<ISource> sourceMock = new();
 
         /* Total energy is 66kW. */
@@ -35,18 +39,32 @@ public class ErrorCalculatorMockTest
 
         sourceMock.Setup(s => s.GetCurrentLoadpoint()).Returns(loadpoint);
 
-        var services = new ServiceCollection();
         services.AddSingleton(sourceMock.Object);
-        using var provider = services.BuildServiceProvider();
-        ErrorCalculatorMock mock = new(provider);
+
+        services.AddTransient<IErrorCalculatorMock, ErrorCalculatorMock>();
+
+        Services = services.BuildServiceProvider();
+    }
+
+    [TearDown]
+    public void Teardown()
+    {
+        Services?.Dispose();
+    }
+
+    [Test]
+    public async Task Returns_Correct_Error_Status()
+    {
+        var cut = Services.GetRequiredService<IErrorCalculatorMock>();
 
         /* 200 impulses at 10000/kWh is equivalent to 20. */
-        await mock.SetErrorMeasurementParameters(10000, 200);
-        await mock.StartErrorMeasurement(false);
+        await cut.SetErrorMeasurementParameters(10000, 200);
+        await cut.StartErrorMeasurement(false);
 
+        /* 100ms delay generates ~1.8W. */
         Thread.Sleep(100);
 
-        var result = await mock.GetErrorStatus();
+        var result = await cut.GetErrorStatus();
 
         Assert.Multiple(() =>
         {
@@ -55,9 +73,10 @@ public class ErrorCalculatorMockTest
             Assert.That(result.Energy, Is.GreaterThan(0));
         });
 
-        Thread.Sleep(1000);
+        /* 1.5s delay generates 27.5W. */
+        Thread.Sleep(1500);
 
-        result = await mock.GetErrorStatus();
+        result = await cut.GetErrorStatus();
 
         Assert.Multiple(() =>
         {
@@ -65,5 +84,43 @@ public class ErrorCalculatorMockTest
             Assert.That(result.ErrorValue, Is.GreaterThanOrEqualTo(-5).And.LessThanOrEqualTo(+7));
             Assert.That(result.Energy, Is.EqualTo(20));
         });
+    }
+
+    [Test]
+    public async Task Can_Do_Continuous_Measurement()
+    {
+        var cut = Services.GetRequiredService<IErrorCalculatorMock>();
+
+        /* 200 impulses at 10000/kWh is equivalent to 20W. */
+        await cut.SetErrorMeasurementParameters(10000, 200);
+        await cut.StartErrorMeasurement(true);
+
+        /* 1.5s delay generates 27.5W. */
+        Thread.Sleep(1500);
+
+        var result = await cut.GetErrorStatus();
+        var error = result.ErrorValue;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.State, Is.EqualTo(ErrorMeasurementStates.Running));
+            Assert.That(error, Is.GreaterThanOrEqualTo(-5).And.LessThanOrEqualTo(+7));
+            Assert.That(result.Energy, Is.EqualTo(20));
+        });
+
+        Thread.Sleep(100);
+
+        result = await cut.GetErrorStatus();
+
+        /* There should be no full cycle be done and the error value keeps its value. */
+        Assert.That(error, Is.EqualTo(result.ErrorValue));
+
+        /* 1.5s delay generates 27.5W. */
+        Thread.Sleep(1500);
+
+        result = await cut.GetErrorStatus();
+
+        /* Now the second iteration should be complete and the error value "should" change - indeed there is a tin chance of random generation clashes. */
+        Assert.That(error, Is.Not.EqualTo(result.ErrorValue));
     }
 }

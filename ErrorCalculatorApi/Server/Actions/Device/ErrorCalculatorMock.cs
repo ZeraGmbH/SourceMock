@@ -54,7 +54,7 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     /// <inheritdoc/>
     public Task<ErrorMeasurementStatus> GetErrorStatus()
     {
-        /* Time elapses in the current measurement. */
+        /* Time elapses in the current measurement - the mock does not use it's own thred for timing so calling this methode periodically is vital. */
         var hoursElapsed = (DateTime.UtcNow - _startTime).TotalHours;
 
         /* Total energy consumed in kWh and store to status. */

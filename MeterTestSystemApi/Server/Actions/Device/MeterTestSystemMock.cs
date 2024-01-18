@@ -25,7 +25,7 @@ public class MeterTestSystemMock : IMeterTestSystem
     /// <summary>
     /// 
     /// </summary>
-    public MeterTestSystemMock(ISimulatedSource source, IMockRefMeter refMeter, IErrorCalculatorMock errorCalculatorMock, ILogger<SimulatedSource> logger, IConfiguration configuration)
+    public MeterTestSystemMock(ISourceMock source, IMockRefMeter refMeter, IErrorCalculatorMock errorCalculatorMock, ILogger<SimulatedSource> logger, IConfiguration configuration)
     {
         _logger = logger;
         _configuration = configuration;

@@ -58,7 +58,7 @@ public static class SourceApiConfiguration
         {
             case "simulated":
                 if (integrated)
-                    services.AddTransient<ISimulatedSource, SimulatedSource>();
+                    services.AddTransient<ISourceMock, SimulatedSource>();
                 else
                     services.AddSingleton<ISource, SimulatedSource>();
 

@@ -4,14 +4,14 @@ using SourceApi.Model;
 
 namespace SourceApi.Actions.Source
 {
-    public interface ISimulatedSource : ISource
+    public interface ISourceMock : ISource
     {
 
     }
     /// <summary>
     /// Simulatetes the behaviour of a ZERA source.
     /// </summary>
-    public class SimulatedSource : ISimulatedSource
+    public class SimulatedSource : ISourceMock, ISimulatedSource
     {
         #region ContructorAndDependencyInjection
         private readonly ILogger<SimulatedSource> _logger;
@@ -70,6 +70,7 @@ namespace SourceApi.Actions.Source
 
         #endregion
 
+        private SimulatedSourceState? _simulatedSourceState;
         private Loadpoint? _loadpoint;
 
         /// <inheritdoc/>
@@ -172,7 +173,17 @@ namespace SourceApi.Actions.Source
         public Task<double[]> GetCurrentRanges() => Task.FromResult<double[]>([1d, 2d, 5d]);
 
         public bool Available => true;
+        /// <inheritdoc/>
+        public void SetSimulatedSourceState(SimulatedSourceState simulatedSourceState)
+        {
+            _simulatedSourceState = simulatedSourceState;
+        }
 
+        /// <inheritdoc/>
+        public SimulatedSourceState? GetSimulatedSourceState()
+        {
+            return _simulatedSourceState;
+        }
         private double StopDosage()
         {
             double energy;

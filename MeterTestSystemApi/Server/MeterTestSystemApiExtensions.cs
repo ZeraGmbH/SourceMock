@@ -54,12 +54,9 @@ public static class MeterTestSystemApiConfiguration
             case "MT":
                 services.AddSingleton<IMeterTestSystem, SerialPortMTMeterTestSystem>();
                 break;
-            case "DeviceMock":
+            default:
                 services.AddSingleton<IMeterTestSystem, MeterTestSystemMock>();
                 break;
-            default:
-                /* Maybe the web server configuration does not need the meter test system abstraction at all. */
-                return;
         }
 
         /* Convinient accessors to the source, reference meter and error calculator - transient because these can change when reconfiguring the meter test system. */

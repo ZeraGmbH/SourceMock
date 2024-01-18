@@ -1,13 +1,18 @@
 using ErrorCalculatorApi.Models;
+using Microsoft.Extensions.DependencyInjection;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 
 namespace ErrorCalculatorApi.Actions.Device;
 
 /// <summary>
+/// Tag interface
+/// </summary>
+public interface IErrorCalculatorMock : IErrorCalculator { }
+/// <summary>
 /// 
 /// </summary>
-public class ErrorCalculatorMock : IErrorCalculator
+public class ErrorCalculatorMock : IErrorCalculatorMock
 {
     /// <summary>
     /// 
@@ -16,7 +21,7 @@ public class ErrorCalculatorMock : IErrorCalculator
 
     private bool _continious = false;
     private ErrorMeasurementStatus _status = new();
-    private ISource _source;
+    private IServiceProvider _di;
     private DateTime _startTime;
     private double _meterConstant;
     private long _totalImpulses;
@@ -25,10 +30,10 @@ public class ErrorCalculatorMock : IErrorCalculator
     /// <summary>
     /// Need SimulatedSource to mock the energy
     /// </summary>
-    /// <param name="source"></param>
-    public ErrorCalculatorMock(ISource source)
+    /// <param name="di"></param>
+    public ErrorCalculatorMock(IServiceProvider di)
     {
-        _source = source;
+        _di = di;
     }
 
     /// <summary>
@@ -79,7 +84,7 @@ public class ErrorCalculatorMock : IErrorCalculator
     {
         _meterConstant = meterConstant;
         _totalImpulses = impulses;
-        _loadpoint = _source.GetCurrentLoadpoint();
+        _loadpoint = _di.GetRequiredService<ISource>().GetCurrentLoadpoint();
 
         return Task<Tuple<double, long>>.FromResult((_meterConstant, _totalImpulses));
     }

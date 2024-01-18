@@ -1,5 +1,6 @@
 using ErrorCalculatorApi.Actions.Device;
 using ErrorCalculatorApi.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
@@ -33,7 +34,10 @@ public class ErrorCalculatorMockTest
 
         sourceMock.Setup(s => s.GetCurrentLoadpoint()).Returns(loadpoint);
 
-        ErrorCalculatorMock mock = new(sourceMock.Object);
+        var services = new ServiceCollection();
+        services.AddSingleton(sourceMock.Object);
+        using var provider = services.BuildServiceProvider();
+        ErrorCalculatorMock mock = new(provider);
 
         await mock.SetErrorMeasurementParameters(10000, 200);
         await mock.StartErrorMeasurement(false);

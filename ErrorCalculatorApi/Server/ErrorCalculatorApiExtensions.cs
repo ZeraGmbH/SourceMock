@@ -52,5 +52,6 @@ public static class ErrorCalculatorApiConfiguration
         /* Make all implementations transient since lifetime is controlled by a meter test system. */
         services.AddTransient<ISerialPortFGErrorCalculator, SerialPortFGErrorCalculator>();
         services.AddTransient<ISerialPortMTErrorCalculator, SerialPortMTErrorCalculator>();
+        services.AddTransient<IErrorCalculatorMock, ErrorCalculatorMock>();
     }
 }

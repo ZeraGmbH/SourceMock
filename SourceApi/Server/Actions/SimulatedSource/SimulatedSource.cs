@@ -4,10 +4,14 @@ using SourceApi.Model;
 
 namespace SourceApi.Actions.Source
 {
+    public interface ISimulatedSource : ISource
+    {
+
+    }
     /// <summary>
     /// Simulatetes the behaviour of a ZERA source.
     /// </summary>
-    public class SimulatedSource : ISource
+    public class SimulatedSource : ISimulatedSource
     {
         #region ContructorAndDependencyInjection
         private readonly ILogger<SimulatedSource> _logger;

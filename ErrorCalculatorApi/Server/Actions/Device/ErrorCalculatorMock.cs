@@ -1,7 +1,6 @@
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using SourceApi.Actions.Source;
-using SourceApi.Model;
 
 namespace ErrorCalculatorApi.Actions.Device;
 
@@ -14,93 +13,121 @@ public interface IErrorCalculatorMock : IErrorCalculator { }
 /// </summary>
 public class ErrorCalculatorMock : IErrorCalculatorMock
 {
-    /// <summary>
-    /// 
-    /// </summary>
+    /// <inheritdoc/>
     public bool Available => true;
 
-    private bool _continious = false;
+    private bool _continuous = false;
+
     private ErrorMeasurementStatus _status = new();
+
     private IServiceProvider _di;
+
     private DateTime _startTime;
+
     private double _meterConstant;
+
     private long _totalImpulses;
-    private Loadpoint? _loadpoint;
+
+    /// <summary>
+    /// Total power of the loadpoint in kW.
+    /// </summary>
+    private double _totalPower;
 
     /// <summary>
     /// Need SimulatedSource to mock the energy
     /// </summary>
-    /// <param name="di"></param>
+    /// <param name="di">Dependency injection to create ISource on demand -
+    /// to avoid cyclic dependencies during setup.</param>
     public ErrorCalculatorMock(IServiceProvider di)
     {
         _di = di;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public Task AbortErrorMeasurement()
     {
         _status.State = ErrorMeasurementStates.Finished;
-        return Task<bool>.FromResult(true);
+
+        return Task.CompletedTask;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public Task<ErrorMeasurementStatus> GetErrorStatus()
     {
-        double power = 0;
-        foreach (var phase in _loadpoint!.Phases)
+        /* Time elapses in the current measurement. */
+        var hoursElapsed = (DateTime.UtcNow - _startTime).TotalHours;
+
+        /* Total energy consumed in kWh and store to status. */
+        var energy = hoursElapsed * _totalPower;
+
+        _status.Energy = 1000d * energy;
+
+        /* Get the number of pulses and from this the progress. */
+        var measuredImpulses = (long)(_meterConstant * energy);
+
+        if (measuredImpulses > _totalImpulses)
         {
-            power += phase.Voltage.Rms * phase.Current.Rms * Math.Cos((phase.Voltage.Angle - phase.Current.Angle) * Math.PI / 180d);
+            /* In mock never report more than requested - even if time has run out. */
+            measuredImpulses = _totalImpulses;
+
+            _status.Energy = 1000d * _totalImpulses / _meterConstant;
         }
-        var timeInSeconds = (DateTime.Now - _startTime).TotalSeconds;
 
-        double energy = power * timeInSeconds / 3600 / 1000;
-        _status.Energy = energy;
-        var measuredImpulses = _meterConstant * energy;
+        _status.Progress = 100d * measuredImpulses / _totalImpulses;
 
-        _status.Progress = measuredImpulses / _totalImpulses * 100;
-
+        /* Check for end of measurement. */
         if (_status.Progress >= 100)
         {
-            _status.ErrorValue = _status.Progress / 100;
-            _status.State = ErrorMeasurementStates.Finished;
+            /* Keep this in continuous mode. */
+            _status.ErrorValue = Random.Shared.Next(9500, 10700) / 100d - 100d;
+            _status.Progress = 0d;
+
+            /* Restart counting or end measurement. */
+            if (_continuous)
+                _startTime = DateTime.UtcNow;
+            else
+                _status.State = ErrorMeasurementStates.Finished;
         }
 
-        return Task.FromResult<ErrorMeasurementStatus>(_status);
+        /* Report copy - never give access to internal structures. */
+        return Task.FromResult(new ErrorMeasurementStatus
+        {
+            Energy = _status.Energy,
+            ErrorValue = _status.ErrorValue,
+            Progress = _status.Progress,
+            State = _status.State,
+        });
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="meterConstant"></param>
-    /// <param name="impulses"></param>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public Task SetErrorMeasurementParameters(double meterConstant, long impulses)
     {
         _meterConstant = meterConstant;
         _totalImpulses = impulses;
-        _loadpoint = _di.GetRequiredService<ISource>().GetCurrentLoadpoint();
 
-        return Task<Tuple<double, long>>.FromResult((_meterConstant, _totalImpulses));
+        return Task.CompletedTask;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="continuous"></param>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public Task StartErrorMeasurement(bool continuous)
     {
-        _continious = continuous;
-        _startTime = DateTime.Now;
-        _status.State = ErrorMeasurementStates.Running;
+        /* Get the total power of all active phases of the current loadpoint (in W) */
+        var totalPower = 0d;
 
-        return Task<bool>.FromResult(_continious);
+        var loadpoint = _di.GetRequiredService<ISource>().GetCurrentLoadpoint()!;
+
+        foreach (var phase in loadpoint.Phases)
+            if (phase.Voltage.On && phase.Current.On)
+                totalPower += phase.Voltage.Rms * phase.Current.Rms * Math.Cos((phase.Voltage.Angle - phase.Current.Angle) * Math.PI / 180d);
+
+        /* Use total power in kW to ease calculations with meter constant. */
+        _totalPower = totalPower / 1000d;
+        _continuous = continuous;
+
+        _startTime = DateTime.UtcNow;
+
+        _status = new() { State = ErrorMeasurementStates.Running, Progress = 0, ErrorValue = null };
+
+        return Task.CompletedTask;
     }
-
 }

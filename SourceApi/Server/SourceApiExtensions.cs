@@ -48,7 +48,7 @@ public static class SourceApiConfiguration
     /// <summary>
     /// 
     /// </summary>
-    public static void UseSourceApi(this IServiceCollection services, IConfiguration configuration, bool serialOnly)
+    public static void UseSourceApi(this IServiceCollection services, IConfiguration configuration, bool integrated)
     {
         services.AddSingleton<ICapabilitiesMap, CapabilitiesMap>();
 
@@ -57,11 +57,14 @@ public static class SourceApiConfiguration
         switch (configuration["SourceType"])
         {
             case "simulated":
-                //services.AddTransient<ISource, SimulatedSource>();
-                services.AddTransient<ISimulatedSource, SimulatedSource>();
+                if (integrated)
+                    services.AddTransient<ISimulatedSource, SimulatedSource>();
+                else
+                    services.AddSingleton<ISource, SimulatedSource>();
+
                 break;
             case "vein":
-                if (serialOnly)
+                if (integrated)
                     throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
 
                 services.AddSingleton(new VeinClient(new(), "localhost", 8080));
@@ -72,7 +75,7 @@ public static class SourceApiConfiguration
                 if (deviceType != "MT" && deviceType != "FG" && deviceType != "DeviceMock")
                     throw new NotImplementedException($"Unknown DeviceType: {deviceType}");
 
-                if (!serialOnly)
+                if (!integrated)
                     services.AddSingleton<ISource>(ctx => ctx.GetRequiredService<ISerialPortMTSource>());
                 else
                 {

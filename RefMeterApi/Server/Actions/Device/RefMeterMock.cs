@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Models;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
@@ -5,20 +6,28 @@ using SourceApi.Model;
 namespace RefMeterApi.Actions.Device;
 
 /// <summary>
+/// This is a tag interface which simply identifies specific 
+/// variants.
+/// </summary>
+public interface IMockRefMeter : IRefMeter
+{
+}
+
+/// <summary>
 /// 
 /// </summary>
-public partial class RefMeterMock : IRefMeter
+public partial class RefMeterMock : IMockRefMeter
 {
 
     private MeasurementModes? _measurementMode = null;
-    private readonly ISource _source;
+    private readonly IServiceProvider _di;
 
     /// <summary>
     /// 
     /// </summary>
-    public RefMeterMock(ISource source)
+    public RefMeterMock(IServiceProvider di)
     {
-        _source = source;
+        _di = di;
     }
     /// <summary>
     /// 
@@ -125,7 +134,8 @@ public partial class RefMeterMock : IRefMeter
     private Loadpoint GetLoadpoint()
     {
         Random r = new();
-        return _source.GetCurrentLoadpoint() ?? new Loadpoint()
+
+        return _di.GetRequiredService<ISource>().GetCurrentLoadpoint() ?? new Loadpoint()
         {
             Frequency = new Frequency() { Value = 0 },
             Phases = new List<PhaseLoadpoint>(){

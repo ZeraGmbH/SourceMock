@@ -3,17 +3,38 @@ using Moq;
 using SourceApi.Actions.Source;
 using RefMeterApi.Models;
 using SourceApi.Model;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace RefMeterApiTests;
 
 public class RefMeterMockTest
 {
+    private ServiceProvider Services;
+
+    private Mock<ISource> SourceMock;
+
+    [SetUp]
+    public void Setup()
+    {
+        var services = new ServiceCollection();
+
+        SourceMock = new Mock<ISource>();
+
+        services.AddSingleton(SourceMock.Object);
+
+        Services = services.BuildServiceProvider();
+    }
+
+    [TearDown]
+    public void Teardown()
+    {
+        Services?.Dispose();
+    }
+
     [Test]
     public void Produces_Actual_Values_If_No_Loadpoint_Switched_On()
     {
-        var sourceMock = new Mock<ISource>();
-
-        RefMeterMock refMeterMock = new(sourceMock.Object);
+        RefMeterMock refMeterMock = new(Services);
 
         MeasureOutput measureOutput = refMeterMock.GetActualValues().Result;
 
@@ -29,8 +50,7 @@ public class RefMeterMockTest
         double currentAngle = 7;
         double voltageAngle = 5;
 
-        var sourceMock = new Mock<ISource>();
-        sourceMock.Setup(s => s.GetCurrentLoadpoint()).Returns(
+        SourceMock.Setup(s => s.GetCurrentLoadpoint()).Returns(
             new Loadpoint()
             {
                 Frequency = new() { Value = frequencyValue },
@@ -42,7 +62,7 @@ public class RefMeterMockTest
                 }
             });
 
-        RefMeterMock refMeterMock = new(sourceMock.Object);
+        RefMeterMock refMeterMock = new(Services);
         MeasureOutput measureOutput = refMeterMock.GetActualValues().Result;
 
         Assert.That(measureOutput.Frequency, Is.InRange(GetMinValue(frequencyValue, 0.0002), GetMaxValue(frequencyValue, 0.0002)));

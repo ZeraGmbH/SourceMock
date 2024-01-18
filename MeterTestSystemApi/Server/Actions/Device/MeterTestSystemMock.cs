@@ -25,12 +25,12 @@ public class MeterTestSystemMock : IMeterTestSystem
     /// <summary>
     /// 
     /// </summary>
-    public MeterTestSystemMock(ILogger<SimulatedSource> logger, IConfiguration configuration)
+    public MeterTestSystemMock(IMockRefMeter refMeter, ILogger<SimulatedSource> logger, IConfiguration configuration)
     {
         _logger = logger;
         _configuration = configuration;
         Source = new SimulatedSource(_logger, _configuration);
-        RefMeter = new RefMeterMock(Source);
+        RefMeter = refMeter;
         ErrorCalculator = new ErrorCalculatorMock(Source);
     }
 

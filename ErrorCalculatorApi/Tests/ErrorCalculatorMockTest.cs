@@ -62,7 +62,7 @@ public class ErrorCalculatorMockTest
         Assert.Multiple(() =>
         {
             Assert.That(result.State, Is.EqualTo(ErrorMeasurementStates.Finished));
-            Assert.That(result.ErrorValue, Is.GreaterThanOrEqualTo(0.95).And.LessThanOrEqualTo(1.07));
+            Assert.That(result.ErrorValue, Is.GreaterThanOrEqualTo(-5).And.LessThanOrEqualTo(+7));
             Assert.That(result.Energy, Is.EqualTo(20));
         });
     }

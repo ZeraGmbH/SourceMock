@@ -194,7 +194,7 @@ public class CapabilitiesMap : ICapabilitiesMap
     { "MT786",  Tuple.Create<SourceCapabilities,double[]>(new () {
         FrequencyRanges = [new(45, 65, 0.01, FrequencyMode.SYNTHETIC)],
         Phases = [new() { Voltage = new(20, 500, 0.001) }],
-    }, [ 5d, 250d ] )},
+    }, [ 60d, 125d, 250d, 420d ] )},
     { "VU211", Tuple.Create<SourceCapabilities,double[]>(new () {
         FrequencyRanges = [new(40, 70, 0.01, FrequencyMode.SYNTHETIC)],
         Phases = [new() { Voltage = new(30, 480, 0.001) }],
@@ -220,7 +220,7 @@ public class CapabilitiesMap : ICapabilitiesMap
     { "MT786", Tuple.Create<SourceCapabilities,double[]>(new () {
         FrequencyRanges = [new(45, 65, 0.01, FrequencyMode.SYNTHETIC)],
         Phases = [new() { Current = new(0.001, 120, 0.001) }],
-    }, [ 1d, 5d ] )},
+    }, [ 100d, 50d, 20d, 10d, 5d, 2d, 1d, 0.5d, 0.2d, 0.1d, 0.05d, 0.02d ] )},
     { "VI201",Tuple.Create<SourceCapabilities,double[]>(new ()  {
         FrequencyRanges = [new(15, 70, 0.01, FrequencyMode.SYNTHETIC)],
         Phases = [new() { Current = new(500E-6, 160, 0.0001) }],

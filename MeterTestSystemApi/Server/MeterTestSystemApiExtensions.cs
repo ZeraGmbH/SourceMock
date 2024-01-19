@@ -1,10 +1,8 @@
-using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Actions.Device;
 using MeterTestSystemApi.Models;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RefMeterApi.Actions.Device;
 using SharedLibrary;
 using Swashbuckle.AspNetCore.SwaggerGen;
 

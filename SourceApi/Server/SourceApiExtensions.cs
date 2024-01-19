@@ -81,7 +81,9 @@ public static class SourceApiConfiguration
                 {
                     services.AddTransient<ISerialPortFGSource, SerialPortFGSource>();
                     services.AddTransient<ISerialPortMTSource, SerialPortMTSource>();
+
                     services.AddTransient<ISimulatedSource, SimulatedSource>();
+                    services.AddTransient<ISourceMock, SimulatedSource>();
                 }
 
                 break;

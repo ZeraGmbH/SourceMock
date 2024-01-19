@@ -154,16 +154,16 @@ namespace SourceApi.Tests.Actions.Source
                 Frequency = new() { Value = 50 },
                 Phases = new List<PhaseLoadpoint>(){
                     new PhaseLoadpoint(){
-                        Current = new(){Angle=0, Rms=10},
-                        Voltage = new(){Angle=0, Rms=220}
+                        Current = new(){Angle=0, Rms=10, On=true},
+                        Voltage = new(){Angle=0, Rms=220, On=true}
                     },
                     new PhaseLoadpoint(){
-                        Current = new(){Angle=120, Rms=10},
-                        Voltage = new(){Angle=120, Rms=220}
+                        Current = new(){Angle=120, Rms=10, On=true},
+                        Voltage = new(){Angle=120, Rms=220, On=true}
                     },
                     new PhaseLoadpoint(){
-                        Current = new(){Angle=240, Rms=10},
-                        Voltage = new(){Angle=240, Rms=220}
+                        Current = new(){Angle=240, Rms=10, On=true},
+                        Voltage = new(){Angle=240, Rms=220, On=true}
                     }
                 }
             };

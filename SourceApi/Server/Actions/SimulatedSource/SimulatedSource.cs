@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SourceApi.Model;
@@ -17,7 +18,7 @@ namespace SourceApi.Actions.Source
         private readonly ILogger<SimulatedSource> _logger;
         private readonly IConfiguration _configuration;
         private readonly SourceCapabilities _sourceCapabilities;
-        private readonly LoadpointInfo _info = new();
+        private LoadpointInfo _info = new();
         private DosageProgress _status = new();
         private DateTime _startTime;
         private double _dosageEnergy;
@@ -84,7 +85,9 @@ namespace SourceApi.Actions.Source
                 _loadpoint = loadpoint;
             }
 
-            _dosageMode = true;
+            _dosageMode = false;
+
+            _info.SavedAt = _info.ActivatedAt = DateTime.Now;
 
             return Task.FromResult(isValid);
         }
@@ -95,30 +98,28 @@ namespace SourceApi.Actions.Source
             _logger.LogTrace("Source turned off.");
             _loadpoint = null;
 
+            _info = new();
+
             return Task.FromResult(SourceApiErrorCodes.SUCCESS);
         }
 
         /// <inheritdoc/>
-        public Loadpoint? GetCurrentLoadpoint()
-        {
-            return _loadpoint;
-        }
+        public Loadpoint? GetCurrentLoadpoint() => _loadpoint;
 
-        public Task<SourceCapabilities> GetCapabilities()
-        {
-            return Task.FromResult(_sourceCapabilities);
-        }
+        public Task<SourceCapabilities> GetCapabilities() => Task.FromResult(_sourceCapabilities);
 
         public Task SetDosageMode(bool on)
         {
             _dosageMode = on;
-            return Task.FromResult(_dosageMode);
+
+            return Task.CompletedTask;
         }
 
         public Task SetDosageEnergy(double value)
         {
             _dosageEnergy = value;
-            return Task.FromResult(value);
+
+            return Task.CompletedTask;
         }
 
         public Task StartDosage()
@@ -127,43 +128,48 @@ namespace SourceApi.Actions.Source
             _status.Active = true;
             _dosageMode = false;
 
-            return Task.FromResult(true);
+            return Task.CompletedTask;
         }
 
         public Task CancelDosage()
         {
             _status.Active = false;
             _status.Remaining = 0;
-            return Task.FromResult(true);
+
+            return Task.CompletedTask;
         }
 
         public Task<DosageProgress> GetDosageProgress()
         {
-            double power = 0;
+            var power = 0d;
+
             foreach (var phase in _loadpoint!.Phases)
-            {
-                power += phase.Voltage.Rms * phase.Current.Rms * Math.Cos((phase.Voltage.Angle - phase.Current.Angle) * Math.PI / 180d);
-            }
-            var timeInSeconds = (DateTime.Now - _startTime).TotalSeconds;
+                if (phase.Voltage.On && phase.Current.On)
+                    power += phase.Voltage.Rms * phase.Current.Rms * Math.Cos((phase.Voltage.Angle - phase.Current.Angle) * Math.PI / 180d);
 
-            double energy = power * timeInSeconds / 3600;
+            var elapsedHours = (DateTime.Now - _startTime).TotalHours;
+            var energy = power * elapsedHours;
 
-            if (energy > _dosageEnergy)
-            {
-                energy = StopDosage();
-            }
+            if (energy > _dosageEnergy) energy = StopDosage();
 
             _status.Progress = energy;
             _status.Remaining = _dosageEnergy - energy;
             _status.Total = _dosageEnergy;
 
-            return Task.FromResult(_status);
+            return Task.FromResult(new DosageProgress
+            {
+                Active = _status.Active,
+                Progress = _status.Progress,
+                Remaining = _status.Remaining,
+                Total = _status.Total
+            });
         }
 
         public Task<bool> CurrentSwitchedOffForDosage()
         {
             _logger.LogTrace("Mock switches off the current for dosage");
-            return Task.FromResult(false);
+
+            return Task.FromResult(_dosageMode);
         }
 
         public LoadpointInfo GetActiveLoadpointInfo() => _info;
@@ -173,24 +179,21 @@ namespace SourceApi.Actions.Source
         public Task<double[]> GetCurrentRanges() => Task.FromResult<double[]>([1d, 2d, 5d]);
 
         public bool Available => true;
-        /// <inheritdoc/>
-        public void SetSimulatedSourceState(SimulatedSourceState simulatedSourceState)
-        {
-            _simulatedSourceState = simulatedSourceState;
-        }
 
         /// <inheritdoc/>
-        public SimulatedSourceState? GetSimulatedSourceState()
-        {
-            return _simulatedSourceState;
-        }
+        public void SetSimulatedSourceState(SimulatedSourceState simulatedSourceState) =>
+            _simulatedSourceState = simulatedSourceState;
+
+        /// <inheritdoc/>
+        public SimulatedSourceState? GetSimulatedSourceState() => _simulatedSourceState;
+
         private double StopDosage()
         {
-            double energy;
             _status.Active = false;
-            energy = _dosageEnergy;
+
             _dosageMode = false;
-            return energy;
+
+            return _dosageEnergy;
         }
     }
 }

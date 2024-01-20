@@ -151,7 +151,7 @@ public class ErrorConditionTests
         Thread.Sleep(500);
 
         Assert.That(byEvent, Has.Count.EqualTo(1));
-        Assert.That(byEvent[0], Is.SameAs(errors));
+        Assert.That(byEvent[0], Is.Not.SameAs(errors));
 
         Assert.Multiple(() =>
         {

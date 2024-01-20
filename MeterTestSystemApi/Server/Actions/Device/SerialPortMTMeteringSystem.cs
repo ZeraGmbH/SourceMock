@@ -20,6 +20,11 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     private static readonly Regex _versionReg = new("^(.+)V([^V]+)$", RegexOptions.Singleline | RegexOptions.Compiled);
 
     /// <summary>
+    /// Pattern for error conditions.
+    /// </summary>
+    private static readonly Regex _smRegEx = new Regex("^SSM([0-9A-Fa-f]+)$");
+
+    /// <summary>
     /// Serial port connection to the system.
     /// </summary>
     private readonly ISerialPortConnection _device;
@@ -60,6 +65,9 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
 
         _device = device;
         _logger = logger;
+
+        /* Register out-of-band processing of error conditions. */
+        _device.RegisterEvent(_smRegEx, reply => ErrorConditionsChanged?.Invoke(ErrorConditionParser.Parse(reply.Groups[1].Value, true)));
     }
 
     /// <inheritdoc/>
@@ -103,16 +111,11 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     public async Task<ErrorConditions> GetErrorConditions()
     {
         /* Send command and check reply. */
-        var request = SerialPortRequest.Create("SSM", new Regex("^SSM([0-9A-Fa-f]+)$"));
+        var request = SerialPortRequest.Create("SSM", _smRegEx);
 
         await _device.Execute(request)[0];
 
         /* Create response structure. */
-        var errors = ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, false);
-
-        /* Report through event. */
-        ErrorConditionsChanged?.Invoke(errors);
-
-        return errors;
+        return ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, false);
     }
 }

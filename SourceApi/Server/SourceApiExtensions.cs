@@ -62,7 +62,7 @@ public static class SourceApiConfiguration
                 else
                     services.AddSingleton<ISource, SimulatedSource>();
 
-                break;
+                return;
             case "vein":
                 if (integrated)
                     throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
@@ -70,7 +70,8 @@ public static class SourceApiConfiguration
                 services.AddSingleton(new VeinClient(new(), "localhost", 8080));
                 services.AddSingleton<VeinSource>();
                 services.AddSingleton<ISource>(x => x.GetRequiredService<VeinSource>());
-                break;
+
+                return;
             case "serial":
                 if (deviceType != "MT" && deviceType != "FG" && deviceType != "DeviceMock")
                     throw new NotImplementedException($"Unknown DeviceType: {deviceType}");

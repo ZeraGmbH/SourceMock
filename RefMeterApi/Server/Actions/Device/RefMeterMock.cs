@@ -138,56 +138,44 @@ public partial class RefMeterMock : IMockRefMeter
         return _di.GetRequiredService<ISource>().GetCurrentLoadpoint() ?? new Loadpoint()
         {
             Frequency = new Frequency() { Value = 0 },
-            Phases = new List<PhaseLoadpoint>(){
-                new PhaseLoadpoint(){
+            Phases = [
+                new () {
                     Current = new() {Rms = 0, Angle=r.Next(0,360)},
                     Voltage = new() {Rms = 0, Angle=r.Next(0,360)},
                 },
-                new PhaseLoadpoint(){
+                new () {
                     Current = new() {Rms = 0, Angle=r.Next(0,360)},
                     Voltage = new() {Rms = 0, Angle=r.Next(0,360)},
                 },
-                new PhaseLoadpoint(){
+                new () {
                     Current = new() {Rms = 0, Angle=r.Next(0,360)},
                     Voltage = new() {Rms = 0, Angle=r.Next(0,360)},
                 }
-            }
+            ]
         };
     }
 
     // Phases are sorted by the phase angles from lowest to highest
     private static string CalculatePhaseOrder(Loadpoint lp)
     {
-        Dictionary<double, int> anglesWithIndices = new();
-        List<double> orderedAngles = new();
+        /* See if there are at least three phases - use very defensive programming. */
+        var phases = lp?.Phases?.Select(p => p.Voltage).Where(v => v != null).ToList();
 
-        CopyAngleValues(lp, anglesWithIndices, orderedAngles);
+        if (phases == null) return "123";
 
-        orderedAngles.Sort();
+        var phaseCount = phases.Count;
 
-        string result = GetPhaseOrder(anglesWithIndices, orderedAngles);
+        if (phaseCount < 3) return "123";
 
-        return result;
-    }
+        /* Find the first angle - the first voltage seen by any consumer. */
+        var minAngle = phases.Min(v => v.Angle);
+        var l1 = phases.FindIndex(v => v.Angle == minAngle);
 
-    private static string GetPhaseOrder(Dictionary<double, int> anglesWithIndices, List<double> orderedAngles)
-    {
-        string result = "";
-        for (int i = 0; i < anglesWithIndices.Count; ++i)
-        {
-            result += (anglesWithIndices[orderedAngles[i]] + 1).ToString();
-        }
+        /* Get the following phases and compare angles. */
+        var l2 = (l1 + 1) % phaseCount;
+        var l3 = (l2 + 1) % phaseCount;
 
-        return result;
-    }
-
-    private static void CopyAngleValues(Loadpoint lp, Dictionary<double, int> angles, List<double> orderedAngles)
-    {
-        for (int i = 0; i < lp.Phases.Count; ++i)
-        {
-            angles.Add(lp.Phases[i].Voltage.Angle, i);
-            orderedAngles.Add(lp.Phases[i].Voltage.Angle);
-        }
+        return phases[l2].Angle < phases[l3].Angle ? "123" : "132";
     }
 
     private static void MeasureOutputPhaseNullCheck(MeasureOutputPhase phase)

@@ -4,6 +4,8 @@ using SourceApi.Actions.Source;
 using RefMeterApi.Models;
 using SourceApi.Model;
 using Microsoft.Extensions.DependencyInjection;
+using NuGet.Frameworks;
+using ZstdSharp.Unsafe;
 
 namespace RefMeterApiTests;
 
@@ -202,5 +204,40 @@ public class RefMeterMockTest
     private double GetAbsoluteMaxValue(double value, double deviation)
     {
         return value + deviation;
+    }
+
+    [TestCase(0d, 120d, 240d, "123")]
+    [TestCase(240d, 0d, 120d, "123")]
+    [TestCase(120d, 240d, 0d, "123")]
+    [TestCase(0d, 240d, 120d, "132")]
+    [TestCase(120d, 0d, 240d, "132")]
+    [TestCase(240d, 120d, 0d, "132")]
+    public void Will_Calculate_Phase_Order(double angle0, double angle1, double angle2, string phaseOrder)
+    {
+        // Arrange
+        var lp = new Loadpoint()
+        {
+            Frequency = new() { Value = 50 },
+            Phases = [
+                     new () {
+                        Current = new(){Rms=1, Angle=angle0},
+                        Voltage = new(){Rms=220, Angle=angle0}
+                    },
+                    new () {
+                        Current = new(){Rms=1, Angle=angle1},
+                        Voltage = new(){Rms=220, Angle=angle1}
+                    },
+                    new () {
+                        Current = new(){Rms=1, Angle=angle2},
+                        Voltage = new(){Rms=220, Angle=angle2}
+                    }
+                 ]
+        };
+
+        // Act
+        var mo = RefMeterMock.CalcMeasureOutput(lp);
+
+        // Assert
+        Assert.That(mo.PhaseOrder, Is.EqualTo(phaseOrder));
     }
 }

@@ -155,10 +155,14 @@ public partial class RefMeterMock : IMockRefMeter
         };
     }
 
-    // Phases are sorted by the phase angles from lowest to highest
+    /// <summary>
+    /// Calculate the phase order - simply approach for results 123 and 132 only.
+    /// </summary>
+    /// <param name="lp">Some loadpoint.</param>
+    /// <returns>The phase order.</returns>
     private static string CalculatePhaseOrder(Loadpoint lp)
     {
-        /* See if there are at least three phases - use very defensive programming. */
+        /* See if there are at least three phases - use very defensive programming, maybe a bit too much. */
         var phases = lp?.Phases?.Select(p => p.Voltage).Where(v => v != null).ToList();
 
         if (phases == null) return "123";

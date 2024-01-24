@@ -19,7 +19,8 @@ public interface IMockRefMeter : IRefMeter
 public partial class RefMeterMock : IMockRefMeter
 {
 
-    private MeasurementModes? _measurementMode = null;
+    private MeasurementModes _measurementMode = MeasurementModes.FourWireActivePower;
+
     private readonly IServiceProvider _di;
 
     /// <summary>
@@ -38,10 +39,8 @@ public partial class RefMeterMock : IMockRefMeter
     /// MeasurementMode
     /// </summary>
     /// <returns></returns>
-    public Task<MeasurementModes?> GetActualMeasurementMode()
-    {
-        return Task.FromResult(_measurementMode);
-    }
+    public Task<MeasurementModes?> GetActualMeasurementMode() =>
+        Task.FromResult((MeasurementModes?)_measurementMode);
 
     private const double PI_BY_180 = Math.PI / 180;
 
@@ -51,13 +50,11 @@ public partial class RefMeterMock : IMockRefMeter
     /// <returns>ActualValues that fluctuate around the set loadpoint</returns>
     public Task<MeasureOutput> GetActualValues(int firstActiveVoltagePhase = -1)
     {
-        Loadpoint loadpoint = GetLoadpoint();
-        MeasureOutput mo = CalcMeasureOutput(loadpoint);
+        var loadpoint = GetLoadpoint();
+        var mo = CalcMeasureOutput(loadpoint);
 
         foreach (var phase in mo.Phases)
-        {
             CalculatePhaseDeviations(phase);
-        }
 
         CalculateDeviations(mo);
 
@@ -71,11 +68,12 @@ public partial class RefMeterMock : IMockRefMeter
     /// <returns>The according measure output.</returns>
     public static MeasureOutput CalcMeasureOutput(Loadpoint lp)
     {
-        double activePowerSum = 0;
-        double reactivePowerSum = 0;
-        double apparentPowerSum = 0;
+        var activePowerSum = 0d;
+        var reactivePowerSum = 0d;
+        var apparentPowerSum = 0d;
 
         var measureOutputPhases = new List<MeasureOutputPhase>();
+
         foreach (var phase in lp.Phases)
         {
             var current = phase.Current.Rms;
@@ -115,10 +113,8 @@ public partial class RefMeterMock : IMockRefMeter
     /// Returns all entrys in enum MeasurementModes
     /// </summary>
     /// <returns></returns>
-    public Task<MeasurementModes[]> GetMeasurementModes()
-    {
-        return Task.FromResult((MeasurementModes[])Enum.GetValues(typeof(MeasurementModes)));
-    }
+    public Task<MeasurementModes[]> GetMeasurementModes() =>
+        Task.FromResult((MeasurementModes[])Enum.GetValues(typeof(MeasurementModes)));
 
     /// <summary>
     /// Measurement mode is not relevant for mock logic but frontent requeires an implementation
@@ -128,12 +124,13 @@ public partial class RefMeterMock : IMockRefMeter
     public Task SetActualMeasurementMode(MeasurementModes mode)
     {
         _measurementMode = mode;
-        return Task.FromResult<MeasurementModes>(mode);
+
+        return Task.CompletedTask;
     }
 
     private Loadpoint GetLoadpoint()
     {
-        Random r = new();
+        var r = Random.Shared;
 
         return _di.GetRequiredService<ISource>().GetCurrentLoadpoint() ?? new Loadpoint()
         {
@@ -237,6 +234,7 @@ public partial class RefMeterMock : IMockRefMeter
     {
         if (powerFactor == null)
             return false;
+
         return powerFactor != 0 && !double.IsNaN((double)powerFactor);
     }
 
@@ -244,7 +242,8 @@ public partial class RefMeterMock : IMockRefMeter
     {
         var maximum = value + deviation;
         var minimum = value - deviation;
-        Random random = new Random();
+        var random = Random.Shared;
+
         return random.NextDouble() * (maximum - minimum) + minimum;
     }
 
@@ -252,7 +251,8 @@ public partial class RefMeterMock : IMockRefMeter
     {
         var maximum = value + value * deviation / 100;
         var minimum = value - value * deviation / 100;
-        Random random = new Random();
+        var random = Random.Shared;
+
         return random.NextDouble() * (maximum - minimum) + minimum;
     }
 }

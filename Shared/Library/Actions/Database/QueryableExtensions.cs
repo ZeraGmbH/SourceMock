@@ -13,8 +13,9 @@ public static class QueryableExtensions
     /// </summary>
     /// <typeparam name="T">Type of the item.</typeparam>
     /// <param name="query">Query instance.</param>
+    /// <param name="message">Message to generate.</param>
     /// <returns>The desired item</returns>
-    public static T FastSingle<T>(this IQueryable<T> query)
+    public static T FastSingle<T>(this IQueryable<T> query, string message)
     {
         try
         {
@@ -22,7 +23,7 @@ public static class QueryableExtensions
         }
         catch (InvalidOperationException)
         {
-            throw new Exception("Unique item could not be found in the database.");
+            throw new Exception(message);
         }
     }
 }

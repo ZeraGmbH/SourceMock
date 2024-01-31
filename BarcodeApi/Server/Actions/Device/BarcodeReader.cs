@@ -15,7 +15,9 @@ public class BarcodeReader : IBarcodeReader, IDisposable
 
     private readonly ILogger<BarcodeReader> _logger;
 
-    private readonly FileStream _device = null!;
+    private readonly string _path;
+
+    private FileStream _device = null!;
 
     private readonly byte[] _buffer = new byte[24];
 
@@ -37,11 +39,23 @@ public class BarcodeReader : IBarcodeReader, IDisposable
         _bufPtr = GCHandle.Alloc(_buffer, GCHandleType.Pinned);
 
         _logger = logger;
+        _path = device;
+
+        Reconnect();
+    }
+
+    private void Reconnect()
+    {
+        /* Do proper cleanup. */
+        Disconnect();
+
+        /* See if we are already disposed. */
+        if (!_bufPtr.IsAllocated) return;
 
         try
         {
             /* Open device file. */
-            _device = new FileStream(device, FileMode.Open, FileAccess.Read, FileShare.None);
+            _device = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.None);
 
             /* Start the first read. */
             _active = _device.BeginRead(_buffer, 0, _buffer.Length, OnInputEvent, null);
@@ -51,7 +65,10 @@ public class BarcodeReader : IBarcodeReader, IDisposable
             _logger.LogCritical("Unable to access barcode reader: {Exception}", e.Message);
 
             /* Do proper cleanup. */
-            Dispose();
+            Disconnect();
+
+            /* Try again later. */
+            Task.Delay(5000).ContinueWith(t => Reconnect());
         }
     }
 
@@ -61,6 +78,8 @@ public class BarcodeReader : IBarcodeReader, IDisposable
     /// <param name="state">Will be ignored.</param>
     private void OnInputEvent(object? state)
     {
+        Exception? failed = null;
+
         try
         {
             /* Should be a full event. */
@@ -108,14 +127,23 @@ public class BarcodeReader : IBarcodeReader, IDisposable
         }
         catch (Exception e)
         {
-            _logger.LogCritical("Unable to process bar code input: {Exception}", e.Message);
+            failed = e;
         }
         finally
         {
             try
             {
-                /* Wait for next event. */
-                _active = _device.BeginRead(_buffer, 0, _buffer.Length, OnInputEvent, null);
+                if (failed != null)
+                {
+                    _logger.LogCritical("Unable to process bar code input: {Exception}", failed.Message);
+
+                    Reconnect();
+                }
+                else
+                {
+                    /* Wait for next event. */
+                    _active = _device.BeginRead(_buffer, 0, _buffer.Length, OnInputEvent, null);
+                }
             }
             catch (Exception e)
             {
@@ -124,12 +152,19 @@ public class BarcodeReader : IBarcodeReader, IDisposable
         }
     }
 
+    private void Disconnect()
+    {
+        _device?.Dispose();
+        _device = null!;
+        _active = null!;
+    }
+
     /// <summary>
     /// Close connection to the device.
     /// </summary>
     public void Dispose()
     {
-        _device?.Dispose();
+        Disconnect();
 
         _bufPtr.Free();
     }

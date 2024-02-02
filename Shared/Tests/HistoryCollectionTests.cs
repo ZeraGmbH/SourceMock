@@ -1,11 +1,7 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using MongoDB.Bson.Serialization.Attributes;
 using SharedLibrary.Actions.Database;
 using SharedLibrary.Models;
-using SharedLibrary.Services;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
@@ -70,18 +66,22 @@ public abstract class HistoryCollectionTests : DatabaseTestCore
         var history = (await Collection.GetHistory(item.Id)).ToArray();
 
         Assert.That(history, Is.Not.Null);
-        Assert.That(history.Length, Is.EqualTo(1));
-
-        var theOne = history[0];
+        Assert.That(history, Has.Length.EqualTo(1));
 
         Assert.Multiple(() =>
         {
-            Assert.That(theOne.Item.Id, Is.EqualTo(item.Id));
-            Assert.That(theOne.Item.Name, Is.EqualTo("Test 1"));
-            Assert.That(theOne.Version.ChangeCount, Is.EqualTo(1));
-            Assert.That(theOne.Version.CreatedBy, Is.EqualTo("autotest"));
-            Assert.That(theOne.Version.ModifiedBy, Is.EqualTo("autotest"));
-            Assert.That(theOne.Version.ModifiedAt, Is.EqualTo(theOne.Version.CreatedAt));
+            Assert.That(history[0].ChangeCount, Is.EqualTo(1));
+            Assert.That(history[0].CreatedBy, Is.EqualTo("autotest"));
+            Assert.That(history[0].ModifiedBy, Is.EqualTo("autotest"));
+            Assert.That(history[0].ModifiedAt, Is.EqualTo(history[0].CreatedAt));
+        });
+
+        var theOne = await Collection.GetHistoryItem(item.Id, history[0].ChangeCount);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(theOne.Id, Is.EqualTo(item.Id));
+            Assert.That(theOne.Name, Is.EqualTo("Test 1"));
         });
     }
 
@@ -129,30 +129,35 @@ public abstract class HistoryCollectionTests : DatabaseTestCore
         var history = (await Collection.GetHistory(item.Id)).ToArray();
 
         Assert.That(history, Is.Not.Null);
-        Assert.That(history.Length, Is.EqualTo(2));
-
-        var theOne = history[0];
+        Assert.That(history, Has.Length.EqualTo(2));
 
         Assert.Multiple(() =>
         {
-            Assert.That(theOne.Item.Id, Is.EqualTo(item.Id));
-            Assert.That(theOne.Item.Name, Is.EqualTo("Test 4"));
-            Assert.That(theOne.Version.ChangeCount, Is.EqualTo(2));
-            Assert.That(theOne.Version.CreatedBy, Is.EqualTo("autotest"));
-            Assert.That(theOne.Version.ModifiedBy, Is.EqualTo("updater"));
-            Assert.That(theOne.Version.ModifiedAt, Is.GreaterThanOrEqualTo(theOne.Version.CreatedAt));
+            Assert.That(history[0].ChangeCount, Is.EqualTo(2));
+            Assert.That(history[0].CreatedBy, Is.EqualTo("autotest"));
+            Assert.That(history[0].ModifiedBy, Is.EqualTo("updater"));
+            Assert.That(history[0].ModifiedAt, Is.GreaterThanOrEqualTo(history[0].CreatedAt));
+
+            Assert.That(history[1].ChangeCount, Is.EqualTo(1));
+            Assert.That(history[1].CreatedBy, Is.EqualTo("autotest"));
+            Assert.That(history[1].ModifiedBy, Is.EqualTo("autotest"));
+            Assert.That(history[1].ModifiedAt, Is.EqualTo(history[0].CreatedAt));
         });
 
-        var theFirst = history[1];
+        var theOne = await Collection.GetHistoryItem(item.Id, history[0].ChangeCount);
 
         Assert.Multiple(() =>
         {
-            Assert.That(theFirst.Item.Id, Is.EqualTo(item.Id));
-            Assert.That(theFirst.Item.Name, Is.EqualTo("Test 3"));
-            Assert.That(theFirst.Version.ChangeCount, Is.EqualTo(1));
-            Assert.That(theFirst.Version.CreatedBy, Is.EqualTo("autotest"));
-            Assert.That(theFirst.Version.ModifiedBy, Is.EqualTo("autotest"));
-            Assert.That(theFirst.Version.ModifiedAt, Is.EqualTo(theOne.Version.CreatedAt));
+            Assert.That(theOne.Id, Is.EqualTo(item.Id));
+            Assert.That(theOne.Name, Is.EqualTo("Test 4"));
+        });
+
+        var theFirst = await Collection.GetHistoryItem(item.Id, history[1].ChangeCount);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(theFirst.Id, Is.EqualTo(item.Id));
+            Assert.That(theFirst.Name, Is.EqualTo("Test 3"));
         });
     }
 

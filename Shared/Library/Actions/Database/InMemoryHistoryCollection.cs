@@ -14,7 +14,7 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
 {
     private readonly ILogger<InMemoryHistoryCollection<TItem>> _logger;
 
-    private readonly Dictionary<string, List<HistoryItem<TItem>>> _data = new();
+    private readonly Dictionary<string, List<HistoryItem<TItem>>> _data = [];
 
     /// <summary>
     /// Initializes a new collection.
@@ -34,7 +34,7 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
     public static T CloneItem<T>(T item)
     {
         /* Make us behave just like real implementations will do. */
-        using var writer = new BsonDocumentWriter(new BsonDocument());
+        using var writer = new BsonDocumentWriter([]);
 
         BsonSerializer.Serialize(writer, item);
 
@@ -63,7 +63,7 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
 
         /* Add to dictionary. */
         lock (_data)
-            if (!_data.TryAdd(clone.Item.Id, new List<HistoryItem<TItem>> { clone }))
+            if (!_data.TryAdd(clone.Item.Id, [clone]))
                 return Task.FromException<TItem>(new ArgumentException("duplicate item", nameof(item)));
 
         /* Report a second clone to make sure no one messes with our internal structure. */
@@ -121,19 +121,6 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
     }
 
     /// <inheritdoc/>
-    public Task<IEnumerable<HistoryItem<TItem>>> GetHistory(string id)
-    {
-        /* Find in dictionary. */
-        lock (_data)
-        {
-            if (!_data.TryGetValue(id, out var list))
-                list = new();
-
-            return Task.FromResult(list.Select(i => InMemoryHistoryCollection<TItem>.CloneItem(i)).Reverse());
-        }
-    }
-
-    /// <inheritdoc/>
     public Task<long> RemoveAll()
     {
         lock (_data)
@@ -152,6 +139,32 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
     {
         lock (_data)
             return _data.Values.Select(list => CloneItem(list[^1].Item)).ToArray().AsQueryable();
+    }
+
+    /// <inheritdoc/>
+    public Task<IEnumerable<HistoryInfo>> GetHistory(string id)
+    {
+        /* Find in dictionary. */
+        lock (_data)
+        {
+            if (!_data.TryGetValue(id, out var list))
+                list = [];
+
+            return Task.FromResult(list.Select(i => InMemoryHistoryCollection<TItem>.CloneItem(i).Version).Reverse());
+        }
+    }
+
+    /// <inheritdoc/>
+    public Task<TItem> GetHistoryItem(string id, long version)
+    {
+        /* Find in dictionary. */
+        lock (_data)
+        {
+            if (!_data.TryGetValue(id, out var list))
+                list = [];
+
+            return Task.FromResult(InMemoryHistoryCollection<TItem>.CloneItem(list.Single(i => i.Version.ChangeCount == version).Item));
+        }
     }
 }
 

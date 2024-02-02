@@ -7,9 +7,17 @@ namespace SharedLibrary.Models;
 public interface IHistoryCollection<T> : IObjectCollection<T> where T : IDatabaseObject
 {
     /// <summary>
-    /// Find items and add the full history information.
+    /// Get the history of a single entity.
     /// </summary>
-    /// <param name="id">Primary key of the document the history should be reported.</param>
-    /// <returns>History of the document sorted by version descending - i.e. newest first.</returns>
-    Task<IEnumerable<HistoryItem<T>>> GetHistory(string id);
+    /// <param name="id">The unique identifier of the entity.</param>
+    /// <returns>History informnation of the item sorted by version descending - i.e. newest first.</returns>
+    Task<IEnumerable<HistoryInfo>> GetHistory(string id);
+
+    /// <summary>
+    /// Retrieve a specific version of some entity.
+    /// </summary>
+    /// <param name="id">The unique identifier of the entity.</param>
+    /// <param name="version">The version number to look up - starting with 1.</param>
+    /// <returns>The item in the indicated version</returns>
+    Task<T> GetHistoryItem(string id, long version);
 }

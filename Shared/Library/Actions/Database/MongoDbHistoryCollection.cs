@@ -142,11 +142,20 @@ public sealed class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem> 
     }
 
     /// <summary>
-    /// Find items and add the full history information.
+    /// Remove all content.
     /// </summary>
-    /// <param name="id">Primary key of the document the history should be reported.</param>
-    /// <returns>History of the document sorted by version descending - i.e. newest first.</returns>
-    public Task<IEnumerable<HistoryItem<TItem>>> GetHistory(string id)
+    /// <returns>Conroller of the outstanding operation.</returns>
+    public Task<long> RemoveAll() =>
+       Task.WhenAll(
+           GetCollection<BsonDocument>().DeleteManyAsync(FilterDefinition<BsonDocument>.Empty),
+           GetHistoryCollection<BsonDocument>().DeleteManyAsync(FilterDefinition<BsonDocument>.Empty)
+       ).ContinueWith(tasks => tasks.Result.Sum(r => r.DeletedCount), TaskContinuationOptions.OnlyOnRanToCompletion);
+
+    /// <inheritdoc/>
+    public IQueryable<TItem> CreateQueryable() => GetCollection<TItem>().AsQueryable();
+
+    /// <inheritdoc/>
+    public Task<IEnumerable<HistoryInfo>> GetHistory(string id)
     {
         var pipeline = PipelineDefinitionBuilder
             /* Use raw BSON semantic to be more flexible on operations. */
@@ -161,34 +170,48 @@ public sealed class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem> 
             )
             /* Newest version first - if existing this will start with the current item. */
             .Sort(new BsonDocument { { "_id", 1 }, { HistoryVersionPath, -1 } })
-            /* Make it look like all history items are regular items - the _id are provided by the documents themselves.. */
-            .Project(new BsonDocument {
-                { "_id", 0 },
-                { "Item", "$$ROOT" },
-                { "Version", $"${HistoryField}" },
-            });
+            /* Use the history information. */
+            .ReplaceRoot<BsonDocument, BsonDocument, BsonDocument>($"${HistoryField}");
 
         /* Execute the pipeline and recreated the items. */
         return GetHistoryCollection<BsonDocument>()
             .Aggregate(pipeline)
             .ToListAsync()
-            .ContinueWith((task) => task.Result.Select(doc => BsonSerializer.Deserialize<HistoryItem<TItem>>(doc)), TaskContinuationOptions.OnlyOnRanToCompletion);
+            .ContinueWith((task) => task.Result.Select(doc => BsonSerializer.Deserialize<HistoryInfo>(doc)), TaskContinuationOptions.OnlyOnRanToCompletion);
     }
 
-    /// <summary>
-    /// Remove all content.
-    /// </summary>
-    /// <returns>Conroller of the outstanding operation.</returns>
-    public Task<long> RemoveAll() =>
-       Task.WhenAll(
-           GetCollection<BsonDocument>().DeleteManyAsync(FilterDefinition<BsonDocument>.Empty),
-           GetHistoryCollection<BsonDocument>().DeleteManyAsync(FilterDefinition<BsonDocument>.Empty)
-       ).ContinueWith(tasks => tasks.Result.Sum(r => r.DeletedCount), TaskContinuationOptions.OnlyOnRanToCompletion);
-
     /// <inheritdoc/>
-    public IQueryable<TItem> CreateQueryable() => GetCollection<TItem>().AsQueryable();
-}
+    public Task<TItem> GetHistoryItem(string id, long version)
+    {
+        var pipeline = PipelineDefinitionBuilder
+            /* Use raw BSON semantic to be more flexible on operations. */
+            .For<BsonDocument>()
+            /* Filter on all related history items and use these as the new document stream.. */
+            .Match(new BsonDocument { { "item._id", id } })
+            .ReplaceRoot<BsonDocument, BsonDocument, BsonDocument>("$item")
+            /* Add the current item itself - up to now we have only history entries. */
+            .UnionWith(GetCollection<BsonDocument>(), PipelineDefinitionBuilder
+                .For<BsonDocument>()
+                .Match(new BsonDocument { { "_id", id } })
+            )
+            /* Newest version first - if existing this will start with the current item. */
+            .Match(new BsonDocument { { HistoryVersionPath, version } });
 
+        /* Execute the pipeline and recreated the items. */
+        return GetHistoryCollection<BsonDocument>()
+            .Aggregate(pipeline)
+            .ToListAsync()
+            .ContinueWith((task) =>
+            {
+                /* Remove history information and report result. */
+                var doc = task.Result.Single();
+
+                doc.Remove(HistoryField);
+
+                return BsonSerializer.Deserialize<TItem>(doc);
+            }, TaskContinuationOptions.OnlyOnRanToCompletion);
+    }
+}
 
 /// <summary>
 /// 

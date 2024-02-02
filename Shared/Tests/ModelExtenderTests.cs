@@ -1,4 +1,3 @@
-using Moq;
 using SharedLibrary;
 using Swashbuckle.AspNetCore.SwaggerGen;
 

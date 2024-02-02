@@ -27,58 +27,19 @@ class HistoryTestItem : IDatabaseObject
     public string Name { get; set; } = null!;
 }
 
-public abstract class HistoryCollectionTests
+public abstract class HistoryCollectionTests : DatabaseTestCore
 {
-    protected abstract bool UseMongoDb { get; }
+    private IHistoryCollection<HistoryTestItem> Collection = null!;
 
-    private ServiceProvider Services;
-
-    private IHistoryCollection<HistoryTestItem> Collection;
-
-    [SetUp]
-    public async Task Setup()
+    protected override async Task OnPostSetup()
     {
-        if (UseMongoDb && Environment.GetEnvironmentVariable("EXECUTE_MONGODB_NUNIT_TESTS") != "yes")
-        {
-            Assert.Ignore("not runnig database tests");
-
-            return;
-        }
-
-        var services = new ServiceCollection();
-
-        services.AddLogging(l => l.AddProvider(NullLoggerProvider.Instance));
-
-        if (UseMongoDb)
-        {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appSettings.test.json")
-                .Build();
-
-            services.AddSingleton(configuration.GetSection("MongoDB").Get<MongoDbSettings>()!);
-
-            services.AddSingleton<IMongoDbDatabaseService, MongoDbDatabaseService>();
-            services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(MongoDbHistoryCollectionFactory<>));
-        }
-        else
-        {
-            services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
-        }
-
-        services.AddSingleton<IObjectCollection<HistoryTestItem>>((s) => s.GetService<IHistoryCollection<HistoryTestItem>>()!);
-
-        Services = services.BuildServiceProvider();
-
         Collection = Services.GetService<IHistoryCollectionFactory<HistoryTestItem>>()!.Create("history-collection");
 
         await Collection.RemoveAll();
     }
 
-    [TearDown]
-    public void Teardown()
+    protected override void OnSetupServices(IServiceCollection services)
     {
-        Services?.Dispose();
     }
 
     [Test]

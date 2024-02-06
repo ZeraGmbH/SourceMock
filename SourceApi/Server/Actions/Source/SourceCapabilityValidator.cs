@@ -45,13 +45,17 @@ namespace SourceApi.Actions.Source
         {
             for (int i = 0; i < loadpoint.Phases.Count; ++i)
             {
-                var actualRms = loadpoint.Phases[i].Current.Rms;
+                var current = loadpoint.Phases[i].Current;
+
+                if (current?.On != true) continue;
+
+                var actualRms = current.Rms;
                 var allowedRange = capabilities.Phases[i].Current;
 
                 if (!allowedRange.IsIncluded(actualRms))
                     return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
 
-                var isAngleValue = CheckAngle(loadpoint.Phases[i].Current.Angle);
+                var isAngleValue = CheckAngle(current.Angle);
                 if (isAngleValue != SourceApiErrorCodes.SUCCESS)
                     return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
             }
@@ -66,14 +70,18 @@ namespace SourceApi.Actions.Source
                 if (capabilities.Phases[i].Voltage == null)
                     continue;
 
-                var actualRms = loadpoint.Phases[i].Voltage.Rms;
+                var voltage = loadpoint.Phases[i].Voltage;
+
+                if (voltage?.On != true) continue;
+
+                var actualRms = voltage.Rms;
                 var allowedRange = capabilities.Phases[i].Voltage;
 
                 if (!allowedRange.IsIncluded(actualRms))
                     return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID;
 
 
-                var isAngleValue = CheckAngle(loadpoint.Phases[i].Voltage.Angle);
+                var isAngleValue = CheckAngle(voltage.Angle);
                 if (isAngleValue != SourceApiErrorCodes.SUCCESS)
                     return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
             }

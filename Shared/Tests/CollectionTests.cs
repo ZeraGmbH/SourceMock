@@ -13,13 +13,12 @@ class TestItem : IDatabaseObject
     /// Unique identifer of the object which can be used
     /// as a primary key. Defaults to a new Guid.
     /// </summary>
-    [BsonId]
-    [Required]
-    [NotNull]
-    [MinLength(1)]
+    [BsonId, Required, NotNull, MinLength(1)]
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
     public string Name { get; set; } = null!;
+
+    public string Data { get; set; } = null!;
 }
 
 public abstract class CollectionTests : DatabaseTestCore
@@ -29,6 +28,8 @@ public abstract class CollectionTests : DatabaseTestCore
     protected override async Task OnPostSetup()
     {
         Collection = Services.GetService<IObjectCollectionFactory<TestItem>>()!.Create("regular-collection");
+
+        await Collection.CreateIndex("karl", i => i.Data, caseSensitive: false);
 
         await Collection.RemoveAll();
     }
@@ -145,6 +146,18 @@ public abstract class CollectionTests : DatabaseTestCore
         var item = new TestItem() { Name = "Test 7" };
 
         Assert.That(() => Collection.DeleteItem(item.Id, "autotest").Wait(), Throws.Exception);
+    }
+
+    [Test]
+    public async Task Can_Use_Case_Insensitive_Key()
+    {
+        Assert.That(Collection, Is.Not.Null);
+
+        await Collection.AddItem(new TestItem() { Name = "Test 1", Data = "Data 1" }, "autotest");
+
+        Assert.ThrowsAsync<TaskCanceledException>(async () => await Collection.AddItem(new TestItem() { Name = "Test 2", Data = "data 1" }, "autotest"));
+
+        await Collection.AddItem(new TestItem() { Name = "Test 2", Data = "data 2" }, "autotest");
     }
 }
 

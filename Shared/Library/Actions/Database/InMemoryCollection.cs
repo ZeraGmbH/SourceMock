@@ -1,5 +1,8 @@
 
 using System.Linq.Expressions;
+using System.Security.Permissions;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
@@ -19,6 +22,8 @@ public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where T
 {
 
     private readonly Dictionary<string, TItem> _data = [];
+
+    private event Func<TItem, bool>? _indexCheck = null;
 
     /// <summary>
     /// Clone item using the standard MongoDb serialisation mechanisms. 
@@ -43,8 +48,13 @@ public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where T
 
         /* Add to dictionary. */
         lock (_data)
+        {
+            if (_indexCheck?.Invoke(item) == false)
+                return Task.FromException<TItem>(new TaskCanceledException("index"));
+
             if (!_data.TryAdd(clone.Id, clone))
                 return Task.FromException<TItem>(new ArgumentException("duplicate item", nameof(item)));
+        }
 
         /* Report a second clone to make sure no one messes with our internal structure. */
         return Task.FromResult(CloneItem(clone));
@@ -59,6 +69,9 @@ public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where T
         /* Replace in dictionary. */
         lock (_data)
         {
+            if (_indexCheck?.Invoke(item) == false)
+                return Task.FromException<TItem>(new TaskCanceledException("index"));
+
             if (!_data.ContainsKey(item.Id))
                 return Task.FromException<TItem>(new ArgumentException("item not found", nameof(item)));
 
@@ -108,6 +121,31 @@ public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where T
     /// <inheritdoc/>
     public Task<string> CreateIndex(string name, Expression<Func<TItem, object>> keyAccessor, bool ascending = true, bool unique = true, bool caseSensitive = true)
     {
+        if (unique)
+        {
+            var getKey = keyAccessor.Compile();
+
+            _indexCheck += (newItem) =>
+            {
+                var newValue = (string)getKey.Invoke(newItem);
+
+                if (!caseSensitive) newValue = newValue?.ToLowerInvariant();
+
+                var match = _data.Values.SingleOrDefault(i =>
+                {
+                    var oldValue = (string)getKey.Invoke(i);
+
+                    if (!caseSensitive) oldValue = oldValue?.ToLowerInvariant();
+
+                    return oldValue == newValue;
+                });
+
+                if (match == null) return true;
+
+                return match.Id == newItem.Id;
+            };
+        }
+
         return Task.FromResult(name);
     }
 }

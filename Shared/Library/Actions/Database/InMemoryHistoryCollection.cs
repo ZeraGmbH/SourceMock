@@ -14,6 +14,8 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
 {
     private readonly Dictionary<string, List<HistoryItem<TItem>>> _data = [];
 
+    private event Func<TItem, bool>? _indexCheck = null;
+
     /// <summary>
     /// Clone item using the standard MongoDb serialisation mechanisms. 
     /// </summary>
@@ -52,8 +54,13 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
 
         /* Add to dictionary. */
         lock (_data)
+        {
+            if (_indexCheck?.Invoke(item) == false)
+                return Task.FromException<TItem>(new TaskCanceledException("index"));
+
             if (!_data.TryAdd(clone.Item.Id, [clone]))
                 return Task.FromException<TItem>(new ArgumentException("duplicate item", nameof(item)));
+        }
 
         /* Report a second clone to make sure no one messes with our internal structure. */
         return Task.FromResult(InMemoryHistoryCollection<TItem>.CloneItem(clone.Item));
@@ -70,6 +77,9 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
         /* Replace in dictionary. */
         lock (_data)
         {
+            if (_indexCheck?.Invoke(item) == false)
+                return Task.FromException<TItem>(new TaskCanceledException("index"));
+
             if (!_data.ContainsKey(clone.Id))
                 return Task.FromException<TItem>(new ArgumentException("item not found", nameof(item)));
 
@@ -159,6 +169,32 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
     /// <inheritdoc/>
     public Task<string> CreateIndex(string name, Expression<Func<TItem, object>> keyAccessor, bool ascending = true, bool unique = true, bool caseSensitive = true)
     {
+        if (unique)
+        {
+            var getKey = keyAccessor.Compile();
+
+            _indexCheck += (newItem) =>
+            {
+                var newValue = (string)getKey.Invoke(newItem);
+
+                if (!caseSensitive) newValue = newValue?.ToLowerInvariant();
+
+                var match = _data.Values.SingleOrDefault(i =>
+                {
+                    var latest = i[^1].Item;
+                    var oldValue = (string)getKey.Invoke(latest);
+
+                    if (!caseSensitive) oldValue = oldValue?.ToLowerInvariant();
+
+                    return oldValue == newValue;
+                });
+
+                if (match == null) return true;
+
+                return match[^1].Item.Id == newItem.Id;
+            };
+        }
+
         return Task.FromResult(name);
     }
 }

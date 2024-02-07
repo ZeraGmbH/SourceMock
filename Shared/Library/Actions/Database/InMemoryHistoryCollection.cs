@@ -1,5 +1,5 @@
+using System.Linq.Expressions;
 using Microsoft.Extensions.Logging;
-using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 using SharedLibrary.Models;
@@ -12,18 +12,7 @@ namespace SharedLibrary.Actions.Database;
 /// <typeparam name="TItem">Type of the related document.</typeparam>
 public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem> where TItem : IDatabaseObject
 {
-    private readonly ILogger<InMemoryHistoryCollection<TItem>> _logger;
-
     private readonly Dictionary<string, List<HistoryItem<TItem>>> _data = [];
-
-    /// <summary>
-    /// Initializes a new collection.
-    /// </summary>
-    /// <param name="logger">Logging instance to use.</param>
-    public InMemoryHistoryCollection(ILogger<InMemoryHistoryCollection<TItem>> logger)
-    {
-        _logger = logger;
-    }
 
     /// <summary>
     /// Clone item using the standard MongoDb serialisation mechanisms. 
@@ -166,6 +155,12 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
             return Task.FromResult(InMemoryHistoryCollection<TItem>.CloneItem(list.Single(i => i.Version.ChangeCount == version).Item));
         }
     }
+
+    /// <inheritdoc/>
+    public Task<string> CreateIndex(string name, Expression<Func<TItem, object>> keyAccessor, bool ascending = true, bool unique = true, bool caseSensitive = true)
+    {
+        return Task.FromResult(name);
+    }
 }
 
 /// <summary>
@@ -174,18 +169,7 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
 /// <typeparam name="TItem"></typeparam>
 public class InMemoryHistoryCollectionFactory<TItem> : IHistoryCollectionFactory<TItem> where TItem : IDatabaseObject
 {
-    private readonly ILogger<InMemoryHistoryCollection<TItem>> _logger;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="logger"></param>
-    public InMemoryHistoryCollectionFactory(ILogger<InMemoryHistoryCollection<TItem>> logger)
-    {
-        _logger = logger;
-    }
-
     /// <inheritdoc/>
-    public IHistoryCollection<TItem> Create(string uniqueName) => new InMemoryHistoryCollection<TItem>(_logger);
+    public IHistoryCollection<TItem> Create(string uniqueName) => new InMemoryHistoryCollection<TItem>();
 }
 

@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace SharedLibrary.Models;
 
 /// <summary>
@@ -49,4 +51,15 @@ public interface IObjectCollection<T> : IObjectCollection where T : IDatabaseObj
     /// </summary>
     /// <returns>A new queryable.</returns>
     IQueryable<T> CreateQueryable();
+
+    /// <summary>
+    /// Create a new index.
+    /// </summary>
+    /// <param name="ascending">Unset to use an descending index.</param>
+    /// <param name="caseSensitive">Unset to use a case insensitive index.</param>
+    /// <param name="keyAccessor">Accessor to the field to use.</param>
+    /// <param name="name">Name the the index.</param>
+    /// <param name="unique">Unset to use an index without a unique constraint.</param>
+    /// <returns>Task waiting for the index to be created.</returns>
+    Task<string> CreateIndex(string name, Expression<Func<T, object>> keyAccessor, bool ascending = true, bool unique = true, bool caseSensitive = true);
 }

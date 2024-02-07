@@ -1,4 +1,5 @@
 
+using System.Linq.Expressions;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -12,7 +13,9 @@ namespace SharedLibrary.Actions.Database;
 /// MongoDb collection with automatic document history.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
-public sealed class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem> where TItem : IDatabaseObject
+/// <param name="collectionName"></param>
+/// <param name="_database">Database connection to use.</param>
+public sealed class MongoDbHistoryCollection<TItem>(string collectionName, IMongoDbDatabaseService _database) : IHistoryCollection<TItem> where TItem : IDatabaseObject
 {
     /// <summary>
     /// Field added to each item containing history information.
@@ -26,31 +29,29 @@ public sealed class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem> 
     /// <summary>
     /// Name of the collection to use.
     /// </summary>
-    public readonly string CollectionName;
+    public readonly string CollectionName = collectionName;
 
     private string HistoryCollectionName => $"{CollectionName}-history";
-
-    private readonly IMongoDbDatabaseService _database;
-
-    private readonly ILogger<MongoDbHistoryCollection<TItem>> _logger;
-
-    /// <summary>
-    /// Initializes a new collection.
-    /// </summary>
-    /// <param name="collectionName"></param>
-    /// <param name="database">Database connection to use.</param>
-    /// <param name="logger">Logging instance to use.</param>
-    public MongoDbHistoryCollection(string collectionName, IMongoDbDatabaseService database, ILogger<MongoDbHistoryCollection<TItem>> logger)
-    {
-        CollectionName = collectionName;
-
-        _database = database;
-        _logger = logger;
-    }
 
     private IMongoCollection<T> GetCollection<T>() => _database.Database.GetCollection<T>(CollectionName);
 
     private IMongoCollection<T> GetHistoryCollection<T>() => _database.Database.GetCollection<T>(HistoryCollectionName);
+
+    private readonly Collation _noCase = new("en", strength: CollationStrength.Secondary);
+
+    /// <inheritdoc/>
+    public Task<string> CreateIndex(string name, Expression<Func<TItem, object>> keyAccessor, bool ascending = true, bool unique = true, bool caseSensitive = true)
+    {
+        var builder = Builders<TItem>.IndexKeys;
+        var keys = ascending ? builder.Ascending(keyAccessor) : builder.Descending(keyAccessor);
+
+        return GetCollection<TItem>()
+            .Indexes
+            .CreateOneAsync(new CreateIndexModel<TItem>(
+                keys,
+                new CreateIndexOptions { Name = name, Collation = caseSensitive ? null : _noCase, Unique = unique, }
+            ));
+    }
 
     /// <inheritdoc/>
     public Task<TItem> AddItem(TItem item, string user)
@@ -217,24 +218,13 @@ public sealed class MongoDbHistoryCollection<TItem> : IHistoryCollection<TItem> 
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public class MongoDbHistoryCollectionFactory<TItem> : IHistoryCollectionFactory<TItem> where TItem : IDatabaseObject
+/// <remarks>
+/// 
+/// </remarks>
+/// <param name="_database"></param>
+public class MongoDbHistoryCollectionFactory<TItem>(IMongoDbDatabaseService _database) : IHistoryCollectionFactory<TItem> where TItem : IDatabaseObject
 {
-    private readonly ILogger<MongoDbHistoryCollection<TItem>> _logger;
-
-    private readonly IMongoDbDatabaseService _database;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="database"></param>
-    /// <param name="logger"></param>
-    public MongoDbHistoryCollectionFactory(IMongoDbDatabaseService database, ILogger<MongoDbHistoryCollection<TItem>> logger)
-    {
-        _database = database;
-        _logger = logger;
-    }
-
     /// <inheritdoc/>
-    public IHistoryCollection<TItem> Create(string uniqueName) => new MongoDbHistoryCollection<TItem>(uniqueName, _database, _logger);
+    public IHistoryCollection<TItem> Create(string uniqueName) => new MongoDbHistoryCollection<TItem>(uniqueName, _database);
 }
 

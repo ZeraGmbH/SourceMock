@@ -1,4 +1,5 @@
 
+using System.Linq.Expressions;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
@@ -11,20 +12,13 @@ namespace SharedLibrary.Actions.Database;
 /// In memory collection.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
+/// <remarks>
+/// Initializes a new collection.
+/// </remarks>
 public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where TItem : IDatabaseObject
 {
-    private readonly ILogger<InMemoryCollection<TItem>> _logger;
 
-    private readonly Dictionary<string, TItem> _data = new();
-
-    /// <summary>
-    /// Initializes a new collection.
-    /// </summary>
-    /// <param name="logger">Logging instance to use.</param>
-    public InMemoryCollection(ILogger<InMemoryCollection<TItem>> logger)
-    {
-        _logger = logger;
-    }
+    private readonly Dictionary<string, TItem> _data = [];
 
     /// <summary>
     /// Clone item using the standard MongoDb serialisation mechanisms. 
@@ -110,6 +104,12 @@ public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where T
         lock (_data)
             return _data.Values.Select(CloneItem).ToArray().AsQueryable();
     }
+
+    /// <inheritdoc/>
+    public Task<string> CreateIndex(string name, Expression<Func<TItem, object>> keyAccessor, bool ascending = true, bool unique = true, bool caseSensitive = true)
+    {
+        return Task.FromResult(name);
+    }
 }
 
 /// <summary>
@@ -118,18 +118,7 @@ public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where T
 /// <typeparam name="TItem"></typeparam>
 public class InMemoryCollectionFactory<TItem> : IObjectCollectionFactory<TItem> where TItem : IDatabaseObject
 {
-    private readonly ILogger<InMemoryCollection<TItem>> _logger;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="logger"></param>
-    public InMemoryCollectionFactory(ILogger<InMemoryCollection<TItem>> logger)
-    {
-        _logger = logger;
-    }
-
     /// <inheritdoc/>
-    public IObjectCollection<TItem> Create(string uniqueName) => new InMemoryCollection<TItem>(_logger);
+    public IObjectCollection<TItem> Create(string uniqueName) => new InMemoryCollection<TItem>();
 }
 

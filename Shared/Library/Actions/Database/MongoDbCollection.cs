@@ -1,4 +1,5 @@
 
+using System.Linq.Expressions;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -11,30 +12,14 @@ namespace SharedLibrary.Actions.Database;
 /// MongoDb collection.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
-public sealed class MongoDbCollection<TItem> : IObjectCollection<TItem> where TItem : IDatabaseObject
+/// <param name="collectionName"></param>
+/// <param name="_database">Database connection to use.</param>
+public sealed class MongoDbCollection<TItem>(string collectionName, IMongoDbDatabaseService _database) : IObjectCollection<TItem> where TItem : IDatabaseObject
 {
     /// <summary>
     /// Name of the collection to use.
     /// </summary>
-    public readonly string CollectionName;
-
-    private readonly IMongoDbDatabaseService _database;
-
-    private readonly ILogger<MongoDbCollection<TItem>> _logger;
-
-    /// <summary>
-    /// Initializes a new collection.
-    /// </summary>
-    /// <param name="collectionName"></param>
-    /// <param name="database">Database connection to use.</param>
-    /// <param name="logger">Logging instance to use.</param>
-    public MongoDbCollection(string collectionName, IMongoDbDatabaseService database, ILogger<MongoDbCollection<TItem>> logger)
-    {
-        CollectionName = collectionName;
-
-        _database = database;
-        _logger = logger;
-    }
+    public readonly string CollectionName = collectionName;
 
     private IMongoCollection<T> GetCollection<T>() => _database.Database.GetCollection<T>(CollectionName);
 
@@ -65,30 +50,35 @@ public sealed class MongoDbCollection<TItem> : IObjectCollection<TItem> where TI
 
     /// <inheritdoc/>
     public IQueryable<TItem> CreateQueryable() => GetCollection().AsQueryable();
+
+    private readonly Collation _noCase = new("en", strength: CollationStrength.Secondary);
+
+    /// <inheritdoc/>
+    public Task<string> CreateIndex(string name, Expression<Func<TItem, object>> keyAccessor, bool ascending = true, bool unique = true, bool caseSensitive = true)
+    {
+        var builder = Builders<TItem>.IndexKeys;
+        var keys = ascending ? builder.Ascending(keyAccessor) : builder.Descending(keyAccessor);
+
+        return GetCollection<TItem>()
+            .Indexes
+            .CreateOneAsync(new CreateIndexModel<TItem>(
+                keys,
+                new CreateIndexOptions { Name = name, Collation = caseSensitive ? null : _noCase, Unique = unique, }
+            ));
+    }
 }
 
 /// <summary>
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public class MongoDbCollectionFactory<TItem> : IObjectCollectionFactory<TItem> where TItem : IDatabaseObject
+/// <remarks>
+/// 
+/// </remarks>
+/// <param name="_database"></param>
+public class MongoDbCollectionFactory<TItem>(IMongoDbDatabaseService _database) : IObjectCollectionFactory<TItem> where TItem : IDatabaseObject
 {
-    private readonly ILogger<MongoDbCollection<TItem>> _logger;
-
-    private readonly IMongoDbDatabaseService _database;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="database"></param>
-    /// <param name="logger"></param>
-    public MongoDbCollectionFactory(IMongoDbDatabaseService database, ILogger<MongoDbCollection<TItem>> logger)
-    {
-        _database = database;
-        _logger = logger;
-    }
-
     /// <inheritdoc/>
-    public IObjectCollection<TItem> Create(string uniqueName) => new MongoDbCollection<TItem>(uniqueName, _database, _logger);
+    public IObjectCollection<TItem> Create(string uniqueName) => new MongoDbCollection<TItem>(uniqueName, _database);
 }
 

@@ -68,8 +68,8 @@ public class MTSourceTests
         Assert.That(caps.FrequencyRanges[0].Min, Is.EqualTo(45));
     }
 
-    [TestCase(0.01, "SIPAAR000.010000.00S000.020120.00T000.030240.00")]
-    [TestCase(0.5, "SIPAAR000.500000.00S001.000120.00T001.500240.00")]
+    [TestCase(0.01, "SIPAAR000.010000.00S000.020240.00T000.030120.00")]
+    [TestCase(0.5, "SIPAAR000.500000.00S001.000240.00T001.500120.00")]
     public async Task Can_Set_Valid_Loadpoint(double baseAngle, string current)
     {
         var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap());
@@ -100,7 +100,7 @@ public class MTSourceTests
 
         Assert.That(PortMock.Commands, Is.EqualTo(new string[] {
             "SFR50.00",
-            "SUPAER220.000000.00S221.000120.00T222.000240.00",
+            "SUPAER220.000000.00S221.000240.00T222.000120.00",
             current,
             "SUIEAEPPAAAA"
         }));

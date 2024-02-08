@@ -1,5 +1,5 @@
 using System.Text;
-
+using Newtonsoft.Json;
 using SerialPortProxy;
 
 using SourceApi.Model;
@@ -167,4 +167,48 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
         /* Finish the request and declare the expected success command. */
         requests.Add(SerialPortRequest.Create(request.ToString(), reply));
     }
+
+    protected static Loadpoint ConvertFromIECtoDin(Loadpoint loadpoint)
+    {
+        // Not manipulating the original loadpoint object
+        Loadpoint result = DeepCopy(loadpoint);
+
+        var firstActiveVoltagePhase = loadpoint.Phases.FindIndex(p => p.Voltage.On);
+
+        ConvertAngles(result, firstActiveVoltagePhase);
+
+        return result;
+    }
+
+    private static void ConvertAngles(Loadpoint loadpoint, int firstActiveVoltagePhase)
+    {
+        foreach (var phase in loadpoint.Phases)
+        {
+            phase.Voltage.Angle = (360 - phase.Voltage.Angle) % 360;
+            phase.Current.Angle = (360 - phase.Current.Angle) % 360;
+        };
+
+
+        if (firstActiveVoltagePhase < 0)
+            return;
+
+        var angle = loadpoint.Phases[firstActiveVoltagePhase].Voltage.Angle;
+
+        if (angle == 0)
+            return;
+
+        foreach (var phase in loadpoint.Phases)
+        {
+            phase.Voltage.Angle = (phase.Voltage.Angle - angle + 360) % 360;
+            phase.Current.Angle = (phase.Current.Angle - angle + 360) % 360;
+        }
+    }
+
+    /// <summary>
+    /// Copys values of object, not its reference
+    /// </summary>
+    /// <typeparam name="T">Any type of objects</typeparam>
+    /// <param name="self">object to clone</param>
+    /// <returns>a clone of the object</returns>
+    private static T DeepCopy<T>(T self) => JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(self))!;
 }

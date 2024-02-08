@@ -47,8 +47,8 @@ public class FGSourceTests
         _device?.Dispose();
     }
 
-    [TestCase(0.01, "IPAAR000.010000.00S000.020120.00T000.030240.00")]
-    [TestCase(0.5, "IPAAR000.500000.00S001.000120.00T001.500240.00")]
+    [TestCase(0.01, "IPAAR000.010000.00S000.020240.00T000.030120.00")]
+    [TestCase(0.5, "IPAAR000.500000.00S001.000240.00T001.500120.00")]
     public async Task Can_Set_Valid_Loadpoint(double baseAngle, string current)
     {
         Assert.That(_source.GetCurrentLoadpoint(), Is.Null);
@@ -81,8 +81,52 @@ public class FGSourceTests
 
         Assert.That(_port.Commands, Is.EqualTo(new string[] {
             "FR50.00",
-            "UPAER220.000000.00S221.000120.00T222.000240.00",
+            "UPAER220.000000.00S221.000240.00T222.000120.00",
             current,
+            "UIEAEPPAAAA"
+        }));
+
+        var loadpoint = _source.GetCurrentLoadpoint();
+
+        Assert.That(loadpoint, Is.Not.Null);
+        Assert.That(loadpoint.Frequency.Value, Is.EqualTo(50));
+    }
+
+    [Test]
+    public async Task Can_Set_IEC_Loadpoint()
+    {
+        Assert.That(_source.GetCurrentLoadpoint(), Is.Null);
+
+        var result = await _source.SetLoadpoint(new Model.Loadpoint
+        {
+            Frequency = new()
+            {
+                Mode = Model.FrequencyMode.SYNTHETIC,
+                Value = 50
+            },
+            Phases = new() {
+                new()  {
+                    Current = new Model.ElectricalVectorQuantity { Rms=10, Angle=0, On=true},
+                    Voltage = new Model.ElectricalVectorQuantity { Rms=120, Angle=330, On=true},
+                },
+                new() {
+                    Current = new Model.ElectricalVectorQuantity { Rms=10, Angle=240, On=true},
+                    Voltage = new Model.ElectricalVectorQuantity { Rms=120, Angle=210, On=true},
+                },
+                new() {
+                    Current = new Model.ElectricalVectorQuantity { Rms=10, Angle=120, On=true},
+                    Voltage = new Model.ElectricalVectorQuantity { Rms=120, Angle=90, On=true},
+                },
+            },
+            VoltageNeutralConnected = true,
+        });
+
+        Assert.That(result, Is.EqualTo(SourceApiErrorCodes.SUCCESS));
+
+        Assert.That(_port.Commands, Is.EqualTo(new string[] {
+            "FR50.00",
+            "UPAER120.000000.00S120.0000120.00T120.000240.00",
+            "IPAAR010.000330.00S010.0000090.00T010.000120.00",
             "UIEAEPPAAAA"
         }));
 

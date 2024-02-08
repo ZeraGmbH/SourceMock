@@ -204,12 +204,12 @@ public class RefMeterMockTest
         return value + deviation;
     }
 
-    [TestCase(0d, 120d, 240d, "123")]
-    [TestCase(240d, 0d, 120d, "123")]
-    [TestCase(120d, 240d, 0d, "123")]
-    [TestCase(0d, 240d, 120d, "132")]
-    [TestCase(120d, 0d, 240d, "132")]
-    [TestCase(240d, 120d, 0d, "132")]
+    [TestCase(0d, 120d, 240d, "132")]
+    [TestCase(240d, 0d, 120d, "132")]
+    [TestCase(120d, 240d, 0d, "132")]
+    [TestCase(0d, 240d, 120d, "123")]
+    [TestCase(120d, 0d, 240d, "123")]
+    [TestCase(240d, 120d, 0d, "123")]
     public void Will_Calculate_Phase_Order(double angle0, double angle1, double angle2, string phaseOrder)
     {
         // Arrange

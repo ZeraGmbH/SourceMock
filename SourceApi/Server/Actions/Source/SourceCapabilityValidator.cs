@@ -55,6 +55,12 @@ namespace SourceApi.Actions.Source
                 if (!allowedRange.IsIncluded(actualRms))
                     return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
 
+                var firstActive = loadpoint.Phases.FirstOrDefault(p => p.Current?.On == true);
+
+                // IEC norm expects the first active current to be 0°
+                if (firstActive != null && firstActive.Current.Angle != 0)
+                    return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
+
                 var isAngleValue = CheckAngle(current.Angle);
                 if (isAngleValue != SourceApiErrorCodes.SUCCESS)
                     return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
@@ -80,16 +86,10 @@ namespace SourceApi.Actions.Source
                 if (!allowedRange.IsIncluded(actualRms))
                     return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID;
 
-
                 var isAngleValue = CheckAngle(voltage.Angle);
                 if (isAngleValue != SourceApiErrorCodes.SUCCESS)
                     return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
             }
-
-            var firstActive = loadpoint.Phases.FirstOrDefault(p => p.Voltage?.On == true);
-
-            if (firstActive != null && firstActive.Voltage.Angle != 0)
-                return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
 
             return SourceApiErrorCodes.SUCCESS;
         }

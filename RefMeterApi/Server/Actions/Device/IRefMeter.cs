@@ -16,9 +16,9 @@ public interface IRefMeter
     /// Queries a device connected to the serial port for the current
     /// measurement results.
     /// </summary>
-    /// <param name="firstActiveVoltagePhase">Index of the first active voltage phase if known.</param>
+    /// <param name="firstActiveCurrentPhase">Index of the first active voltage phase if known.</param>
     /// <returns>All measurement data.</returns>
-    Task<MeasureOutput> GetActualValues(int firstActiveVoltagePhase = -1);
+    Task<MeasureOutput> GetActualValues(int firstActiveCurrentPhase = -1);
 
     /// <summary>
     /// Read all supported measurment modes.

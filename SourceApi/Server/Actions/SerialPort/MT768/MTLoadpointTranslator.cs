@@ -16,15 +16,16 @@ public class MTLoadpointTranslator : LoadpointTranslator
     /// <returns>Sequence of requests to send as a single transaction.</returns>
     public override SerialPortRequest[] ToSerialPortRequests(Loadpoint loadpoint)
     {
+        var loadpointDIN = ConvertFromIECtoDin(loadpoint);
         var requests = new List<SerialPortRequest>();
 
-        CreateFrequencyRequests("SFR", "SOKFR", loadpoint, requests);
+        CreateFrequencyRequests("SFR", "SOKFR", loadpointDIN, requests);
 
-        CreateVoltageRequests("SUP", "SOKUP", loadpoint, requests);
+        CreateVoltageRequests("SUP", "SOKUP", loadpointDIN, requests);
 
-        CreateCurrentRequests("SIP", "SOKIP", loadpoint, requests);
+        CreateCurrentRequests("SIP", "SOKIP", loadpointDIN, requests);
 
-        CreatePhaseRequests("SUI", "SOKUI", loadpoint, requests);
+        CreatePhaseRequests("SUI", "SOKUI", loadpointDIN, requests);
 
         return requests.ToArray();
     }

@@ -176,7 +176,7 @@ public partial class RefMeterMock : IMockRefMeter
         var l2 = (l1 + 1) % phaseCount;
         var l3 = (l2 + 1) % phaseCount;
 
-        return phases[l2].Angle < phases[l3].Angle ? "123" : "132";
+        return phases[l2].Angle < phases[l3].Angle ? "132" : "123";
     }
 
     private static void MeasureOutputPhaseNullCheck(MeasureOutputPhase phase)

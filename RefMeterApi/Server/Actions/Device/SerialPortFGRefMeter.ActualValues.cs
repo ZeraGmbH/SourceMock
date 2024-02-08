@@ -7,7 +7,7 @@ namespace RefMeterApi.Actions.Device;
 partial class SerialPortFGRefMeter
 {
     /// <inheritdoc/>
-    public async Task<MeasureOutput> GetActualValues(int firstActiveVoltagePhase = -1)
+    public async Task<MeasureOutput> GetActualValues(int firstActiveCurrentPhase = -1)
     {
         TestConfigured();
 
@@ -57,7 +57,8 @@ partial class SerialPortFGRefMeter
         var voltage3Angle = double.Parse(awRequest.EndMatch!.Groups[5].Value);
         var current3Angle = double.Parse(awRequest.EndMatch!.Groups[6].Value);
 
-        return new()
+
+        MeasureOutput result = new()
         {
             ActivePower = active1 + active2 + active3,
             ApparentPower = apparent1 + apparent2 + apparent3,
@@ -95,5 +96,7 @@ partial class SerialPortFGRefMeter
                 }
             }
         };
+
+        return Utils.ConvertFromDINtoIEC(result, 0);
     }
 }

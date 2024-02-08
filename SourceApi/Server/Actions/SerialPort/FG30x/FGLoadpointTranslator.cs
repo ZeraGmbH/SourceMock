@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using SerialPortProxy;
 
 using SourceApi.Model;
@@ -12,19 +13,20 @@ public class FGLoadpointTranslator : LoadpointTranslator
     /// <summary>
     /// Create a sequence of related serial port request from any loadpoint.
     /// </summary>
-    /// <param name="loadpoint">Some already validated loadpoint.</param>
+    /// <param name="loadpoint">Some already validated loadpoint in IEC form.</param>
     /// <returns>Sequence of requests to send as a single transaction.</returns>
     public override SerialPortRequest[] ToSerialPortRequests(Loadpoint loadpoint)
     {
+        var DINloadpoint = ConvertFromIECtoDin(loadpoint);
         var requests = new List<SerialPortRequest>();
 
-        CreateFrequencyRequests("FR", "OKFR", loadpoint, requests);
+        CreateFrequencyRequests("FR", "OKFR", DINloadpoint, requests);
 
-        CreateVoltageRequests("UP", "OKUP", loadpoint, requests);
+        CreateVoltageRequests("UP", "OKUP", DINloadpoint, requests);
 
-        CreateCurrentRequests("IP", "OKIP", loadpoint, requests);
+        CreateCurrentRequests("IP", "OKIP", DINloadpoint, requests);
 
-        CreatePhaseRequests("UI", "OKUI", loadpoint, requests);
+        CreatePhaseRequests("UI", "OKUI", DINloadpoint, requests);
 
         return requests.ToArray();
     }

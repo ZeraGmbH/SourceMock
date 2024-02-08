@@ -25,12 +25,12 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 Rms = 230d,
-                                Angle = 0d,
+                                Angle = 5d,
                                 On = true
                             },
                             Current = new() {
                                 Rms = 60d,
-                                Angle = 5d,
+                                Angle = 0d,
                                 On = true
                             }
                         },
@@ -79,12 +79,12 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 Rms = 230d,
-                                Angle = 0d,
+                                Angle = 5d,
                                 On = true
                             },
                             Current = new() {
                                 Rms = 60d,
-                                Angle = 5d,
+                                Angle = 0d,
                                 On = true
                             }
                         },
@@ -121,12 +121,12 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 Rms = 230d,
-                                Angle = 0d,
+                                Angle = 5d,
                                 On = true
                             },
                             Current = new() {
                                 Rms = 60d,
-                                Angle = 5d,
+                                Angle = 0d,
                                 On = true
                             }
                         }
@@ -163,7 +163,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 Rms = 230d,
-                                Angle = 0d,
+                                Angle = 5d,
                                 On = false
                             },
                             Current = new() {

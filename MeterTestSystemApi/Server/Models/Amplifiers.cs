@@ -11,40 +11,40 @@ public enum Amplifiers
     /// <summary>
     /// First auxiliary.
     /// </summary>
-    Auxiliary1,
+    Auxiliary1 = 0,
 
     /// <summary>
     /// Second auxiliary.
     /// </summary>
-    Auxiliary2,
+    Auxiliary2 = 1,
 
     /// <summary>
     /// First current.
     /// </summary>
-    Current1,
+    Current1 = 2,
 
     /// <summary>
     /// Second current.
     /// </summary>
-    Current2,
+    Current2 = 3,
 
     /// <summary>
     /// Third current.
     /// </summary>
-    Current3,
+    Current3 = 4,
 
     /// <summary>
     /// First voltage.
     /// </summary>
-    Voltage1,
+    Voltage1 = 5,
 
     /// <summary>
     /// Second voltage.
     /// </summary>
-    Voltage2,
+    Voltage2 = 6,
 
     /// <summary>
     /// Third voltage.
     /// </summary>
-    Voltage3,
+    Voltage3 = 7,
 }

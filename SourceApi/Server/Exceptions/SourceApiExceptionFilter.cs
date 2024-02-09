@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SharedLibrary.ExceptionHandling;
 using SourceApi.Actions.Source;
-using SourceApi.Model;
 
 namespace SourceApi.Exceptions;
 

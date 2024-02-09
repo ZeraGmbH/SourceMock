@@ -1,4 +1,3 @@
-using MongoDB.Bson;
 using SerialPortProxy;
 
 using SourceApi.Model;

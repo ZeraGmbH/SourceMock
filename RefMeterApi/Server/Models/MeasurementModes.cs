@@ -11,60 +11,60 @@ public enum MeasurementModes
     /// <summary>
     /// 4WA, 4LW
     /// </summary>
-    FourWireActivePower,
+    FourWireActivePower = 0,
 
     /// <summary>
     /// 4WR, 4LBE
     /// </summary>
-    FourWireReactivePower,
+    FourWireReactivePower = 1,
 
     /// <summary>
     /// 4WRC, 4LBK
     /// </summary>
-    FourWireReactivePowerCrossConnected,
+    FourWireReactivePowerCrossConnected = 2,
 
     /// <summary>
     /// 4WAP, 4LS
     /// </summary>
-    FourWireApparentPower,
+    FourWireApparentPower = 3,
 
     /// <summary>
     /// 3WA, 3LW
     /// </summary>
-    ThreeWireActivePower,
+    ThreeWireActivePower = 4,
 
     /// <summary>
     /// 3WR, 3LBE 
     /// </summary>
-    ThreeWireReactivePower,
+    ThreeWireReactivePower = 5,
 
     /// <summary>
     /// 3WRCA, 3LBKA
     /// </summary>
-    ThreeWireReactivePowerCrossConnectedA,
+    ThreeWireReactivePowerCrossConnectedA = 6,
 
     /// <summary>
     /// 3WRCB, 3LBKB
     /// </summary>
-    ThreeWireReactivePowerCrossConnectedB,
+    ThreeWireReactivePowerCrossConnectedB = 7,
 
     /// <summary>
     /// 3WAP, 3LS
     /// </summary>
-    ThreeWireApparentPower,
+    ThreeWireApparentPower = 8,
 
     /// <summary>
     /// 2WA, 2LW
     /// </summary>
-    TwoWireActivePower,
+    TwoWireActivePower = 9,
 
     /// <summary>
     /// 2WR, 2LB
     /// </summary>
-    TwoWireReactivePower,
+    TwoWireReactivePower = 10,
 
     /// <summary>
     /// 2WAP, 2LS
     /// </summary>
-    TwoWireApparentPower,
+    TwoWireApparentPower = 11,
 }

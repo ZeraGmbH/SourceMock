@@ -160,7 +160,7 @@ public partial class RefMeterMock : IMockRefMeter
     private static string CalculatePhaseOrder(Loadpoint lp)
     {
         /* See if there are at least three phases - use very defensive programming, maybe a bit too much. */
-        var phases = lp?.Phases?.Select(p => p.Voltage).Where(v => v != null).ToList();
+        var phases = lp?.Phases?.Select(p => p.Current).Where(v => v != null).ToList();
 
         if (phases == null) return "123";
 

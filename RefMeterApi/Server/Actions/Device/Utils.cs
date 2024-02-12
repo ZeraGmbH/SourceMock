@@ -21,8 +21,6 @@ public static class Utils
 
         ConvertAngles(result, firstPhaseAngle);
 
-        SwapPhaseOrder(result, firstPhaseAngle);
-
         return result;
     }
 
@@ -36,16 +34,16 @@ public static class Utils
 
     private static void ConvertAngles(MeasureOutput measureOutput, int firstPhaseAngle)
     {
-        // All current phases are off
-        if (firstPhaseAngle < 0)
-            return;
-
         // reverse all angles
         foreach (var phase in measureOutput.Phases)
         {
             phase.AngleVoltage = (360 - phase.AngleVoltage) % 360;
             phase.AngleCurrent = (360 - phase.AngleCurrent) % 360;
         };
+
+        // All current phases are off
+        if (firstPhaseAngle < 0)
+            return;
 
         // get the current angle of the first phase, that is on
         var angle = measureOutput.Phases[firstPhaseAngle].AngleCurrent;
@@ -61,16 +59,4 @@ public static class Utils
             phase.AngleCurrent = (phase.AngleCurrent - angle + 360) % 360;
         }
     }
-
-    private static void SwapPhaseOrder(MeasureOutput measureOutput, int firstPhaseAngle)
-    {
-        if (firstPhaseAngle < 0 || firstPhaseAngle >= measureOutput.Phases.Count || measureOutput.Phases.Count < 3)
-            return;
-
-        if (measureOutput.PhaseOrder == "123")
-            measureOutput.PhaseOrder = "132";
-        else
-            measureOutput.PhaseOrder = "123";
-    }
-
 }

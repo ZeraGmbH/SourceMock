@@ -57,7 +57,6 @@ partial class SerialPortFGRefMeter
         var voltage3Angle = double.Parse(awRequest.EndMatch!.Groups[5].Value);
         var current3Angle = double.Parse(awRequest.EndMatch!.Groups[6].Value);
 
-
         MeasureOutput result = new()
         {
             ActivePower = active1 + active2 + active3,
@@ -97,6 +96,6 @@ partial class SerialPortFGRefMeter
             }
         };
 
-        return Utils.ConvertFromDINtoIEC(result, 0);
+        return Utils.ConvertFromDINtoIEC(result, firstActiveCurrentPhase);
     }
 }

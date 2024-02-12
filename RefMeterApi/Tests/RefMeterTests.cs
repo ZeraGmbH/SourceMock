@@ -140,7 +140,7 @@ public class RefMeterTests
         var device = SerialPortConnection.FromMock<MeasuringModesMock>(new NullLogger<SerialPortConnection>());
         var refMeter = new SerialPortFGRefMeter(device, new NullLogger<SerialPortFGRefMeter>());
 
-        var values = await refMeter.GetActualValues();
+        var values = await refMeter.GetActualValues(0);
 
         Assert.Multiple(() =>
         {
@@ -176,7 +176,7 @@ public class RefMeterTests
             Assert.That(values.Phases[2].AngleCurrent, Is.EqualTo(134));
             Assert.That(values.Phases[2].PowerFactor, Is.EqualTo(896.6 / 900.0).Within(0.001));
 
-            Assert.That(values.PhaseOrder, Is.EqualTo("132"));
+            Assert.That(values.PhaseOrder, Is.EqualTo("123"));
         });
 
     }

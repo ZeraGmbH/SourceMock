@@ -33,8 +33,8 @@ public class RefMeterControllerTests
             Assert.That(data.Frequency, Is.EqualTo(50).Within(0.5));
             Assert.That(data.Phases[0].Voltage, Is.EqualTo(20).Within(0.5));
             Assert.That(data.Phases[1].Current, Is.EqualTo(0.1).Within(0.05));
-            Assert.That(data.Phases[1].AngleVoltage, Is.EqualTo(120).Within(0.5));
-            Assert.That(data.Phases[2].AngleCurrent, Is.EqualTo(240).Within(0.5));
+            Assert.That(data.Phases[1].AngleVoltage, Is.EqualTo(240).Within(0.5));
+            Assert.That(data.Phases[2].AngleCurrent, Is.EqualTo(120).Within(0.5));
 
             Assert.That(data.PhaseOrder, Is.EqualTo("123"));
         });

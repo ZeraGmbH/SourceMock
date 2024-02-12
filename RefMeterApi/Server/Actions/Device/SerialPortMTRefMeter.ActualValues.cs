@@ -19,24 +19,6 @@ partial class SerialPortMTRefMeter
         /* Request the cached values and clone the result - so the caller must not care for accessing shared data. */
         var values = JsonConvert.DeserializeObject<MeasureOutput>(JsonConvert.SerializeObject(await _actualValues.Execute()))!;
 
-        /* No need to correct for active phase. */
-        if (firstActiveCurrentPhase < 0 || firstActiveCurrentPhase >= values.Phases.Count) return values;
-
-        /* Get the angle of the first active current. */
-        var angle = values.Phases[firstActiveCurrentPhase].AngleCurrent;
-
-        if (!angle.HasValue) return values;
-
-        /* Correct all angles accordingly. */
-        foreach (var phase in values.Phases)
-        {
-            if (phase.AngleCurrent.HasValue)
-                phase.AngleCurrent = (phase.AngleCurrent - angle + 720) % 360;
-
-            if (phase.AngleVoltage.HasValue)
-                phase.AngleVoltage = (phase.AngleVoltage - angle + 720) % 360;
-        }
-
         /* Report the corrected and converted result. */
         return Utils.ConvertFromDINtoIEC(values, firstActiveCurrentPhase); ;
     }

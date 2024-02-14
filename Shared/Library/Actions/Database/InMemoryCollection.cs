@@ -83,13 +83,13 @@ public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where T
     }
 
     /// <inheritdoc/>
-    public Task<TItem> DeleteItem(string id, string user)
+    public Task<TItem> DeleteItem(string id, string user, bool silent = false)
     {
         /* Remove from dictionary. */
         lock (_data)
         {
             if (!_data.TryGetValue(id, out var clone))
-                return Task.FromException<TItem>(new ArgumentException("item not found", nameof(id)));
+                return silent ? Task.FromResult(default(TItem)!) : Task.FromException<TItem>(new ArgumentException("item not found", nameof(id)));
 
             _data.Remove(id);
 

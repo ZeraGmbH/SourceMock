@@ -42,9 +42,10 @@ public interface IObjectCollection<T> : IObjectCollection where T : IDatabaseObj
     /// </summary>
     /// <param name="id">The unique identifier of the item.</param>
     /// <param name="user">The user deleting the item.</param>
+    /// <param name="silent">Set to avoid an exception if the item does not exist.</param>
     /// <returns>The item which has been deleted.</returns>
     /// <exception cref="ArgumentException">There is no such item.</exception>
-    Task<T> DeleteItem(string id, string user);
+    Task<T> DeleteItem(string id, string user, bool silent = false);
 
     /// <summary>
     /// Start a query on the collection.

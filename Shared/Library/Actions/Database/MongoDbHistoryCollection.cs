@@ -108,7 +108,7 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, IMong
     }
 
     /// <inheritdoc/>
-    public async Task<TItem> DeleteItem(string id, string user)
+    public async Task<TItem> DeleteItem(string id, string user, bool silent = false)
     {
         var self = GetCollection<BsonDocument>();
 
@@ -123,7 +123,9 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, IMong
                     { "$inc", new BsonDocument{ { HistoryVersionPath, 1 } } }
                 },
                 new FindOneAndUpdateOptions<BsonDocument, BsonDocument> { ReturnDocument = ReturnDocument.Before }
-            ).ContinueWith(t => t.Result ?? throw new ArgumentException("item not found", nameof(id)));
+            ).ContinueWith(t => t.Result ?? (silent ? null : throw new ArgumentException("item not found", nameof(id))));
+
+        if (previous == null) return default!;
 
         await GetHistoryCollection<BsonDocument>().InsertOneAsync(new BsonDocument{
             { "_id", Guid.NewGuid().ToString() },

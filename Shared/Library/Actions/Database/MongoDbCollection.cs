@@ -36,9 +36,9 @@ public sealed class MongoDbCollection<TItem>(string collectionName, IMongoDbData
         .ContinueWith(t => t.Result ?? throw new ArgumentException("item not found", nameof(item)), TaskContinuationOptions.OnlyOnRanToCompletion);
 
     /// <inheritdoc/>
-    public Task<TItem> DeleteItem(string id, string user) => GetCollection()
+    public Task<TItem> DeleteItem(string id, string user, bool silent = false) => GetCollection()
         .FindOneAndDeleteAsync(Builders<TItem>.Filter.Eq(nameof(IDatabaseObject.Id), id))
-        .ContinueWith(t => t.Result ?? throw new ArgumentException("item not found", nameof(id)), TaskContinuationOptions.OnlyOnRanToCompletion);
+        .ContinueWith(t => t.Result ?? (silent ? default(TItem)! : throw new ArgumentException("item not found", nameof(id))), TaskContinuationOptions.OnlyOnRanToCompletion);
 
     /// <summary>
     /// Remove all content.

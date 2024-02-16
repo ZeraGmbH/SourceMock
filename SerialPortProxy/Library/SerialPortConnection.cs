@@ -315,18 +315,16 @@ public class SerialPortConnection : ISerialPortConnection
     private string ReadInput()
     {
         lock (_incoming)
-        {
-            /* Maybe data is already available. */
-            if (_incoming.TryDequeue(out var line))
-                return line;
+            for (; ; )
+            {
+                /* Maybe data is already available. */
+                if (_incoming.TryDequeue(out var line))
+                    return line;
 
-            /* Wait for new data. */
-            if (!Monitor.Wait(_incoming, UnitTest ?? 30000))
-                throw new TimeoutException("no reply from serial port");
-
-            /* There is now definitly at least one entry. */
-            return _incoming.Dequeue();
-        }
+                /* Wait for new data. */
+                if (!Monitor.Wait(_incoming, UnitTest ?? 30000))
+                    throw new TimeoutException("no reply from serial port");
+            }
     }
 
     /// <inheritdoc/>

@@ -1,6 +1,6 @@
 # Barcode Reader API
 
-Barcode readers will be connected to the sysstem as a keyboard or generally as a human interface device (HID). To use a barcode reader a path to the related device must be configured. It is recommended to use the symbolic link file which is more or less stable unique name to the device.
+Barcode readers will be connected to the system as a keyboard or generally as a human interface device (HID). To use a barcode reader a path to the related device must be configured. It is recommended to use the symbolic link file which is more or less stable unique name to the device.
 
 ```json
   "BarcodeReader": {

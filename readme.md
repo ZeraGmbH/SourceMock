@@ -6,3 +6,8 @@ The existing implementations wrap old interfaces to the devices mentiond above o
 
 This repository is primarily serves as a submodule to other projects, namely [WebSAM](https://github.com/ZeraGmbH/websam) and [ZENUX](https://github.com/ZeraGmbH/meta-zera). For information on how to set this project up, refer to these projects.
 
+# Configuration
+
+Various web servers in this repository need a dedicated configuration in the overall `appSettings.json`.
+
+- [Barcode Reader API](BarcodeApi/readme.md)

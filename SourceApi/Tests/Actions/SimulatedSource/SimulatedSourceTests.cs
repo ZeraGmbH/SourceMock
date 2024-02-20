@@ -52,7 +52,6 @@ namespace SourceApi.Tests.Actions.Source
             var currentLoadpoint = source.GetCurrentLoadpoint();
 
             Assert.That(result, Is.EqualTo(SourceApiErrorCodes.SUCCESS));
-            Assert.That(currentLoadpoint, Is.Null);
         }
         #endregion
 

@@ -24,13 +24,13 @@ public static class SharedLibraryConfiguration
             services.AddSingleton<IMongoDbDatabaseService, MongoDbDatabaseService>();
             services.AddTransient(typeof(IObjectCollectionFactory<>), typeof(MongoDbCollectionFactory<>));
             services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(MongoDbHistoryCollectionFactory<>));
-            services.AddSingleton<ICounterCollection, MongoDbCounters>();
+            services.AddTransient<ICounterCollectionFactory, MongoDbCountersFactory>();
         }
         else
         {
             services.AddTransient(typeof(IObjectCollectionFactory<>), typeof(InMemoryCollectionFactory<>));
             services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
-            services.AddSingleton<ICounterCollection, InMemoryCounters>();
+            services.AddTransient<ICounterCollectionFactory, InMemoryCountersFactory>();
         }
     }
 

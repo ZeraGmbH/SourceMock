@@ -11,7 +11,7 @@ public interface IMongoDbDatabaseService
     /// <summary>
     /// MongoDB datbase reference for this service.
     /// </summary>
-    IMongoDatabase Database { get; }
+    IMongoDatabase GetDatabase();
 }
 
 /// <summary>
@@ -24,7 +24,7 @@ public class MongoDbDatabaseService : IMongoDbDatabaseService
     /// <summary>
     /// Underlying MongoDb database reference.
     /// </summary>
-    public IMongoDatabase Database => _database;
+    public IMongoDatabase GetDatabase() => _database;
 
     /// <summary>
     /// Initialize a new database connection.

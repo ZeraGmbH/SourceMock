@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using SharedLibrary.Actions.Database;
 using SharedLibrary.Models;
 
 namespace SharedLibraryTests;
@@ -10,7 +11,7 @@ public abstract class CounterTests : DatabaseTestCore
 
     protected override Task OnPostSetup()
     {
-        Collection = Services.GetService<ICounterCollection>()!;
+        Collection = Services.GetRequiredService<ICounterCollectionFactory>().Create();
 
         return Task.CompletedTask;
     }

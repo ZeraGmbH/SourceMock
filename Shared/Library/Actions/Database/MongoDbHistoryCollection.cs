@@ -1,6 +1,5 @@
 
 using System.Linq.Expressions;
-using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -33,9 +32,9 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, IMong
 
     private string HistoryCollectionName => $"{CollectionName}-history";
 
-    private IMongoCollection<T> GetCollection<T>() => _database.Database.GetCollection<T>(CollectionName);
+    private IMongoCollection<T> GetCollection<T>() => _database.GetDatabase().GetCollection<T>(CollectionName);
 
-    private IMongoCollection<T> GetHistoryCollection<T>() => _database.Database.GetCollection<T>(HistoryCollectionName);
+    private IMongoCollection<T> GetHistoryCollection<T>() => _database.GetDatabase().GetCollection<T>(HistoryCollectionName);
 
     private readonly Collation _noCase = new("en", strength: CollationStrength.Secondary);
 

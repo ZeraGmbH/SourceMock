@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using Microsoft.Extensions.Logging;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 using SharedLibrary.Models;

@@ -8,7 +8,7 @@ namespace SharedLibrary.Actions.Database;
 /// <summary>
 /// Database managed counters.
 /// </summary>
-public class MongoDbCounters : ICounterCollection
+public sealed class MongoDbCounters : ICounterCollection
 {
     private readonly IMongoDbDatabaseService _database;
 
@@ -25,7 +25,7 @@ public class MongoDbCounters : ICounterCollection
     public async Task<long> GetNextCounter(string name)
     {
         /* Attach to connection. */
-        var collection = _database.Database.GetCollection<BsonDocument>("sam-sequence-numbers");
+        var collection = _database.GetDatabase().GetCollection<BsonDocument>("sam-sequence-numbers");
 
         /* Update the counter - eventually create a new master object. */
         var updated = await collection.FindOneAndUpdateAsync<BsonDocument>(
@@ -39,3 +39,13 @@ public class MongoDbCounters : ICounterCollection
     }
 }
 
+
+/// <summary>
+/// 
+/// </summary>
+/// <param name="_database"></param>
+public class MongoDbCountersFactory(IMongoDbDatabaseService _database) : ICounterCollectionFactory
+{
+    /// <inheritdoc/>
+    public ICounterCollection Create() => new MongoDbCounters(_database);
+}

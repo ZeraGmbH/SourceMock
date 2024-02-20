@@ -1,6 +1,5 @@
 
 using System.Linq.Expressions;
-using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using SharedLibrary.Models;
@@ -21,7 +20,7 @@ public sealed class MongoDbCollection<TItem>(string collectionName, IMongoDbData
     /// </summary>
     public readonly string CollectionName = collectionName;
 
-    private IMongoCollection<T> GetCollection<T>() => _database.Database.GetCollection<T>(CollectionName);
+    private IMongoCollection<T> GetCollection<T>() => _database.GetDatabase().GetCollection<T>(CollectionName);
 
     private IMongoCollection<TItem> GetCollection() => GetCollection<TItem>();
 

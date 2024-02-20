@@ -1,5 +1,3 @@
-using SharedLibrary.ExceptionHandling;
-
 namespace SharedLibrary.Actions.Database;
 
 /// <summary>

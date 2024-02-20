@@ -11,7 +11,8 @@ public interface IMongoDbDatabaseService
     /// <summary>
     /// MongoDB datbase reference for this service.
     /// </summary>
-    IMongoDatabase GetDatabase();
+    /// <param name="category">Category name of the database - to support multiple databases.</param>
+    IMongoDatabase GetDatabase(string category);
 }
 
 /// <summary>
@@ -24,7 +25,7 @@ public class MongoDbDatabaseService : IMongoDbDatabaseService
     /// <summary>
     /// Underlying MongoDb database reference.
     /// </summary>
-    public IMongoDatabase GetDatabase() => _database;
+    public IMongoDatabase GetDatabase(string category) => _database;
 
     /// <summary>
     /// Initialize a new database connection.

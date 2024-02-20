@@ -13,8 +13,9 @@ namespace SharedLibrary.Actions.Database;
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
 /// <param name="collectionName"></param>
+/// <param name="_category">Category of the database.</param>
 /// <param name="_database">Database connection to use.</param>
-public sealed class MongoDbHistoryCollection<TItem>(string collectionName, IMongoDbDatabaseService _database) : IHistoryCollection<TItem> where TItem : IDatabaseObject
+public sealed class MongoDbHistoryCollection<TItem>(string collectionName, string _category, IMongoDbDatabaseService _database) : IHistoryCollection<TItem> where TItem : IDatabaseObject
 {
     /// <summary>
     /// Field added to each item containing history information.
@@ -32,9 +33,9 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, IMong
 
     private string HistoryCollectionName => $"{CollectionName}-history";
 
-    private IMongoCollection<T> GetCollection<T>() => _database.GetDatabase().GetCollection<T>(CollectionName);
+    private IMongoCollection<T> GetCollection<T>() => _database.GetDatabase(_category).GetCollection<T>(CollectionName);
 
-    private IMongoCollection<T> GetHistoryCollection<T>() => _database.GetDatabase().GetCollection<T>(HistoryCollectionName);
+    private IMongoCollection<T> GetHistoryCollection<T>() => _database.GetDatabase(_category).GetCollection<T>(HistoryCollectionName);
 
     private readonly Collation _noCase = new("en", strength: CollationStrength.Secondary);
 
@@ -226,6 +227,6 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, IMong
 public class MongoDbHistoryCollectionFactory<TItem>(IMongoDbDatabaseService _database) : IHistoryCollectionFactory<TItem> where TItem : IDatabaseObject
 {
     /// <inheritdoc/>
-    public IHistoryCollection<TItem> Create(string uniqueName) => new MongoDbHistoryCollection<TItem>(uniqueName, _database);
+    public IHistoryCollection<TItem> Create(string uniqueName, string category) => new MongoDbHistoryCollection<TItem>(uniqueName, category, _database);
 }
 

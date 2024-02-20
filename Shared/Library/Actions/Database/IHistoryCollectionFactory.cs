@@ -12,6 +12,7 @@ public interface IHistoryCollectionFactory<T> where T : IDatabaseObject
     /// 
     /// </summary>
     /// <param name="uniqueName"></param>
+    /// <param name="category"></param>
     /// <returns></returns>
-    IHistoryCollection<T> Create(string uniqueName);
+    IHistoryCollection<T> Create(string uniqueName, string category);
 }

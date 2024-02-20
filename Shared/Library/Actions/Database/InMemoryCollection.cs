@@ -153,6 +153,6 @@ public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where T
 public class InMemoryCollectionFactory<TItem> : IObjectCollectionFactory<TItem> where TItem : IDatabaseObject
 {
     /// <inheritdoc/>
-    public IObjectCollection<TItem> Create(string uniqueName) => new InMemoryCollection<TItem>();
+    public IObjectCollection<TItem> Create(string uniqueName, string category) => new InMemoryCollection<TItem>();
 }
 

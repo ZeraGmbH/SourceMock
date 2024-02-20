@@ -12,15 +12,16 @@ namespace SharedLibrary.Actions.Database;
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
 /// <param name="collectionName"></param>
+/// <param name="category">Category of the database.</param>
 /// <param name="_database">Database connection to use.</param>
-public sealed class MongoDbCollection<TItem>(string collectionName, IMongoDbDatabaseService _database) : IObjectCollection<TItem> where TItem : IDatabaseObject
+public sealed class MongoDbCollection<TItem>(string collectionName, string category, IMongoDbDatabaseService _database) : IObjectCollection<TItem> where TItem : IDatabaseObject
 {
     /// <summary>
     /// Name of the collection to use.
     /// </summary>
     public readonly string CollectionName = collectionName;
 
-    private IMongoCollection<T> GetCollection<T>() => _database.GetDatabase().GetCollection<T>(CollectionName);
+    private IMongoCollection<T> GetCollection<T>() => _database.GetDatabase(category).GetCollection<T>(CollectionName);
 
     private IMongoCollection<TItem> GetCollection() => GetCollection<TItem>();
 
@@ -78,6 +79,6 @@ public sealed class MongoDbCollection<TItem>(string collectionName, IMongoDbData
 public class MongoDbCollectionFactory<TItem>(IMongoDbDatabaseService _database) : IObjectCollectionFactory<TItem> where TItem : IDatabaseObject
 {
     /// <inheritdoc/>
-    public IObjectCollection<TItem> Create(string uniqueName) => new MongoDbCollection<TItem>(uniqueName, _database);
+    public IObjectCollection<TItem> Create(string uniqueName, string category) => new MongoDbCollection<TItem>(uniqueName, category, _database);
 }
 

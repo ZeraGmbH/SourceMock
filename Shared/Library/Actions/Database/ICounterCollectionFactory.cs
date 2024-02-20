@@ -10,6 +10,7 @@ public interface ICounterCollectionFactory
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="category"></param>
     /// <returns></returns>
-    ICounterCollection Create();
+    ICounterCollection Create(string category);
 }

@@ -28,7 +28,7 @@ public abstract class HistoryCollectionTests : DatabaseTestCore
 
     protected override async Task OnPostSetup()
     {
-        Collection = Services.GetService<IHistoryCollectionFactory<HistoryTestItem>>()!.Create("history-collection");
+        Collection = Services.GetService<IHistoryCollectionFactory<HistoryTestItem>>()!.Create("history-collection", string.Empty);
 
         await Collection.CreateIndex("karl", i => i.Data, caseSensitive: false);
 

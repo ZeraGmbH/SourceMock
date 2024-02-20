@@ -33,6 +33,6 @@ public sealed class InMemoryCounters : ICounterCollection
 public class InMemoryCountersFactory : ICounterCollectionFactory
 {
     /// <inheritdoc/>
-    public ICounterCollection Create() => new InMemoryCounters();
+    public ICounterCollection Create(string category) => new InMemoryCounters();
 }
 

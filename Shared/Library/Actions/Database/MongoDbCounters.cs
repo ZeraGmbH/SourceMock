@@ -12,20 +12,24 @@ public sealed class MongoDbCounters : ICounterCollection
 {
     private readonly IMongoDbDatabaseService _database;
 
+    private readonly string _category;
+
     /// <summary>
     /// Initialize a new instance.
     /// </summary>
     /// <param name="database">Database to use</param>
-    public MongoDbCounters(IMongoDbDatabaseService database)
+    /// <param name="category">Category of the database.</param>
+    public MongoDbCounters(string category, IMongoDbDatabaseService database)
     {
         _database = database;
+        _category = category;
     }
 
     /// <inheritdoc/>
     public async Task<long> GetNextCounter(string name)
     {
         /* Attach to connection. */
-        var collection = _database.GetDatabase().GetCollection<BsonDocument>("sam-sequence-numbers");
+        var collection = _database.GetDatabase(_category).GetCollection<BsonDocument>("sam-sequence-numbers");
 
         /* Update the counter - eventually create a new master object. */
         var updated = await collection.FindOneAndUpdateAsync<BsonDocument>(
@@ -47,5 +51,5 @@ public sealed class MongoDbCounters : ICounterCollection
 public class MongoDbCountersFactory(IMongoDbDatabaseService _database) : ICounterCollectionFactory
 {
     /// <inheritdoc/>
-    public ICounterCollection Create() => new MongoDbCounters(_database);
+    public ICounterCollection Create(string category) => new MongoDbCounters(category, _database);
 }

@@ -205,6 +205,6 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
 public class InMemoryHistoryCollectionFactory<TItem> : IHistoryCollectionFactory<TItem> where TItem : IDatabaseObject
 {
     /// <inheritdoc/>
-    public IHistoryCollection<TItem> Create(string uniqueName) => new InMemoryHistoryCollection<TItem>();
+    public IHistoryCollection<TItem> Create(string uniqueName, string category) => new InMemoryHistoryCollection<TItem>();
 }
 

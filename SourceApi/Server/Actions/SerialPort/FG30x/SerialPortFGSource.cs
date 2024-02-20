@@ -36,7 +36,6 @@ public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, I
 
     private CurrentAuxiliaries? CurrentAuxiliary;
 
-    private LoadpointInfo _info = new();
 
     /// <inheritdoc/>
     public override bool Available =>
@@ -95,7 +94,7 @@ public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, I
 
         await Task.WhenAll(Device.Execute(SerialPortRequest.Create("UIAAAAAAAAA", "OKUI")));
 
-        _info.IsActive = false;
+        Info.IsActive = false;
 
         return SourceApiErrorCodes.SUCCESS;
     }

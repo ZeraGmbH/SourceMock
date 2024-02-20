@@ -21,7 +21,6 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, I
 {
     /// <inheritdoc/>
     public override bool Available => true;
-    private LoadpointInfo _info = new();
 
     /// <summary>
     /// Initialize a new source implementation.
@@ -47,7 +46,7 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, I
 
         await Task.WhenAll(Device.Execute(SerialPortRequest.Create("SUIAAAAAAAAA", "SOKUI")));
 
-        _info.IsActive = false;
+        Info.IsActive = false;
 
         return SourceApiErrorCodes.SUCCESS;
     }

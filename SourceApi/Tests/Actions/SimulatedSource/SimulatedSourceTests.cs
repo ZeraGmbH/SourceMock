@@ -1,4 +1,5 @@
 
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -12,6 +13,7 @@ namespace SourceApi.Tests.Actions.Source
 {
     internal class SimulatedSourceTests
     {
+
         const string CONFIG_KEY_NUMBER_OF_PHASES = "SourceProperties:NumberOfPhases";
 
         #region PositiveTestCases
@@ -32,6 +34,9 @@ namespace SourceApi.Tests.Actions.Source
 
             Assert.That(result, Is.EqualTo(SourceApiErrorCodes.SUCCESS));
             Assert.That(loadpoint, Is.EqualTo(currentLoadpoint));
+
+            var info = source.GetActiveLoadpointInfo();
+            Assert.That(info.IsActive, Is.EqualTo(true));
         }
 
         [Test]
@@ -52,6 +57,9 @@ namespace SourceApi.Tests.Actions.Source
             var currentLoadpoint = source.GetCurrentLoadpoint();
 
             Assert.That(result, Is.EqualTo(SourceApiErrorCodes.SUCCESS));
+
+            var info = source.GetActiveLoadpointInfo();
+            Assert.That(info.IsActive, Is.EqualTo(false));
         }
         #endregion
 
@@ -73,6 +81,10 @@ namespace SourceApi.Tests.Actions.Source
 
             Assert.That(result, Is.EqualTo(SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES));
             Assert.That(currentLoadpoint, Is.Null);
+
+
+            var info = source.GetActiveLoadpointInfo();
+            Assert.That(info.IsActive, Is.EqualTo(null));
         }
         #endregion
 
@@ -146,6 +158,30 @@ namespace SourceApi.Tests.Actions.Source
             Assert.That(result.Progress, Is.GreaterThan(0));
         }
 
+        [Test]
+        public async Task Turns_Off_Loadpoint()
+        {
+            Mock<ILogger<SimulatedSource>> logger = new();
+            Mock<IConfiguration> configs = new();
+
+            SimulatedSource mock = new(logger.Object, configs.Object);
+
+            var loadpoint = GetLoadpoint();
+            await mock.SetLoadpoint(loadpoint);
+
+            await mock.TurnOff();
+
+            foreach (var phase in loadpoint.Phases)
+            {
+                Assert.That(phase.Voltage.On, Is.EqualTo(false));
+                Assert.That(phase.Current.On, Is.EqualTo(false));
+            }
+
+            var info = mock.GetActiveLoadpointInfo();
+
+            Assert.That(info.IsActive, Is.EqualTo(false));
+        }
+
         private static Loadpoint GetLoadpoint()
         {
             return new()
@@ -168,5 +204,4 @@ namespace SourceApi.Tests.Actions.Source
             };
         }
     }
-
 }

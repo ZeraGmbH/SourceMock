@@ -82,6 +82,7 @@ namespace SourceApi.Actions.Source
             {
                 _logger.LogTrace("Loadpoint set, source turned on.");
                 _loadpoint = loadpoint;
+                _info.IsActive = CheckHasActivePhase();
             }
 
             _dosageMode = false;
@@ -95,9 +96,18 @@ namespace SourceApi.Actions.Source
         public Task<SourceApiErrorCodes> TurnOff()
         {
             _logger.LogTrace("Source turned off.");
-            _loadpoint = null;
 
-            _info = new();
+            _info = new()
+            {
+                IsActive = false
+            };
+
+            if (_loadpoint != null)
+                foreach (var phase in _loadpoint.Phases)
+                {
+                    phase.Current.On = false;
+                    phase.Voltage.On = false;
+                }
 
             return Task.FromResult(SourceApiErrorCodes.SUCCESS);
         }
@@ -193,6 +203,19 @@ namespace SourceApi.Actions.Source
             _dosageMode = false;
 
             return _dosageEnergy;
+        }
+
+        private bool CheckHasActivePhase()
+        {
+            if (_loadpoint != null)
+                foreach (var phase in _loadpoint.Phases)
+                {
+                    if (phase.Current.On == true)
+                        return true;
+                    if (phase.Voltage.On == true)
+                        return true;
+                }
+            return false;
         }
     }
 }

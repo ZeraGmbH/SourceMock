@@ -56,6 +56,6 @@ namespace SourceApi.Actions.Source
         /// <summary>
         /// 
         /// </summary>
-        SOURCE_NOT_READY
+        SOURCE_NOT_READY,
     }
 }

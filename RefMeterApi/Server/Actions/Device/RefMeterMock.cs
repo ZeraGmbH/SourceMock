@@ -48,9 +48,10 @@ public partial class RefMeterMock : IMockRefMeter
     /// 
     /// </summary>
     /// <returns>ActualValues that fluctuate around the set loadpoint</returns>
-    public Task<MeasureOutput> GetActualValues(int firstActiveVoltagePhase = -1)
+    public async Task<MeasureOutput> GetActualValues(int firstActiveVoltagePhase = -1)
     {
-        var loadpoint = GetLoadpoint();
+        var loadpoint = await GetLoadpoint();
+
         var mo = CalcMeasureOutput(loadpoint);
 
         foreach (var phase in mo.Phases)
@@ -58,7 +59,7 @@ public partial class RefMeterMock : IMockRefMeter
 
         CalculateDeviations(mo);
 
-        return Task.FromResult(mo);
+        return mo;
     }
 
     /// <summary>
@@ -76,21 +77,25 @@ public partial class RefMeterMock : IMockRefMeter
 
         foreach (var phase in lp.Phases)
         {
-            var current = phase.Current.Rms;
-            var voltage = phase.Voltage.Rms;
+            var current = phase.Current.On ? phase.Current.Rms : 0;
+            var voltage = phase.Voltage.On ? phase.Voltage.Rms : 0;
+
             var angle = Math.Abs(phase.Current.Angle - phase.Voltage.Angle);
 
             var measureOutputPhase = new MeasureOutputPhase()
             {
-                Current = phase.Current.Rms,
+                Current = current,
                 AngleCurrent = phase.Current.Angle,
-                Voltage = phase.Voltage.Rms,
+                Voltage = voltage,
                 AngleVoltage = phase.Voltage.Angle,
                 ActivePower = current * voltage * Math.Cos(angle * PI_BY_180),
                 ReactivePower = current * voltage * Math.Sin(angle * PI_BY_180),
-                ApparentPower = phase.Current.Rms * phase.Voltage.Rms
+                ApparentPower = current * voltage
             };
-            measureOutputPhase.PowerFactor = measureOutputPhase.ActivePower / measureOutputPhase.ApparentPower;
+
+            measureOutputPhase.PowerFactor = measureOutputPhase.ApparentPower == 0
+                ? 1
+                : measureOutputPhase.ActivePower / measureOutputPhase.ApparentPower;
 
             activePowerSum += measureOutputPhase.ActivePower.Value;
             reactivePowerSum += measureOutputPhase.ReactivePower.Value;
@@ -128,11 +133,13 @@ public partial class RefMeterMock : IMockRefMeter
         return Task.CompletedTask;
     }
 
-    private Loadpoint GetLoadpoint()
+    private async Task<Loadpoint> GetLoadpoint()
     {
         var r = Random.Shared;
 
-        return _di.GetRequiredService<ISource>().GetCurrentLoadpoint() ?? new Loadpoint()
+        var source = _di.GetRequiredService<ISource>();
+
+        var loadpoint = source.GetCurrentLoadpoint() ?? new Loadpoint()
         {
             Frequency = new Frequency() { Value = 0 },
             Phases = [
@@ -150,6 +157,19 @@ public partial class RefMeterMock : IMockRefMeter
                 }
             ]
         };
+
+        loadpoint = SharedLibrary.Utils.DeepCopy(loadpoint);
+
+        var info = source.GetActiveLoadpointInfo();
+        var currentSwitchedOffForDosage = await source.CurrentSwitchedOffForDosage();
+
+        foreach (var phase in loadpoint.Phases)
+        {
+            if (phase.Voltage.On && info.IsActive == false) phase.Voltage.On = false;
+            if (phase.Current.On && (info.IsActive == false || currentSwitchedOffForDosage)) phase.Current.On = false;
+        }
+
+        return loadpoint;
     }
 
     /// <summary>

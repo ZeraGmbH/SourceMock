@@ -56,11 +56,14 @@ public class RefMeterMockTest
                 Frequency = new() { Value = frequencyValue },
                 Phases = new List<PhaseLoadpoint>(){
                     new PhaseLoadpoint(){
-                        Current = new(){Rms=current, Angle=currentAngle},
-                        Voltage = new(){Rms=voltage, Angle=voltageAngle}
+                        Current = new(){Rms=current, Angle=currentAngle, On=true},
+                        Voltage = new(){Rms=voltage, Angle=voltageAngle, On=true}
                     }
                 }
             });
+
+        SourceMock.Setup(s => s.GetActiveLoadpointInfo()).Returns(new LoadpointInfo { IsActive = true });
+        SourceMock.Setup(s => s.CurrentSwitchedOffForDosage()).ReturnsAsync(false);
 
         RefMeterMock refMeterMock = new(Services);
         MeasureOutput measureOutput = refMeterMock.GetActualValues().Result;

@@ -1,7 +1,5 @@
 using Microsoft.Extensions.Logging;
 
-using SourceApi.Actions.SerialPort.MT768;
-
 namespace SourceApi.Tests.Actions.Dosage;
 
 public class DeviceLogger<T> : ILogger<T>

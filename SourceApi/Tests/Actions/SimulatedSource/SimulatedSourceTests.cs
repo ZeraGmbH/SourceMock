@@ -1,5 +1,3 @@
-
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -130,12 +128,11 @@ namespace SourceApi.Tests.Actions.Source
         private static ISource GenerateSimulatedSource(Mock<ILogger<SimulatedSource>>? loggerMock = null, Mock<IConfiguration>? configMock = null, SourceCapabilities? capabilities = null)
         {
             loggerMock ??= new();
-            configMock ??= new();
 
             if (capabilities == null)
-                return new SimulatedSource(loggerMock.Object, configMock.Object);
+                return new SimulatedSource(loggerMock.Object);
 
-            return new SimulatedSource(loggerMock.Object, configMock.Object, capabilities);
+            return new SimulatedSource(loggerMock.Object, capabilities);
         }
         #endregion
 
@@ -143,9 +140,8 @@ namespace SourceApi.Tests.Actions.Source
         public async Task Returns_Correct_Dosage_Progress()
         {
             Mock<ILogger<SimulatedSource>> logger = new();
-            Mock<IConfiguration> configs = new();
 
-            SimulatedSource mock = new(logger.Object, configs.Object);
+            SimulatedSource mock = new(logger.Object);
 
             await mock.SetLoadpoint(GetLoadpoint());
             await mock.SetDosageEnergy(20);
@@ -162,9 +158,8 @@ namespace SourceApi.Tests.Actions.Source
         public async Task Turns_Off_Loadpoint()
         {
             Mock<ILogger<SimulatedSource>> logger = new();
-            Mock<IConfiguration> configs = new();
 
-            SimulatedSource mock = new(logger.Object, configs.Object);
+            SimulatedSource mock = new(logger.Object);
 
             var loadpoint = GetLoadpoint();
             await mock.SetLoadpoint(loadpoint);
@@ -173,8 +168,8 @@ namespace SourceApi.Tests.Actions.Source
 
             foreach (var phase in loadpoint.Phases)
             {
-                Assert.That(phase.Voltage.On, Is.EqualTo(false));
-                Assert.That(phase.Current.On, Is.EqualTo(false));
+                Assert.That(phase.Voltage.On, Is.EqualTo(true));
+                Assert.That(phase.Current.On, Is.EqualTo(true));
             }
 
             var info = mock.GetActiveLoadpointInfo();

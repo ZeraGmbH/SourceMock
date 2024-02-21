@@ -96,13 +96,6 @@ public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, I
 
         Info.IsActive = false;
 
-        if (Loadpoint?.Phases != null)
-            foreach (var phase in Loadpoint.Phases)
-            {
-                phase.Current.On = false;
-                phase.Voltage.On = false;
-            }
-
         return SourceApiErrorCodes.SUCCESS;
     }
 

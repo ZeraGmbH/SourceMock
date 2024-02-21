@@ -15,9 +15,8 @@ namespace SourceApi.Actions.Source
     {
         #region ContructorAndDependencyInjection
         private readonly ILogger<SimulatedSource> _logger;
-        private readonly IConfiguration _configuration;
         private readonly SourceCapabilities _sourceCapabilities;
-        private LoadpointInfo _info = new();
+        readonly private LoadpointInfo _info = new();
         private DosageProgress _status = new();
         private DateTime _startTime;
         private double _dosageEnergy;
@@ -27,11 +26,9 @@ namespace SourceApi.Actions.Source
         /// Constructor that injects logger and configuration and uses default source capablities.
         /// </summary>
         /// <param name="logger">The logger to be used.</param>
-        /// <param name="configuration">The configuration o be used.</param>
-        public SimulatedSource(ILogger<SimulatedSource> logger, IConfiguration configuration)
+        public SimulatedSource(ILogger<SimulatedSource> logger)
         {
             _logger = logger;
-            _configuration = configuration;
 
             _sourceCapabilities = new()
             {
@@ -59,12 +56,10 @@ namespace SourceApi.Actions.Source
         /// Constructor that injects logger, configuration and capabilities.
         /// </summary>
         /// <param name="logger">The logger to be used.</param>
-        /// <param name="configuration">The configuration o be used.</param>
         /// <param name="sourceCapabilities">The capabilities of the source which should be simulated.</param>
-        public SimulatedSource(ILogger<SimulatedSource> logger, IConfiguration configuration, SourceCapabilities sourceCapabilities)
+        public SimulatedSource(ILogger<SimulatedSource> logger, SourceCapabilities sourceCapabilities)
         {
             _logger = logger;
-            _configuration = configuration;
             _sourceCapabilities = sourceCapabilities;
         }
 
@@ -82,7 +77,8 @@ namespace SourceApi.Actions.Source
             {
                 _logger.LogTrace("Loadpoint set, source turned on.");
                 _loadpoint = loadpoint;
-                _info.IsActive = CheckHasActivePhase();
+
+                _info.IsActive = true;
             }
 
             _dosageMode = false;
@@ -97,17 +93,7 @@ namespace SourceApi.Actions.Source
         {
             _logger.LogTrace("Source turned off.");
 
-            _info = new()
-            {
-                IsActive = false
-            };
-
-            if (_loadpoint != null)
-                foreach (var phase in _loadpoint.Phases)
-                {
-                    phase.Current.On = false;
-                    phase.Voltage.On = false;
-                }
+            _info.IsActive = false;
 
             return Task.FromResult(SourceApiErrorCodes.SUCCESS);
         }

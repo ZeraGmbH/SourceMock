@@ -46,13 +46,6 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, I
 
         await Task.WhenAll(Device.Execute(SerialPortRequest.Create("SUIAAAAAAAAA", "SOKUI")));
 
-        if (Loadpoint?.Phases != null)
-            foreach (var phase in Loadpoint.Phases)
-            {
-                phase.Current.On = false;
-                phase.Voltage.On = false;
-            }
-
         Info.IsActive = false;
 
         return SourceApiErrorCodes.SUCCESS;

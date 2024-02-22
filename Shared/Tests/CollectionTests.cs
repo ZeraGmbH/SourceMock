@@ -27,7 +27,7 @@ public abstract class CollectionTests : DatabaseTestCore
 
     protected override async Task OnPostSetup()
     {
-        Collection = Services.GetService<IObjectCollectionFactory<TestItem>>()!.Create("regular-collection", string.Empty);
+        Collection = Services.GetService<IObjectCollectionFactory<TestItem>>()!.Create("regular-collection", DatabaseCategories.Master);
 
         await Collection.CreateIndex("karl", i => i.Data, caseSensitive: false);
 

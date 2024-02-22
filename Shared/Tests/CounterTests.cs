@@ -11,7 +11,7 @@ public abstract class CounterTests : DatabaseTestCore
 
     protected override Task OnPostSetup()
     {
-        Collection = Services.GetRequiredService<ICounterCollectionFactory>().Create(string.Empty);
+        Collection = Services.GetRequiredService<ICounterCollectionFactory>().Create(DatabaseCategories.Master);
 
         return Task.CompletedTask;
     }

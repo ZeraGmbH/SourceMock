@@ -145,7 +145,7 @@ namespace SourceApi.Actions.Source
             var elapsedHours = (DateTime.Now - _startTime).TotalHours;
             var energy = power * elapsedHours;
 
-            if (energy > _dosageEnergy) energy = StopDosage();
+            if (energy > _dosageEnergy) energy = DosageDone();
 
             _status.Progress = energy;
             _status.Remaining = _dosageEnergy - energy;
@@ -182,11 +182,11 @@ namespace SourceApi.Actions.Source
         /// <inheritdoc/>
         public SimulatedSourceState? GetSimulatedSourceState() => _simulatedSourceState;
 
-        private double StopDosage()
+        private double DosageDone()
         {
             _status.Active = false;
 
-            _dosageMode = false;
+            _dosageMode = true;
 
             return _dosageEnergy;
         }

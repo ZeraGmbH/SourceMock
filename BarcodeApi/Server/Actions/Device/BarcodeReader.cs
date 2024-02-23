@@ -25,9 +25,9 @@ public class BarcodeReader : IBarcodeReader, IDisposable
 
     private readonly StringBuilder _collector = new();
 
-    private IAsyncResult _active = null!;
-
     private Dictionary<KeyCodes, char> _currentCodeMap = KeyMaps.BarcodeRegular;
+
+    private Thread? _connector;
 
     /// <summary>
     /// Initialize a new barcode reader instance.
@@ -41,114 +41,92 @@ public class BarcodeReader : IBarcodeReader, IDisposable
         _logger = logger;
         _path = device;
 
-        Reconnect();
+        _connector = new Thread(Reconnect);
+        _connector.Start();
     }
 
     private void Reconnect()
     {
-        /* Do proper cleanup. */
-        Disconnect();
+        for (; ; )
+            try
+            {
+                /* Do proper cleanup. */
+                Disconnect();
 
-        /* See if we are already disposed. */
-        if (!_bufPtr.IsAllocated) return;
+                /* See if we are already disposed. */
+                if (!_bufPtr.IsAllocated) return;
 
-        try
-        {
-            /* Open device file. */
-            _device = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.None);
+                try
+                {
+                    /* Open device file. */
+                    _device = new FileStream(_path, FileMode.Open, FileAccess.Read);
 
-            /* Start the first read. */
-            _active = _device.BeginRead(_buffer, 0, _buffer.Length, OnInputEvent, null);
-        }
-        catch (Exception e)
-        {
-            _logger.LogCritical("Unable to access barcode reader: {Exception}", e.Message);
+                    /* Start the read-out. */
+                    for (; ; ) ReadInputEvent();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogCritical("Unable to access barcode reader: {Exception}", e.Message);
 
-            /* Do proper cleanup. */
-            Disconnect();
+                    /* Do proper cleanup. */
+                    Disconnect();
 
-            /* Try again later. */
-            Task.Delay(5000).ContinueWith(t => Reconnect());
-        }
+                    /* Try again later. */
+                    Thread.Sleep(5000);
+                }
+            }
+            catch (ThreadInterruptedException)
+            {
+                return;
+            }
     }
 
     /// <summary>
     /// Process an incoming event.
     /// </summary>
-    /// <param name="state">Will be ignored.</param>
-    private void OnInputEvent(object? state)
+    private void ReadInputEvent()
     {
-        Exception? failed = null;
+        /* Should be a full event. */
+        if (_device.Read(_buffer) != _buffer.Length) return;
 
-        try
+        /* Only EV_KEY events. */
+        var bufPtr = _bufPtr.AddrOfPinnedObject();
+
+        if (Marshal.ReadInt16(bufPtr, 16) != 1) return;
+
+        /* Only key up events. */
+        if (Marshal.ReadInt32(bufPtr, 20) != 0) return;
+
+        /* End of bar code detected. */
+        var code = (KeyCodes)Marshal.ReadInt16(bufPtr, 18);
+
+        if (code == KeyCodes.KEY_ENTER)
         {
-            /* Should be a full event. */
-            if (_device.EndRead(_active) != _buffer.Length) return;
+            /* Get the code. */
+            var barcode = _collector.ToString();
 
-            /* Only EV_KEY events. */
-            var bufPtr = _bufPtr.AddrOfPinnedObject();
+            /* Reset all. */
+            _currentCodeMap = KeyMaps.BarcodeRegular;
+            _collector.Clear();
 
-            if (Marshal.ReadInt16(bufPtr, 16) != 1) return;
+            /* Dispatch code and read next. */
+            BarcodeReceived?.Invoke(barcode);
 
-            /* Only key up events. */
-            if (Marshal.ReadInt32(bufPtr, 20) != 0) return;
+            _logger.LogTrace("Dispatching bar code {Code}", barcode);
 
-            /* End of bar code detected. */
-            var code = (KeyCodes)Marshal.ReadInt16(bufPtr, 18);
-
-            if (code == KeyCodes.KEY_ENTER)
-            {
-                /* Get the code. */
-                var barcode = _collector.ToString();
-
-                /* Reset all. */
-                _currentCodeMap = KeyMaps.BarcodeRegular;
-                _collector.Clear();
-
-                /* Dispatch code and read next. */
-                BarcodeReceived?.Invoke(barcode);
-
-                _logger.LogTrace("Dispatching bar code {Code}", barcode);
-
-                return;
-            }
-
-            /* Use SHIFT map. */
-            if (code == KeyCodes.KEY_LEFTSHIFT)
-                _currentCodeMap = KeyMaps.BarcodeShifted;
-            else
-            {
-                /* Merge all known keys to the bar code. */
-                if (_currentCodeMap.TryGetValue(code, out var supported)) _collector.Append(supported);
-
-                /* Always back to the regular map. */
-                _currentCodeMap = KeyMaps.BarcodeRegular;
-            }
+            return;
         }
-        catch (Exception e)
-        {
-            failed = e;
-        }
-        finally
-        {
-            try
-            {
-                if (failed != null)
-                {
-                    _logger.LogCritical("Unable to process bar code input: {Exception}", failed.Message);
 
-                    Reconnect();
-                }
-                else
-                {
-                    /* Wait for next event. */
-                    _active = _device.BeginRead(_buffer, 0, _buffer.Length, OnInputEvent, null);
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogCritical("Unable to start bar code read out: {Exception}", e.Message);
-            }
+        /* Use SHIFT map. */
+        if (code == KeyCodes.KEY_LEFTSHIFT)
+            _currentCodeMap = KeyMaps.BarcodeShifted;
+        else
+        {
+            /* Merge all known keys to the bar code. */
+            if (_currentCodeMap.TryGetValue(code, out var supported)) _collector.Append(supported);
+
+            /* Always back to the regular map. */
+            _currentCodeMap = KeyMaps.BarcodeRegular;
         }
     }
 
@@ -156,7 +134,6 @@ public class BarcodeReader : IBarcodeReader, IDisposable
     {
         _device?.Dispose();
         _device = null!;
-        _active = null!;
     }
 
     /// <summary>
@@ -167,5 +144,8 @@ public class BarcodeReader : IBarcodeReader, IDisposable
         Disconnect();
 
         _bufPtr.Free();
+
+        _connector?.Interrupt();
+        _connector = null;
     }
 }

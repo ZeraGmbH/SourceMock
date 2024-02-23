@@ -18,7 +18,7 @@ public static class BarcodeApiConfiguration
     /// <param name="options">Documentation builder instance.</param>
     public static void UseBarcodeApi(this SwaggerGenOptions options)
     {
-        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(BarcodeApiConfiguration).Assembly.GetName().Name}.xml"));
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(BarcodeApiConfiguration).Assembly.GetName().Name}.xml"), true);
     }
 
     /// <summary>

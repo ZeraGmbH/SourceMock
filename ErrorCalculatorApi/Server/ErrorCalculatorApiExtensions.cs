@@ -21,7 +21,7 @@ public static class ErrorCalculatorApiConfiguration
     /// <param name="options">Documentation builder instance.</param>
     public static void UseErrorCalculatorApi(this SwaggerGenOptions options)
     {
-        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(ErrorCalculatorApiConfiguration).Assembly.GetName().Name}.xml"));
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(ErrorCalculatorApiConfiguration).Assembly.GetName().Name}.xml"), true);
 
         SwaggerModelExtender.AddType<ErrorCalculatorApiErrorCodes>().Register(options);
     }

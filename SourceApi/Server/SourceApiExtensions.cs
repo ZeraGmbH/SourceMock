@@ -25,7 +25,7 @@ public static class SourceApiConfiguration
     /// </summary>
     public static void UseSourceApi(this SwaggerGenOptions options)
     {
-        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SourceApiConfiguration).Assembly.GetName().Name}.xml"));
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(SourceApiConfiguration).Assembly.GetName().Name}.xml"), true);
 
         SwaggerModelExtender.AddType<SourceApiErrorCodes>().Register(options);
     }

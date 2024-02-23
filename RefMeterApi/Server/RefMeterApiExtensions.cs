@@ -21,7 +21,7 @@ public static class RefMeterApiConfiguration
     /// <param name="options">Documentation builder.</param>
     public static void UseRefMeterApi(this SwaggerGenOptions options)
     {
-        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(RefMeterApiConfiguration).Assembly.GetName().Name}.xml"));
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(RefMeterApiConfiguration).Assembly.GetName().Name}.xml"), true);
 
         SwaggerModelExtender.AddType<RefMeterApiErrorCodes>().Register(options);
     }

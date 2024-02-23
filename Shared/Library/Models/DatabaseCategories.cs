@@ -16,6 +16,11 @@ public static class DatabaseCategories
     public const string Configuration = "config";
 
     /// <summary>
+    /// Meter test system configuration.
+    /// </summary>
+    public const string MeterTestSystem = "mts";
+
+    /// <summary>
     /// Meter dependant information - e.g. type definitions.
     /// </summary>
     public const string Meter = "meter";

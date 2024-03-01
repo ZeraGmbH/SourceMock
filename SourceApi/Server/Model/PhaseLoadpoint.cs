@@ -2,7 +2,7 @@ namespace SourceApi.Model
 {
     public class PhaseLoadpoint
     {
-        public ElectricalVectorQuantity Voltage { get; set; } = new();
-        public ElectricalVectorQuantity Current { get; set; } = new();
+        public ElectricalQuantity Voltage { get; set; } = new();
+        public ElectricalQuantity Current { get; set; } = new();
     }
 }

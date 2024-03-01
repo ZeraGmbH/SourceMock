@@ -9,39 +9,51 @@ public static class RefMeterMockTestData {
             Phases = new() {
                 new() {
                     Voltage = new() {
-                        Angle = 0,
+                        AcComponent = new() {
+                            Angle = 0,
+                            Rms = 230
+                        },
                         On = true,
-                        Rms = 230
                     },
                     Current = new() {
-                        Angle = 0,
+                        AcComponent = new() {
+                            Angle = 0,
+                            Rms = 100
+                        },
                         On = true,
-                        Rms = 100
                     }
                 },
                 new() {
                     Voltage = new() {
-                        Angle = 120,
+                        AcComponent = new() {
+                            Angle = 120,
+                            Rms = 235
+                        },
                         On = true,
-                        Rms = 235
                     },
                     Current = new() {
-                        Angle = 120,
+                        AcComponent = new() {
+                            Angle = 120,
+                            Rms = 80
+                        },
                         On = true,
-                        Rms = 80
                     }
                 },
                 new() {
                     Voltage = new() {
-                        Angle = 240,
+                        AcComponent = new() {
+                            Angle = 240,
+                            Rms = 240
+                        },
                         On = true,
-                        Rms = 240
 
                     },
                     Current = new() {
-                        Angle = 240,
+                        AcComponent = new() {
+                            Angle = 240,
+                            Rms = 60
+                        },
                         On = true,
-                        Rms = 60
                     }
                 }
             },
@@ -58,39 +70,50 @@ public static class RefMeterMockTestData {
             Phases = new() {
                 new() {
                     Voltage = new() {
-                        Angle = 0,
-                        On = true,
-                        Rms = 230
+                        AcComponent = new() {
+                            Angle = 0,
+                            Rms = 230
+                        },
+                        On = true
                     },
                     Current = new() {
-                        Angle = 90,
-                        On = true,
-                        Rms = 100
+                        AcComponent = new() {
+                            Angle = 90,
+                            Rms = 100
+                        },
+                        On = true
                     }
                 },
                 new() {
                     Voltage = new() {
-                        Angle = 120,
-                        On = true,
-                        Rms = 235
+                        AcComponent = new() {
+                            Angle = 120,
+                            Rms = 235
+                        },
+                        On = true
                     },
                     Current = new() {
-                        Angle = 210,
-                        On = true,
-                        Rms = 80
+                        AcComponent = new() {
+                            Angle = 210,
+                            Rms = 80
+                        },
+                        On = true
                     }
                 },
                 new() {
                     Voltage = new() {
-                        Angle = 240,
-                        On = true,
-                        Rms = 240
-
+                        AcComponent = new() {
+                            Angle = 240,
+                            Rms = 240
+                        },
+                        On = true
                     },
                     Current = new() {
-                        Angle = 330,
-                        On = true,
-                        Rms = 60
+                        AcComponent = new() {
+                            Angle = 330,
+                            Rms = 60
+                        },
+                        On = true
                     }
                 }
             },
@@ -107,39 +130,50 @@ public static class RefMeterMockTestData {
             Phases = new() {
                 new() {
                     Voltage = new() {
-                        Angle = 0,
-                        On = true,
-                        Rms = 230
+                        AcComponent = new() {
+                            Angle = 0,
+                            Rms = 230
+                        },
+                        On = true
                     },
                     Current = new() {
-                        Angle = 60,
-                        On = true,
-                        Rms = 100
+                        AcComponent = new() {
+                            Angle = 60,
+                            Rms = 100
+                        },
+                        On = true
                     }
                 },
                 new() {
                     Voltage = new() {
-                        Angle = 120,
-                        On = true,
-                        Rms = 235
+                        AcComponent = new() {
+                            Angle = 120,
+                            Rms = 235
+                        },
+                        On = true
                     },
                     Current = new() {
-                        Angle = 180,
-                        On = true,
-                        Rms = 80
+                        AcComponent = new() {
+                            Angle = 180,
+                            Rms = 80
+                        },
+                        On = true
                     }
                 },
                 new() {
                     Voltage = new() {
-                        Angle = 240,
-                        On = true,
-                        Rms = 240
-
+                        AcComponent = new() {
+                            Angle = 240,
+                            Rms = 240
+                        },
+                        On = true
                     },
                     Current = new() {
-                        Angle = 300,
-                        On = true,
-                        Rms = 60
+                        AcComponent = new() {
+                            Angle = 300,
+                            Rms = 60
+                        },
+                        On = true
                     }
                 }
             },

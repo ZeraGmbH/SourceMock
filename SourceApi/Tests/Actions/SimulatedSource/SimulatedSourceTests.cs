@@ -93,7 +93,7 @@ namespace SourceApi.Tests.Actions.Source
             // Arrange 
             ISource source = GenerateSimulatedSource();
             Loadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
-            lp.Phases[0].Voltage.Rms = 500;
+            lp.Phases[0].Voltage.AcComponent.Rms = 500;
 
             // Act
             var result = await source.SetLoadpoint(lp);
@@ -111,7 +111,7 @@ namespace SourceApi.Tests.Actions.Source
             // Arrange 
             ISource source = GenerateSimulatedSource();
             Loadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
-            lp.Phases[0].Current.Rms = 100;
+            lp.Phases[0].Current.AcComponent.Rms = 100;
 
             // Act
             var result = await source.SetLoadpoint(lp);
@@ -184,16 +184,16 @@ namespace SourceApi.Tests.Actions.Source
                 Frequency = new() { Value = 50 },
                 Phases = new List<PhaseLoadpoint>(){
                     new PhaseLoadpoint(){
-                        Current = new(){Angle=0, Rms=10, On=true},
-                        Voltage = new(){Angle=0, Rms=220, On=true}
+                        Current = new(){AcComponent = new() {Angle=0, Rms=10}, On=true},
+                        Voltage = new(){AcComponent = new() {Angle=0, Rms=220}, On=true}
                     },
                     new PhaseLoadpoint(){
-                        Current = new(){Angle=120, Rms=10, On=true},
-                        Voltage = new(){Angle=120, Rms=220, On=true}
+                        Current = new(){AcComponent = new() {Angle=120, Rms=10}, On=true},
+                        Voltage = new(){AcComponent = new() {Angle=120, Rms=220}, On=true}
                     },
                     new PhaseLoadpoint(){
-                        Current = new(){Angle=240, Rms=10, On=true},
-                        Voltage = new(){Angle=240, Rms=220, On=true}
+                        Current = new(){AcComponent = new() {Angle=240, Rms=10}, On=true},
+                        Voltage = new(){AcComponent = new() {Angle=240, Rms=220}, On=true}
                     }
                 }
             };

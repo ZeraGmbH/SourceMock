@@ -65,11 +65,11 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
             {
                 var voltage = loadpoint.Phases[i]?.Voltage;
 
-                if (voltage != null)
+                if (voltage != null && voltage.AcComponent != null)
                 {
                     /* Convert voltage and angle to API protocol format. */
-                    request.Append(voltage.Rms.ToString("000.000"));
-                    request.Append(voltage.Angle.ToString("000.00"));
+                    request.Append(voltage.AcComponent.Rms.ToString("000.000"));
+                    request.Append(voltage.AcComponent.Angle.ToString("000.00"));
 
                     continue;
                 }
@@ -112,11 +112,11 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
             {
                 var current = loadpoint.Phases[i]?.Current;
 
-                if (current != null)
+                if (current != null && current.AcComponent != null)
                 {
                     /* Convert voltage and angle to API protocol format. */
-                    request.Append(current.Rms.ToString("000.000"));
-                    request.Append(current.Angle.ToString("000.00"));
+                    request.Append(current.AcComponent.Rms.ToString("000.000"));
+                    request.Append(current.AcComponent.Angle.ToString("000.00"));
 
                     continue;
                 }
@@ -184,23 +184,23 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
     {
         foreach (var phase in loadpoint.Phases)
         {
-            phase.Voltage.Angle = (360 - phase.Voltage.Angle) % 360;
-            phase.Current.Angle = (360 - phase.Current.Angle) % 360;
+            phase.Voltage.AcComponent.Angle = (360 - phase.Voltage.AcComponent.Angle) % 360;
+            phase.Current.AcComponent.Angle = (360 - phase.Current.AcComponent.Angle) % 360;
         };
 
 
         if (firstActiveVoltagePhase < 0)
             return;
 
-        var angle = loadpoint.Phases[firstActiveVoltagePhase].Voltage.Angle;
+        var angle = loadpoint.Phases[firstActiveVoltagePhase].Voltage.AcComponent.Angle;
 
         if (angle == 0)
             return;
 
         foreach (var phase in loadpoint.Phases)
         {
-            phase.Voltage.Angle = (phase.Voltage.Angle - angle + 360) % 360;
-            phase.Current.Angle = (phase.Current.Angle - angle + 360) % 360;
+            phase.Voltage.AcComponent.Angle = (phase.Voltage.AcComponent.Angle - angle + 360) % 360;
+            phase.Current.AcComponent.Angle = (phase.Current.AcComponent.Angle - angle + 360) % 360;
         }
     }
 

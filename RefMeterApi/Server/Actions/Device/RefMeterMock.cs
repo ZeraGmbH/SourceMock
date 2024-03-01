@@ -77,17 +77,17 @@ public partial class RefMeterMock : IMockRefMeter
 
         foreach (var phase in lp.Phases)
         {
-            var current = phase.Current.On ? phase.Current.Rms : 0;
-            var voltage = phase.Voltage.On ? phase.Voltage.Rms : 0;
+            var current = phase.Current.On ? phase.Current.AcComponent.Rms : 0;
+            var voltage = phase.Voltage.On ? phase.Voltage.AcComponent.Rms : 0;
 
-            var angle = Math.Abs(phase.Current.Angle - phase.Voltage.Angle);
+            var angle = Math.Abs(phase.Current.AcComponent.Angle - phase.Voltage.AcComponent.Angle);
 
             var measureOutputPhase = new MeasureOutputPhase()
             {
                 Current = current,
-                AngleCurrent = phase.Current.Angle,
+                AngleCurrent = phase.Current.AcComponent.Angle,
                 Voltage = voltage,
-                AngleVoltage = phase.Voltage.Angle,
+                AngleVoltage = phase.Voltage.AcComponent.Angle,
                 ActivePower = current * voltage * Math.Cos(angle * PI_BY_180),
                 ReactivePower = current * voltage * Math.Sin(angle * PI_BY_180),
                 ApparentPower = current * voltage
@@ -144,16 +144,16 @@ public partial class RefMeterMock : IMockRefMeter
             Frequency = new Frequency() { Value = 0 },
             Phases = [
                 new () {
-                    Current = new() {Rms = 0, Angle=r.Next(0,360)},
-                    Voltage = new() {Rms = 0, Angle=r.Next(0,360)},
+                    Current = new() { AcComponent = new() { Rms = 0, Angle=r.Next(0,360)}},
+                    Voltage = new() { AcComponent = new() { Rms = 0, Angle=r.Next(0,360)}},
                 },
                 new () {
-                    Current = new() {Rms = 0, Angle=r.Next(0,360)},
-                    Voltage = new() {Rms = 0, Angle=r.Next(0,360)},
+                    Current = new() { AcComponent = new() { Rms = 0, Angle=r.Next(0,360)}},
+                    Voltage = new() { AcComponent = new() { Rms = 0, Angle=r.Next(0,360)}},
                 },
                 new () {
-                    Current = new() {Rms = 0, Angle=r.Next(0,360)},
-                    Voltage = new() {Rms = 0, Angle=r.Next(0,360)},
+                    Current = new() { AcComponent = new() { Rms = 0, Angle=r.Next(0,360)}},
+                    Voltage = new() { AcComponent = new() { Rms = 0, Angle=r.Next(0,360)}},
                 }
             ]
         };
@@ -189,14 +189,14 @@ public partial class RefMeterMock : IMockRefMeter
         if (phaseCount < 3) return "123";
 
         /* Find the first angle - the first voltage seen by any consumer. */
-        var minAngle = phases.Min(v => v.Angle);
-        var l1 = phases.FindIndex(v => v.Angle == minAngle);
+        var minAngle = phases.Min(v => v.AcComponent.Angle);
+        var l1 = phases.FindIndex(v => v.AcComponent.Angle == minAngle);
 
         /* Get the following phases and compare angles. */
         var l2 = (l1 + 1) % phaseCount;
         var l3 = (l2 + 1) % phaseCount;
 
-        return phases[l2].Angle < phases[l3].Angle ? "132" : "123";
+        return phases[l2].AcComponent.Angle < phases[l3].AcComponent.Angle ? "132" : "123";
     }
 
     private static void MeasureOutputPhaseNullCheck(MeasureOutputPhase phase)

@@ -23,16 +23,16 @@ public class ErrorCalculatorMockTest
         {
             Phases = {
                 new(){
-                    Current = new(){Angle=0, Rms=100, On=true},
-                    Voltage = new(){Angle=0, Rms=220, On=true}
+                    Current = new(){AcComponent = new() {Angle=0, Rms=100}, On=true},
+                    Voltage = new(){AcComponent = new() {Angle=0, Rms=220}, On=true}
                 },
                 new(){
-                    Current = new(){Angle=120, Rms=100, On=true},
-                    Voltage = new(){Angle=120, Rms=220, On=true}
+                    Current = new(){AcComponent = new() {Angle=120, Rms=100}, On=true},
+                    Voltage = new(){AcComponent = new() {Angle=120, Rms=220}, On=true}
                 },
                 new(){
-                    Current = new(){Angle=240, Rms=100, On=true},
-                    Voltage = new(){Angle=240, Rms=220, On=true}
+                    Current = new(){AcComponent = new() {Angle=240, Rms=100}, On=true},
+                    Voltage = new(){AcComponent = new() {Angle=240, Rms=220}, On=true}
                 }
             }
         };

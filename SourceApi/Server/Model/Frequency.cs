@@ -33,9 +33,9 @@ namespace SourceApi.Model
         /// The frequency is specified by the power supply.
         /// </summary>
         GRID_SYNCRONOUS = 1,
-        /// <summary>
-        /// This is a DC-Loadpoint
-        /// </summary>
-        DIRECT_CURRENT = 2
+        // <summary>
+        // This is a DC-Loadpoint
+        // </summary>
+        //DIRECT_CURRENT = 2
     }
 }

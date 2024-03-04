@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MeterTestSystemApi.Models.Configuration;
+namespace SourceApi.Model.Configuration;
 
 /// <summary>
 /// Configuration of a serial port connection.

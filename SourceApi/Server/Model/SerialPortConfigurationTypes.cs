@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace MeterTestSystemApi.Models.Configuration;
+namespace SourceApi.Model.Configuration;
 
 /// <summary>
 /// Supported types of a serial port connection.

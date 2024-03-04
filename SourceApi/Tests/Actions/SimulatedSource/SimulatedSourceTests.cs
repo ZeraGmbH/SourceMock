@@ -17,7 +17,7 @@ namespace SourceApi.Tests.Actions.Source
         #region PositiveTestCases
         [Test]
         [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.ValidLoadpoints))]
-        public async Task TestValidTurnOn(Loadpoint loadpoint)
+        public async Task TestValidTurnOn(TargetLoadpoint loadpoint)
         {
             // Arrange
             var capabilities = SimulatedSourceTestData.GetSourceCapabilitiesForNumberOfPhases(loadpoint.Phases.Count);
@@ -39,7 +39,7 @@ namespace SourceApi.Tests.Actions.Source
 
         [Test]
         [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.ValidLoadpoints))]
-        public async Task TestValidTurnOff(Loadpoint loadpoint)
+        public async Task TestValidTurnOff(TargetLoadpoint loadpoint)
         {
             // Arrange
             var capabilities = SimulatedSourceTestData.GetSourceCapabilitiesForNumberOfPhases(loadpoint.Phases.Count);
@@ -64,7 +64,7 @@ namespace SourceApi.Tests.Actions.Source
         #region LoadpointIssues
         [Test]
         [TestCaseSource(typeof(SimulatedSourceTestData), nameof(SimulatedSourceTestData.ValidLoadpointsWithOneOrThreePhases))]
-        public async Task TestTurnOnWithInvalidLoadpoint(Loadpoint loadpoint)
+        public async Task TestTurnOnWithInvalidLoadpoint(TargetLoadpoint loadpoint)
         {
             // Arrange
             var capabilities = SimulatedSourceTestData.DefaultTwoPhaseSourceCapabilities;
@@ -92,7 +92,7 @@ namespace SourceApi.Tests.Actions.Source
         {
             // Arrange 
             ISource source = GenerateSimulatedSource();
-            Loadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
+            TargetLoadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
             lp.Phases[0].Voltage.AcComponent.Rms = 500;
 
             // Act
@@ -110,7 +110,7 @@ namespace SourceApi.Tests.Actions.Source
         {
             // Arrange 
             ISource source = GenerateSimulatedSource();
-            Loadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
+            TargetLoadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
             lp.Phases[0].Current.AcComponent.Rms = 100;
 
             // Act
@@ -177,21 +177,21 @@ namespace SourceApi.Tests.Actions.Source
             Assert.That(info.IsActive, Is.EqualTo(false));
         }
 
-        private static Loadpoint GetLoadpoint()
+        private static TargetLoadpoint GetLoadpoint()
         {
             return new()
             {
                 Frequency = new() { Value = 50 },
-                Phases = new List<PhaseLoadpoint>(){
-                    new PhaseLoadpoint(){
+                Phases = new List<TargetLoadpointPhase>(){
+                    new TargetLoadpointPhase(){
                         Current = new(){AcComponent = new() {Angle=0, Rms=10}, On=true},
                         Voltage = new(){AcComponent = new() {Angle=0, Rms=220}, On=true}
                     },
-                    new PhaseLoadpoint(){
+                    new TargetLoadpointPhase(){
                         Current = new(){AcComponent = new() {Angle=120, Rms=10}, On=true},
                         Voltage = new(){AcComponent = new() {Angle=120, Rms=220}, On=true}
                     },
-                    new PhaseLoadpoint(){
+                    new TargetLoadpointPhase(){
                         Current = new(){AcComponent = new() {Angle=240, Rms=10}, On=true},
                         Voltage = new(){AcComponent = new() {Angle=240, Rms=220}, On=true}
                     }

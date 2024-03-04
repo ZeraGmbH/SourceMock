@@ -18,7 +18,7 @@ public interface IRefMeter
     /// </summary>
     /// <param name="firstActiveCurrentPhase">Index of the first active voltage phase if known.</param>
     /// <returns>All measurement data.</returns>
-    Task<MeasureOutput> GetActualValues(int firstActiveCurrentPhase = -1);
+    Task<MeasuredLoadpoint> GetActualValues(int firstActiveCurrentPhase = -1);
 
     /// <summary>
     /// Read all supported measurment modes.

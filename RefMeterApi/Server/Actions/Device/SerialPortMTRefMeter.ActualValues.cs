@@ -11,13 +11,13 @@ partial class SerialPortMTRefMeter
     private static readonly Regex ActualValueReg = new Regex(@"^(\d{1,3});(.+)$");
 
     /* Outstanding AME request - only works properly if the device instance is a singleton. */
-    private readonly ResponseShare<MeasureOutput> _actualValues;
+    private readonly ResponseShare<MeasuredLoadpoint> _actualValues;
 
     /// <inheritdoc/>
-    public async Task<MeasureOutput> GetActualValues(int firstActiveCurrentPhase = -1)
+    public async Task<MeasuredLoadpoint> GetActualValues(int firstActiveCurrentPhase = -1)
     {
         /* Request the cached values and clone the result - so the caller must not care for accessing shared data. */
-        var values = JsonConvert.DeserializeObject<MeasureOutput>(JsonConvert.SerializeObject(await _actualValues.Execute()))!;
+        var values = JsonConvert.DeserializeObject<MeasuredLoadpoint>(JsonConvert.SerializeObject(await _actualValues.Execute()))!;
 
         /* Report the corrected and converted result. */
         return Utils.ConvertFromDINtoIEC(values, firstActiveCurrentPhase); ;
@@ -28,7 +28,7 @@ partial class SerialPortMTRefMeter
     /// </summary>
     /// <returns>Task reading the actual values.</returns>
     /// <exception cref="ArgumentException">Reply from the device was not recognized.</exception>
-    private async Task<MeasureOutput> CreateActualValueRequest()
+    private async Task<MeasuredLoadpoint> CreateActualValueRequest()
     {
         /* Execute the request and get the answer from the device. */
         var replies = await _device.Execute(
@@ -37,9 +37,9 @@ partial class SerialPortMTRefMeter
         )[1];
 
         /* Prepare response with three phases. */
-        var response = new MeasureOutput
+        var response = new MeasuredLoadpoint
         {
-            Phases = { new MeasureOutputPhase(), new MeasureOutputPhase(), new MeasureOutputPhase(), }
+            Phases = { new MeasuredLoadpointPhase(), new MeasuredLoadpointPhase(), new MeasuredLoadpointPhase(), }
         };
 
         for (var i = 0; i < replies.Length - 1; i++)
@@ -87,40 +87,40 @@ partial class SerialPortMTRefMeter
             switch (index)
             {
                 case 0:
-                    response.Phases[0].Voltage = value;
+                    response.Phases[0].Voltage.AcComponent.Rms = value;
                     break;
                 case 1:
-                    response.Phases[1].Voltage = value;
+                    response.Phases[1].Voltage.AcComponent.Rms = value;
                     break;
                 case 2:
-                    response.Phases[2].Voltage = value;
+                    response.Phases[2].Voltage.AcComponent.Rms = value;
                     break;
                 case 3:
-                    response.Phases[0].Current = value;
+                    response.Phases[0].Current.AcComponent.Rms = value;
                     break;
                 case 4:
-                    response.Phases[1].Current = value;
+                    response.Phases[1].Current.AcComponent.Rms = value;
                     break;
                 case 5:
-                    response.Phases[2].Current = value;
+                    response.Phases[2].Current.AcComponent.Rms = value;
                     break;
                 case 6:
-                    response.Phases[0].AngleVoltage = value;
+                    response.Phases[0].Voltage.AcComponent.Angle = value;
                     break;
                 case 7:
-                    response.Phases[1].AngleVoltage = value;
+                    response.Phases[1].Voltage.AcComponent.Angle = value;
                     break;
                 case 8:
-                    response.Phases[2].AngleVoltage = value;
+                    response.Phases[2].Voltage.AcComponent.Angle = value;
                     break;
                 case 9:
-                    response.Phases[0].AngleCurrent = value;
+                    response.Phases[0].Current.AcComponent.Angle = value;
                     break;
                 case 10:
-                    response.Phases[1].AngleCurrent = value;
+                    response.Phases[1].Current.AcComponent.Angle = value;
                     break;
                 case 11:
-                    response.Phases[2].AngleCurrent = value;
+                    response.Phases[2].Current.AcComponent.Angle = value;
                     break;
                 case 12:
                     response.Phases[0].PowerFactor = value;

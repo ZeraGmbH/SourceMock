@@ -19,7 +19,7 @@ public class ErrorCalculatorMockTest
         Mock<ISource> sourceMock = new();
 
         /* Total energy is 66kW. */
-        Loadpoint loadpoint = new()
+        TargetLoadpoint loadpoint = new()
         {
             Phases = {
                 new(){

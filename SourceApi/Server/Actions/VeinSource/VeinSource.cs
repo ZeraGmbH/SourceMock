@@ -33,9 +33,9 @@ namespace SourceApi.Actions.VeinSource
 
         public Task<SourceCapabilities> GetCapabilities() => Task.FromException<SourceCapabilities>(new NotImplementedException());
 
-        public Loadpoint? GetCurrentLoadpoint()
+        public TargetLoadpoint? GetCurrentLoadpoint()
         {
-            Loadpoint ret = new();
+            TargetLoadpoint ret = new();
 
             var veinResponse = _veinClient.GetLoadpoint();
             // how to act on http statuscode and pass through to api endpoint?
@@ -61,7 +61,7 @@ namespace SourceApi.Actions.VeinSource
             throw new NotImplementedException();
         }
 
-        public Task<SourceApiErrorCodes> SetLoadpoint(Loadpoint loadpoint)
+        public Task<SourceApiErrorCodes> SetLoadpoint(TargetLoadpoint loadpoint)
         {
             JObject veinRequest = VeinLoadpointMapper.ConvertToZeraJson(loadpoint);
 

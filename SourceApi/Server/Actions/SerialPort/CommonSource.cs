@@ -31,7 +31,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     /// <summary>
     /// 
     /// </summary>
-    protected Loadpoint? Loadpoint { get; private set; }
+    protected TargetLoadpoint? Loadpoint { get; private set; }
 
     /// <summary>
     /// 
@@ -60,10 +60,10 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     public abstract Task<SourceCapabilities> GetCapabilities();
 
     /// <inheritdoc/>
-    public virtual Loadpoint? GetCurrentLoadpoint() => Loadpoint;
+    public virtual TargetLoadpoint? GetCurrentLoadpoint() => Loadpoint;
 
     /// <inheritdoc/>
-    public virtual async Task<SourceApiErrorCodes> SetLoadpoint(Loadpoint loadpoint)
+    public virtual async Task<SourceApiErrorCodes> SetLoadpoint(TargetLoadpoint loadpoint)
     {
         /* Always validate the loadpoint against the device capabilities. */
         var isValid = SourceCapabilityValidator.IsValid(loadpoint, await GetCapabilities());

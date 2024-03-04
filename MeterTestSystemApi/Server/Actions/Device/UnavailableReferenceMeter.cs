@@ -13,7 +13,7 @@ internal class UnavailableReferenceMeter : IRefMeter
 
     public Task<MeasurementModes?> GetActualMeasurementMode() => throw new RefMeterNotReadyException();
 
-    public Task<MeasureOutput> GetActualValues(int firstActiveVoltagePhase = -1) => throw new RefMeterNotReadyException();
+    public Task<MeasuredLoadpoint> GetActualValues(int firstActiveVoltagePhase = -1) => throw new RefMeterNotReadyException();
 
     public Task<MeasurementModes[]> GetMeasurementModes() => throw new RefMeterNotReadyException();
 

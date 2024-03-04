@@ -9,7 +9,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
         #region TestValidLoadpoints
         [Test]
         [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.ValidLoadpoints))]
-        public void TestValidLoadpoints(Loadpoint loadpoint)
+        public void TestValidLoadpoints(TargetLoadpoint loadpoint)
         {
             // Arrange
             // loadpoint set in parameter
@@ -23,7 +23,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
 
         [Test]
         [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.InvalidLoadpoints))]
-        public void TestInvalidLoadpoints(Loadpoint loadpoint)
+        public void TestInvalidLoadpoints(TargetLoadpoint loadpoint)
         {
             // Arrange
             // loadpoint set in parameter

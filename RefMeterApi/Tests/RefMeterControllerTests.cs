@@ -24,17 +24,17 @@ public class RefMeterControllerTests
 
         var response = await cut.GetActualValues();
         var result = response.Result as OkObjectResult;
-        var data = result?.Value as MeasureOutput;
+        var data = result?.Value as MeasuredLoadpoint;
 
         Assert.That(data, Is.Not.Null);
 
         Assert.Multiple(() =>
         {
             Assert.That(data.Frequency, Is.EqualTo(50).Within(0.5));
-            Assert.That(data.Phases[0].Voltage, Is.EqualTo(20).Within(0.5));
-            Assert.That(data.Phases[1].Current, Is.EqualTo(0.1).Within(0.05));
-            Assert.That(data.Phases[1].AngleVoltage, Is.EqualTo(240).Within(0.5));
-            Assert.That(data.Phases[2].AngleCurrent, Is.EqualTo(120).Within(0.5));
+            Assert.That(data.Phases[0].Voltage.AcComponent.Rms, Is.EqualTo(20).Within(0.5));
+            Assert.That(data.Phases[1].Current.AcComponent.Rms, Is.EqualTo(0.1).Within(0.05));
+            Assert.That(data.Phases[1].Voltage.AcComponent.Angle, Is.EqualTo(240).Within(0.5));
+            Assert.That(data.Phases[2].Current.AcComponent.Angle, Is.EqualTo(120).Within(0.5));
 
             Assert.That(data.PhaseOrder, Is.EqualTo("123"));
         });

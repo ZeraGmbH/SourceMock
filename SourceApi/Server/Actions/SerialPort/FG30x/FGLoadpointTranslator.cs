@@ -14,7 +14,7 @@ public class FGLoadpointTranslator : LoadpointTranslator
     /// </summary>
     /// <param name="loadpoint">Some already validated loadpoint in IEC form.</param>
     /// <returns>Sequence of requests to send as a single transaction.</returns>
-    public override SerialPortRequest[] ToSerialPortRequests(Loadpoint loadpoint)
+    public override SerialPortRequest[] ToSerialPortRequests(TargetLoadpoint loadpoint)
     {
         var DINloadpoint = ConvertFromIECtoDin(loadpoint);
         var requests = new List<SerialPortRequest>();

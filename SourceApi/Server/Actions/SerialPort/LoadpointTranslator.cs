@@ -12,7 +12,7 @@ namespace SourceApi.Actions.SerialPort;
 public abstract class LoadpointTranslator : ILoadpointTranslator
 {
     /// <inheritdoc/>
-    public abstract SerialPortRequest[] ToSerialPortRequests(Loadpoint loadpoint);
+    public abstract SerialPortRequest[] ToSerialPortRequests(TargetLoadpoint loadpoint);
 
     /// <summary>
     /// Create serial port requests to set the frequency.
@@ -21,7 +21,7 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
     /// <param name="reply">Answer to expect.</param>
     /// <param name="loadpoint">The full loadpoint definition.</param>
     /// <param name="requests">The current list of all requests.</param>
-    protected void CreateFrequencyRequests(string command, string reply, Loadpoint loadpoint, List<SerialPortRequest> requests)
+    protected void CreateFrequencyRequests(string command, string reply, TargetLoadpoint loadpoint, List<SerialPortRequest> requests)
     {
         var request = new StringBuilder(command);
 
@@ -44,7 +44,7 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
     /// <param name="reply">Reply to expect.</param>
     /// <param name="loadpoint">The full loadpoint definition.</param>
     /// <param name="requests">The current list of all requests.</param>
-    protected void CreateVoltageRequests(string command, string reply, Loadpoint loadpoint, List<SerialPortRequest> requests)
+    protected void CreateVoltageRequests(string command, string reply, TargetLoadpoint loadpoint, List<SerialPortRequest> requests)
     {
         var request = new StringBuilder(command);
 
@@ -90,7 +90,7 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
     /// <param name="reply">Reply to expect.</param>
     /// <param name="loadpoint">The full loadpoint definition.</param>
     /// <param name="requests">The current list of all requests.</param>
-    protected void CreateCurrentRequests(string command, string reply, Loadpoint loadpoint, List<SerialPortRequest> requests)
+    protected void CreateCurrentRequests(string command, string reply, TargetLoadpoint loadpoint, List<SerialPortRequest> requests)
     {
         var request = new StringBuilder(command);
 
@@ -138,7 +138,7 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
     /// <param name="reply">Reply to expect.</param>
     /// <param name="loadpoint">The full loadpoint definition.</param>
     /// <param name="requests">The current list of all requests.</param>
-    protected void CreatePhaseRequests(string command, string reply, Loadpoint loadpoint, List<SerialPortRequest> requests)
+    protected void CreatePhaseRequests(string command, string reply, TargetLoadpoint loadpoint, List<SerialPortRequest> requests)
     {
         var request = new StringBuilder(command);
 
@@ -168,10 +168,10 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
         requests.Add(SerialPortRequest.Create(request.ToString(), reply));
     }
 
-    protected static Loadpoint ConvertFromIECtoDin(Loadpoint loadpoint)
+    protected static TargetLoadpoint ConvertFromIECtoDin(TargetLoadpoint loadpoint)
     {
         // Not manipulating the original loadpoint object
-        Loadpoint result = DeepCopy(loadpoint);
+        TargetLoadpoint result = DeepCopy(loadpoint);
 
         var firstActiveVoltagePhase = loadpoint.Phases.FindIndex(p => p.Voltage.On);
 
@@ -180,7 +180,7 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
         return result;
     }
 
-    private static void ConvertAngles(Loadpoint loadpoint, int firstActiveVoltagePhase)
+    private static void ConvertAngles(TargetLoadpoint loadpoint, int firstActiveVoltagePhase)
     {
         foreach (var phase in loadpoint.Phases)
         {

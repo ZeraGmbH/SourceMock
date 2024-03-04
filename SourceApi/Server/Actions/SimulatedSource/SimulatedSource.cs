@@ -65,10 +65,10 @@ namespace SourceApi.Actions.Source
         #endregion
 
         private SimulatedSourceState? _simulatedSourceState;
-        private Loadpoint? _loadpoint;
+        private TargetLoadpoint? _loadpoint;
 
         /// <inheritdoc/>
-        public Task<SourceApiErrorCodes> SetLoadpoint(Loadpoint loadpoint)
+        public Task<SourceApiErrorCodes> SetLoadpoint(TargetLoadpoint loadpoint)
         {
             var isValid = SourceCapabilityValidator.IsValid(loadpoint, _sourceCapabilities);
 
@@ -98,7 +98,7 @@ namespace SourceApi.Actions.Source
         }
 
         /// <inheritdoc/>
-        public Loadpoint? GetCurrentLoadpoint() => _loadpoint;
+        public TargetLoadpoint? GetCurrentLoadpoint() => _loadpoint;
 
         public Task<SourceCapabilities> GetCapabilities() => Task.FromResult(_sourceCapabilities);
 

@@ -36,7 +36,7 @@ public class RefMeterMockTest
     {
         RefMeterMock refMeterMock = new(Services);
 
-        MeasureOutput measureOutput = refMeterMock.GetActualValues().Result;
+        MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues().Result;
 
         Assert.That(measureOutput.Frequency, Is.EqualTo(0));
     }
@@ -51,11 +51,11 @@ public class RefMeterMockTest
         double voltageAngle = 5;
 
         SourceMock.Setup(s => s.GetCurrentLoadpoint()).Returns(
-            new Loadpoint()
+            new TargetLoadpoint()
             {
                 Frequency = new() { Value = frequencyValue },
-                Phases = new List<PhaseLoadpoint>(){
-                    new PhaseLoadpoint(){
+                Phases = new List<TargetLoadpointPhase>(){
+                    new TargetLoadpointPhase(){
                         Current = new(){AcComponent = new() {Rms=current, Angle=currentAngle}, On=true},
                         Voltage = new(){AcComponent = new() {Rms=voltage, Angle=voltageAngle}, On=true}
                     }
@@ -66,21 +66,20 @@ public class RefMeterMockTest
         SourceMock.Setup(s => s.CurrentSwitchedOffForDosage()).ReturnsAsync(false);
 
         RefMeterMock refMeterMock = new(Services);
-        MeasureOutput measureOutput = refMeterMock.GetActualValues().Result;
+        MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues().Result;
 
         Assert.That(measureOutput.Frequency, Is.InRange(GetMinValue(frequencyValue, 0.0002), GetMaxValue(frequencyValue, 0.0002)));
-        Assert.That(measureOutput.Phases[0].Current, Is.InRange(GetMinValue(current, 0.0001), GetMaxValue(current, 0.0001)));
-
-        Assert.That(measureOutput.Phases[0].AngleCurrent, Is.InRange(GetAbsoluteMinValue(currentAngle, 0.1), GetAbsoluteMaxValue(current, 0.1)));
-        Assert.That(measureOutput.Phases[0].Voltage, Is.InRange(GetMinValue(voltage, 0.0005), GetMaxValue(voltage, 0.0005)));
-        Assert.That(measureOutput.Phases[0].AngleVoltage, Is.InRange(GetAbsoluteMinValue(voltageAngle, 0.1), GetAbsoluteMaxValue(voltageAngle, 0.1)));
+        Assert.That(measureOutput.Phases[0].Current.AcComponent.Rms, Is.InRange(GetMinValue(current, 0.0001), GetMaxValue(current, 0.0001)));
+        Assert.That(measureOutput.Phases[0].Current.AcComponent.Angle, Is.InRange(GetAbsoluteMinValue(currentAngle, 0.1), GetAbsoluteMaxValue(current, 0.1)));
+        Assert.That(measureOutput.Phases[0].Voltage.AcComponent.Rms, Is.InRange(GetMinValue(voltage, 0.0005), GetMaxValue(voltage, 0.0005)));
+        Assert.That(measureOutput.Phases[0].Voltage.AcComponent.Angle, Is.InRange(GetAbsoluteMinValue(voltageAngle, 0.1), GetAbsoluteMaxValue(voltageAngle, 0.1)));
     }
 
     [Test]
     public void Transfers_Data_Correctly_To_Measure_Output()
     {
         // Arrange
-        Loadpoint lp = RefMeterMockTestData.Loadpoint_OnlyActivePower;
+        TargetLoadpoint lp = RefMeterMockTestData.Loadpoint_OnlyActivePower;
 
         // Act
         var mo = RefMeterMock.CalcMeasureOutput(lp);
@@ -90,27 +89,27 @@ public class RefMeterMockTest
 
         Assert.That(mo.Phases.Count, Is.EqualTo(3));
 
-        Assert.That(mo.Phases[0].Voltage, Is.EqualTo(230).Within(double.Epsilon));
-        Assert.That(mo.Phases[0].AngleVoltage, Is.EqualTo(0).Within(double.Epsilon));
-        Assert.That(mo.Phases[0].Current, Is.EqualTo(100).Within(double.Epsilon));
-        Assert.That(mo.Phases[0].AngleCurrent, Is.EqualTo(0).Within(double.Epsilon));
+        Assert.That(mo.Phases[0].Voltage.AcComponent.Rms, Is.EqualTo(230).Within(double.Epsilon));
+        Assert.That(mo.Phases[0].Voltage.AcComponent.Angle, Is.EqualTo(0).Within(double.Epsilon));
+        Assert.That(mo.Phases[0].Current.AcComponent.Rms, Is.EqualTo(100).Within(double.Epsilon));
+        Assert.That(mo.Phases[0].Current.AcComponent.Angle, Is.EqualTo(0).Within(double.Epsilon));
 
-        Assert.That(mo.Phases[1].Voltage, Is.EqualTo(235).Within(double.Epsilon));
-        Assert.That(mo.Phases[1].AngleVoltage, Is.EqualTo(120).Within(double.Epsilon));
-        Assert.That(mo.Phases[1].Current, Is.EqualTo(80).Within(double.Epsilon));
-        Assert.That(mo.Phases[1].AngleCurrent, Is.EqualTo(120).Within(double.Epsilon));
+        Assert.That(mo.Phases[1].Voltage.AcComponent.Rms, Is.EqualTo(235).Within(double.Epsilon));
+        Assert.That(mo.Phases[1].Voltage.AcComponent.Angle, Is.EqualTo(120).Within(double.Epsilon));
+        Assert.That(mo.Phases[1].Current.AcComponent.Rms, Is.EqualTo(80).Within(double.Epsilon));
+        Assert.That(mo.Phases[1].Current.AcComponent.Angle, Is.EqualTo(120).Within(double.Epsilon));
 
-        Assert.That(mo.Phases[2].Voltage, Is.EqualTo(240).Within(double.Epsilon));
-        Assert.That(mo.Phases[2].AngleVoltage, Is.EqualTo(240).Within(double.Epsilon));
-        Assert.That(mo.Phases[2].Current, Is.EqualTo(60).Within(double.Epsilon));
-        Assert.That(mo.Phases[2].AngleCurrent, Is.EqualTo(240).Within(double.Epsilon));
+        Assert.That(mo.Phases[2].Voltage.AcComponent.Rms, Is.EqualTo(240).Within(double.Epsilon));
+        Assert.That(mo.Phases[2].Voltage.AcComponent.Angle, Is.EqualTo(240).Within(double.Epsilon));
+        Assert.That(mo.Phases[2].Current.AcComponent.Rms, Is.EqualTo(60).Within(double.Epsilon));
+        Assert.That(mo.Phases[2].Current.AcComponent.Angle, Is.EqualTo(240).Within(double.Epsilon));
     }
 
     [Test]
     public void Calculates_Measure_Output_Correctly_Only_Active_Power()
     {
         // Arrange
-        Loadpoint lp = RefMeterMockTestData.Loadpoint_OnlyActivePower;
+        TargetLoadpoint lp = RefMeterMockTestData.Loadpoint_OnlyActivePower;
 
         // Act
         var mo = RefMeterMock.CalcMeasureOutput(lp);
@@ -137,7 +136,7 @@ public class RefMeterMockTest
     public void Calculates_Measure_Output_Correctly_Only_Rective_Power()
     {
         // Arrange
-        Loadpoint lp = RefMeterMockTestData.Loadpoint_OnlyReactivePower;
+        TargetLoadpoint lp = RefMeterMockTestData.Loadpoint_OnlyReactivePower;
 
         // Act
         var mo = RefMeterMock.CalcMeasureOutput(lp);
@@ -164,7 +163,7 @@ public class RefMeterMockTest
     public void Calculates_Measure_Output_Correctly_Active_Rective_Mixed_Power()
     {
         // Arrange
-        Loadpoint lp = RefMeterMockTestData.Loadpoint_CosPhi0_5;
+        TargetLoadpoint lp = RefMeterMockTestData.Loadpoint_CosPhi0_5;
 
         // Act
         var mo = RefMeterMock.CalcMeasureOutput(lp);
@@ -216,7 +215,7 @@ public class RefMeterMockTest
     public void Will_Calculate_Phase_Order(double angle0, double angle1, double angle2, string phaseOrder)
     {
         // Arrange
-        var lp = new Loadpoint()
+        var lp = new TargetLoadpoint()
         {
             Frequency = new() { Value = 50 },
             Phases = [

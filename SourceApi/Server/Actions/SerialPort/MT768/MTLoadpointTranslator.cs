@@ -14,7 +14,7 @@ public class MTLoadpointTranslator : LoadpointTranslator
     /// </summary>
     /// <param name="loadpoint">Some already validated loadpoint.</param>
     /// <returns>Sequence of requests to send as a single transaction.</returns>
-    public override SerialPortRequest[] ToSerialPortRequests(Loadpoint loadpoint)
+    public override SerialPortRequest[] ToSerialPortRequests(TargetLoadpoint loadpoint)
     {
         var loadpointDIN = ConvertFromIECtoDin(loadpoint);
         var requests = new List<SerialPortRequest>();

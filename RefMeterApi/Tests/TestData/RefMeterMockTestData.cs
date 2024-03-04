@@ -4,7 +4,7 @@ namespace RefMeterApiTests;
 
 public static class RefMeterMockTestData {
 
-    public static Loadpoint Loadpoint_OnlyActivePower { get {
+    public static TargetLoadpoint Loadpoint_OnlyActivePower { get {
         return new() {
             Phases = new() {
                 new() {
@@ -65,7 +65,7 @@ public static class RefMeterMockTestData {
         };
     }}
 
-    public static Loadpoint Loadpoint_OnlyReactivePower { get {
+    public static TargetLoadpoint Loadpoint_OnlyReactivePower { get {
         return new() {
             Phases = new() {
                 new() {
@@ -125,7 +125,7 @@ public static class RefMeterMockTestData {
         };
     }}
 
-    public static Loadpoint Loadpoint_CosPhi0_5{ get {
+    public static TargetLoadpoint Loadpoint_CosPhi0_5{ get {
         return new() {
             Phases = new() {
                 new() {

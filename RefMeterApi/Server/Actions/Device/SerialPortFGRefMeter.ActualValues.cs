@@ -1,13 +1,14 @@
 using System.Text.RegularExpressions;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SourceApi.Model;
 
 namespace RefMeterApi.Actions.Device;
 
 partial class SerialPortFGRefMeter
 {
     /// <inheritdoc/>
-    public async Task<MeasureOutput> GetActualValues(int firstActiveCurrentPhase = -1)
+    public async Task<MeasuredLoadpoint> GetActualValues(int firstActiveCurrentPhase = -1)
     {
         TestConfigured();
 
@@ -57,7 +58,7 @@ partial class SerialPortFGRefMeter
         var voltage3Angle = double.Parse(awRequest.EndMatch!.Groups[5].Value);
         var current3Angle = double.Parse(awRequest.EndMatch!.Groups[6].Value);
 
-        MeasureOutput result = new()
+        MeasuredLoadpoint result = new()
         {
             ActivePower = active1 + active2 + active3,
             ApparentPower = apparent1 + apparent2 + apparent3,
@@ -66,32 +67,62 @@ partial class SerialPortFGRefMeter
             PhaseOrder = voltage2Angle < voltage3Angle ? "123" : "132",
             Phases = {
                 new() {
+                    Current = new() {
+                      DcComponent = 0,
+                      AcComponent = new() {
+                        Rms = current1,
+                        Angle = current1Angle,
+                      }, 
+                    },
+                    Voltage = new() {
+                        DcComponent = 0,
+                        AcComponent = new() {
+                            Rms = voltage1,
+                            Angle = voltage1Angle,
+                        },
+                    },
                     ActivePower = active1,
-                    AngleCurrent = current1Angle,
-                    AngleVoltage = voltage1Angle,
                     ApparentPower = apparent1,
-                    Current = current1,
                     PowerFactor = apparent1 == 0 ? null : active1/apparent1,
                     ReactivePower = reactive1,
-                    Voltage = voltage1,
                 }, new() {
+                    Current = new() {
+                      DcComponent = 0,
+                      AcComponent = new() {
+                        Rms = current2,
+                        Angle = current2Angle,
+                      }, 
+                    },
+                    Voltage = new() {
+                        DcComponent = 0,
+                        AcComponent = new() {
+                            Rms = voltage2,
+                            Angle = voltage2Angle,
+                        },
+                    },
                     ActivePower = active2,
-                    AngleCurrent = current2Angle,
-                    AngleVoltage = voltage2Angle,
                     ApparentPower = apparent2,
-                    Current = current2,
                     PowerFactor = apparent2 == 0 ? null : active2/apparent2,
                     ReactivePower = reactive2,
-                    Voltage = voltage2,
                 }, new() {
+                    Current = new() {
+                      DcComponent = 0,
+                      AcComponent = new() {
+                        Rms = current3,
+                        Angle = current3Angle,
+                      }, 
+                    },
+                    Voltage = new() {
+                        DcComponent = 0,
+                        AcComponent = new() {
+                            Rms = voltage3,
+                            Angle = voltage3Angle,
+                        },
+                    },
                     ActivePower = active3,
-                    AngleCurrent = current3Angle,
-                    AngleVoltage = voltage3Angle,
                     ApparentPower = apparent3,
-                    Current = current3,
                     PowerFactor = apparent3 == 0 ? null : active3/apparent3,
                     ReactivePower = reactive3,
-                    Voltage = voltage3,
                 }
             }
         };

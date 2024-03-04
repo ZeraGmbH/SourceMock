@@ -9,7 +9,7 @@ namespace SourceApi.Actions.VeinSource
     /// </summary>
     public static class VeinLoadpointMapper
     {
-        public static JObject ConvertToZeraJson(Loadpoint inLoadpoint)
+        public static JObject ConvertToZeraJson(TargetLoadpoint inLoadpoint)
         {
             JObject ret = new();
             JObject frequency = new();
@@ -33,9 +33,9 @@ namespace SourceApi.Actions.VeinSource
             return ret;
         }
 
-        public static Loadpoint ConvertToLoadpoint(string zeraJson)
+        public static TargetLoadpoint ConvertToLoadpoint(string zeraJson)
         {
-            Loadpoint ret = new();
+            TargetLoadpoint ret = new();
             JObject json = JObject.Parse(zeraJson);
 
             ret.Frequency.Mode = MapFrequencyTypeToMode(json["Frequency"]?["type"]?.ToString() ?? "");
@@ -44,7 +44,7 @@ namespace SourceApi.Actions.VeinSource
             int counter = 0;
             while (json.ContainsKey($"I{counter + 1}"))
             {
-                if (ret.Phases.Count <= counter) ret.Phases.Add(new PhaseLoadpoint());
+                if (ret.Phases.Count <= counter) ret.Phases.Add(new TargetLoadpointPhase());
                 ret.Phases[counter].Current.AcComponent.Rms = json[$"I{counter + 1}"]?["rms"]?.ToObject<double>() ?? 0;
                 ret.Phases[counter].Current.AcComponent.Angle = json[$"I{counter + 1}"]?["angle"]?.ToObject<double>() ?? 0;
                 ret.Phases[counter].Current.On = json[$"I{counter + 1}"]?["on"]?.ToObject<bool>() ?? false;
@@ -54,7 +54,7 @@ namespace SourceApi.Actions.VeinSource
             counter = 0;
             while (json.ContainsKey($"U{counter + 1}"))
             {
-                if (ret.Phases.Count <= counter) ret.Phases.Add(new PhaseLoadpoint());
+                if (ret.Phases.Count <= counter) ret.Phases.Add(new TargetLoadpointPhase());
                 ret.Phases[counter].Voltage.AcComponent.Rms = json[$"U{counter + 1}"]?["rms"]?.ToObject<double>() ?? 0;
                 ret.Phases[counter].Voltage.AcComponent.Angle = json[$"U{counter + 1}"]?["angle"]?.ToObject<double>() ?? 0;
                 ret.Phases[counter].Voltage.On = json[$"U{counter + 1}"]?["on"]?.ToObject<bool>() ?? false;

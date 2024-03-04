@@ -68,7 +68,7 @@ namespace SourceApi.Controllers
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "SetLoadpoint")]
-        public async Task<ActionResult> SetLoadpoint([FromBody] Loadpoint loadpoint)
+        public async Task<ActionResult> SetLoadpoint([FromBody] TargetLoadpoint loadpoint)
         {
             _logger.LogTrace($"Loadpoint to be set: {loadpoint}");
 
@@ -140,7 +140,7 @@ namespace SourceApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [SwaggerOperation(OperationId = "GetLoadpoint")]
-        public ActionResult<Loadpoint> GetCurrentLoadpoint()
+        public ActionResult<TargetLoadpoint> GetCurrentLoadpoint()
         {
             var loadpoint = _source.GetCurrentLoadpoint();
 

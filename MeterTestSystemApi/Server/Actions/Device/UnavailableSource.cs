@@ -19,7 +19,7 @@ internal class UnavailableSource : ISource
 
     public Task<SourceCapabilities> GetCapabilities() => Task.FromResult<SourceCapabilities>(null!);
 
-    public Loadpoint? GetCurrentLoadpoint() => throw new SourceNotReadyException();
+    public TargetLoadpoint? GetCurrentLoadpoint() => throw new SourceNotReadyException();
 
     public Task<double[]> GetCurrentRanges() => throw new NotImplementedException();
 
@@ -31,7 +31,7 @@ internal class UnavailableSource : ISource
 
     public Task SetDosageMode(bool on) => throw new SourceNotReadyException();
 
-    public Task<SourceApiErrorCodes> SetLoadpoint(Loadpoint loadpoint) => throw new SourceNotReadyException();
+    public Task<SourceApiErrorCodes> SetLoadpoint(TargetLoadpoint loadpoint) => throw new SourceNotReadyException();
 
     public Task StartDosage() => throw new SourceNotReadyException();
 

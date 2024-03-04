@@ -23,7 +23,7 @@ namespace SourceApi.Actions.Source
         /// </summary>
         /// <param name="loadpoint">The loadpoint to be set.</param>
         /// <returns>The corresponding value of <see cref="SourceApiErrorCodes"/> with regard to the success of the operation.</returns>
-        public Task<SourceApiErrorCodes> SetLoadpoint(Loadpoint loadpoint);
+        public Task<SourceApiErrorCodes> SetLoadpoint(TargetLoadpoint loadpoint);
 
         /// <summary>
         /// Turns off the source.
@@ -35,7 +35,7 @@ namespace SourceApi.Actions.Source
         /// Gets the currently set loadpoint.
         /// </summary>
         /// <returns>The loadpoint, null if none was set.</returns>
-        public Loadpoint? GetCurrentLoadpoint();
+        public TargetLoadpoint? GetCurrentLoadpoint();
 
         /// <summary>
         /// Reports information on the active loadpoint.

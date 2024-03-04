@@ -38,7 +38,7 @@ public class RefMeterController(IRefMeter device) : ControllerBase
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<MeasureOutput>> GetActualValues() =>
+    public Task<ActionResult<MeasuredLoadpoint>> GetActualValues() =>
         ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetActualValues());
 
     /// <summary>

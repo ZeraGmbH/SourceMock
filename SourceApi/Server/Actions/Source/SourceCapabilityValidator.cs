@@ -7,7 +7,7 @@ namespace SourceApi.Actions.Source
     /// </summary>
     public static class SourceCapabilityValidator
     {
-        public static SourceApiErrorCodes IsValid(Loadpoint loadpoint, SourceCapabilities capabilities)
+        public static SourceApiErrorCodes IsValid(TargetLoadpoint loadpoint, SourceCapabilities capabilities)
         {
             if (CheckNumberOfPhasesAreEqual(loadpoint, capabilities))
                 return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES;
@@ -27,7 +27,7 @@ namespace SourceApi.Actions.Source
             return SourceApiErrorCodes.SUCCESS;
         }
 
-        private static bool CheckNumberOfPhasesAreEqual(Loadpoint loadpoint, SourceCapabilities capabilities)
+        private static bool CheckNumberOfPhasesAreEqual(TargetLoadpoint loadpoint, SourceCapabilities capabilities)
         {
             return
                 loadpoint.Phases.Count() != capabilities.Phases.Count;
@@ -41,7 +41,7 @@ namespace SourceApi.Actions.Source
             return SourceApiErrorCodes.SUCCESS;
         }
 
-        private static SourceApiErrorCodes CheckCurrents(Loadpoint loadpoint, SourceCapabilities capabilities)
+        private static SourceApiErrorCodes CheckCurrents(TargetLoadpoint loadpoint, SourceCapabilities capabilities)
         {
             for (int i = 0; i < loadpoint.Phases.Count; ++i)
             {
@@ -68,7 +68,7 @@ namespace SourceApi.Actions.Source
             return SourceApiErrorCodes.SUCCESS;
         }
 
-        private static SourceApiErrorCodes CheckVoltages(Loadpoint loadpoint, SourceCapabilities capabilities)
+        private static SourceApiErrorCodes CheckVoltages(TargetLoadpoint loadpoint, SourceCapabilities capabilities)
         {
             for (int i = 0; i < loadpoint.Phases.Count; ++i)
             {
@@ -94,7 +94,7 @@ namespace SourceApi.Actions.Source
             return SourceApiErrorCodes.SUCCESS;
         }
 
-        private static SourceApiErrorCodes CheckFrequencies(Loadpoint loadpoint, SourceCapabilities capabilities)
+        private static SourceApiErrorCodes CheckFrequencies(TargetLoadpoint loadpoint, SourceCapabilities capabilities)
         {
             if (loadpoint.Frequency.Mode != FrequencyMode.SYNTHETIC)
                 return SourceApiErrorCodes.SUCCESS;

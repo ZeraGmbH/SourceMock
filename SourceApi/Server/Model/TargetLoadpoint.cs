@@ -4,16 +4,8 @@ namespace SourceApi.Model
     /// Describes a specific loadpoint.
     /// </summary>
     [Serializable]
-    public class Loadpoint
+    public class TargetLoadpoint : AbstractLoadpoint<TargetLoadpointPhase, ActivatableElectricalQuantity>
     {
-        private const double MINIMUM_ANGLE = 0;
-        private const double MAXIMUM_ANGLE = 360;
-
-        /// <summary>
-        /// The phases of this loadpoint.
-        /// </summary>
-        public List<PhaseLoadpoint> Phases { get; set; } = [];
-
         /// <summary>
         /// Determines whether or not the voltages neutral conductor is to be connected.
         /// </summary>

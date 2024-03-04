@@ -14,10 +14,10 @@ public static class Utils
     /// <param name="measureOutput"></param>
     /// <param name="firstPhaseAngle"></param>
     /// <returns></returns>
-    public static MeasureOutput ConvertFromDINtoIEC(MeasureOutput measureOutput, int firstPhaseAngle)
+    public static MeasuredLoadpoint ConvertFromDINtoIEC(MeasuredLoadpoint measureOutput, int firstPhaseAngle)
     {
         // Not manipulating the original measureOutput object
-        MeasureOutput result = DeepCopy(measureOutput);
+        MeasuredLoadpoint result = DeepCopy(measureOutput);
 
         ConvertAngles(result, firstPhaseAngle);
 
@@ -32,13 +32,13 @@ public static class Utils
     /// <returns>a clone of the object</returns>
     private static T DeepCopy<T>(T self) => JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(self))!;
 
-    private static void ConvertAngles(MeasureOutput measureOutput, int firstPhaseAngle)
+    private static void ConvertAngles(MeasuredLoadpoint measureOutput, int firstPhaseAngle)
     {
         // reverse all angles
         foreach (var phase in measureOutput.Phases)
         {
-            phase.AngleVoltage = (360 - phase.AngleVoltage) % 360;
-            phase.AngleCurrent = (360 - phase.AngleCurrent) % 360;
+            phase.Voltage.AcComponent.Angle = (360 - phase.Voltage.AcComponent.Angle) % 360;
+            phase.Current.AcComponent.Angle = (360 - phase.Current.AcComponent.Angle) % 360;
         };
 
         // All current phases are off
@@ -46,7 +46,7 @@ public static class Utils
             return;
 
         // get the current angle of the first phase, that is on
-        var angle = measureOutput.Phases[firstPhaseAngle].AngleCurrent;
+        var angle = measureOutput.Phases[firstPhaseAngle].Current.AcComponent.Angle;
 
         // reference angle is already 0°
         if (angle == 0)
@@ -55,8 +55,8 @@ public static class Utils
         // first current angle must be 0°. The rest we add up
         foreach (var phase in measureOutput.Phases)
         {
-            phase.AngleVoltage = (phase.AngleVoltage - angle + 360) % 360;
-            phase.AngleCurrent = (phase.AngleCurrent - angle + 360) % 360;
+            phase.Voltage.AcComponent.Angle = (phase.Voltage.AcComponent.Angle - angle + 360) % 360;
+            phase.Current.AcComponent.Angle = (phase.Current.AcComponent.Angle - angle + 360) % 360;
         }
     }
 }

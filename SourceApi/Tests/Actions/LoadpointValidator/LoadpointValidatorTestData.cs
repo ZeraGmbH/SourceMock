@@ -15,7 +15,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
             }
         }
 
-        public static Loadpoint Loadpoint001_3AC_valid
+        public static TargetLoadpoint Loadpoint001_3AC_valid
         {
             get
             {
@@ -81,7 +81,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
             }
         }
 
-        public static Loadpoint Loadpoint002_2AC_valid
+        public static TargetLoadpoint Loadpoint002_2AC_valid
         {
             get
             {
@@ -131,7 +131,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
             }
         }
 
-        public static Loadpoint Loadpoint003_1AC_valid
+        public static TargetLoadpoint Loadpoint003_1AC_valid
         {
             get
             {
@@ -177,7 +177,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
             }
         }
 
-        public static Loadpoint Loadpoint001_3AC_invalid
+        public static TargetLoadpoint Loadpoint001_3AC_invalid
         {
             get
             {
@@ -243,7 +243,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
             }
         }
 
-        public static Loadpoint Loadpoint002_2AC_invalid
+        public static TargetLoadpoint Loadpoint002_2AC_invalid
         {
             get
             {
@@ -293,7 +293,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
             }
         }
 
-        public static Loadpoint Loadpoint003_1AC_invalid
+        public static TargetLoadpoint Loadpoint003_1AC_invalid
         {
             get
             {

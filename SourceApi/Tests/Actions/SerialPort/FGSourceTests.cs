@@ -53,7 +53,7 @@ public class FGSourceTests
     {
         Assert.That(_source.GetCurrentLoadpoint(), Is.Null);
 
-        var result = await _source.SetLoadpoint(new Model.Loadpoint
+        var result = await _source.SetLoadpoint(new Model.TargetLoadpoint
         {
             Frequency = new()
             {
@@ -97,7 +97,7 @@ public class FGSourceTests
     {
         Assert.That(_source.GetCurrentLoadpoint(), Is.Null);
 
-        var result = await _source.SetLoadpoint(new Model.Loadpoint
+        var result = await _source.SetLoadpoint(new Model.TargetLoadpoint
         {
             Frequency = new()
             {

@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
@@ -14,6 +15,20 @@ namespace SourceApi.Actions.SerialPort;
 /// <param name="logger"></param>
 public class SerialPortConnectionFactory(IServiceProvider services, ILogger<SerialPortConnectionFactory> logger) : ISerialPortConnectionFactory
 {
+    class NullConnection : ISerialPortConnection
+    {
+        public void Dispose()
+        {
+        }
+
+        public Task<string[]>[] Execute(params SerialPortRequest[] requests) =>
+            requests.Select(r => Task.FromException<string[]>(new NotSupportedException())).ToArray();
+
+        public void RegisterEvent(Regex pattern, Action<Match> handler)
+        {
+        }
+    }
+
     private readonly object _sync = new();
 
     private bool _initialized = false;
@@ -42,7 +57,7 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
 
             try
             {
-                if (settings != null)
+                if (settings != null && type.HasValue && type != MeterTestSystemTypes.Mock)
                     switch (settings.ConfigurationType)
                     {
                         case SerialPortConfigurationTypes.Mock:
@@ -70,6 +85,8 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
             }
             finally
             {
+                _connection ??= new NullConnection();
+
                 _initialized = true;
 
                 Monitor.PulseAll(_sync);

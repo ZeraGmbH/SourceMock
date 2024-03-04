@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharedLibrary;
+using SourceApi.Model.Configuration;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MeterTestSystemApi;
@@ -58,13 +59,13 @@ public static class MeterTestSystemApiConfiguration
                 switch (configuration["SerialPort:DeviceType"])
                 {
                     case "FG":
-                        factory.Initialize(new() { MeterTestSystemType = Models.Configuration.MeterTestSystemTypes.FG30x });
+                        factory.Initialize(new() { MeterTestSystemType = MeterTestSystemTypes.FG30x });
                         break;
                     case "MT":
-                        factory.Initialize(new() { MeterTestSystemType = Models.Configuration.MeterTestSystemTypes.MT786 });
+                        factory.Initialize(new() { MeterTestSystemType = MeterTestSystemTypes.MT786 });
                         break;
                     default:
-                        factory.Initialize(new() { MeterTestSystemType = Models.Configuration.MeterTestSystemTypes.Mock });
+                        factory.Initialize(new() { MeterTestSystemType = MeterTestSystemTypes.Mock });
                         break;
                 }
             }

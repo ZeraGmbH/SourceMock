@@ -12,6 +12,7 @@ using SourceApi.Actions.SerialPort;
 using SharedLibrary;
 using SourceApi.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using SourceApi.Model.Configuration;
 
 namespace SourceApi;
 
@@ -57,67 +58,70 @@ public static class SourceApiConfiguration
         services.AddTransient<ISimulatedSource, SimulatedSource>();
         services.AddTransient<ISourceMock, SimulatedSource>();
 
-        /* Database will configure serial ports from settings. */
-        //if (configuration["UseDatabaseConfiguration"] == "yes") return;
-
         /* Legacy configuration from setting files. */
+        var useDatabase = configuration["UseDatabaseConfiguration"] == "yes";
         var deviceType = configuration["SerialPort:DeviceType"];
 
-        switch (configuration["SourceType"])
-        {
-            case "simulated":
-                if (integrated)
-                    services.AddTransient<ISourceMock, SimulatedSource>();
-                else
+        if (!useDatabase)
+            switch (configuration["SourceType"])
+            {
+                case "simulated":
+                    if (integrated) break;
+
                     services.AddSingleton<ISource, SimulatedSource>();
 
-                return;
-            case "vein":
-                if (integrated)
-                    throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
+                    return;
+                case "vein":
+                    if (integrated)
+                        throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
 
-                services.AddSingleton(new VeinClient(new(), "localhost", 8080));
-                services.AddSingleton<VeinSource>();
-                services.AddSingleton<ISource>(x => x.GetRequiredService<VeinSource>());
+                    services.AddSingleton(new VeinClient(new(), "localhost", 8080));
+                    services.AddSingleton<VeinSource>();
+                    services.AddSingleton<ISource>(x => x.GetRequiredService<VeinSource>());
 
-                return;
-            case "serial":
-                if (deviceType != "MT" && deviceType != "FG" && deviceType != "DeviceMock")
-                    throw new NotImplementedException($"Unknown DeviceType: {deviceType}");
+                    return;
+                case "serial":
+                    if (deviceType != "MT" && deviceType != "FG" && deviceType != "DeviceMock")
+                        throw new NotImplementedException($"Unknown DeviceType: {deviceType}");
 
-                if (!integrated)
-                    services.AddSingleton<ISource>(ctx => ctx.GetRequiredService<ISerialPortMTSource>());
+                    if (!integrated)
+                        services.AddSingleton<ISource>(ctx => ctx.GetRequiredService<ISerialPortMTSource>());
 
-                break;
-            default:
-                throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
-        }
-
-        if (deviceType == "DeviceMock") return;
-
-        var usePortMock = configuration["SerialPort:UsePortMock"];
-
-        if (usePortMock == "yes")
-            switch (deviceType)
-            {
-                case "FG":
-                    services.AddSingleton(ctx => SerialPortConnection.FromMock<SerialPortFGMock>(ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
                     break;
                 default:
-                    services.AddSingleton(ctx => SerialPortConnection.FromMock<SerialPortMTMock>(ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
-                    break;
+                    throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
             }
-        else
+
+        services.AddSingleton<ISerialPortConnectionFactory>((ctx) =>
         {
-            var portName = configuration["SerialPort:PortName"];
+            var factory = new SerialPortConnectionFactory(ctx, ctx.GetRequiredService<ILogger<SerialPortConnectionFactory>>());
 
-            if (string.IsNullOrEmpty(portName))
-                throw new NotSupportedException("serial port name must be set if not using serial port mock.");
+            if (!useDatabase)
+            {
+                var portName = configuration["SerialPort:PortName"];
 
-            if (portName.Contains(':'))
-                services.AddSingleton(ctx => SerialPortConnection.FromNetwork(portName, ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
-            else
-                services.AddSingleton(ctx => SerialPortConnection.FromSerialPort(portName, ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
-        }
+                var meterSystemType = deviceType == "FG"
+                    ? MeterTestSystemTypes.FG30x
+                    : deviceType == "MT"
+                    ? MeterTestSystemTypes.MT786
+                    : MeterTestSystemTypes.Mock;
+
+                var configurationType = configuration["SerialPort:UsePortMock"] == "yes"
+                                        ? SerialPortConfigurationTypes.Mock
+                                        : portName?.Contains(':') == true
+                                        ? SerialPortConfigurationTypes.Network
+                                        : SerialPortConfigurationTypes.Device;
+
+                factory.Initialize(meterSystemType, meterSystemType == MeterTestSystemTypes.Mock ? null : new()
+                {
+                    ConfigurationType = configurationType,
+                    EndPoint = portName!
+                });
+            }
+
+            return factory;
+        });
+
+        services.AddTransient(ctx => ctx.GetRequiredService<ISerialPortConnectionFactory>().Connection);
     }
 }

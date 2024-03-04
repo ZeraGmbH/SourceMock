@@ -41,23 +41,39 @@ public static class MeterTestSystemApiConfiguration
     /// <param name="configuration">Overall configuration of the web server.</param>
     public static void UseMeterTestSystemApi(this IServiceCollection services, IConfiguration configuration)
     {
-        /* Create the correct implemetation of the meter test system - only serial port communication is supported. */
+        /* All available implementations by type. */
+        services.AddTransient<FallbackMeteringSystem>();
+        services.AddTransient<MeterTestSystemMock>();
+        services.AddTransient<SerialPortFGMeterTestSystem>();
+        services.AddTransient<SerialPortMTMeterTestSystem>();
+
+        /* Configure the factory. */
         var deviceType = configuration["SerialPort:DeviceType"];
 
-        switch (deviceType)
+        services.AddSingleton<IMeterTestSystemFactory>((ctx) =>
         {
-            case "FG":
-                services.AddSingleton<IMeterTestSystem, SerialPortFGMeterTestSystem>();
-                break;
-            case "MT":
-                services.AddSingleton<IMeterTestSystem, SerialPortMTMeterTestSystem>();
-                break;
-            default:
-                services.AddSingleton<IMeterTestSystem, MeterTestSystemMock>();
-                break;
-        }
+            var factory = new MeterTestSystemFactory(ctx);
 
-        /* Convinient accessors to the source, reference meter and error calculator - transient because these can change when reconfiguring the meter test system. */
+            switch (deviceType)
+            {
+                case "FG":
+                    factory.Inititalize(new() { MeterTestSystemType = Models.Configuration.MeterTestSystemTypes.FG30x });
+                    break;
+                case "MT":
+                    factory.Inititalize(new() { MeterTestSystemType = Models.Configuration.MeterTestSystemTypes.MT786 });
+                    break;
+                default:
+                    factory.Inititalize(new() { MeterTestSystemType = Models.Configuration.MeterTestSystemTypes.Mock });
+                    break;
+            }
+
+            return factory;
+        });
+
+        /* Access meter test system singlon through the factory. */
+        services.AddTransient((ctx) => ctx.GetRequiredService<IMeterTestSystemFactory>().MeterTestSystem);
+
+        /* Convenient accessors to the source, reference meter and error calculator - transient because these can change when reconfiguring the meter test system. */
         services.AddTransient(di => di.GetRequiredService<IMeterTestSystem>().ErrorCalculator);
         services.AddTransient(di => di.GetRequiredService<IMeterTestSystem>().RefMeter);
         services.AddTransient(di => di.GetRequiredService<IMeterTestSystem>().Source);

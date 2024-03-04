@@ -52,6 +52,15 @@ public static class SourceApiConfiguration
     {
         services.AddSingleton<ICapabilitiesMap, CapabilitiesMap>();
 
+        services.AddTransient<ISerialPortFGSource, SerialPortFGSource>();
+        services.AddTransient<ISerialPortMTSource, SerialPortMTSource>();
+        services.AddTransient<ISimulatedSource, SimulatedSource>();
+        services.AddTransient<ISourceMock, SimulatedSource>();
+
+        /* Database will configure serial ports from settings. */
+        //if (configuration["UseDatabaseConfiguration"] == "yes") return;
+
+        /* Legacy configuration from setting files. */
         var deviceType = configuration["SerialPort:DeviceType"];
 
         switch (configuration["SourceType"])
@@ -78,46 +87,37 @@ public static class SourceApiConfiguration
 
                 if (!integrated)
                     services.AddSingleton<ISource>(ctx => ctx.GetRequiredService<ISerialPortMTSource>());
-                else
-                {
-                    services.AddTransient<ISerialPortFGSource, SerialPortFGSource>();
-                    services.AddTransient<ISerialPortMTSource, SerialPortMTSource>();
-
-                    services.AddTransient<ISimulatedSource, SimulatedSource>();
-                    services.AddTransient<ISourceMock, SimulatedSource>();
-                }
 
                 break;
             default:
                 throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
         }
 
-        if (deviceType != "DeviceMock")
-        {
-            var usePortMock = configuration["SerialPort:UsePortMock"];
+        if (deviceType == "DeviceMock") return;
 
-            if (usePortMock == "yes")
-                switch (deviceType)
-                {
-                    case "FG":
-                        services.AddSingleton(ctx => SerialPortConnection.FromMock<SerialPortFGMock>(ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
-                        break;
-                    default:
-                        services.AddSingleton(ctx => SerialPortConnection.FromMock<SerialPortMTMock>(ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
-                        break;
-                }
-            else
+        var usePortMock = configuration["SerialPort:UsePortMock"];
+
+        if (usePortMock == "yes")
+            switch (deviceType)
             {
-                var portName = configuration["SerialPort:PortName"];
-
-                if (string.IsNullOrEmpty(portName))
-                    throw new NotSupportedException("serial port name must be set if not using serial port mock.");
-
-                if (portName.Contains(':'))
-                    services.AddSingleton(ctx => SerialPortConnection.FromNetwork(portName, ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
-                else
-                    services.AddSingleton(ctx => SerialPortConnection.FromSerialPort(portName, ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
+                case "FG":
+                    services.AddSingleton(ctx => SerialPortConnection.FromMock<SerialPortFGMock>(ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
+                    break;
+                default:
+                    services.AddSingleton(ctx => SerialPortConnection.FromMock<SerialPortMTMock>(ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
+                    break;
             }
+        else
+        {
+            var portName = configuration["SerialPort:PortName"];
+
+            if (string.IsNullOrEmpty(portName))
+                throw new NotSupportedException("serial port name must be set if not using serial port mock.");
+
+            if (portName.Contains(':'))
+                services.AddSingleton(ctx => SerialPortConnection.FromNetwork(portName, ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
+            else
+                services.AddSingleton(ctx => SerialPortConnection.FromSerialPort(portName, ctx.GetRequiredService<ILogger<ISerialPortConnection>>()));
         }
     }
 }

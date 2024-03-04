@@ -10,12 +10,11 @@ namespace MeterTestSystemApi.Models.Configuration;
 public class SerialPortConfiguration
 {
     /// <summary>
-    /// Set to connect using a network to serial port
-    /// mapper.
+    /// Type of the impmentation to use.
     /// </summary>
     [NotNull, Required]
-    [BsonElement("useNet")]
-    public bool UseNetwork { get; set; }
+    [BsonElement("type")]
+    public SerialPortConfigurationTypes ConfigurationType { get; set; }
 
     /// <summary>
     /// Endpoint to connect to - either the name/path to a

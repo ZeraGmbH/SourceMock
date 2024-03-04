@@ -36,16 +36,16 @@ namespace SourceApi.Tests.Actions.Source
                 {
                     Phases = new() {
                         new() {
-                            Voltage = new(10, 300, 0.01),
-                            Current = new(0, 60, 0.01)
+                            AcVoltage = new(10, 300, 0.01),
+                            AcCurrent = new(0, 60, 0.01)
                         },
                         new() {
-                            Voltage = new(10, 300, 0.01),
-                            Current = new(0, 60, 0.01)
+                            AcVoltage = new(10, 300, 0.01),
+                            AcCurrent = new(0, 60, 0.01)
                         },
                         new() {
-                            Voltage = new(10, 300, 0.01),
-                            Current = new(0, 60, 0.01)
+                            AcVoltage = new(10, 300, 0.01),
+                            AcCurrent = new(0, 60, 0.01)
                         }
                     },
                     FrequencyRanges = new() {
@@ -63,12 +63,12 @@ namespace SourceApi.Tests.Actions.Source
                 {
                     Phases = new() {
                         new() {
-                            Voltage = new(10, 300, 0.01),
-                            Current = new(0, 60, 0.01)
+                            AcVoltage = new(10, 300, 0.01),
+                            AcCurrent = new(0, 60, 0.01)
                         },
                         new() {
-                            Voltage = new(10, 300, 0.01),
-                            Current = new(0, 60, 0.01)
+                            AcVoltage = new(10, 300, 0.01),
+                            AcCurrent = new(0, 60, 0.01)
                         }
                     },
                     FrequencyRanges = new() {
@@ -86,8 +86,8 @@ namespace SourceApi.Tests.Actions.Source
                 {
                     Phases = new() {
                         new() {
-                            Voltage = new(10, 300, 0.01),
-                            Current = new(0, 60, 0.01)
+                            AcVoltage = new(10, 300, 0.01),
+                            AcCurrent = new(0, 60, 0.01)
                         }
                     },
                     FrequencyRanges = new() {

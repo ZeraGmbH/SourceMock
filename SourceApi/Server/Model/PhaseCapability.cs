@@ -3,13 +3,23 @@ namespace SourceApi.Model
     public class PhaseCapability
     {
         /// <summary>
-        /// The voltage range and quantisation this source is able to provide.
+        /// The AC voltage range and quantisation this source is able to provide.
         /// </summary>
-        public QuantizedRange Voltage { get; set; } = new();
+        public QuantizedRange AcVoltage { get; set; } = new();
 
         /// <summary>
-        /// The current range and quantisation this source is able to provide.
+        /// The AC current range and quantisation this source is able to provide.
         /// </summary>
-        public QuantizedRange Current { get; set; } = new();
+        public QuantizedRange AcCurrent { get; set; } = new();
+
+        /// <summary>
+        /// The DC voltage range and quantisation this source is able to provide.
+        /// </summary>
+        public QuantizedRange DcVoltage { get; set; } = new();
+
+        /// <summary>
+        /// The DC current range and quantisation this source is able to provide.
+        /// </summary>
+        public QuantizedRange DcCurrent { get; set; } = new();
     }
 }

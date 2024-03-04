@@ -49,8 +49,8 @@ namespace SourceApi.Actions.Source
 
                 if (current?.On != true) continue;
 
-                var actualRms = current.Rms;
-                var allowedRange = capabilities.Phases[i].Current;
+                var actualRms = current.AcComponent.Rms;
+                var allowedRange = capabilities.Phases[i].AcCurrent;
 
                 if (!allowedRange.IsIncluded(actualRms))
                     return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
@@ -58,10 +58,10 @@ namespace SourceApi.Actions.Source
                 var firstActive = loadpoint.Phases.FirstOrDefault(p => p.Current?.On == true);
 
                 // IEC norm expects the first active current to be 0°
-                if (firstActive != null && firstActive.Current.Angle != 0)
+                if (firstActive != null && firstActive.Current.AcComponent.Angle != 0)
                     return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
 
-                var isAngleValue = CheckAngle(current.Angle);
+                var isAngleValue = CheckAngle(current.AcComponent.Angle);
                 if (isAngleValue != SourceApiErrorCodes.SUCCESS)
                     return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
             }
@@ -73,20 +73,20 @@ namespace SourceApi.Actions.Source
             for (int i = 0; i < loadpoint.Phases.Count; ++i)
             {
                 // Is a current-only source
-                if (capabilities.Phases[i].Voltage == null)
+                if (capabilities.Phases[i].AcVoltage == null)
                     continue;
 
                 var voltage = loadpoint.Phases[i].Voltage;
 
                 if (voltage?.On != true) continue;
 
-                var actualRms = voltage.Rms;
-                var allowedRange = capabilities.Phases[i].Voltage;
+                var actualRms = voltage.AcComponent.Rms;
+                var allowedRange = capabilities.Phases[i].AcVoltage;
 
                 if (!allowedRange.IsIncluded(actualRms))
                     return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID;
 
-                var isAngleValue = CheckAngle(voltage.Angle);
+                var isAngleValue = CheckAngle(voltage.AcComponent.Angle);
                 if (isAngleValue != SourceApiErrorCodes.SUCCESS)
                     return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
             }

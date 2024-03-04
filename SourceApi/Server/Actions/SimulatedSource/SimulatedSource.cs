@@ -34,16 +34,16 @@ namespace SourceApi.Actions.Source
             {
                 Phases = new() {
                     new() {
-                        Voltage = new(10, 300, 0.01),
-                        Current = new(0, 60, 0.01)
+                        AcVoltage = new(10, 300, 0.01),
+                        AcCurrent = new(0, 60, 0.01)
                     },
                     new() {
-                        Voltage = new(10, 300, 0.01),
-                        Current = new(0, 60, 0.01)
+                        AcVoltage = new(10, 300, 0.01),
+                        AcCurrent = new(0, 60, 0.01)
                     },
                     new() {
-                        Voltage = new(10, 300, 0.01),
-                        Current = new(0, 60, 0.01)
+                        AcVoltage = new(10, 300, 0.01),
+                        AcCurrent = new(0, 60, 0.01)
                     }
                 },
                 FrequencyRanges = new() {
@@ -140,7 +140,9 @@ namespace SourceApi.Actions.Source
 
             foreach (var phase in _loadpoint!.Phases)
                 if (phase.Voltage.On && phase.Current.On)
-                    power += phase.Voltage.Rms * phase.Current.Rms * Math.Cos((phase.Voltage.Angle - phase.Current.Angle) * Math.PI / 180d);
+                    power += phase.Voltage.AcComponent.Rms * phase.Current.AcComponent.Rms * 
+                        Math.Cos((phase.Voltage.AcComponent.Angle - phase.Current.AcComponent.Angle) *
+                        Math.PI / 180d);
 
             var elapsedHours = (DateTime.Now - _startTime).TotalHours;
             var energy = power * elapsedHours;

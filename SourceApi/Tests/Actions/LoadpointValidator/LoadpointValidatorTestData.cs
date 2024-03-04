@@ -24,37 +24,49 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                     Phases = new() {
                         new() {
                             Voltage = new() {
+                                AcComponent = new () {
                                 Rms = 230d,
                                 Angle = 5d,
+                                },
                                 On = true
                             },
                             Current = new() {
+                                AcComponent = new () {
                                 Rms = 60d,
                                 Angle = 0d,
+                                },
                                 On = true
                             }
                         },
                         new() {
                             Voltage = new() {
+                                AcComponent = new () {
                                 Rms = 230d,
                                 Angle = 120d,
+                                },
                                 On = true
                             },
                             Current = new() {
+                                AcComponent = new () {
                                 Rms = 60d,
                                 Angle = 125d,
+                                },
                                 On = true
                             }
                         },
                         new() {
                             Voltage = new() {
+                                AcComponent = new () {
                                 Rms = 230d,
                                 Angle = 240d,
+                                },
                                 On = true
                             },
                             Current = new() {
+                                AcComponent = new () {
                                 Rms = 60d,
                                 Angle = 245d,
+                                },
                                 On = true
                             }
                         }
@@ -78,25 +90,33 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                     Phases = new() {
                         new() {
                             Voltage = new() {
+                                AcComponent = new () {
                                 Rms = 230d,
                                 Angle = 5d,
+                                },
                                 On = true
                             },
                             Current = new() {
+                                AcComponent = new () {
                                 Rms = 60d,
                                 Angle = 0d,
+                                },
                                 On = true
                             }
                         },
                         new() {
                             Voltage = new() {
+                                AcComponent = new () {
                                 Rms = 230d,
                                 Angle = 180d,
+                                },
                                 On = true
                             },
                             Current = new() {
+                                AcComponent = new () {
                                 Rms = 60d,
                                 Angle = 185d,
+                                },
                                 On = true
                             }
                         }
@@ -120,13 +140,17 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                     Phases = new() {
                         new() {
                             Voltage = new() {
+                                AcComponent = new () {
                                 Rms = 230d,
                                 Angle = 5d,
+                                },
                                 On = true
                             },
                             Current = new() {
+                                AcComponent = new () {
                                 Rms = 60d,
                                 Angle = 0d,
+                                },
                                 On = true
                             }
                         }
@@ -162,37 +186,49 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                     Phases = new() {
                         new() {
                             Voltage = new() {
+                                AcComponent = new () {
                                 Rms = 230d,
                                 Angle = 5d,
+                                },
                                 On = false
                             },
                             Current = new() {
+                                AcComponent = new () {
                                 Rms = 60d,
                                 Angle = 5d,
+                                },
                                 On = false
                             }
                         },
                         new() {
                             Voltage = new() {
+                                AcComponent = new () {
                                 Rms = 230d,
                                 Angle = 120d,
+                                },
                                 On = true
                             },
                             Current = new() {
+                                AcComponent = new () {
                                 Rms = 60d,
                                 Angle = 125d,
+                                },
                                 On = true
                             }
                         },
                         new() {
                             Voltage = new() {
+                                AcComponent = new () {
                                 Rms = 230d,
                                 Angle = 240d,
+                                },
                                 On = true
                             },
                             Current = new() {
+                                AcComponent = new () {
                                 Rms = 60d,
                                 Angle = 245d,
+                                },
                                 On = true
                             }
                         }
@@ -216,25 +252,33 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                     Phases = new() {
                         new() {
                             Voltage = new() {
+                                AcComponent = new () {
                                 Rms = 230d,
                                 Angle = 0d,
+                                },
                                 On = false
                             },
                             Current = new() {
+                                AcComponent = new () {
                                 Rms = 60d,
                                 Angle = 5d,
+                                },
                                 On = false
                             }
                         },
                         new() {
                             Voltage = new() {
+                                AcComponent = new () {
                                 Rms = 230d,
                                 Angle = 180d,
+                                },
                                 On = true
                             },
                             Current = new() {
+                                AcComponent = new () {
                                 Rms = 60d,
                                 Angle = 185d,
+                                },
                                 On = true
                             }
                         }
@@ -258,13 +302,17 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                     Phases = new() {
                         new() {
                             Voltage = new() {
+                                AcComponent = new () {
                                 Rms = 230d,
                                 Angle = 1d,
+                                },
                                 On = true
                             },
                             Current = new() {
+                                AcComponent = new () {
                                 Rms = 60d,
                                 Angle = 5d,
+                                },
                                 On = true
                             }
                         }

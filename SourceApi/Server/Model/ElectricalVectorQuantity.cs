@@ -24,7 +24,5 @@ namespace SourceApi.Model
         [Required]
         [Range(MINIMUM_ANGLE, MAXIMUM_ANGLE)]
         public double Angle { get; set; }
-
-        public bool On { get; set; }
     }
 }

@@ -62,16 +62,16 @@ public class FGSourceTests
             },
             Phases = new() {
                 new()  {
-                    Current = new Model.ElectricalVectorQuantity { Rms=1 * baseAngle, Angle=0, On=true},
-                    Voltage = new Model.ElectricalVectorQuantity { Rms=220, Angle=0, On=true},
+                    Current = new() { AcComponent = new () {Rms=1 * baseAngle, Angle=0}, On=true},
+                    Voltage = new() { AcComponent = new () {Rms=220, Angle=0}, On=true},
                 },
                 new() {
-                    Current = new Model.ElectricalVectorQuantity { Rms=2 * baseAngle, Angle=120, On=true},
-                    Voltage = new Model.ElectricalVectorQuantity { Rms=221, Angle=120, On=false},
+                    Current = new() { AcComponent = new () {Rms=2 * baseAngle, Angle=120}, On=true},
+                    Voltage = new() { AcComponent = new () {Rms=221, Angle=120}, On=false},
                 },
                 new() {
-                    Current = new Model.ElectricalVectorQuantity { Rms=3 * baseAngle, Angle=240, On=false},
-                    Voltage = new Model.ElectricalVectorQuantity { Rms=222, Angle=240, On=true},
+                    Current = new() { AcComponent = new () {Rms=3 * baseAngle, Angle=240}, On=false},
+                    Voltage = new() { AcComponent = new () {Rms=222, Angle=240}, On=true},
                 },
             },
             VoltageNeutralConnected = true,
@@ -106,16 +106,16 @@ public class FGSourceTests
             },
             Phases = new() {
                 new()  {
-                    Current = new Model.ElectricalVectorQuantity { Rms=10, Angle=0, On=true},
-                    Voltage = new Model.ElectricalVectorQuantity { Rms=120, Angle=330, On=true},
+                    Current = new() { AcComponent = new () { Rms=10, Angle=0}, On=true},
+                    Voltage = new() { AcComponent = new () { Rms=120, Angle=330}, On=true},
                 },
                 new() {
-                    Current = new Model.ElectricalVectorQuantity { Rms=10, Angle=240, On=true},
-                    Voltage = new Model.ElectricalVectorQuantity { Rms=120, Angle=210, On=true},
+                    Current = new() { AcComponent = new () { Rms=10, Angle=240}, On=true},
+                    Voltage = new() { AcComponent = new () { Rms=120, Angle=210}, On=true},
                 },
                 new() {
-                    Current = new Model.ElectricalVectorQuantity { Rms=10, Angle=120, On=true},
-                    Voltage = new Model.ElectricalVectorQuantity { Rms=120, Angle=90, On=true},
+                    Current = new() { AcComponent = new () { Rms=10, Angle=120}, On=true},
+                    Voltage = new() { AcComponent = new () { Rms=120, Angle=90}, On=true},
                 },
             },
             VoltageNeutralConnected = true,

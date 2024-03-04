@@ -56,8 +56,8 @@ public class RefMeterMockTest
                 Frequency = new() { Value = frequencyValue },
                 Phases = new List<PhaseLoadpoint>(){
                     new PhaseLoadpoint(){
-                        Current = new(){Rms=current, Angle=currentAngle, On=true},
-                        Voltage = new(){Rms=voltage, Angle=voltageAngle, On=true}
+                        Current = new(){AcComponent = new() {Rms=current, Angle=currentAngle}, On=true},
+                        Voltage = new(){AcComponent = new() {Rms=voltage, Angle=voltageAngle}, On=true}
                     }
                 }
             });
@@ -221,16 +221,16 @@ public class RefMeterMockTest
             Frequency = new() { Value = 50 },
             Phases = [
                      new () {
-                        Current = new(){Rms=1, Angle=angle0},
-                        Voltage = new(){Rms=220, Angle=angle0}
+                        Current = new(){AcComponent = new() {Rms=1, Angle=angle0}},
+                        Voltage = new(){AcComponent = new() {Rms=220, Angle=angle0}}
                     },
                     new () {
-                        Current = new(){Rms=1, Angle=angle1},
-                        Voltage = new(){Rms=220, Angle=angle1}
+                        Current = new(){AcComponent = new() {Rms=1, Angle=angle1}},
+                        Voltage = new(){AcComponent = new() {Rms=220, Angle=angle1}}
                     },
                     new () {
-                        Current = new(){Rms=1, Angle=angle2},
-                        Voltage = new(){Rms=220, Angle=angle2}
+                        Current = new(){AcComponent = new() {Rms=1, Angle=angle2}},
+                        Voltage = new(){AcComponent = new() {Rms=220, Angle=angle2}}
                     }
                  ]
         };

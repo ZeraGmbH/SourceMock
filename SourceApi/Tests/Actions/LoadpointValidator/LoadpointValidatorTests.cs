@@ -36,8 +36,8 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                     .Select(
                         p => new PhaseCapability
                         {
-                            Current = new() { Min = 0, Max = 100, PrecisionStepSize = 1 },
-                            Voltage = new() { Min = 0, Max = 1000, PrecisionStepSize = 1 }
+                            AcCurrent = new() { Min = 0, Max = 100, PrecisionStepSize = 1 },
+                            AcVoltage = new() { Min = 0, Max = 1000, PrecisionStepSize = 1 }
                         }
                     ).ToList()
             });
@@ -56,7 +56,6 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
             {
                 Rms = 0d,
                 Angle = 180d,
-                On = true
             };
 
             // Act
@@ -74,7 +73,6 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
             {
                 Rms = 0d,
                 Angle = -0.1d,
-                On = true
             };
 
             // Act
@@ -92,7 +90,6 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
             {
                 Rms = 0d,
                 Angle = 360.1d,
-                On = true
             };
 
             // Act

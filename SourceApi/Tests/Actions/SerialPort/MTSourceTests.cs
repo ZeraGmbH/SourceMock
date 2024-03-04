@@ -81,16 +81,16 @@ public class MTSourceTests
             Frequency = new Model.Frequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = 50 },
             Phases = new List<Model.PhaseLoadpoint>() {
                 new Model.PhaseLoadpoint {
-                    Current = new Model.ElectricalVectorQuantity { Rms=1 * baseAngle, Angle=0, On=true},
-                    Voltage = new Model.ElectricalVectorQuantity { Rms=220, Angle=0, On=true},
+                    Current = new() { AcComponent = new () { Rms=1 * baseAngle, Angle=0}, On=true},
+                    Voltage = new() { AcComponent = new () { Rms=220, Angle=0}, On=true},
                 },
                 new Model.PhaseLoadpoint {
-                    Current = new Model.ElectricalVectorQuantity { Rms=2 * baseAngle, Angle=120, On=true},
-                    Voltage = new Model.ElectricalVectorQuantity { Rms=221, Angle=120, On=false},
+                    Current = new() { AcComponent = new () { Rms=2 * baseAngle, Angle=120}, On=true},
+                    Voltage = new() { AcComponent = new () { Rms=221, Angle=120}, On=false},
                 },
                 new Model.PhaseLoadpoint {
-                    Current = new Model.ElectricalVectorQuantity { Rms=3 * baseAngle, Angle=240, On=false},
-                    Voltage = new Model.ElectricalVectorQuantity { Rms=222, Angle=240, On=true},
+                    Current = new() { AcComponent = new () { Rms=3 * baseAngle, Angle=240}, On=false},
+                    Voltage = new() { AcComponent = new () { Rms=222, Angle=240}, On=true},
                 },
             },
             VoltageNeutralConnected = true,
@@ -125,16 +125,16 @@ public class MTSourceTests
             Frequency = new Model.Frequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = 50 },
             Phases = new List<Model.PhaseLoadpoint>() {
                 new Model.PhaseLoadpoint {
-                    Current = new Model.ElectricalVectorQuantity { Rms=current, Angle=angle, On=true},
-                    Voltage = new Model.ElectricalVectorQuantity { Rms=voltage, Angle=angle, On=true},
+                    Current = new() { AcComponent = new () { Rms=current, Angle=angle}, On=true},
+                    Voltage = new() { AcComponent = new () { Rms=voltage, Angle=angle}, On=true},
                 },
                 new Model.PhaseLoadpoint {
-                    Current = new Model.ElectricalVectorQuantity { Rms=1, Angle=120, On=true},
-                    Voltage = new Model.ElectricalVectorQuantity { Rms=220, Angle=120, On=true},
+                    Current = new() { AcComponent = new () { Rms=1, Angle=120}, On=true},
+                    Voltage = new() { AcComponent = new () { Rms=220, Angle=120}, On=true},
                 },
                 new Model.PhaseLoadpoint {
-                    Current = new Model.ElectricalVectorQuantity { Rms=1, Angle=240, On=true},
-                    Voltage = new Model.ElectricalVectorQuantity { Rms=220, Angle=240, On=true},
+                    Current = new() { AcComponent = new () { Rms=1, Angle=240}, On=true},
+                    Voltage = new() { AcComponent = new () { Rms=220, Angle=240}, On=true},
                 },
             },
             VoltageNeutralConnected = true,

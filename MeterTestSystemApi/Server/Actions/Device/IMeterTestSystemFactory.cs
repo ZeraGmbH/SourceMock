@@ -11,7 +11,7 @@ public interface IMeterTestSystemFactory
     /// Create a new meter test system based on the given configuration.
     /// </summary>
     /// <param name="configuration">Configuration to use.</param>
-    public void Inititalize(MeterTestSystemConfiguration configuration);
+    public void Initialize(MeterTestSystemConfiguration configuration);
 
     /// <summary>
     /// Get the meter test system to use - will be available after initialisation.

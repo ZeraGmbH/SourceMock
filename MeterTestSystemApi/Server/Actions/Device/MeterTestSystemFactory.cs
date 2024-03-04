@@ -1,5 +1,6 @@
 using MeterTestSystemApi.Models.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace MeterTestSystemApi.Actions.Device;
 
@@ -7,7 +8,8 @@ namespace MeterTestSystemApi.Actions.Device;
 /// Implement a meter test system factory.
 /// </summary>
 /// <param name="services">Dependency injection to use.</param>
-public class MeterTestSystemFactory(IServiceProvider services) : IMeterTestSystemFactory
+/// <param name="logger">Logging helper.</param>
+public class MeterTestSystemFactory(IServiceProvider services, ILogger<MeterTestSystemFactory> logger) : IMeterTestSystemFactory
 {
     private readonly object _sync = new();
 
@@ -28,7 +30,7 @@ public class MeterTestSystemFactory(IServiceProvider services) : IMeterTestSyste
     }
 
     /// <inheritdoc/>
-    public void Inititalize(MeterTestSystemConfiguration configuration)
+    public void Initialize(MeterTestSystemConfiguration configuration)
     {
         lock (_sync)
         {
@@ -45,6 +47,21 @@ public class MeterTestSystemFactory(IServiceProvider services) : IMeterTestSyste
                     break;
                 case MeterTestSystemTypes.FG30x:
                     meterTestSystem = services.GetRequiredService<SerialPortFGMeterTestSystem>();
+
+                    if (configuration.AmplifiersAndReferenceMeter != null)
+                        try
+                        {
+                            /* Do all configurations. */
+                            meterTestSystem
+                                .SetAmplifiersAndReferenceMeter(configuration.AmplifiersAndReferenceMeter)
+                                .Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            /* Just report - let meter test system run. */
+                            logger.LogError("Unable to restore amplifiers: {Exception}", e.Message);
+                        }
+
                     break;
                 case MeterTestSystemTypes.Mock:
                     meterTestSystem = services.GetRequiredService<MeterTestSystemMock>();

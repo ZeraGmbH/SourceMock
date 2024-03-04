@@ -1,9 +1,7 @@
 namespace SourceApi.Model;
 
 public class ElectricalQuantity {
-    public double DcComponent;
+    public double DcComponent { get; set; }
     
-    public ElectricalVectorQuantity AcComponent = new();
-    
-    public bool On { get; set; }
+    public ElectricalVectorQuantity AcComponent { get; set; } = new();
 }

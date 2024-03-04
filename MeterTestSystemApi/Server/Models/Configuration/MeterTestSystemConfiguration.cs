@@ -14,7 +14,7 @@ public class MeterTestSystemConfiguration
     /// Type of the connected meter test system - use to decide
     /// what communication protocols to use.
     /// </summary>
-    [BsonIgnore]
+    [BsonElement("type")]
     public MeterTestSystemTypes? MeterTestSystemType { get; set; }
 
     /// <summary>

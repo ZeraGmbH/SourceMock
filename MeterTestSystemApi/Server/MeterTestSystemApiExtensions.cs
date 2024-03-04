@@ -3,6 +3,7 @@ using MeterTestSystemApi.Models;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SharedLibrary;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -48,23 +49,24 @@ public static class MeterTestSystemApiConfiguration
         services.AddTransient<SerialPortMTMeterTestSystem>();
 
         /* Configure the factory. */
-        var deviceType = configuration["SerialPort:DeviceType"];
-
         services.AddSingleton<IMeterTestSystemFactory>((ctx) =>
         {
-            var factory = new MeterTestSystemFactory(ctx);
+            var factory = new MeterTestSystemFactory(ctx, ctx.GetRequiredService<ILogger<MeterTestSystemFactory>>());
 
-            switch (deviceType)
+            if (configuration["UseDatabaseConfiguration"] != "yes")
             {
-                case "FG":
-                    factory.Inititalize(new() { MeterTestSystemType = Models.Configuration.MeterTestSystemTypes.FG30x });
-                    break;
-                case "MT":
-                    factory.Inititalize(new() { MeterTestSystemType = Models.Configuration.MeterTestSystemTypes.MT786 });
-                    break;
-                default:
-                    factory.Inititalize(new() { MeterTestSystemType = Models.Configuration.MeterTestSystemTypes.Mock });
-                    break;
+                switch (configuration["SerialPort:DeviceType"])
+                {
+                    case "FG":
+                        factory.Initialize(new() { MeterTestSystemType = Models.Configuration.MeterTestSystemTypes.FG30x });
+                        break;
+                    case "MT":
+                        factory.Initialize(new() { MeterTestSystemType = Models.Configuration.MeterTestSystemTypes.MT786 });
+                        break;
+                    default:
+                        factory.Initialize(new() { MeterTestSystemType = Models.Configuration.MeterTestSystemTypes.Mock });
+                        break;
+                }
             }
 
             return factory;

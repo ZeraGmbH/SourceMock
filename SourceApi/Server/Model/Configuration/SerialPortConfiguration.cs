@@ -21,7 +21,6 @@ public class SerialPortConfiguration
     /// physical device or the IP address of a network to
     /// serial port proxy.
     /// </summary>
-    [NotNull, Required]
     [BsonElement("endPoint")]
-    public string EndPoint { get; set; } = null!;
+    public string? EndPoint { get; set; }
 }

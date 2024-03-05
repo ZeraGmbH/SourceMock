@@ -80,6 +80,9 @@ public class MeterTestSystemFactory(IServiceProvider services, ILogger<MeterTest
             }
             finally
             {
+                /* Use fallback so that there is ALWAYS a meter test system. */
+                _meterTestSystem ??= services.GetRequiredService<FallbackMeteringSystem>();
+
                 /* Use the new instance. */
                 _initialized = true;
 

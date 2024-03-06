@@ -49,8 +49,10 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     /// <inheritdoc/>
     public IRefMeter RefMeter { get; private set; } = new UnavailableReferenceMeter();
 
+    private List<IErrorCalculator> _errorCalculators = [new UnavailableErrorCalculator()];
+
     /// <inheritdoc/>
-    public IErrorCalculator ErrorCalculator { get; private set; } = new UnavailableErrorCalculator();
+    public IErrorCalculator[] ErrorCalculators => _errorCalculators.ToArray();
 
     /// <inheritdoc/>
     public event Action<ErrorConditions> ErrorConditionsChanged = null!;
@@ -222,8 +224,9 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
             if (source != null)
             {
                 /* Update the implementation references if the frequency generator accepted the new configuration. */
+                _errorCalculators[0] = errorCalculator;
+
                 AmplifiersAndReferenceMeter = settings;
-                ErrorCalculator = errorCalculator;
                 RefMeter = refMeter;
                 Source = source;
             }

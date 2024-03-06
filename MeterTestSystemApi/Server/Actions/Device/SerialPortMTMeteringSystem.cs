@@ -40,8 +40,10 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     /// <inheritdoc/>
     public IRefMeter RefMeter { get; private set; }
 
+    private readonly List<IErrorCalculator> _errorCalculators = [];
+
     /// <inheritdoc/>
-    public IErrorCalculator ErrorCalculator { get; private set; }
+    public IErrorCalculator[] ErrorCalculators => _errorCalculators.ToArray();
 
     /// <inheritdoc/>
     public AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter => throw new NotImplementedException();
@@ -59,9 +61,10 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     /// <param name="source">Source to use to access the metering system.</param>
     public SerialPortMTMeterTestSystem(ISerialPortConnection device, ISerialPortMTRefMeter refMeter, ISerialPortMTErrorCalculator errorCalculator, ILogger<SerialPortMTMeterTestSystem> logger, ISerialPortMTSource source)
     {
-        ErrorCalculator = errorCalculator;
         RefMeter = refMeter;
         Source = source;
+
+        _errorCalculators.Add(errorCalculator);
 
         _device = device;
         _logger = logger;

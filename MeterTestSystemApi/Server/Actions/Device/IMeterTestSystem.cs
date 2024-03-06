@@ -50,9 +50,10 @@ public interface IMeterTestSystem
     IRefMeter RefMeter { get; }
 
     /// <summary>
-    /// The error calculator associated with this metering system.
+    /// The error calculators associated with this metering system - must be at least
+    /// one.
     /// </summary>
-    IErrorCalculator ErrorCalculator { get; }
+    IErrorCalculator[] ErrorCalculators { get; }
 
     /// <summary>
     /// Fired whenever a new error condition is detected.

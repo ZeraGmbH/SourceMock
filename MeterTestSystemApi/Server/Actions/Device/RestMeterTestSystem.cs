@@ -6,9 +6,9 @@ using SourceApi.Actions.Source;
 namespace MeterTestSystemApi.Actions.Device;
 
 /// <summary>
-/// Fallback implementation of a meter test system.
+/// Meter test system based on REST connection to source and reference meter.
 /// </summary>
-public class FallbackMeteringSystem : IMeterTestSystem
+public class RestMeterTestSystem : IMeterTestSystem
 {
     /// <inheritdoc/>
 
@@ -49,8 +49,8 @@ public class FallbackMeteringSystem : IMeterTestSystem
     public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion() =>
         Task.FromResult(new MeterTestSystemFirmwareVersion
         {
-            ModelName = "Unknown",
-            Version = "0.0"
+            ModelName = "REST",
+            Version = "0.1"
         });
 
     /// <inheritdoc/>

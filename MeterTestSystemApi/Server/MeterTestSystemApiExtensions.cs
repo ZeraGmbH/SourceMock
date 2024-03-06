@@ -1,3 +1,4 @@
+using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Actions.Device;
 using MeterTestSystemApi.Models;
 using Microsoft.AspNetCore.Routing;
@@ -77,7 +78,9 @@ public static class MeterTestSystemApiConfiguration
         services.AddTransient((ctx) => ctx.GetRequiredService<IMeterTestSystemFactory>().MeterTestSystem);
 
         /* Convenient accessors to the source, reference meter and error calculator - transient because these can change when reconfiguring the meter test system. */
-        services.AddTransient(di => di.GetRequiredService<IMeterTestSystem>().ErrorCalculator);
+        services.AddTransient(di => di.GetRequiredService<IMeterTestSystem>().ErrorCalculators);
+        services.AddTransient(di => di.GetRequiredService<IErrorCalculator[]>()[0]);
+
         services.AddTransient(di => di.GetRequiredService<IMeterTestSystem>().RefMeter);
         services.AddTransient(di => di.GetRequiredService<IMeterTestSystem>().Source);
     }

@@ -40,10 +40,13 @@ public class MeterTestSystemMock(ISourceMock source, IMockRefMeter refMeter, IEr
     /// </summary>
     public IRefMeter RefMeter { get; } = refMeter;
 
+
+    private readonly List<IErrorCalculator> _errorCalculators = [errorCalculatorMock];
+
     /// <summary>
     /// 
     /// </summary>
-    public IErrorCalculator ErrorCalculator { get; } = errorCalculatorMock;
+    public IErrorCalculator[] ErrorCalculators => _errorCalculators.ToArray();
 
     /// <summary>
     /// 

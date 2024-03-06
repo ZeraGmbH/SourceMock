@@ -50,16 +50,4 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, I
 
         return SourceApiErrorCodes.SUCCESS;
     }
-
-    /// <inheritdoc/>
-    public override Task<double[]> GetVoltageRanges()
-    {
-        return Task.FromResult(Available ? Capabilities.GetVoltageRangesByModel("MT786") : null!);
-    }
-
-    /// <inheritdoc/>
-    public override Task<double[]> GetCurrentRanges()
-    {
-        return Task.FromResult(Available ? Capabilities.GetCurrentRangesByModel("MT786") : null!);
-    }
 }

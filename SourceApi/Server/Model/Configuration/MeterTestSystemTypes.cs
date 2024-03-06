@@ -22,5 +22,10 @@ public enum MeterTestSystemTypes
     /// Internal mock implementation for development and testing
     /// purposes.
     /// </summary>
-    Mock = 2
+    Mock = 2,
+
+    /// <summary>
+    /// REST connection to components of a meter test system.
+    /// </summary>
+    REST = 3
 }

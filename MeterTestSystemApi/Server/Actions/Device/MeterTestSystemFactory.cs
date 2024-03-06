@@ -66,6 +66,11 @@ public class MeterTestSystemFactory(IServiceProvider services, ILogger<MeterTest
                             }
 
                         break;
+                    case MeterTestSystemTypes.REST:
+                        var meterTestSystem = services.GetRequiredService<RestMeterTestSystem>();
+
+                        _meterTestSystem = meterTestSystem;
+                        return;
                     case MeterTestSystemTypes.Mock:
                         _meterTestSystem = services.GetRequiredService<MeterTestSystemMock>();
                         break;

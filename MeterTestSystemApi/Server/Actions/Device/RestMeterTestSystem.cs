@@ -1,6 +1,9 @@
 using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Models;
+using MeterTestSystemApi.Models.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Actions.Device;
+using SourceApi.Actions.RestSource;
 using SourceApi.Actions.Source;
 
 namespace MeterTestSystemApi.Actions.Device;
@@ -14,7 +17,7 @@ public class RestMeterTestSystem : IMeterTestSystem
     public AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public ISource Source { get; } = new UnavailableSource();
+    public ISource Source { get; private set; } = new UnavailableSource();
 
     /// <inheritdoc/>
     public IRefMeter RefMeter { get; } = new UnavailableReferenceMeter();
@@ -50,5 +53,25 @@ public class RestMeterTestSystem : IMeterTestSystem
     {
         /* The fallback do not support amplifier configurations. */
         throw new InvalidOperationException();
+    }
+
+    /// <summary>
+    /// Configure all sub components.
+    /// </summary>
+    /// <param name="config">Configuration to use.</param>
+    /// <param name="di">Active dependency injection runtime to create helper.</param>
+    public void Configure(InterfaceConfiguration config, IServiceProvider di)
+    {
+        /* Validate. */
+        if (config.Source == null) throw new InvalidOperationException("no source connection configured");
+
+        /* Create. */
+        var source = di.GetRequiredService<IRestSource>();
+
+        /* Configure. */
+        source.Initialize(config.Source);
+
+        /* Use. */
+        Source = source;
     }
 }

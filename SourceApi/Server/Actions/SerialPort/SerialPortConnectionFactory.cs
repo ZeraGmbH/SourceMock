@@ -58,27 +58,28 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
 
             try
             {
-                if (settings != null && type.HasValue && type != MeterTestSystemTypes.Mock)
-                    switch (settings.ConfigurationType)
-                    {
-                        case SerialPortConfigurationTypes.Mock:
-                            switch (type)
-                            {
-                                case MeterTestSystemTypes.FG30x:
-                                    _connection = SerialPortConnection.FromMock<SerialPortFGMock>(services.GetRequiredService<ILogger<ISerialPortConnection>>());
-                                    break;
-                                case MeterTestSystemTypes.MT786:
-                                    _connection = SerialPortConnection.FromMock<SerialPortMTMock>(services.GetRequiredService<ILogger<ISerialPortConnection>>());
-                                    break;
-                            }
-                            break;
-                        case SerialPortConfigurationTypes.Network:
-                            _connection = SerialPortConnection.FromNetwork(settings.EndPoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
-                            break;
-                        case SerialPortConfigurationTypes.Device:
-                            _connection = SerialPortConnection.FromSerialPort(settings.EndPoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
-                            break;
-                    }
+                if (settings != null && type.HasValue)
+                    if (type == MeterTestSystemTypes.MT786 || type == MeterTestSystemTypes.FG30x)
+                        switch (settings.ConfigurationType)
+                        {
+                            case SerialPortConfigurationTypes.Mock:
+                                switch (type)
+                                {
+                                    case MeterTestSystemTypes.FG30x:
+                                        _connection = SerialPortConnection.FromMock<SerialPortFGMock>(services.GetRequiredService<ILogger<ISerialPortConnection>>());
+                                        break;
+                                    case MeterTestSystemTypes.MT786:
+                                        _connection = SerialPortConnection.FromMock<SerialPortMTMock>(services.GetRequiredService<ILogger<ISerialPortConnection>>());
+                                        break;
+                                }
+                                break;
+                            case SerialPortConfigurationTypes.Network:
+                                _connection = SerialPortConnection.FromNetwork(settings.EndPoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
+                                break;
+                            case SerialPortConfigurationTypes.Device:
+                                _connection = SerialPortConnection.FromSerialPort(settings.EndPoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
+                                break;
+                        }
             }
             catch (Exception e)
             {

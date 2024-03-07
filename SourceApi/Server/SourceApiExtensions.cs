@@ -13,6 +13,7 @@ using SourceApi.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using SourceApi.Model.Configuration;
 using SharedLibrary.Models;
+using SourceApi.Actions.RestSource;
 
 namespace SourceApi;
 
@@ -53,6 +54,7 @@ public static class SourceApiConfiguration
     {
         services.AddSingleton<ICapabilitiesMap, CapabilitiesMap>();
 
+        services.AddTransient<IRestSource, RestSource>();
         services.AddTransient<ISerialPortFGSource, SerialPortFGSource>();
         services.AddTransient<ISerialPortMTSource, SerialPortMTSource>();
         services.AddTransient<ISimulatedSource, SimulatedSource>();

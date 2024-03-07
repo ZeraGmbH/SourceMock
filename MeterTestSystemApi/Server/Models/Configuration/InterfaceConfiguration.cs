@@ -23,6 +23,12 @@ public class InterfaceConfiguration
     public RestConfiguration? Source { get; set; }
 
     /// <summary>
+    /// Endpoint of the dosage REST web service - typically part of the source.
+    /// </summary>
+    [BsonElement("dosage")]
+    public RestConfiguration? Dosage { get; set; }
+
+    /// <summary>
     /// Endpoint of the reference meter REST web service.
     /// </summary>
     [BsonElement("refMeter")]

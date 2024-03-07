@@ -64,12 +64,13 @@ public class RestMeterTestSystem : IMeterTestSystem
     {
         /* Validate. */
         if (config.Source == null) throw new InvalidOperationException("no source connection configured");
+        if (config.Dosage == null) throw new InvalidOperationException("no dosage connection configured");
 
         /* Create. */
         var source = di.GetRequiredService<IRestSource>();
 
         /* Configure. */
-        source.Initialize(config.Source);
+        source.Initialize(config.Source, config.Dosage);
 
         /* Use. */
         Source = source;

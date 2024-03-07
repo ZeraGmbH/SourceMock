@@ -1,7 +1,7 @@
 using MeterTestSystemApi.Models.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SourceApi.Model.Configuration;
+using SharedLibrary.Models;
 
 namespace MeterTestSystemApi.Actions.Device;
 

@@ -6,13 +6,13 @@ using SourceApi.Actions.Source;
 using SourceApi.Actions.VeinSource;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.SerialPort.MT768;
-using SerialPortProxy;
 using Microsoft.Extensions.Logging;
 using SourceApi.Actions.SerialPort;
 using SharedLibrary;
 using SourceApi.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using SourceApi.Model.Configuration;
+using SharedLibrary.Models;
 
 namespace SourceApi;
 

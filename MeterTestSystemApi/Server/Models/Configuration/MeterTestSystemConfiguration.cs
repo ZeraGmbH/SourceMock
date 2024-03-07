@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using MongoDB.Bson.Serialization.Attributes;
-using SourceApi.Model.Configuration;
+using SharedLibrary.Models;
 
 namespace MeterTestSystemApi.Models.Configuration;
 

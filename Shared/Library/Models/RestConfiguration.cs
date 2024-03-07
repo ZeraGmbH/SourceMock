@@ -1,6 +1,6 @@
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MeterTestSystemApi.Models.Configuration;
+namespace SharedLibrary.Models;
 
 /// <summary>
 /// Describe a REST endpoint.

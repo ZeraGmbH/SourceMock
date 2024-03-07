@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharedLibrary;
-using SourceApi.Model.Configuration;
+using SharedLibrary.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MeterTestSystemApi;

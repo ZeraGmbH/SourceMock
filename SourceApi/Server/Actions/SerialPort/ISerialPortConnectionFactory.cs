@@ -1,4 +1,5 @@
 using SerialPortProxy;
+using SharedLibrary.Models;
 using SourceApi.Model.Configuration;
 
 namespace SourceApi.Actions.SerialPort;

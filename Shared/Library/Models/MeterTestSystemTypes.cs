@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace SourceApi.Model.Configuration;
+namespace SharedLibrary.Models;
 
 /// <summary>
 /// Supported types of the meter tests system.

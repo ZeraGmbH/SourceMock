@@ -11,5 +11,5 @@ public enum ErrorCalculatorProtocols
     /// <summary>
     /// Error calculator supported MAD XML communication,
     /// </summary>
-    MAD = 0,
+    MAD_1 = 0,
 }

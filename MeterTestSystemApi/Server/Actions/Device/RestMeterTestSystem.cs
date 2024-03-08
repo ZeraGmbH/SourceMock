@@ -62,10 +62,6 @@ public class RestMeterTestSystem : IMeterTestSystem
     /// <param name="di">Active dependency injection runtime to create helper.</param>
     public void Configure(InterfaceConfiguration config, IServiceProvider di)
     {
-        /* Validate. */
-        if (config.Source == null) throw new InvalidOperationException("no source connection configured");
-        if (config.Dosage == null) throw new InvalidOperationException("no dosage connection configured");
-
         /* Create. */
         var source = di.GetRequiredService<IRestSource>();
 

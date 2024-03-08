@@ -13,5 +13,5 @@ public interface IRestSource : ISource
     /// </summary>
     /// <param name="sourceEndpoint">Endpoint of the remote source.</param>
     /// <param name="dosageEndpoint">Endpoint of the remote dosage.</param>
-    public void Initialize(RestConfiguration sourceEndpoint, RestConfiguration dosageEndpoint);
+    public void Initialize(RestConfiguration? sourceEndpoint, RestConfiguration? dosageEndpoint);
 }

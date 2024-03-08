@@ -23,7 +23,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
 
     private Uri _sourceUri = null!;
 
-    private Uri _dosageUri = null!;
+    private Uri? _dosageUri = null;
 
     /// <inheritdoc/>
     public bool Available
@@ -57,6 +57,8 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     /// <inheritdoc/>
     public async Task CancelDosage()
     {
+        if (_dosageUri == null) throw new NotImplementedException("Dosage");
+
         var res = await httpDosage.PostAsync(new Uri(_dosageUri, "Cancel"), null);
 
         if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
@@ -64,7 +66,9 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
 
     /// <inheritdoc/>
     public Task<bool> CurrentSwitchedOffForDosage() =>
-        httpDosage.GetAsync(new Uri(_dosageUri, "IsDosageCurrentOff")).GetJsonResponse<bool>();
+        (_dosageUri == null)
+            ? throw new NotImplementedException("Dosage")
+            : httpDosage.GetAsync(new Uri(_dosageUri, "IsDosageCurrentOff")).GetJsonResponse<bool>();
 
     /// <inheritdoc/>
     public LoadpointInfo GetActiveLoadpointInfo()
@@ -92,26 +96,38 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
 
     /// <inheritdoc/>
     public Task<DosageProgress> GetDosageProgress() =>
-        httpDosage.GetAsync(new Uri(_dosageUri, "Progress")).GetJsonResponse<DosageProgress>();
+        (_dosageUri == null)
+            ? throw new NotImplementedException("Dosage")
+            : httpDosage.GetAsync(new Uri(_dosageUri, "Progress")).GetJsonResponse<DosageProgress>();
 
     /// <inheritdoc/>
-    public void Initialize(RestConfiguration sourceEndpoint, RestConfiguration dosageEndpoint)
+    public void Initialize(RestConfiguration? sourceEndpoint, RestConfiguration? dosageEndpoint)
     {
         /* Can be only done once. */
         if (_initialized) throw new InvalidOperationException("Already initialized");
 
-        /* Validate.*/
+        /* Reset - just in case!. */
+        _sourceUri = null!;
+        _dosageUri = null;
+
+        /* Validate. */
+        if (sourceEndpoint == null) throw new InvalidOperationException("no source connection configured");
         _sourceUri = new Uri(sourceEndpoint.EndPoint.TrimEnd('/') + "/");
-        _dosageUri = new Uri(dosageEndpoint.EndPoint.TrimEnd('/') + "/");
 
         /* May have authorisation. */
         if (!string.IsNullOrEmpty(_sourceUri.UserInfo))
             httpSource.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(_sourceUri.UserInfo)));
 
-        if (!string.IsNullOrEmpty(_dosageUri.UserInfo))
-            httpDosage.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(_dosageUri.UserInfo)));
+        /* Dosage is optional. */
+        if (dosageEndpoint != null)
+        {
+            _dosageUri = new Uri(dosageEndpoint.EndPoint.TrimEnd('/') + "/");
+
+            if (!string.IsNullOrEmpty(_dosageUri.UserInfo))
+                httpDosage.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(_dosageUri.UserInfo)));
+        }
 
         /* Did it. */
         _initialized = true;
@@ -120,6 +136,8 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     /// <inheritdoc/>
     public async Task SetDosageEnergy(double value)
     {
+        if (_dosageUri == null) throw new NotImplementedException("Dosage");
+
         var res = await httpDosage.PutAsync($"{new Uri(_dosageUri, "Energy")}?energy={JsonConvert.SerializeObject(value)}", null);
 
         if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
@@ -128,6 +146,8 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     /// <inheritdoc/>
     public async Task SetDosageMode(bool on)
     {
+        if (_dosageUri == null) throw new NotImplementedException("Dosage");
+
         var res = await httpDosage.PostAsync($"{new Uri(_dosageUri, "DOSMode")}?on={JsonConvert.SerializeObject(on)}", null);
 
         if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
@@ -144,6 +164,8 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     /// <inheritdoc/>
     public async Task StartDosage()
     {
+        if (_dosageUri == null) throw new NotImplementedException("Dosage");
+
         var res = await httpDosage.PostAsync(new Uri(_dosageUri, "Start"), null);
 
         if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();

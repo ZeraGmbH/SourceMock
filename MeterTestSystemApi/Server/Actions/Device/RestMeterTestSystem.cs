@@ -1,3 +1,5 @@
+using System.Net.Http.Headers;
+using System.Text;
 using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Models;
 using MeterTestSystemApi.Models.Configuration;
@@ -5,14 +7,18 @@ using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Actions.Device;
 using SourceApi.Actions.RestSource;
 using SourceApi.Actions.Source;
+using SharedLibrary;
 
 namespace MeterTestSystemApi.Actions.Device;
 
 /// <summary>
 /// Meter test system based on REST connection to source and reference meter.
 /// </summary>
-public class RestMeterTestSystem : IMeterTestSystem
+/// <param name="httpClient">Connection to a remote meter test system.</param>
+public class RestMeterTestSystem(HttpClient httpClient) : IMeterTestSystem
 {
+    private Uri _baseUri = null!;
+
     /// <inheritdoc/>
     public AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter => throw new NotImplementedException();
 
@@ -38,15 +44,11 @@ public class RestMeterTestSystem : IMeterTestSystem
 
     /// <inheritdoc/>
     public Task<ErrorConditions> GetErrorConditions() =>
-        Task.FromResult(new ErrorConditions());
+        httpClient.GetAsync(new Uri(_baseUri, "ErrorConditions")).GetJsonResponse<ErrorConditions>();
 
     /// <inheritdoc/>
     public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion() =>
-        Task.FromResult(new MeterTestSystemFirmwareVersion
-        {
-            ModelName = "REST",
-            Version = "0.1"
-        });
+        httpClient.GetAsync(new Uri(_baseUri, "FirmwareVersion")).GetJsonResponse<MeterTestSystemFirmwareVersion>();
 
     /// <inheritdoc/>
     public Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeter settings)
@@ -62,6 +64,16 @@ public class RestMeterTestSystem : IMeterTestSystem
     /// <param name="di">Active dependency injection runtime to create helper.</param>
     public void Configure(InterfaceConfiguration config, IServiceProvider di)
     {
+        /* Validate. */
+        if (string.IsNullOrEmpty(config.MeterTestSystem?.EndPoint)) throw new InvalidOperationException("no meter test system connection configured");
+
+        _baseUri = new Uri(config.MeterTestSystem.EndPoint.TrimEnd('/') + "/");
+
+        /* May have authorisation. */
+        if (!string.IsNullOrEmpty(_baseUri.UserInfo))
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(_baseUri.UserInfo)));
+
         /* Create. */
         var source = di.GetRequiredService<IRestSource>();
 

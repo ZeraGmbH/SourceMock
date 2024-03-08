@@ -37,4 +37,9 @@ public interface IRefMeter
     /// </summary>
     /// <param name="mode">The new measurement mode.</param>
     Task SetActualMeasurementMode(MeasurementModes mode);
+
+    /// <summary>
+    /// Report the current megter constant of the reference meter (impulses per kWh).
+    /// </summary>
+    Task<double> GetMeterConstant();
 }

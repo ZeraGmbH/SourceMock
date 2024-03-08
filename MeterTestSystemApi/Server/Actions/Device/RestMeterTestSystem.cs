@@ -8,6 +8,7 @@ using RefMeterApi.Actions.Device;
 using SourceApi.Actions.RestSource;
 using SourceApi.Actions.Source;
 using SharedLibrary;
+using RefMeterApi.Actions.RestSource;
 
 namespace MeterTestSystemApi.Actions.Device;
 
@@ -26,7 +27,7 @@ public class RestMeterTestSystem(HttpClient httpClient) : IMeterTestSystem
     public ISource Source { get; private set; } = new UnavailableSource();
 
     /// <inheritdoc/>
-    public IRefMeter RefMeter { get; } = new UnavailableReferenceMeter();
+    public IRefMeter RefMeter { get; private set; } = new UnavailableReferenceMeter();
 
     private readonly List<IErrorCalculator> _errorCalculators = [new UnavailableErrorCalculator()];
 
@@ -76,11 +77,14 @@ public class RestMeterTestSystem(HttpClient httpClient) : IMeterTestSystem
 
         /* Create. */
         var source = di.GetRequiredService<IRestSource>();
+        var refMeter = di.GetRequiredService<IRestRefMeter>();
 
         /* Configure. */
         source.Initialize(config.Source, config.Dosage);
+        refMeter.Initialize(config.ReferenceMeter);
 
         /* Use. */
+        RefMeter = refMeter;
         Source = source;
     }
 }

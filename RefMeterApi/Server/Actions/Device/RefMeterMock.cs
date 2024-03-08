@@ -44,6 +44,9 @@ public partial class RefMeterMock : IMockRefMeter
 
     private const double PI_BY_180 = Math.PI / 180;
 
+    /// <inheritdoc/>
+    public Task<double> GetMeterConstant() => throw new NotImplementedException();
+
     /// <summary>
     /// 
     /// </summary>
@@ -84,16 +87,20 @@ public partial class RefMeterMock : IMockRefMeter
 
             var measureOutputPhase = new MeasuredLoadpointPhase()
             {
-                Current = new() {
+                Current = new()
+                {
                     DcComponent = 0,
-                    AcComponent = new() {
+                    AcComponent = new()
+                    {
                         Rms = current,
                         Angle = phase.Current.AcComponent.Angle,
                     },
                 },
-                Voltage = new() {
+                Voltage = new()
+                {
                     DcComponent = 0,
-                    AcComponent = new() {
+                    AcComponent = new()
+                    {
                         Rms = voltage,
                         Angle = phase.Voltage.AcComponent.Angle,
                     },

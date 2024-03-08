@@ -42,4 +42,34 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
 
     /// <inheritdoc/>
     public bool Available => true;
+
+    /// <inheritdoc/>
+    public async Task<double> GetMeterConstant()
+    {
+        var reply = await _device.Execute(SerialPortRequest.Create("AST", "ASTACK"))[0];
+
+        /* We need the range of voltage and current and the measurement mode as well. */
+        double? voltage = null, current = null;
+        string? mode = null;
+
+        foreach (var value in reply)
+            if (value.StartsWith("UB="))
+                voltage = double.Parse(value.Substring(3));
+            else if (value.StartsWith("IB="))
+                current = double.Parse(value.Substring(3));
+            else if (value.StartsWith("M="))
+                mode = value.Substring(2);
+
+        if (!voltage.HasValue || !current.HasValue || string.IsNullOrEmpty(mode))
+            throw new InvalidOperationException("AST status incomplete");
+
+        var phases =
+            mode[0] == '4' ? 3d :
+            mode[0] == '3' ? 2d :
+            mode[0] == '2' ? 1d :
+            throw new ArgumentException($"unsupported measurement mode {mode}");
+
+        /* Calculate according to formula - see MT78x_MAN_EXT_GB.pdf section 5.6.*/
+        return 1000d * 3600d * 60000d / (phases * (double)voltage * (double)current);
+    }
 }

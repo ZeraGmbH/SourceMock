@@ -29,6 +29,7 @@ public class RefMeterController(IRefMeter device) : ControllerBase
     /// <summary>
     /// Get the current measurement data.
     /// </summary>
+    /// <param name="firstActiveCurrentPhase">Optional index of the first active current phase.</param>
     /// <returns>The current data.</returns>
     [HttpGet("ActualValues")]
     [SwaggerOperation(OperationId = "GetActualValues")]
@@ -38,8 +39,8 @@ public class RefMeterController(IRefMeter device) : ControllerBase
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<MeasuredLoadpoint>> GetActualValues() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetActualValues());
+    public Task<ActionResult<MeasuredLoadpoint>> GetActualValues(int firstActiveCurrentPhase = -1) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetActualValues(firstActiveCurrentPhase));
 
     /// <summary>
     /// Get the list of supported measurement modes.
@@ -93,4 +94,19 @@ public class RefMeterController(IRefMeter device) : ControllerBase
     [SwaggerOperation(OperationId = "ReferenceMeterIsAvailable")]
     public ActionResult<bool> IsAvailable() =>
         Ok(_device.Available);
+
+    /// <summary>
+    /// Get the current meter constant of the reference meter.
+    /// </summary>
+    /// <returns>The meter constant (impulses per kWh).</returns>
+    [HttpGet("MeterConstant")]
+    [SwaggerOperation(OperationId = "GetMeterConstant")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult<double>> GetMeterConstant() =>
+         ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetMeterConstant);
 }

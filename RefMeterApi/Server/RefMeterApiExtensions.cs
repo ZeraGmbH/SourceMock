@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Actions.Device;
+using RefMeterApi.Actions.RestSource;
 using RefMeterApi.Exceptions;
 using RefMeterApi.Models;
 using SharedLibrary;
@@ -43,6 +44,7 @@ public static class RefMeterApiConfiguration
     {
         /* The concrete implementations are transient and the lifetime is controlled by the corresponding meter test system. */
         services.AddTransient<IMockRefMeter, RefMeterMock>();
+        services.AddTransient<IRestRefMeter, RestRefMeter>();
         services.AddTransient<ISerialPortFGRefMeter, SerialPortFGRefMeter>();
         services.AddTransient<ISerialPortMTRefMeter, SerialPortMTRefMeter>();
     }

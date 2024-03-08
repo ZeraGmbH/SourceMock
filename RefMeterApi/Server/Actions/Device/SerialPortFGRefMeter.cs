@@ -35,6 +35,9 @@ public partial class SerialPortFGRefMeter(ISerialPortConnection device, ILogger<
     /// <inheritdoc/>
     public bool Available => true;
 
+    /// <inheritdoc/>
+    public Task<double> GetMeterConstant() => throw new NotImplementedException();
+
     /// <summary>
     /// See if the reference meter is configured.
     /// </summary>

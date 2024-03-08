@@ -11,6 +11,8 @@ internal class UnavailableReferenceMeter : IRefMeter
 {
     public bool Available => false;
 
+    public Task<double> GetMeterConstant() => throw new NotImplementedException();
+
     public Task<MeasurementModes?> GetActualMeasurementMode() => throw new RefMeterNotReadyException();
 
     public Task<MeasuredLoadpoint> GetActualValues(int firstActiveVoltagePhase = -1) => throw new RefMeterNotReadyException();

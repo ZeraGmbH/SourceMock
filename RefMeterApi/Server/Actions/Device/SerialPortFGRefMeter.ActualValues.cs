@@ -1,7 +1,6 @@
 using System.Text.RegularExpressions;
 using RefMeterApi.Models;
 using SerialPortProxy;
-using SourceApi.Model;
 
 namespace RefMeterApi.Actions.Device;
 

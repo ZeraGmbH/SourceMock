@@ -111,7 +111,8 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
         _dosageUri = null;
 
         /* Validate. */
-        if (sourceEndpoint == null) throw new InvalidOperationException("no source connection configured");
+        if (string.IsNullOrEmpty(sourceEndpoint?.EndPoint)) throw new InvalidOperationException("no source connection configured");
+
         _sourceUri = new Uri(sourceEndpoint.EndPoint.TrimEnd('/') + "/");
 
         /* May have authorisation. */

@@ -120,7 +120,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
                 new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(_sourceUri.UserInfo)));
 
         /* Dosage is optional. */
-        if (dosageEndpoint != null)
+        if (!string.IsNullOrEmpty(dosageEndpoint?.EndPoint))
         {
             _dosageUri = new Uri(dosageEndpoint.EndPoint.TrimEnd('/') + "/");
 

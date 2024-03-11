@@ -1,3 +1,5 @@
+using DutApi.Actions;
+using DutApi.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -16,6 +18,9 @@ public static class DutApiConfiguration
     /// <param name="configuration"></param>
     public static void UseDutApi(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddTransient<IDeviceUnderTestFactory, ConnectionFactory>();
+
+        services.AddKeyedTransient<IDeviceUnderTestConnection, ScpiConnection>(DutProtocolTypes.SCPIOverTCP);
     }
 
     /// <summary>

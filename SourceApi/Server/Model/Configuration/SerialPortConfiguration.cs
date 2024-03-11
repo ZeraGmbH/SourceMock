@@ -23,4 +23,10 @@ public class SerialPortConfiguration
     /// </summary>
     [BsonElement("endPoint")]
     public string? EndPoint { get; set; }
+
+    /// <summary>
+    /// Optional information to authorize a network connection.
+    /// </summary>
+    [BsonElement("authorization")]
+    public string? Authorization { get; set; }
 }

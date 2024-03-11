@@ -187,18 +187,5 @@ namespace SourceApi.Actions.Source
 
             return _dosageEnergy;
         }
-
-        private bool CheckHasActivePhase()
-        {
-            if (_loadpoint != null)
-                foreach (var phase in _loadpoint.Phases)
-                {
-                    if (phase.Current.On == true)
-                        return true;
-                    if (phase.Voltage.On == true)
-                        return true;
-                }
-            return false;
-        }
     }
 }

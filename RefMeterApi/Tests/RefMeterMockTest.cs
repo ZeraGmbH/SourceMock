@@ -34,7 +34,7 @@ public class RefMeterMockTest
     [Test]
     public void Produces_Actual_Values_If_No_Loadpoint_Switched_On()
     {
-        RefMeterMock refMeterMock = new(Services);
+        ACRefMeterMock refMeterMock = new(Services);
 
         MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues().Result;
 
@@ -65,7 +65,7 @@ public class RefMeterMockTest
         SourceMock.Setup(s => s.GetActiveLoadpointInfo()).Returns(new LoadpointInfo { IsActive = true });
         SourceMock.Setup(s => s.CurrentSwitchedOffForDosage()).ReturnsAsync(false);
 
-        RefMeterMock refMeterMock = new(Services);
+        ACRefMeterMock refMeterMock = new(Services);
         MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues().Result;
 
         Assert.That(measureOutput.Frequency, Is.InRange(GetMinValue(frequencyValue, 0.0002), GetMaxValue(frequencyValue, 0.0002)));
@@ -80,9 +80,10 @@ public class RefMeterMockTest
     {
         // Arrange
         TargetLoadpoint lp = RefMeterMockTestData.Loadpoint_OnlyActivePower;
+        ACRefMeterMock refMeterMock = new(Services);
 
         // Act
-        var mo = RefMeterMock.CalcMeasureOutput(lp);
+        var mo = refMeterMock.CalcMeasureOutput(lp);
 
         // Assert
         Assert.That(mo.Frequency, Is.EqualTo(50).Within(double.Epsilon));
@@ -110,9 +111,10 @@ public class RefMeterMockTest
     {
         // Arrange
         TargetLoadpoint lp = RefMeterMockTestData.Loadpoint_OnlyActivePower;
+        ACRefMeterMock refMeterMock = new(Services);
 
         // Act
-        var mo = RefMeterMock.CalcMeasureOutput(lp);
+        var mo = refMeterMock.CalcMeasureOutput(lp);
 
         // Assert
         Assert.That(mo.Phases[0].ActivePower, Is.EqualTo(23000).Within(10e-10));
@@ -137,9 +139,10 @@ public class RefMeterMockTest
     {
         // Arrange
         TargetLoadpoint lp = RefMeterMockTestData.Loadpoint_OnlyReactivePower;
+        ACRefMeterMock refMeterMock = new(Services);
 
         // Act
-        var mo = RefMeterMock.CalcMeasureOutput(lp);
+        var mo = refMeterMock.CalcMeasureOutput(lp);
 
         // Assert
         Assert.That(mo.Phases[0].ActivePower, Is.EqualTo(0).Within(10e-10));
@@ -164,9 +167,10 @@ public class RefMeterMockTest
     {
         // Arrange
         TargetLoadpoint lp = RefMeterMockTestData.Loadpoint_CosPhi0_5;
+        ACRefMeterMock refMeterMock = new(Services);
 
         // Act
-        var mo = RefMeterMock.CalcMeasureOutput(lp);
+        var mo = refMeterMock.CalcMeasureOutput(lp);
 
         // Assert
         Assert.That(mo.Phases[0].ActivePower, Is.EqualTo(11500).Within(10e-10));
@@ -233,9 +237,10 @@ public class RefMeterMockTest
                     }
                  ]
         };
+        ACRefMeterMock refMeterMock = new(Services);
 
         // Act
-        var mo = RefMeterMock.CalcMeasureOutput(lp);
+        var mo = refMeterMock.CalcMeasureOutput(lp);
 
         // Assert
         Assert.That(mo.PhaseOrder, Is.EqualTo(phaseOrder));

@@ -43,7 +43,7 @@ public static class RefMeterApiConfiguration
     public static void UseRefMeterApi(this IServiceCollection services, IConfiguration configuration)
     {
         /* The concrete implementations are transient and the lifetime is controlled by the corresponding meter test system. */
-        services.AddTransient<IMockRefMeter, RefMeterMock>();
+        services.AddTransient<IMockRefMeter, ACRefMeterMock>();
         services.AddTransient<IRestRefMeter, RestRefMeter>();
         services.AddTransient<ISerialPortFGRefMeter, SerialPortFGRefMeter>();
         services.AddTransient<ISerialPortMTRefMeter, SerialPortMTRefMeter>();

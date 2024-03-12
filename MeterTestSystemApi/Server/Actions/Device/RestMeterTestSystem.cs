@@ -16,7 +16,8 @@ namespace MeterTestSystemApi.Actions.Device;
 /// Meter test system based on REST connection to source and reference meter.
 /// </summary>
 /// <param name="httpClient">Connection to a remote meter test system.</param>
-public class RestMeterTestSystem(HttpClient httpClient) : IMeterTestSystem
+/// <param name="factory">Factory instance to create error calculators.</param>
+public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory factory) : IMeterTestSystem
 {
     private Uri _baseUri = null!;
 
@@ -63,7 +64,7 @@ public class RestMeterTestSystem(HttpClient httpClient) : IMeterTestSystem
     /// </summary>
     /// <param name="config">Configuration to use.</param>
     /// <param name="di">Active dependency injection runtime to create helper.</param>
-    public void Configure(InterfaceConfiguration config, IServiceProvider di)
+    public async void Configure(InterfaceConfiguration config, IServiceProvider di)
     {
         /* Validate. */
         if (string.IsNullOrEmpty(config.MeterTestSystem?.EndPoint)) throw new InvalidOperationException("no meter test system connection configured");
@@ -83,8 +84,28 @@ public class RestMeterTestSystem(HttpClient httpClient) : IMeterTestSystem
         source.Initialize(config.Source, config.Dosage);
         refMeter.Initialize(config.ReferenceMeter);
 
+        /* Error calculators. */
+        var errorCalculators = new List<IErrorCalculator>();
+
+        try
+        {
+            /* Create calculators based on configuration. */
+            foreach (var ec in config.ErrorCalculators)
+                errorCalculators.Add(await factory.Create(ec));
+        }
+        catch (Exception)
+        {
+            /* Release anything we have configured so far. */
+            errorCalculators.ForEach(ec => ec.Dispose());
+
+            throw;
+        }
+
         /* Use. */
         RefMeter = refMeter;
         Source = source;
+
+        _errorCalculators.Clear();
+        _errorCalculators.AddRange(errorCalculators);
     }
 }

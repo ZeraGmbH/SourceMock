@@ -36,7 +36,7 @@ public class Mad1ErrorCalculator : IErrorCalculatorInternal
     /// <inheritdoc/>
     public Task Initialize(ErrorCalculatorConfiguration configuration, IServiceProvider services)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc/>

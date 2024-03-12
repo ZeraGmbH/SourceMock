@@ -53,5 +53,8 @@ public static class ErrorCalculatorApiConfiguration
         services.AddTransient<ISerialPortFGErrorCalculator, SerialPortFGErrorCalculator>();
         services.AddTransient<ISerialPortMTErrorCalculator, SerialPortMTErrorCalculator>();
         services.AddTransient<IErrorCalculatorMock, ErrorCalculatorMock>();
+
+        services.AddTransient<IErrorCalculatorFactory, ErrorCalculatorFactory>();
+        services.AddKeyedTransient<IErrorCalculatorInternal, Mad1ErrorCalculator>(ErrorCalculatorProtocols.MAD_1);
     }
 }

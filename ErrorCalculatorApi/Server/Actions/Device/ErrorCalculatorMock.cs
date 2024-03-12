@@ -139,4 +139,9 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
             ModelName = "CalculatorMock",
             Version = "1.0"
         });
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+    }
 }

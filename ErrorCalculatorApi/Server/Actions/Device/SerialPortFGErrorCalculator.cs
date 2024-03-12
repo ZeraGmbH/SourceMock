@@ -43,6 +43,12 @@ public class SerialPortFGErrorCalculator(ISerialPortConnection device, ILogger<S
     public Task AbortErrorMeasurement() => throw new NotImplementedException();
 
     /// <inheritdoc/>
+
+    public void Dispose()
+    {
+    }
+
+    /// <inheritdoc/>
     public Task<ErrorMeasurementStatus> GetErrorStatus() => throw new NotImplementedException();
 
     /// <inheritdoc/>

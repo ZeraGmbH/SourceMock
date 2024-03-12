@@ -13,6 +13,10 @@ internal class UnavailableErrorCalculator : IErrorCalculator
 
     public Task AbortErrorMeasurement() => throw new ErrorCalculatorNotReadyException();
 
+    public void Dispose()
+    {
+    }
+
     public Task<ErrorMeasurementStatus> GetErrorStatus() => throw new ErrorCalculatorNotReadyException();
 
     public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion() => throw new NotImplementedException();

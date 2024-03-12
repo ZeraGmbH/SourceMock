@@ -41,6 +41,12 @@ public partial class SerialPortMTErrorCalculator(ISerialPortConnection device, I
     public bool Available => true;
 
     /// <inheritdoc/>
+
+    public void Dispose()
+    {
+    }
+
+    /// <inheritdoc/>
     public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion()
     {
         /* Execute the request and wait for the information string. */

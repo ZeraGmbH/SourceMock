@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
+using DutApi.Exceptions;
 using DutApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,8 @@ namespace DutApi.Actions;
 /// Connect using SCPI.NET.
 /// </summary>
 /// <param name="services">Dependency injection.</param>
-public class ScpiConnection(IServiceProvider services) : IDeviceUnderTestConnection
+/// <param name="logger">Logging helper.</param>
+public class ScpiConnection(IServiceProvider services, ILogger<ScpiConnection> logger) : IDeviceUnderTestConnection
 {
     class Device(IScpiConnection connection, string deviceId, ILogger<ScpiDevice> logger) : ScpiDevice(connection, deviceId, logger)
     {
@@ -75,29 +77,44 @@ public class ScpiConnection(IServiceProvider services) : IDeviceUnderTestConnect
 
             if (!_status.TryGetValue(type, out var info)) continue;
 
-            /* Read the raw value. */
-            await _connection.WriteString($"{info.Address}?");
-
-            var rawValue = await _connection.ReadString();
-
-            /* Convert the value. */
-            if (_raw.Contains(type))
-                result[i] = rawValue;
-            else
+            try
             {
-                /* Check for number. */
-                var match = parseNumber.Match(rawValue);
+                /* Read the raw value. */
+                await _connection.WriteString($"{info.Address}?");
 
-                if (match == null) continue;
+                var rawValue = await _connection.ReadString();
 
-                /* Get the value. */
-                var value = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+                /* Convert the value. */
+                if (_raw.Contains(type))
+                    result[i] = rawValue;
+                else
+                {
+                    /* Check for number. */
+                    var match = parseNumber.Match(rawValue);
 
-                /* Eventually scale it. */
-                if (info.Scale.GetValueOrDefault(0) != 0) value *= (double)info.Scale!;
+                    if (match == null) continue;
 
-                /* Remember it. */
-                result[i] = value;
+                    /* Get the value. */
+                    var value = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+
+                    /* Eventually scale it. */
+                    if (info.Scale.GetValueOrDefault(0) != 0) value *= (double)info.Scale!;
+
+                    /* Remember it. */
+                    result[i] = value;
+                }
+            }
+            catch (InvalidOperationException e)
+            {
+                logger.LogError("Device under test at {Address} not connected: {Exception}", _connection.DevicePath, e.Message);
+
+                throw new DutIoException($"Device under test at {_connection.DevicePath} not available: {e.Message}", e);
+            }
+            catch (TimeoutException e)
+            {
+                logger.LogError("Device under test did not respond to {Command} query: {Exception}", info.Address, e.Message);
+
+                throw new DutIoException($"Device under test did not respond to {info.Address} query: {e.Message}", e);
             }
         }
 

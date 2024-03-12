@@ -70,23 +70,47 @@ public class ScpiConnection(IServiceProvider services, ILogger<ScpiConnection> l
     {
         var result = new object[types.Length];
 
-        for (var i = 0; i < types.Length; i++)
-        {
-            /* See if register is configured. */
-            var type = types[i];
-
-            if (!_status.TryGetValue(type, out var info)) continue;
-
-            try
+        /* Analyse input types. */
+        var commands = types
+            .Select((DutStatusRegisterTypes type, int index) =>
             {
-                /* Read the raw value. */
-                await _connection.WriteString($"{info.Address}?");
+                if (!_status.TryGetValue(type, out var info)) info = null;
 
-                var rawValue = await _connection.ReadString();
+                return new { Raw = _raw.Contains(type), Info = info, Index = index };
+            })
+            .Where(i => i.Info != null)
+            .ToList();
+
+        /* Create a single command and send it to the device. */
+        var summary = string.Join("|", commands.Select(i => $"{i.Info!.Address}?"));
+
+        try
+        {
+            await _connection.WriteString(summary);
+        }
+        catch (InvalidOperationException e)
+        {
+            logger.LogError("Device under test at {Address} not connected: {Exception}", _connection.DevicePath, e.Message);
+
+            throw new DutIoException($"Device under test at {_connection.DevicePath} not available: {e.Message}", e);
+        }
+
+        /* Process all replies. */
+        try
+        {
+            /* Read the raw values. */
+            var rawValues = (await _connection.ReadString()).Split("\n");
+
+            for (var i = 0; i < commands.Count; i++)
+            {
+                var command = commands[i];
+
+                /* Get the raw values. */
+                var rawValue = rawValues[i];
 
                 /* Convert the value. */
-                if (_raw.Contains(type))
-                    result[i] = rawValue;
+                if (command.Raw)
+                    result[command.Index] = rawValue;
                 else
                 {
                     /* Check for number. */
@@ -98,25 +122,20 @@ public class ScpiConnection(IServiceProvider services, ILogger<ScpiConnection> l
                     var value = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
 
                     /* Eventually scale it. */
-                    if (info.Scale.GetValueOrDefault(0) != 0) value *= (double)info.Scale!;
+                    if (command.Info!.Scale.GetValueOrDefault(0) != 0) value *= (double)command.Info.Scale!;
 
                     /* Remember it. */
-                    result[i] = value;
+                    result[command.Index] = value;
                 }
             }
-            catch (InvalidOperationException e)
-            {
-                logger.LogError("Device under test at {Address} not connected: {Exception}", _connection.DevicePath, e.Message);
-
-                throw new DutIoException($"Device under test at {_connection.DevicePath} not available: {e.Message}", e);
-            }
-            catch (TimeoutException e)
-            {
-                logger.LogError("Device under test did not respond to {Command} query: {Exception}", info.Address, e.Message);
-
-                throw new DutIoException($"Device under test did not respond to {info.Address} query: {e.Message}", e);
-            }
         }
+        catch (TimeoutException e)
+        {
+            logger.LogError("Device under test did not respond to {Command} query: {Exception}", summary, e.Message);
+
+            throw new DutIoException($"Device under test did not respond to {summary} query: {e.Message}", e);
+        }
+
 
         return result;
     }

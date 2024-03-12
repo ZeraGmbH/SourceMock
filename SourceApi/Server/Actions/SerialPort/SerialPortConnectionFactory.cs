@@ -74,10 +74,10 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
                                 }
                                 break;
                             case SerialPortConfigurationTypes.Network:
-                                _connection = SerialPortConnection.FromNetwork(settings.EndPoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
+                                _connection = SerialPortConnection.FromNetwork(settings.Endpoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
                                 break;
                             case SerialPortConfigurationTypes.Device:
-                                _connection = SerialPortConnection.FromSerialPort(settings.EndPoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
+                                _connection = SerialPortConnection.FromSerialPort(settings.Endpoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
                                 break;
                         }
             }

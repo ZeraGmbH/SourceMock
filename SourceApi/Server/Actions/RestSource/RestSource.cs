@@ -111,9 +111,9 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
         _dosageUri = null;
 
         /* Validate. */
-        if (string.IsNullOrEmpty(sourceEndpoint?.EndPoint)) throw new InvalidOperationException("no source connection configured");
+        if (string.IsNullOrEmpty(sourceEndpoint?.Endpoint)) throw new InvalidOperationException("no source connection configured");
 
-        _sourceUri = new Uri(sourceEndpoint.EndPoint.TrimEnd('/') + "/");
+        _sourceUri = new Uri(sourceEndpoint.Endpoint.TrimEnd('/') + "/");
 
         /* May have authorisation. */
         if (!string.IsNullOrEmpty(_sourceUri.UserInfo))
@@ -121,9 +121,9 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
                 new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(_sourceUri.UserInfo)));
 
         /* Dosage is optional. */
-        if (!string.IsNullOrEmpty(dosageEndpoint?.EndPoint))
+        if (!string.IsNullOrEmpty(dosageEndpoint?.Endpoint))
         {
-            _dosageUri = new Uri(dosageEndpoint.EndPoint.TrimEnd('/') + "/");
+            _dosageUri = new Uri(dosageEndpoint.Endpoint.TrimEnd('/') + "/");
 
             if (!string.IsNullOrEmpty(_dosageUri.UserInfo))
                 httpDosage.DefaultRequestHeaders.Authorization =

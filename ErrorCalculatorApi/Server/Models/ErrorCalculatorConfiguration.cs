@@ -30,5 +30,5 @@ public class ErrorCalculatorConfiguration
     /// </summary>
     [BsonElement("endpoint")]
     [NotNull, Required]
-    public required string EndPoint { get; set; }
+    public required string Endpoint { get; set; }
 }

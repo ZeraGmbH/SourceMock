@@ -266,6 +266,8 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     /// <param name="factory">Factory to create error calculators.</param>
     public async Task ConfigureErrorCalculators(List<ErrorCalculatorConfiguration> config, IErrorCalculatorFactory factory)
     {
+        if (config.Count < 1) return;
+
         /* Error calculators. */
         var errorCalculators = new List<IErrorCalculator>();
 
@@ -284,6 +286,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         }
 
         /* Use. */
+        _errorCalculators.Clear();
         _errorCalculators.AddRange(errorCalculators);
     }
 }

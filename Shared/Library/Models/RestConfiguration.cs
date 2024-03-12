@@ -11,5 +11,5 @@ public class RestConfiguration
     /// Endpoint to use - full URL, e.g. https://demo.zerycon.de/api/v1/Source.
     /// </summary>
     [BsonElement("endpoint")]
-    public required string EndPoint { get; set; }
+    public required string Endpoint { get; set; }
 }

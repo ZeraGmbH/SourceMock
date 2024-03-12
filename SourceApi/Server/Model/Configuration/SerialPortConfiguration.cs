@@ -22,7 +22,7 @@ public class SerialPortConfiguration
     /// serial port proxy.
     /// </summary>
     [BsonElement("endPoint")]
-    public string? EndPoint { get; set; }
+    public string? Endpoint { get; set; }
 
     /// <summary>
     /// Optional information to authorize a network connection.

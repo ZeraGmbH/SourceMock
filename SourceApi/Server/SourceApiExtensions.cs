@@ -117,7 +117,7 @@ public static class SourceApiConfiguration
                 factory.Initialize(meterSystemType, meterSystemType == MeterTestSystemTypes.Mock ? null : new()
                 {
                     ConfigurationType = configurationType,
-                    EndPoint = portName!
+                    Endpoint = portName!
                 });
             }
 

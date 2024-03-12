@@ -67,9 +67,9 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
     public async void Configure(InterfaceConfiguration config, IServiceProvider di)
     {
         /* Validate. */
-        if (string.IsNullOrEmpty(config.MeterTestSystem?.EndPoint)) throw new InvalidOperationException("no meter test system connection configured");
+        if (string.IsNullOrEmpty(config.MeterTestSystem?.Endpoint)) throw new InvalidOperationException("no meter test system connection configured");
 
-        _baseUri = new Uri(config.MeterTestSystem.EndPoint.TrimEnd('/') + "/");
+        _baseUri = new Uri(config.MeterTestSystem.Endpoint.TrimEnd('/') + "/");
 
         /* May have authorisation. */
         if (!string.IsNullOrEmpty(_baseUri.UserInfo))

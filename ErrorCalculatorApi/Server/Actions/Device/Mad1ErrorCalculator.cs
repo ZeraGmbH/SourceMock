@@ -1,14 +1,17 @@
 using ErrorCalculatorApi.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ErrorCalculatorApi.Actions.Device;
 
 /// <summary>
 /// Using MAD 1.04 XML communication with an error calculator.
 /// </summary>
-public class Mad1ErrorCalculator : IErrorCalculatorInternal
+public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
 {
     /// <inheritdoc/>
     public bool Available => false;
+
+    private IMadConnection _connection = null!;
 
     /// <inheritdoc/>
     public Task AbortErrorMeasurement()
@@ -19,6 +22,8 @@ public class Mad1ErrorCalculator : IErrorCalculatorInternal
     /// <inheritdoc/>
     public void Dispose()
     {
+        using (_connection)
+            _connection = null!;
     }
 
     /// <inheritdoc/>
@@ -28,18 +33,21 @@ public class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion()
+    public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion()
     {
+        /* Execute the request. */
+        await _connection.Execute(GetVersionRequest());
+
         throw new NotImplementedException();
     }
 
     /// <inheritdoc/>
     public Task Initialize(ErrorCalculatorConfiguration configuration, IServiceProvider services)
     {
-        /* Test connection. */
-        if (configuration.Connection != ErrorCalculatorConnectionTypes.TCP) throw new ArgumentException("MAD only supports TCP connections");
+        /* Create connection implementation. */
+        _connection = services.GetRequiredKeyedService<IMadConnection>(ErrorCalculatorConnectionTypes.TCP);
 
-        return Task.CompletedTask;
+        return _connection.Initialize(configuration);
     }
 
     /// <inheritdoc/>

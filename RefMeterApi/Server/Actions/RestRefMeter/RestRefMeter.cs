@@ -74,9 +74,9 @@ public class RestRefMeter(HttpClient httpClient, ILogger<RestRefMeter> logger) :
         _baseUri = null!;
 
         /* Validate. */
-        if (string.IsNullOrEmpty(endpoint?.EndPoint)) throw new InvalidOperationException("no reference meter connection configured");
+        if (string.IsNullOrEmpty(endpoint?.Endpoint)) throw new InvalidOperationException("no reference meter connection configured");
 
-        _baseUri = new Uri(endpoint.EndPoint.TrimEnd('/') + "/");
+        _baseUri = new Uri(endpoint.Endpoint.TrimEnd('/') + "/");
 
         /* May have authorisation. */
         if (!string.IsNullOrEmpty(_baseUri.UserInfo))

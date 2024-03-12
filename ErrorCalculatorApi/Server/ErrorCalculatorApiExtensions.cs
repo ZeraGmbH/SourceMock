@@ -56,5 +56,7 @@ public static class ErrorCalculatorApiConfiguration
 
         services.AddTransient<IErrorCalculatorFactory, ErrorCalculatorFactory>();
         services.AddKeyedTransient<IErrorCalculatorInternal, Mad1ErrorCalculator>(ErrorCalculatorProtocols.MAD_1);
+
+        services.AddKeyedTransient<IMadConnection, MadTcpConnection>(ErrorCalculatorConnectionTypes.TCP);
     }
 }

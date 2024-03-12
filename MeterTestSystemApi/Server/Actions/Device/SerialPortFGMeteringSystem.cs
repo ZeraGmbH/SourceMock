@@ -1,4 +1,5 @@
 using ErrorCalculatorApi.Actions.Device;
+using ErrorCalculatorApi.Models;
 using MeterTestSystemApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -193,7 +194,6 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         }
 
         /* Create new instances of all connected sub devices. */
-        var errorCalculator = _services.GetRequiredService<ISerialPortFGErrorCalculator>();
         var refMeter = _services.GetRequiredService<ISerialPortFGRefMeter>();
         var source = _services.GetRequiredService<ISerialPortFGSource>();
 
@@ -224,8 +224,6 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
             if (source != null)
             {
                 /* Update the implementation references if the frequency generator accepted the new configuration. */
-                _errorCalculators[0] = errorCalculator;
-
                 AmplifiersAndReferenceMeter = settings;
                 RefMeter = refMeter;
                 Source = source;
@@ -259,5 +257,33 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
 
         /* Create response structure. */
         return ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, true);
+    }
+
+    /// <summary>
+    /// Configure the error calculators.
+    /// </summary>
+    /// <param name="config">List of error calculators to use.</param>
+    /// <param name="factory">Factory to create error calculators.</param>
+    public async Task ConfigureErrorCalculators(List<ErrorCalculatorConfiguration> config, IErrorCalculatorFactory factory)
+    {
+        /* Error calculators. */
+        var errorCalculators = new List<IErrorCalculator>();
+
+        try
+        {
+            /* Create calculators based on configuration. */
+            foreach (var ec in config)
+                errorCalculators.Add(await factory.Create(ec));
+        }
+        catch (Exception)
+        {
+            /* Release anything we have configured so far. */
+            errorCalculators.ForEach(ec => ec.Dispose());
+
+            throw;
+        }
+
+        /* Use. */
+        _errorCalculators.AddRange(errorCalculators);
     }
 }

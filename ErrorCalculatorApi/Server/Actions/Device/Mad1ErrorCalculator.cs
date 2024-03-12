@@ -36,6 +36,9 @@ public class Mad1ErrorCalculator : IErrorCalculatorInternal
     /// <inheritdoc/>
     public Task Initialize(ErrorCalculatorConfiguration configuration, IServiceProvider services)
     {
+        /* Test connection. */
+        if (configuration.Connection != ErrorCalculatorConnectionTypes.TCP) throw new ArgumentException("MAD only supports TCP connections");
+
         return Task.CompletedTask;
     }
 

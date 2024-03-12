@@ -54,7 +54,11 @@ public static class MeterTestSystemApiConfiguration
         /* Configure the factory. */
         services.AddSingleton<IMeterTestSystemFactory>((ctx) =>
         {
-            var factory = new MeterTestSystemFactory(ctx, ctx.GetRequiredService<ILogger<MeterTestSystemFactory>>());
+            var factory = new MeterTestSystemFactory(
+                ctx,
+                ctx.GetRequiredService<IErrorCalculatorFactory>(),
+                ctx.GetRequiredService<ILogger<MeterTestSystemFactory>>()
+            );
 
             if (configuration["UseDatabaseConfiguration"] != "yes")
             {

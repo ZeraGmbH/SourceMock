@@ -1,3 +1,4 @@
+using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Models.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,8 +10,9 @@ namespace MeterTestSystemApi.Actions.Device;
 /// Implement a meter test system factory.
 /// </summary>
 /// <param name="services">Dependency injection to use.</param>
+/// <param name="factory">Factory to create error calculators.</param>
 /// <param name="logger">Logging helper.</param>
-public class MeterTestSystemFactory(IServiceProvider services, ILogger<MeterTestSystemFactory> logger) : IMeterTestSystemFactory
+public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorFactory factory, ILogger<MeterTestSystemFactory> logger) : IMeterTestSystemFactory
 {
     private readonly object _sync = new();
 
@@ -45,34 +47,42 @@ public class MeterTestSystemFactory(IServiceProvider services, ILogger<MeterTest
                 /* Create it depending on the configuration. */
                 switch (configuration.MeterTestSystemType)
                 {
+                    case MeterTestSystemTypes.FG30x:
+                        {
+                            var meterTestSystem = services.GetRequiredService<SerialPortFGMeterTestSystem>();
+
+                            _meterTestSystem = meterTestSystem;
+
+                            meterTestSystem.ConfigureErrorCalculators(configuration.Interfaces.ErrorCalculators, factory).Wait();
+
+                            if (configuration.AmplifiersAndReferenceMeter != null)
+                                try
+                                {
+                                    /* Do all configurations. */
+                                    _meterTestSystem
+                                        .SetAmplifiersAndReferenceMeter(configuration.AmplifiersAndReferenceMeter)
+                                        .Wait();
+                                }
+                                catch (Exception e)
+                                {
+                                    /* Just report - let meter test system run. */
+                                    logger.LogError("Unable to restore amplifiers: {Exception}", e.Message);
+                                }
+
+                            break;
+                        }
+                    case MeterTestSystemTypes.REST:
+                        {
+                            var meterTestSystem = services.GetRequiredService<RestMeterTestSystem>();
+
+                            meterTestSystem.Configure(configuration.Interfaces, services);
+
+                            _meterTestSystem = meterTestSystem;
+                            break;
+                        }
                     case MeterTestSystemTypes.MT786:
                         _meterTestSystem = services.GetRequiredService<SerialPortMTMeterTestSystem>();
                         break;
-                    case MeterTestSystemTypes.FG30x:
-                        _meterTestSystem = services.GetRequiredService<SerialPortFGMeterTestSystem>();
-
-                        if (configuration.AmplifiersAndReferenceMeter != null)
-                            try
-                            {
-                                /* Do all configurations. */
-                                _meterTestSystem
-                                    .SetAmplifiersAndReferenceMeter(configuration.AmplifiersAndReferenceMeter)
-                                    .Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                /* Just report - let meter test system run. */
-                                logger.LogError("Unable to restore amplifiers: {Exception}", e.Message);
-                            }
-
-                        break;
-                    case MeterTestSystemTypes.REST:
-                        var meterTestSystem = services.GetRequiredService<RestMeterTestSystem>();
-
-                        meterTestSystem.Configure(configuration.Interfaces, services);
-
-                        _meterTestSystem = meterTestSystem;
-                        return;
                     case MeterTestSystemTypes.Mock:
                         _meterTestSystem = services.GetRequiredService<MeterTestSystemMock>();
                         break;

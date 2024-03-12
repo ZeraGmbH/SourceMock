@@ -15,6 +15,8 @@ internal class UnavailableErrorCalculator : IErrorCalculator
 
     public Task<ErrorMeasurementStatus> GetErrorStatus() => throw new ErrorCalculatorNotReadyException();
 
+    public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion() => throw new NotImplementedException();
+
     public Task SetErrorMeasurementParameters(double meterConstant, long impulses) => throw new ErrorCalculatorNotReadyException();
 
     public Task StartErrorMeasurement(bool continuous) => throw new ErrorCalculatorNotReadyException();

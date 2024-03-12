@@ -36,4 +36,9 @@ public interface IErrorCalculator
     /// <returns>The current status.</returns>
     Task<ErrorMeasurementStatus> GetErrorStatus();
 
+    /// <summary>
+    /// Retrieve the firmware version of the error calculator.
+    /// </summary>
+    /// <returns>The firmware version.</returns>
+    Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion();
 }

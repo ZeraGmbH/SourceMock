@@ -41,6 +41,21 @@ public class ErrorMeasurementController(IErrorCalculator device) : ControllerBas
         ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.SetErrorMeasurementParameters(meterConstant, impulses));
 
     /// <summary>
+    /// Retrieve the current firmware of the error calculator.
+    /// </summary>
+    /// <returns>Firmware information.</returns>
+    [HttpGet("Version")]
+    [SwaggerOperation(OperationId = "GetFirmware")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult<ErrorCalculatorFirmwareVersion>> GetFirmware() =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetFirmwareVersion);
+
+    /// <summary>
     /// Retrieve the current status of the error measurement.
     /// </summary>
     /// <returns>Status information.</returns>

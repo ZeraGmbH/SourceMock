@@ -2,8 +2,10 @@ using System.Globalization;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using Amazon.Runtime.Internal.Util;
 using DutApi.Exceptions;
 using DutApi.Models;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 
 namespace DutApi.Actions;
@@ -104,67 +106,90 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
     /// <inheritdoc/>
     public Task<object[]> ReadStatusRegisters(DutStatusRegisterTypes[] types) => Task.Run(() =>
     {
-        lock (_collector)
-        {
-            try
+        var result = new object[types.Length];
+
+        for (var iRaw = 2; iRaw-- > 0;)
+            lock (_collector)
             {
-                /* Cleanup junk. */
-                Flush();
-            }
-            catch (Exception e)
-            {
-                logger.LogError("Device under test at {Address} not available: {Exception}", _connection, e.Message);
+                var raw = iRaw == 1;
 
-                throw new DutIoException($"Device under test at {_connection} not available: {e.Message}", e);
-            }
-
-            /* Process all replies. */
-            var result = new object[types.Length];
-            var stream = _connection.GetStream();
-
-            for (var i = 0; i < types.Length; i++)
-            {
-                var type = types[i];
-
-                /* See if type is supported. */
-                if (_status.TryGetValue(type, out var info))
-                    try
+                /* Analyse input types. */
+                var commands = types
+                    .Select((DutStatusRegisterTypes type, int index) =>
                     {
-                        /* Send the request. */
-                        stream.Write(Encoding.UTF8.GetBytes($"{info.Address}?\n"));
+                        /* See if type is used at all. */
+                        if (!_status.TryGetValue(type, out var info)) info = null;
 
-                        /* Read the raw values. */
-                        var rawValue = ReadLine();
+                        /* Create information structure. */
+                        return new { Info = _raw.Contains(type) == raw ? info : null, Index = index };
+                    })
+                    .Where(i => i.Info != null)
+                    .ToList();
 
-                        /* Convert the value. */
-                        if (_raw.Contains(type))
-                            result[i] = rawValue;
-                        else
-                        {
-                            /* Check for number. */
-                            var match = parseNumber.Match(rawValue);
+                if (commands.Count < 1) continue;
 
-                            if (match == null) continue;
+                /* Create a single command and send it to the device. */
+                var summary = string.Join("|", commands.Select(i => $"{i.Info!.Address}?"));
 
-                            /* Get the value. */
-                            var value = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+                try
+                {
+                    Flush();
 
-                            /* Eventually scale it. */
-                            if (info.Scale.GetValueOrDefault(0) != 0) value *= (double)info.Scale!;
+                    _connection.GetStream().Write(Encoding.UTF8.GetBytes($"{summary}\n"));
+                }
+                catch (Exception e)
+                {
+                    logger.LogError("Device under test at {Address} not available: {Exception}", _connection, e.Message);
 
-                            /* Remember it. */
-                            result[i] = value;
-                        }
-                    }
-                    catch (Exception e)
+                    throw new DutIoException($"Device under test at {_connection} not available: {e.Message}", e);
+                }
+
+                /* Read the raw values. */
+                List<string> rawValues;
+
+                try
+                {
+                    rawValues = commands.Select(c => ReadLine()).ToList();
+                }
+                catch (Exception e)
+                {
+                    logger.LogError("Device under test did not respond to {Command} query: {Exception}", summary, e.Message);
+
+                    throw new DutIoException($"Device under test did not respond to {summary} query: {e.Message}", e);
+                }
+
+                /* In raw mode just copy over. */
+                if (raw)
+                    for (var i = 0; i < rawValues.Count; i++)
+                        result[commands[i].Index] = rawValues[i];
+                else
+                {
+                    /* Create lookup map. */
+                    foreach (var command in commands)
                     {
-                        logger.LogError("Device under test did not respond to {Command} query: {Exception}", info.Address, e.Message);
+                        /* Lookup result. */
+                        var info = command.Info!;
+                        var prefix = string.Join(":", $"{info.Address}:".Split(":").Skip(1));
+                        var rawValue = rawValues.FirstOrDefault(r => r.StartsWith(prefix));
 
-                        throw new DutIoException($"Device under test did not respond to {info.Address} query: {e.Message}", e);
+                        if (rawValue == null) continue;
+
+                        /* Check for number. */
+                        var match = parseNumber.Match(rawValue);
+
+                        if (match == null) continue;
+
+                        /* Get the value. */
+                        var value = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+
+                        if (info.Scale.GetValueOrDefault(0) != 0) value *= (double)info.Scale!;
+
+                        /* Remember it. */
+                        result[command.Index] = value;
                     }
+                }
             }
 
-            return Task.FromResult(result);
-        }
+        return Task.FromResult(result);
     });
 }

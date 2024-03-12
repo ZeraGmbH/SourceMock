@@ -106,27 +106,10 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
     {
         lock (_collector)
         {
-            var result = new object[types.Length];
-
-            /* Analyse input types. */
-            var commands = types
-                .Select((DutStatusRegisterTypes type, int index) =>
-                {
-                    if (!_status.TryGetValue(type, out var info)) info = null;
-
-                    return new { Raw = _raw.Contains(type), Info = info, Index = index };
-                })
-                .Where(i => i.Info != null)
-                .ToList();
-
-            /* Create a single command and send it to the device. */
-            var summary = string.Join("|", commands.Select(i => $"{i.Info!.Address}?"));
-
             try
             {
+                /* Cleanup junk. */
                 Flush();
-
-                _connection.GetStream().Write(Encoding.UTF8.GetBytes($"{summary}\n"));
             }
             catch (Exception e)
             {
@@ -136,38 +119,50 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
             }
 
             /* Process all replies. */
-            foreach (var command in commands)
-                try
-                {
-                    /* Read the raw values. */
-                    var rawValue = ReadLine();
+            var result = new object[types.Length];
+            var stream = _connection.GetStream();
 
-                    /* Convert the value. */
-                    if (command.Raw)
-                        result[command.Index] = rawValue;
-                    else
+            for (var i = 0; i < types.Length; i++)
+            {
+                var type = types[i];
+
+                /* See if type is supported. */
+                if (_status.TryGetValue(type, out var info))
+                    try
                     {
-                        /* Check for number. */
-                        var match = parseNumber.Match(rawValue);
+                        /* Send the request. */
+                        stream.Write(Encoding.UTF8.GetBytes($"{info.Address}?\n"));
 
-                        if (match == null) continue;
+                        /* Read the raw values. */
+                        var rawValue = ReadLine();
 
-                        /* Get the value. */
-                        var value = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+                        /* Convert the value. */
+                        if (_raw.Contains(type))
+                            result[i] = rawValue;
+                        else
+                        {
+                            /* Check for number. */
+                            var match = parseNumber.Match(rawValue);
 
-                        /* Eventually scale it. */
-                        if (command.Info!.Scale.GetValueOrDefault(0) != 0) value *= (double)command.Info.Scale!;
+                            if (match == null) continue;
 
-                        /* Remember it. */
-                        result[command.Index] = value;
+                            /* Get the value. */
+                            var value = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+
+                            /* Eventually scale it. */
+                            if (info.Scale.GetValueOrDefault(0) != 0) value *= (double)info.Scale!;
+
+                            /* Remember it. */
+                            result[i] = value;
+                        }
                     }
-                }
-                catch (Exception e)
-                {
-                    logger.LogError("Device under test did not respond to {Command} query: {Exception}", summary, e.Message);
+                    catch (Exception e)
+                    {
+                        logger.LogError("Device under test did not respond to {Command} query: {Exception}", info.Address, e.Message);
 
-                    throw new DutIoException($"Device under test did not respond to {summary} query: {e.Message}", e);
-                }
+                        throw new DutIoException($"Device under test did not respond to {info.Address} query: {e.Message}", e);
+                    }
+            }
 
             return Task.FromResult(result);
         }

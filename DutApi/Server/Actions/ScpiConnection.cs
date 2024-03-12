@@ -1,32 +1,26 @@
 using System.Globalization;
+using System.Net.Sockets;
+using System.Text;
 using System.Text.RegularExpressions;
 using DutApi.Exceptions;
 using DutApi.Models;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ScpiNet;
 
 namespace DutApi.Actions;
 
 /// <summary>
 /// Connect using SCPI.NET.
 /// </summary>
-/// <param name="services">Dependency injection.</param>
 /// <param name="logger">Logging helper.</param>
-public class ScpiConnection(IServiceProvider services, ILogger<ScpiConnection> logger) : IDeviceUnderTestConnection
+public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestConnection
 {
-    class Device(IScpiConnection connection, string deviceId, ILogger<ScpiDevice> logger) : ScpiDevice(connection, deviceId, logger)
-    {
-        public Task<string> Execute(string command) => Query(command);
-    }
-
     private static readonly Regex parseEndpoint = new(@"^(.+):([0-9]+)$");
 
     private static readonly Regex parseNumber = new(@"^.*:([^:]+);$");
 
     private static readonly HashSet<DutStatusRegisterTypes> _raw = [DutStatusRegisterTypes.Serial];
 
-    private IScpiConnection _connection = null!;
+    private TcpClient _connection = null!;
 
     private Dictionary<DutStatusRegisterTypes, DutStatusRegisterInfo> _status = [];
 
@@ -38,7 +32,7 @@ public class ScpiConnection(IServiceProvider services, ILogger<ScpiConnection> l
     }
 
     /// <inheritdoc/>
-    public async Task Initialize(DutConnection configuration, DutStatusRegisterInfo[] status)
+    public Task Initialize(DutConnection configuration, DutStatusRegisterInfo[] status)
     {
         /* Check for supported types. */
         if (configuration.Type != DutProtocolTypes.SCPIOverTCP) throw new NotImplementedException("only SCPI over TCP supported so far");
@@ -53,90 +47,129 @@ public class ScpiConnection(IServiceProvider services, ILogger<ScpiConnection> l
             .Where(s => !string.IsNullOrEmpty(s.Address))
             .ToDictionary(s => s.Type);
 
-        /* Create SCPI connection - must use appropriate timeout due to integration times. */
-        _connection = new TcpScpiConnection(
-            match.Groups[1].Value,
-            ushort.Parse(match.Groups[2].Value),
-            5000,
-            services.GetRequiredService<ILogger<TcpScpiConnection>>()
-        );
+        try
+        {
+            /* Create SCPI connection - must use appropriate timeout due to integration times. */
+            _connection =
+                new(match.Groups[1].Value, ushort.Parse(match.Groups[2].Value))
+                {
+                    SendTimeout = 10000,
+                    ReceiveTimeout = 5000
+                };
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Device under test at {Address} not available: {Exception}", _connection, e.Message);
 
-        /* Open the physical connection. */
-        await _connection.Open();
+            throw new DutIoException($"Device under test at {_connection} not available: {e.Message}", e);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private readonly List<byte> _collector = new();
+
+    private string ReadLine()
+    {
+        var stream = _connection.GetStream();
+
+        for (; ; )
+        {
+            var sep = _collector.IndexOf(10);
+
+            if (sep >= 0)
+            {
+                var line = Encoding.UTF8.GetString(_collector.Take(sep).ToArray());
+
+                _collector.RemoveRange(0, sep + 1);
+
+                return line;
+            }
+
+            var buf = new byte[1024];
+            var len = stream.Read(buf);
+
+            if (len > 0)
+                _collector.AddRange(buf.Take(len));
+        }
+    }
+
+    private void Flush()
+    {
+        _connection.GetStream().Flush();
+
+        _collector.Clear();
     }
 
     /// <inheritdoc/>
-    public async Task<object[]> ReadStatusRegisters(DutStatusRegisterTypes[] types)
+    public Task<object[]> ReadStatusRegisters(DutStatusRegisterTypes[] types) => Task.Run(() =>
     {
-        var result = new object[types.Length];
-
-        /* Analyse input types. */
-        var commands = types
-            .Select((DutStatusRegisterTypes type, int index) =>
-            {
-                if (!_status.TryGetValue(type, out var info)) info = null;
-
-                return new { Raw = _raw.Contains(type), Info = info, Index = index };
-            })
-            .Where(i => i.Info != null)
-            .ToList();
-
-        /* Create a single command and send it to the device. */
-        var summary = string.Join("|", commands.Select(i => $"{i.Info!.Address}?"));
-
-        try
+        lock (_collector)
         {
-            await _connection.WriteString(summary);
-        }
-        catch (InvalidOperationException e)
-        {
-            logger.LogError("Device under test at {Address} not connected: {Exception}", _connection.DevicePath, e.Message);
+            var result = new object[types.Length];
 
-            throw new DutIoException($"Device under test at {_connection.DevicePath} not available: {e.Message}", e);
-        }
-
-        /* Process all replies. */
-        try
-        {
-            /* Read the raw values. */
-            var rawValues = (await _connection.ReadString()).Split("\n");
-
-            for (var i = 0; i < commands.Count; i++)
-            {
-                var command = commands[i];
-
-                /* Get the raw values. */
-                var rawValue = rawValues[i];
-
-                /* Convert the value. */
-                if (command.Raw)
-                    result[command.Index] = rawValue;
-                else
+            /* Analyse input types. */
+            var commands = types
+                .Select((DutStatusRegisterTypes type, int index) =>
                 {
-                    /* Check for number. */
-                    var match = parseNumber.Match(rawValue);
+                    if (!_status.TryGetValue(type, out var info)) info = null;
 
-                    if (match == null) continue;
+                    return new { Raw = _raw.Contains(type), Info = info, Index = index };
+                })
+                .Where(i => i.Info != null)
+                .ToList();
 
-                    /* Get the value. */
-                    var value = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+            /* Create a single command and send it to the device. */
+            var summary = string.Join("|", commands.Select(i => $"{i.Info!.Address}?"));
 
-                    /* Eventually scale it. */
-                    if (command.Info!.Scale.GetValueOrDefault(0) != 0) value *= (double)command.Info.Scale!;
+            try
+            {
+                Flush();
 
-                    /* Remember it. */
-                    result[command.Index] = value;
-                }
+                _connection.GetStream().Write(Encoding.UTF8.GetBytes($"{summary}\n"));
             }
+            catch (Exception e)
+            {
+                logger.LogError("Device under test at {Address} not available: {Exception}", _connection, e.Message);
+
+                throw new DutIoException($"Device under test at {_connection} not available: {e.Message}", e);
+            }
+
+            /* Process all replies. */
+            foreach (var command in commands)
+                try
+                {
+                    /* Read the raw values. */
+                    var rawValue = ReadLine();
+
+                    /* Convert the value. */
+                    if (command.Raw)
+                        result[command.Index] = rawValue;
+                    else
+                    {
+                        /* Check for number. */
+                        var match = parseNumber.Match(rawValue);
+
+                        if (match == null) continue;
+
+                        /* Get the value. */
+                        var value = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+
+                        /* Eventually scale it. */
+                        if (command.Info!.Scale.GetValueOrDefault(0) != 0) value *= (double)command.Info.Scale!;
+
+                        /* Remember it. */
+                        result[command.Index] = value;
+                    }
+                }
+                catch (Exception e)
+                {
+                    logger.LogError("Device under test did not respond to {Command} query: {Exception}", summary, e.Message);
+
+                    throw new DutIoException($"Device under test did not respond to {summary} query: {e.Message}", e);
+                }
+
+            return Task.FromResult(result);
         }
-        catch (TimeoutException e)
-        {
-            logger.LogError("Device under test did not respond to {Command} query: {Exception}", summary, e.Message);
-
-            throw new DutIoException($"Device under test did not respond to {summary} query: {e.Message}", e);
-        }
-
-
-        return result;
-    }
+    });
 }

@@ -1,5 +1,5 @@
 using System.Xml;
-using ErrorCalculatorApi.Actions.Device;
+using ErrorCalculatorApi.Actions.Device.MAD;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 

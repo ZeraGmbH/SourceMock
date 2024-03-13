@@ -2,7 +2,7 @@ using System.Xml;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ErrorCalculatorApi.Actions.Device;
+namespace ErrorCalculatorApi.Actions.Device.MAD;
 
 /// <summary>
 /// Using MAD 1.04 XML communication with an error calculator.

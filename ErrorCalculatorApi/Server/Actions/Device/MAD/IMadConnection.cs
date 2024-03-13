@@ -1,7 +1,7 @@
 using System.Xml;
 using ErrorCalculatorApi.Models;
 
-namespace ErrorCalculatorApi.Actions.Device;
+namespace ErrorCalculatorApi.Actions.Device.MAD;
 
 /// <summary>
 /// Implementation for MAD XML communication.

@@ -6,7 +6,7 @@ using System.Xml;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging;
 
-namespace ErrorCalculatorApi.Actions.Device;
+namespace ErrorCalculatorApi.Actions.Device.MAD;
 
 /// <summary>
 /// MAD communication using a TCP channel.

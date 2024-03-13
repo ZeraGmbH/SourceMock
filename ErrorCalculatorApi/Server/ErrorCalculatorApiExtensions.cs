@@ -1,4 +1,5 @@
 using ErrorCalculatorApi.Actions.Device;
+using ErrorCalculatorApi.Actions.Device.MAD;
 using ErrorCalculatorApi.Exceptions;
 using ErrorCalculatorApi.Models;
 using Microsoft.AspNetCore.Mvc;

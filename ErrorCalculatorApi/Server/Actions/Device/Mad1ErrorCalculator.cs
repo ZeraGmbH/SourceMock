@@ -1,3 +1,4 @@
+using System.Xml;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,6 +25,15 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     {
         using (_connection)
             _connection = null!;
+    }
+
+    private static XmlDocument LoadXmlFromString(string xml)
+    {
+        var doc = new XmlDocument();
+
+        doc.LoadXml(xml);
+
+        return doc;
     }
 
     /// <inheritdoc/>

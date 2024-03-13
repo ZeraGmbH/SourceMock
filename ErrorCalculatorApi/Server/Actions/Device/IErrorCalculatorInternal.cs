@@ -13,4 +13,9 @@ public interface IErrorCalculatorInternal : IErrorCalculator
     /// <param name="configuration">Configuration to use.</param>
     /// <param name="services">Dependency injection.</param>
     Task Initialize(ErrorCalculatorConfiguration configuration, IServiceProvider services);
+
+    /// <summary>
+    /// Release all resources.
+    /// </summary>
+    void Destroy();
 }

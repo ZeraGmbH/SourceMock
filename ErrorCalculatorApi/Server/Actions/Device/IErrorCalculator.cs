@@ -5,10 +5,10 @@ namespace ErrorCalculatorApi.Actions.Device;
 /// <summary>
 /// API for any error calculator device.
 /// </summary>
-public interface IErrorCalculator : IDisposable
+public interface IErrorCalculator
 {
     /// <summary>
-    /// Set if the reference meter is fully configured and can be used.
+    /// Set if the error calculator is fully configured and can be used.
     /// </summary>
     bool Available { get; }
 

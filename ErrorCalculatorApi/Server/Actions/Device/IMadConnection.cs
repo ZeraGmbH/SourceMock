@@ -9,6 +9,11 @@ namespace ErrorCalculatorApi.Actions.Device;
 public interface IMadConnection : IDisposable
 {
     /// <summary>
+    /// Set if the error calculator is fully configured and can be used.
+    /// </summary>
+    bool Available { get; }
+
+    /// <summary>
     /// Configure the connection.
     /// </summary>
     /// <param name="config">Configuration to use.</param>

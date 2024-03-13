@@ -49,6 +49,9 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
     /// </summary>
     private TcpClient client = new() { SendTimeout = 5000, ReceiveTimeout = 5000 };
 
+    /// <inheritdoc/>
+    public bool Available => client.Connected;
+
     /// <summary>
     /// Set to terminate all outstanding operations.
     /// </summary>
@@ -106,12 +109,13 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
                 var data = await client.GetStream().ReadAsync(buffer, _doneReader.Token);
 
                 if (data < 1)
-                {
-                    /* Server may be down, force reconnect. */
-                    client.Close();
+                    using (client)
+                    {
+                        /* Server may be down, force reconnect. */
+                        client = new() { SendTimeout = 5000, ReceiveTimeout = 5000 };
 
-                    continue;
-                }
+                        continue;
+                    }
 
                 /* Merge in. */
                 _collector.AddRange(buffer.Take(data));

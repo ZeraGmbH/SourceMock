@@ -12,5 +12,5 @@ public interface IErrorCalculatorFactory
     /// </summary>
     /// <param name="configuration">Configuration to use.</param>
     /// <returns>Error calculator configured as requested.</returns>
-    Task<IErrorCalculator> Create(ErrorCalculatorConfiguration configuration);
+    Task<IErrorCalculatorInternal> Create(ErrorCalculatorConfiguration configuration);
 }

@@ -1,4 +1,4 @@
-using System.Xml;
+using ErrorCalculatorApi.Models;
 
 namespace ErrorCalculatorApi.Actions.Device;
 
@@ -16,5 +16,24 @@ partial class Mad1ErrorCalculator
       </KMA_XML_0_01>
     ";
 
-  private static XmlDocument GetVersionRequest() => LoadXmlFromString(VersionRequestXml);
+
+  /// <inheritdoc/>
+  public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion()
+  {
+    /* Execute the request. */
+    var res = await _connection.Execute(LoadXmlFromString(VersionRequestXml));
+
+    /* Analyse overall result. */
+    var info = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/serverVerRes");
+    var cmd = info?.SelectSingleNode("cmdResCode")?.InnerText?.Trim();
+
+    if (cmd != "OK") throw new InvalidOperationException("unable to read firmware version");
+
+    /* Report result. */
+    return new()
+    {
+      ModelName = info?.SelectSingleNode("hwZeraName")?.InnerText.Trim() ?? string.Empty,
+      Version = info?.SelectSingleNode("versionValue")?.InnerText.Trim() ?? string.Empty
+    };
+  }
 }

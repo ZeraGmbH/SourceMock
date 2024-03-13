@@ -37,6 +37,17 @@ public static class MeterTestSystemApiConfiguration
     {
     }
 
+    private static T ForbidDisposable<T>(T instance, IServiceProvider services)
+    {
+        /* As expected. */
+        if (instance is not IDisposable) return instance;
+
+        /* Report and terminate. */
+        services.GetRequiredService<ILogger<T>>().LogCritical("{Type} must not implement IDisposable", instance.GetType().FullName);
+
+        throw new InvalidDataException("Implementation of IDisposable forbidden - please contact developer.");
+    }
+
     /// <summary>
     /// Configure the dependency injection.
     /// </summary>
@@ -82,11 +93,25 @@ public static class MeterTestSystemApiConfiguration
         /* Access meter test system singlon through the factory. */
         services.AddTransient((ctx) => ctx.GetRequiredService<IMeterTestSystemFactory>().MeterTestSystem);
 
+        /* 
+            WARNING
+
+            These convienent registration should be transient since the implemenation may
+            change during the life time of the service - although this is not very likely
+            during work it may be a problem when in the startup phase there are some 
+            early bindings to these services.
+
+            But transient services will be disposed by the dependency injection system when
+            the created instance is no longer used. So it's strongly forbidden to implement
+            IDisposable on any of the services registered here. This restriction is based
+            on the class itself not interfaces implemented or used here.
+        */
+
         /* Convenient accessors to the source, reference meter and error calculator - transient because these can change when reconfiguring the meter test system. */
         services.AddTransient(di => di.GetRequiredService<IMeterTestSystem>().ErrorCalculators);
-        services.AddTransient(di => di.GetRequiredService<IErrorCalculator[]>()[0]);
 
-        services.AddTransient(di => di.GetRequiredService<IMeterTestSystem>().RefMeter);
-        services.AddTransient(di => di.GetRequiredService<IMeterTestSystem>().Source);
+        services.AddTransient(di => ForbidDisposable(di.GetRequiredService<IErrorCalculator[]>()[0], di));
+        services.AddTransient(di => ForbidDisposable(di.GetRequiredService<IMeterTestSystem>().RefMeter, di));
+        services.AddTransient(di => ForbidDisposable(di.GetRequiredService<IMeterTestSystem>().Source, di));
     }
 }

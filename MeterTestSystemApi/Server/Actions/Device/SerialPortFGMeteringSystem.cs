@@ -269,7 +269,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         if (config.Count < 1) return;
 
         /* Error calculators. */
-        var errorCalculators = new List<IErrorCalculator>();
+        var errorCalculators = new List<IErrorCalculatorInternal>();
 
         try
         {
@@ -280,7 +280,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         catch (Exception)
         {
             /* Release anything we have configured so far. */
-            errorCalculators.ForEach(ec => ec.Dispose());
+            errorCalculators.ForEach(ec => ec.Destroy());
 
             throw;
         }

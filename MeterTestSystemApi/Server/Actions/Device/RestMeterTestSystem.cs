@@ -85,7 +85,7 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
         refMeter.Initialize(config.ReferenceMeter);
 
         /* Error calculators. */
-        var errorCalculators = new List<IErrorCalculator>();
+        var errorCalculators = new List<IErrorCalculatorInternal>();
 
         try
         {
@@ -96,7 +96,7 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
         catch (Exception)
         {
             /* Release anything we have configured so far. */
-            errorCalculators.ForEach(ec => ec.Dispose());
+            errorCalculators.ForEach(ec => ec.Destroy());
 
             throw;
         }

@@ -10,7 +10,7 @@ namespace ErrorCalculatorApi.Actions.Device;
 public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
 {
     /// <inheritdoc/>
-    public bool Available => false;
+    public bool Available => _connection?.Available == true;
 
     private IMadConnection _connection = null!;
 
@@ -21,7 +21,7 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public void Dispose()
+    public void Destroy()
     {
         using (_connection)
             _connection = null!;
@@ -39,15 +39,6 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     /// <inheritdoc/>
     public Task<ErrorMeasurementStatus> GetErrorStatus()
     {
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion()
-    {
-        /* Execute the request. */
-        await _connection.Execute(GetVersionRequest());
-
         throw new NotImplementedException();
     }
 

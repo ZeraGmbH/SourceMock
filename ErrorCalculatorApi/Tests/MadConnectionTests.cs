@@ -30,8 +30,6 @@ public class MadConnectionTests
             Endpoint = "manns1:14207"
         });
 
-        await Task.Delay(4000);
-
         var res = await cut.Execute(LoadXmlFromString(
             @"<?xml version=""1.0"" encoding=""UTF-8""?>
             <KMA_XML_0_01 xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:noNamespaceSchemaLocation=""KoaLaKMA.xsd"">
@@ -56,6 +54,68 @@ public class MadConnectionTests
             Assert.That(version, Is.EqualTo("1.04"));
             Assert.That(model, Is.EqualTo("SIMULATION"));
         });
+    }
 
+    [Test]
+    public async Task Configure_Error_Measurement()
+    {
+        using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
+
+        await cut.Initialize(new()
+        {
+            Connection = ErrorCalculatorConnectionTypes.TCP,
+            Protocol = ErrorCalculatorProtocols.MAD_1,
+            Endpoint = "manns1:14207"
+        });
+
+        var req = LoadXmlFromString(
+            @"<?xml version=""1.0"" encoding=""UTF-8""?>
+            <KMA_XML_0_01 xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:noNamespaceSchemaLocation=""KoaLaKMA.xsd"">
+                <!-- MAD_KonfigRichtigkeit.xml -->
+                <kmaContainer>
+                    <kmaVersion>01</kmaVersion>
+                    <bindErrorCalculatorsReq>
+                        <envSettings>
+                            <devId/>
+                            <placeId>00</placeId>
+                            <tOutUntilStateHasChanged>500</tOutUntilStateHasChanged>
+                            <logPrefix/>
+                            <logPath/>
+                            <logDebugMask>0x0000</logDebugMask>
+                        </envSettings>
+                        <fctErrorCalculators>
+                            <errorCalculator>
+                                <useSrcPrecedence>true</useSrcPrecedence>
+                                <measuringModule>1</measuringModule>
+                                <evaluationSrc>##Source##</evaluationSrc>
+                                <referenceSrc>src-ref-1</referenceSrc>
+                                <runMode>errorMeasure</runMode>
+                                <highActive>true</highActive>
+                                <minPulseDuration>5</minPulseDuration>
+                                <useLocalDisplay>true</useLocalDisplay>
+                                <showProgressBar>true</showProgressBar>
+                                <useLocalResetKey>true</useLocalResetKey>
+                                <useDisplayReverseSign>false</useDisplayReverseSign>
+                                <setDisplayFractionalSize>2</setDisplayFractionalSize>
+                                <setDisplayEquipmentAccuracy>200</setDisplayEquipmentAccuracy>
+                                <setDisplayAddedText>SC</setDisplayAddedText>
+                                <setDisplayDecPoint>,</setDisplayDecPoint>
+                            </errorCalculator>
+                        </fctErrorCalculators>
+                    </bindErrorCalculatorsReq>
+                </kmaContainer>
+            </KMA_XML_0_01>
+            ");
+
+        var source = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/bindErrorCalculatorsReq/fctErrorCalculators/errorCalculator/evaluationSrc")!;
+
+        source.InnerText = "src-intern-1";
+
+        var res = await cut.Execute(req);
+
+        var info = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/bindErrorCalculatorsRes");
+        var cmd = info?.SelectSingleNode("cmdResCode")?.InnerText?.Trim();
+
+        Assert.That(cmd, Is.EqualTo("OK"));
     }
 }

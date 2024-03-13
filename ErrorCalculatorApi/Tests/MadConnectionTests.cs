@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Xml;
 using ErrorCalculatorApi.Actions.Device.MAD;
 using ErrorCalculatorApi.Models;
@@ -56,8 +57,27 @@ public class MadConnectionTests
         });
     }
 
-    [Test]
-    public async Task Configure_Error_Measurement()
+    [Test, Ignore("requires local MAD server running")]
+    public async Task Run_Error_Measurement()
+    {
+        await ConfigureErrorMeasurement();
+
+        var jobId = await StartErrorMeasurement();
+
+        for (var i = 10; i-- > 0;)
+            TestContext.WriteLine(await ReadJobStatus(jobId, false));
+
+        for (var i = 0; ; i = 1)
+        {
+            var status = await ReadJobStatus(jobId, i == 0);
+
+            TestContext.WriteLine(status);
+
+            if (status.Item1 != "running") break;
+        }
+    }
+
+    private async Task ConfigureErrorMeasurement()
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
 
@@ -117,5 +137,130 @@ public class MadConnectionTests
         var cmd = info?.SelectSingleNode("cmdResCode")?.InnerText?.Trim();
 
         Assert.That(cmd, Is.EqualTo("OK"));
+    }
+
+    private async Task<string> StartErrorMeasurement()
+    {
+        using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
+
+        await cut.Initialize(new()
+        {
+            Connection = ErrorCalculatorConnectionTypes.TCP,
+            Protocol = ErrorCalculatorProtocols.MAD_1,
+            Endpoint = "manns1:14207"
+        });
+
+        var req = LoadXmlFromString(
+            @"<?xml version=""1.0"" encoding=""UTF-8""?>
+              <KMA_XML_0_01 xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:noNamespaceSchemaLocation=""KoaLaKMA.xsd"">
+                <!-- MAD_StartRichtigkeit.xml -->
+                <kmaContainer>
+                    <kmaVersion>01</kmaVersion>
+                    <runErrorMeasureReq>
+                        <envSettings>
+                            <devId></devId>
+                            <tOutUntilStateHasChanged>500</tOutUntilStateHasChanged>
+                            <logPrefix></logPrefix>
+                            <logPath></logPath>
+                            <logDebugMask>0x0001</logDebugMask>
+                            <jobReplacesOther>false</jobReplacesOther>
+                        </envSettings>
+                        <fctErrorMeasurement>
+                            <evaluationSrc>##Source##</evaluationSrc>
+                            <runMode>##Continuous##</runMode>
+                            <metrologicalCounts>##MeterCounts##</metrologicalCounts>
+                            <referenceCounts>##ReferenceCounts##</referenceCounts>
+                            <offsetPPM>0</offsetPPM>
+                            <upperTolerancePPM>999900</upperTolerancePPM>
+                            <lowerTolerancePPM>-999900</lowerTolerancePPM>
+                        </fctErrorMeasurement>
+                    </runErrorMeasureReq>
+                </kmaContainer>
+              </KMA_XML_0_01>
+            ");
+
+        var dutCounts = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureReq/fctErrorMeasurement/metrologicalCounts")!;
+        var mode = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureReq/fctErrorMeasurement/runMode")!;
+        var refCounts = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureReq/fctErrorMeasurement/referenceCounts")!;
+        var source = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureReq/fctErrorMeasurement/evaluationSrc")!;
+
+        dutCounts.InnerText = "3";
+        mode.InnerText = "repetition";
+        refCounts.InnerText = "180000";
+        source.InnerText = "src-intern-1";
+
+        var res = await cut.Execute(req);
+
+        var jobInfo = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/jobDetails");
+        var jobId = jobInfo?.SelectSingleNode("jobId")?.InnerText?.Trim();
+        var status = jobInfo?.SelectSingleNode("jobStatusRes")?.InnerText?.Trim();
+
+        var info = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureRes");
+        var cmd = info?.SelectSingleNode("cmdResCode")?.InnerText?.Trim();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd, Is.EqualTo("OK"));
+            Assert.That(jobId, Is.Not.Empty);
+            Assert.That(status, Is.EqualTo("running"));
+        });
+
+        return jobId;
+    }
+
+    private async Task<Tuple<string, int?, int?, double?>> ReadJobStatus(string jobId, bool abort)
+    {
+        using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
+
+        await cut.Initialize(new()
+        {
+            Connection = ErrorCalculatorConnectionTypes.TCP,
+            Protocol = ErrorCalculatorProtocols.MAD_1,
+            Endpoint = "manns1:14207"
+        });
+
+        var req = LoadXmlFromString(
+            @"<?xml version=""1.0"" encoding=""UTF-8""?>
+              <KMA_XML_0_01 xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:noNamespaceSchemaLocation=""KoaLaKNS.xsd"">
+                <!-- MAD_JobStatus.xml -->
+                <kmaContainer>
+                    <jobDetails>
+                        <jobId>##JobId##</jobId>
+                        <jobAbort>##Abort##</jobAbort>
+                    </jobDetails>
+                </kmaContainer>
+              </KMA_XML_0_01>
+            ");
+
+        var id = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/jobDetails/jobId")!;
+        var op = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/jobDetails/jobAbort")!;
+
+        id.InnerText = jobId;
+        op.InnerText = abort ? "true" : "false";
+
+        var res = await cut.Execute(req);
+
+        var info = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureRes");
+        var cmd = info?.SelectSingleNode("cmdResCode")?.InnerText?.Trim();
+
+        Assert.That(cmd, Is.EqualTo("OK"));
+
+        var jobInfo = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/jobDetails");
+        var status = jobInfo?.SelectSingleNode("jobStatusRes")?.InnerText?.Trim();
+
+        Assert.That(status, Is.EqualTo("closed").Or.EqualTo("running"));
+
+        var errorValues = info?.SelectSingleNode("errorValues");
+        var seen = errorValues?.SelectSingleNode("actSeenCounts");
+        var done = errorValues?.SelectSingleNode("doneMeasures");
+
+        var error = errorValues?.SelectSingleNode("formattedErrorValue");
+
+        return Tuple.Create(
+            status!,
+            string.IsNullOrEmpty(done?.InnerXml) ? null : (int?)int.Parse(done.InnerText),
+            string.IsNullOrEmpty(seen?.InnerXml) ? null : (int?)int.Parse(seen.InnerText),
+            string.IsNullOrEmpty(error?.InnerXml) ? null : (double?)double.Parse(error.InnerText, CultureInfo.GetCultureInfo("de"))
+        );
     }
 }

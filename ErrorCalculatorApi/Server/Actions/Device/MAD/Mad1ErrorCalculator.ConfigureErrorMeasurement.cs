@@ -1,10 +1,11 @@
-using ErrorCalculatorApi.Models;
-
 namespace ErrorCalculatorApi.Actions.Device.MAD;
 
 partial class Mad1ErrorCalculator
 {
-    private static readonly string ErrorMeasurementConfigurationXml =
+    /// <summary>
+    /// 
+    /// </summary>
+    public static readonly string ErrorMeasurementConfigurationXml =
     @"<?xml version=""1.0"" encoding=""UTF-8""?>
       <KMA_XML_0_01 xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:noNamespaceSchemaLocation=""KoaLaKMA.xsd"">
         <!-- MAD_KonfigRichtigkeit.xml -->

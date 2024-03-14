@@ -98,28 +98,27 @@ public static class SourceApiConfiguration
         {
             var factory = new SerialPortConnectionFactory(ctx, ctx.GetRequiredService<ILogger<SerialPortConnectionFactory>>());
 
-            if (!useDatabase)
+            if (useDatabase) return factory;
+
+            var portName = configuration["SerialPort:PortName"];
+
+            var meterSystemType = deviceType == "FG"
+                ? MeterTestSystemTypes.FG30x
+                : deviceType == "MT"
+                ? MeterTestSystemTypes.MT786
+                : MeterTestSystemTypes.ACMock;
+
+            var configurationType = configuration["SerialPort:UsePortMock"] == "yes"
+                                    ? SerialPortConfigurationTypes.Mock
+                                    : portName?.Contains(':') == true
+                                    ? SerialPortConfigurationTypes.Network
+                                    : SerialPortConfigurationTypes.Device;
+
+            factory.Initialize(meterSystemType, meterSystemType == MeterTestSystemTypes.ACMock ? null : new()
             {
-                var portName = configuration["SerialPort:PortName"];
-
-                var meterSystemType = deviceType == "FG"
-                    ? MeterTestSystemTypes.FG30x
-                    : deviceType == "MT"
-                    ? MeterTestSystemTypes.MT786
-                    : MeterTestSystemTypes.Mock;
-
-                var configurationType = configuration["SerialPort:UsePortMock"] == "yes"
-                                        ? SerialPortConfigurationTypes.Mock
-                                        : portName?.Contains(':') == true
-                                        ? SerialPortConfigurationTypes.Network
-                                        : SerialPortConfigurationTypes.Device;
-
-                factory.Initialize(meterSystemType, meterSystemType == MeterTestSystemTypes.Mock ? null : new()
-                {
-                    ConfigurationType = configurationType,
-                    Endpoint = portName!
-                });
-            }
+                ConfigurationType = configurationType,
+                Endpoint = portName!
+            });
 
             return factory;
         });

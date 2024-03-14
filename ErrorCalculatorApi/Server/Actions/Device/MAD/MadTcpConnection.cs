@@ -123,31 +123,34 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
                 /* Check for complete XML - normally we receive only empty keep-alive messages.. */
                 var all = Encoding.UTF8.GetString(CollectionsMarshal.AsSpan(_collector)).Trim();
 
-                if (string.IsNullOrEmpty(all)) continue;
-
-                try
-                {
-                    /* Parse the XML. */
-                    var doc = new XmlDocument();
-
-                    doc.LoadXml(all);
-
-                    /* Eat it all. */
+                if (string.IsNullOrEmpty(all))
+                    /* Get rid of keep-alive data. */
                     _collector.Clear();
-
-                    /* Report it. */
-                    lock (_collector)
+                else
+                    try
                     {
-                        _response = doc;
+                        /* Parse the XML. */
+                        var doc = new XmlDocument();
 
-                        /* Hopefully someone is already waiting for the response. */
-                        Monitor.Pulse(_collector);
+                        doc.LoadXml(all);
+
+                        /* Eat it all. */
+                        _collector.Clear();
+
+                        /* Report it. */
+                        lock (_collector)
+                        {
+                            _response = doc;
+
+                            /* Hopefully someone is already waiting for the response. */
+                            Monitor.Pulse(_collector);
+                        }
                     }
-                }
-                catch (Exception)
-                {
-                    /* XML not yet complete - does no really harm but better extend the buffer. */
-                }
+                    catch (Exception)
+                    {
+                        /* XML not yet complete - does no really harm but better extend the buffer. */
+                        if (all.Length > 1000000) _collector.Clear();
+                    }
             }
             catch (OperationCanceledException)
             {

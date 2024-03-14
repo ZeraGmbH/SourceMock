@@ -19,13 +19,19 @@ public enum MeterTestSystemTypes
     FG30x = 1,
 
     /// <summary>
-    /// Internal mock implementation for development and testing
+    /// Internal AC mock implementation for development and testing
     /// purposes.
     /// </summary>
-    Mock = 2,
+    ACMock = 2,
 
     /// <summary>
     /// REST connection to components of a meter test system.
     /// </summary>
-    REST = 3
+    REST = 3,
+
+    /// <summary>
+    /// Internal DC mock implementation for development and testing
+    /// purposes.
+    /// </summary>
+    DCMock = 4,
 }

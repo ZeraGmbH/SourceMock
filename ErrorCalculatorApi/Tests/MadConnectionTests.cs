@@ -19,7 +19,7 @@ public class MadConnectionTests
         return doc;
     }
 
-    [Test, Ignore("requires local MAD server running")]
+    [Test]
     public async Task Get_Firmware_Version()
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
@@ -57,7 +57,7 @@ public class MadConnectionTests
         });
     }
 
-    [Test, Ignore("requires local MAD server running")]
+    [Test]
     public async Task Run_Error_Measurement()
     {
         await ConfigureErrorMeasurement();

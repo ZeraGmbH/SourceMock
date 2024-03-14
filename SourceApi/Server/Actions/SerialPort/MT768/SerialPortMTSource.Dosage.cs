@@ -13,10 +13,10 @@ partial class SerialPortMTSource
         Task.WhenAll(Device.Execute(SerialPortRequest.Create("S3CM2", "SOK3CM2")));
 
     /// <inheritdoc/>
-    public override async Task<DosageProgress> GetDosageProgress()
+    public override async Task<DosageProgress> GetDosageProgress(double meterConstant)
     {
         /* Request the current meter constant. */
-        var measureConstant = await GetCurrentMeterConstant() / 1000d;
+        meterConstant /= 1000d;
 
         /* Get all actual values - unit is pulse interval. */
         var active = SerialPortRequest.Create("S3SA1", new Regex(@"^SOK3SA1;([0123])$"));
@@ -30,57 +30,20 @@ partial class SerialPortMTSource
         return new()
         {
             Active = active.EndMatch!.Groups[1].Value == "2",
-            Progress = double.Parse(progress.EndMatch!.Groups[1].Value) / measureConstant,
-            Remaining = double.Parse(countdown.EndMatch!.Groups[1].Value) / measureConstant,
-            Total = double.Parse(total.EndMatch!.Groups[1].Value) / measureConstant,
+            Progress = double.Parse(progress.EndMatch!.Groups[1].Value) / meterConstant,
+            Remaining = double.Parse(countdown.EndMatch!.Groups[1].Value) / meterConstant,
+            Total = double.Parse(total.EndMatch!.Groups[1].Value) / meterConstant,
         };
     }
 
-    /// <summary>
-    /// Use the current status values from the device to calculate the 
-    /// meter constant.
-    /// </summary>
-    /// <returns>The current meter constant (impulses per kWh).</returns>
-    /// <exception cref="InvalidOperationException">Status is incomplete.</exception>
-    /// <exception cref="ArgumentException">Measuring mode not supported.</exception>
-    private async Task<double> GetCurrentMeterConstant()
-    {
-        var reply = await Device.Execute(SerialPortRequest.Create("AST", "ASTACK"))[0];
-
-        /* We need the range of voltage and current and the measurement mode as well. */
-        double? voltage = null, current = null;
-        string? mode = null;
-
-        foreach (var value in reply)
-            if (value.StartsWith("UB="))
-                voltage = double.Parse(value.Substring(3));
-            else if (value.StartsWith("IB="))
-                current = double.Parse(value.Substring(3));
-            else if (value.StartsWith("M="))
-                mode = value.Substring(2);
-
-        if (!voltage.HasValue || !current.HasValue || string.IsNullOrEmpty(mode))
-            throw new InvalidOperationException("AST status incomplete");
-
-        var phases =
-            mode[0] == '4' ? 3d :
-            mode[0] == '3' ? 2d :
-            mode[0] == '2' ? 1d :
-            throw new ArgumentException($"unsupported measurement mode {mode}");
-
-        /* Calculate according to formula - see MT78x_MAN_EXT_GB.pdf section 5.6.*/
-        return 1000d * 3600d * 60000d / (phases * (double)voltage * (double)current);
-    }
-
     /// <inheritdoc/>
-    public override async Task SetDosageEnergy(double value)
+    public override async Task SetDosageEnergy(double value, double meterConstant)
     {
         if (value < 0)
             throw new ArgumentOutOfRangeException(nameof(value));
 
         /* Calculate the number of impulses from the energy (in Wh) and the meter constant. */
-        var meterConst = await GetCurrentMeterConstant();
-        var impulses = (long)Math.Round(meterConst * value / 1000d);
+        var impulses = (long)Math.Round(meterConstant * value / 1000d);
 
         await Task.WhenAll(Device.Execute(SerialPortRequest.Create($"S3PS46;{impulses:0000000000}", "SOK3PS46")));
     }

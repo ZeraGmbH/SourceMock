@@ -61,11 +61,7 @@ public class DosageTests
             $"SOK3MA4;{remaining}",
             "SOK3MA5;303541",
             "SOK3SA5;218375",
-            "UB=60",
-            "IB=2",
-            "M=4WA",
-            "ASTACK",
-        }).GetDosageProgress();
+        }).GetDosageProgress(600000000d);
 
         Assert.Multiple(() =>
         {
@@ -84,17 +80,13 @@ public class DosageTests
     public async Task Can_Set_Impules_From_Energy(double energy)
     {
         var mock = new CommandPeekMock(new[] {
-            "UB=60",
-            "IB=2",
-            "M=4WA",
-            "ASTACK",
             "SOK3PS46"
         });
 
         var device = new SerialPortMTSource(_deviceLogger, SerialPortConnection.FromPortInstance(mock, _portLogger), new CapabilitiesMap());
 
-        await device.SetDosageEnergy(energy);
+        await device.SetDosageEnergy(energy, 600000000d);
 
-        Assert.That(mock.Commands[1], Is.EqualTo($"S3PS46;{(long)(6000E5 * energy / 1000d):0000000000}"));
+        Assert.That(mock.Commands[0], Is.EqualTo($"S3PS46;{(long)(6000E5 * energy / 1000d):0000000000}"));
     }
 }

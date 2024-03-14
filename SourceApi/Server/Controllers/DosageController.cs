@@ -81,13 +81,14 @@ public class DosageController(ISource device) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<DosageProgress>> GetProgress() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetDosageProgress);
+    public Task<ActionResult<DosageProgress>> GetProgress(double meterConstant) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetDosageProgress(meterConstant));
 
     /// <summary>
     /// Set the dosage energy.
     /// </summary>
     /// <param name="energy">The energy to sent to the DUT - in Wh.</param>
+    /// <param name="meterConstant">The meter constant of the reference meter.</param>
     [HttpPut("Energy")]
     [SwaggerOperation(OperationId = "SetEnergy")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -96,8 +97,8 @@ public class DosageController(ISource device) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetEnergy(double energy) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.SetDosageEnergy(energy));
+    public Task<ActionResult> SetEnergy(double energy, double meterConstant) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.SetDosageEnergy(energy, meterConstant));
 
     /// <summary>
     /// Ask the server if the dosage is activated but the current is off.

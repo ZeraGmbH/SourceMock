@@ -21,9 +21,9 @@ internal class UnavailableSource : ISource
 
     public TargetLoadpoint? GetCurrentLoadpoint() => throw new SourceNotReadyException();
 
-    public Task<DosageProgress> GetDosageProgress() => throw new SourceNotReadyException();
+    public Task<DosageProgress> GetDosageProgress(double meterConstant) => throw new SourceNotReadyException();
 
-    public Task SetDosageEnergy(double value) => throw new SourceNotReadyException();
+    public Task SetDosageEnergy(double value, double meterConstant) => throw new SourceNotReadyException();
 
     public Task SetDosageMode(bool on) => throw new SourceNotReadyException();
 

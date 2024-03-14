@@ -15,7 +15,7 @@ partial class SerialPortFGSource
     }
 
     /// <inheritdoc/>
-    public override async Task<DosageProgress> GetDosageProgress()
+    public override async Task<DosageProgress> GetDosageProgress(double meterConstant)
     {
         TestConfigured();
 
@@ -41,7 +41,7 @@ partial class SerialPortFGSource
     }
 
     /// <inheritdoc/>
-    public override Task SetDosageEnergy(double value)
+    public override Task SetDosageEnergy(double value, double meterConstant)
     {
         TestConfigured();
 

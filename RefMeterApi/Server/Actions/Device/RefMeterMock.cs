@@ -27,7 +27,7 @@ public abstract class RefMeterMock : IMockRefMeter
         Task.FromResult((MeasurementModes?)_measurementMode);
 
     /// <inheritdoc/>
-    public Task<double> GetMeterConstant() => throw new NotImplementedException();
+    public Task<double> GetMeterConstant() => Task.FromResult(1000000d);
 
     /// <summary>
     /// Returns all entrys in enum MeasurementModes

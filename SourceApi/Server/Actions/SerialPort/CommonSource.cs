@@ -105,7 +105,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     public abstract Task SetDosageMode(bool on);
 
     /// <inheritdoc/>
-    public abstract Task SetDosageEnergy(double value);
+    public abstract Task SetDosageEnergy(double value, double meterConstant);
 
     /// <inheritdoc/>
     public abstract Task StartDosage();
@@ -114,7 +114,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     public abstract Task CancelDosage();
 
     /// <inheritdoc/>
-    public abstract Task<DosageProgress> GetDosageProgress();
+    public abstract Task<DosageProgress> GetDosageProgress(double meterConstant);
 
     /// <inheritdoc/>
     public abstract bool Available { get; }

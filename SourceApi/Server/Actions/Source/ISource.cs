@@ -52,7 +52,8 @@ namespace SourceApi.Actions.Source
         /// Define the dosage energy.
         /// </summary>
         /// <param name="value">Value in Wh.</param>
-        Task SetDosageEnergy(double value);
+        /// <param name="meterConstant">The meter constant used in the reference meter.</param>
+        Task SetDosageEnergy(double value, double meterConstant);
 
         /// <summary>
         /// Start a dosage measurement.
@@ -67,8 +68,9 @@ namespace SourceApi.Actions.Source
         /// <summary>
         /// Reports the remaining energy in the current dosage operation.
         /// </summary>
+        /// <param name="meterConstant">The meter constant used in the reference meter.</param>
         /// <returns>Information on the current progress of the dosage measurement.</returns>
-        Task<DosageProgress> GetDosageProgress();
+        Task<DosageProgress> GetDosageProgress(double meterConstant);
 
         /// <summary>
         /// If set the dosage mode has been activated but current is switch off.

@@ -144,10 +144,10 @@ namespace SourceApi.Tests.Actions.Source
             SimulatedSource mock = new(logger.Object);
 
             await mock.SetLoadpoint(GetLoadpoint());
-            await mock.SetDosageEnergy(20);
+            await mock.SetDosageEnergy(20, 1);
             await mock.StartDosage();
 
-            DosageProgress result = await mock.GetDosageProgress();
+            DosageProgress result = await mock.GetDosageProgress(1);
 
             Assert.That(result.Active, Is.EqualTo(true));
             Assert.That(result.Remaining, Is.LessThan(20));

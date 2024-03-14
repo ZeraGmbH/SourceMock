@@ -95,10 +95,10 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     }
 
     /// <inheritdoc/>
-    public Task<DosageProgress> GetDosageProgress() =>
+    public Task<DosageProgress> GetDosageProgress(double meterConstant) =>
         (_dosageUri == null)
             ? throw new NotImplementedException("Dosage")
-            : httpDosage.GetAsync(new Uri(_dosageUri, "Progress")).GetJsonResponse<DosageProgress>();
+            : httpDosage.GetAsync(new Uri(_dosageUri, "Progress?meterConstant={JsonConvert.SerializeObject(meterConstant)}")).GetJsonResponse<DosageProgress>();
 
     /// <inheritdoc/>
     public void Initialize(RestConfiguration? sourceEndpoint, RestConfiguration? dosageEndpoint)
@@ -135,11 +135,11 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     }
 
     /// <inheritdoc/>
-    public async Task SetDosageEnergy(double value)
+    public async Task SetDosageEnergy(double value, double meterConstant)
     {
         if (_dosageUri == null) throw new NotImplementedException("Dosage");
 
-        var res = await httpDosage.PutAsync($"{new Uri(_dosageUri, "Energy")}?energy={JsonConvert.SerializeObject(value)}", null);
+        var res = await httpDosage.PutAsync($"{new Uri(_dosageUri, "Energy")}?energy={JsonConvert.SerializeObject(value)}&meterConstant={JsonConvert.SerializeObject(meterConstant)}", null);
 
         if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
     }

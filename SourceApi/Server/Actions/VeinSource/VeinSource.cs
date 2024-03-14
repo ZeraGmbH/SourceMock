@@ -46,12 +46,12 @@ namespace SourceApi.Actions.VeinSource
             return ret;
         }
 
-        public Task<DosageProgress> GetDosageProgress()
+        public Task<DosageProgress> GetDosageProgress(double meterConstant)
         {
             throw new NotImplementedException();
         }
 
-        public Task SetDosageEnergy(double value)
+        public Task SetDosageEnergy(double value, double meterConstant)
         {
             throw new NotImplementedException();
         }

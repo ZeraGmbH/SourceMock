@@ -67,7 +67,7 @@ public class DosageFGTests
             $"OK3SA1;{dosage}",
             $"OK3MA1;{remaining}",
             "OK3PA45;918.375",
-        }).GetDosageProgress();
+        }).GetDosageProgress(1d);
 
         var rest = double.Parse(remaining) * 1000d;
 
@@ -93,7 +93,7 @@ public class DosageFGTests
 
         device.SetAmplifiers(Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
 
-        await device.SetDosageEnergy(energy);
+        await device.SetDosageEnergy(energy, 1d);
 
         Assert.That(mock.Commands[0], Is.EqualTo($"3PS45;{energy / 1000d}"));
     }

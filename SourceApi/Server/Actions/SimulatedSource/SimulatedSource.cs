@@ -109,7 +109,7 @@ namespace SourceApi.Actions.Source
             return Task.CompletedTask;
         }
 
-        public Task SetDosageEnergy(double value)
+        public Task SetDosageEnergy(double value, double meterConstant)
         {
             _dosageEnergy = value;
 
@@ -133,7 +133,7 @@ namespace SourceApi.Actions.Source
             return Task.CompletedTask;
         }
 
-        public Task<DosageProgress> GetDosageProgress()
+        public Task<DosageProgress> GetDosageProgress(double meterConstant)
         {
             var power = 0d;
 

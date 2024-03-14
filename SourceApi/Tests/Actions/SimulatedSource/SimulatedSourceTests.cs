@@ -1,8 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-
 using Moq;
-
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 using SourceApi.Tests.Actions.LoadpointValidator;
@@ -130,9 +128,9 @@ namespace SourceApi.Tests.Actions.Source
             loggerMock ??= new();
 
             if (capabilities == null)
-                return new SimulatedSource(loggerMock.Object);
+                return new SimulatedSource(loggerMock.Object, new SourceCapabilityValidator());
 
-            return new SimulatedSource(loggerMock.Object, capabilities);
+            return new SimulatedSource(loggerMock.Object, capabilities, new SourceCapabilityValidator());
         }
         #endregion
 
@@ -141,7 +139,7 @@ namespace SourceApi.Tests.Actions.Source
         {
             Mock<ILogger<SimulatedSource>> logger = new();
 
-            SimulatedSource mock = new(logger.Object);
+            SimulatedSource mock = new(logger.Object, new SourceCapabilityValidator());
 
             await mock.SetLoadpoint(GetLoadpoint());
             await mock.SetDosageEnergy(20, 1);
@@ -159,7 +157,7 @@ namespace SourceApi.Tests.Actions.Source
         {
             Mock<ILogger<SimulatedSource>> logger = new();
 
-            SimulatedSource mock = new(logger.Object);
+            SimulatedSource mock = new(logger.Object, new SourceCapabilityValidator());
 
             var loadpoint = GetLoadpoint();
             await mock.SetLoadpoint(loadpoint);

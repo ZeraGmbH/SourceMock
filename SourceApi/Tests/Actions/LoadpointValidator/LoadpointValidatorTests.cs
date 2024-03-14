@@ -27,9 +27,9 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
         {
             // Arrange
             // loadpoint set in parameter
-
+            var validator = new SourceCapabilityValidator();
             // Act
-            var error = SourceCapabilityValidator.IsValid(loadpoint, new()
+            var error = validator.IsValid(loadpoint, new()
             {
                 FrequencyRanges = { new() { Max = 100, Min = 0, PrecisionStepSize = 1 } },
                 Phases = loadpoint.Phases

@@ -9,6 +9,7 @@ using SerialPortProxy;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.SerialPort.MT768;
+using SourceApi.Actions.Source;
 using SourceApi.Model;
 
 namespace MeterTestSystemApiTests;
@@ -81,7 +82,7 @@ public class MeterTestSystemTests
 
         Device = SerialPortConnection.FromPortInstance(_port, new NullLogger<ISerialPortConnection>());
 
-        Source = new SerialPortFGSource(_sourceLogger, Device, new CapabilitiesMap());
+        Source = new SerialPortFGSource(_sourceLogger, Device, new CapabilitiesMap(), new SourceCapabilityValidator());
 
         var services = new ServiceCollection();
 
@@ -117,7 +118,7 @@ public class MeterTestSystemTests
             new SerialPortMTRefMeter(Device, new NullLogger<SerialPortMTRefMeter>()),
             new SerialPortMTErrorCalculator(Device, new NullLogger<SerialPortMTErrorCalculator>()),
             new NullLogger<SerialPortMTMeterTestSystem>(),
-            new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), Device, new CapabilitiesMap()));
+            new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), Device, new CapabilitiesMap(), new SourceCapabilityValidator()));
 
         var caps = await generator.GetCapabilities();
 
@@ -131,7 +132,7 @@ public class MeterTestSystemTests
             new SerialPortMTRefMeter(Device, new NullLogger<SerialPortMTRefMeter>()),
             new SerialPortMTErrorCalculator(Device, new NullLogger<SerialPortMTErrorCalculator>()),
             new NullLogger<SerialPortMTMeterTestSystem>(),
-            new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), Device, new CapabilitiesMap()));
+            new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), Device, new CapabilitiesMap(), new SourceCapabilityValidator()));
 
         var version = await generator.GetFirmwareVersion();
 

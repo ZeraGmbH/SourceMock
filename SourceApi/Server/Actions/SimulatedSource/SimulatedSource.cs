@@ -10,28 +10,19 @@ namespace SourceApi.Actions.Source
     /// <summary>
     /// Simulatetes the behaviour of a ZERA source.
     /// </summary>
-    public class SimulatedSource : ISourceMock, ISimulatedSource
+    public class SimulatedSource : SourceMock, ISimulatedSource
     {
-        #region ContructorAndDependencyInjection
-        private readonly ILogger<SimulatedSource> _logger;
-        private readonly SourceCapabilities _sourceCapabilities;
-        readonly private LoadpointInfo _info = new();
-        private DosageProgress _status = new();
-        private DateTime _startTime;
-        private double _dosageEnergy;
-        private bool _dosageMode = false;
+
+        private SimulatedSourceState? _simulatedSourceState;
 
         /// <summary>
         /// Constructor that injects logger and configuration and uses default source capablities.
         /// </summary>
         /// <param name="logger">The logger to be used.</param>
-        public SimulatedSource(ILogger<SimulatedSource> logger)
+        /// <param name="validator">The validator to be used.</param>
+        public SimulatedSource(ILogger<SimulatedSource> logger, ISourceCapabilityValidator validator) : base(logger, new()
         {
-            _logger = logger;
-
-            _sourceCapabilities = new()
-            {
-                Phases = new() {
+            Phases = new() {
                     new() {
                         AcVoltage = new(10, 300, 0.01),
                         AcCurrent = new(0, 60, 0.01)
@@ -45,95 +36,23 @@ namespace SourceApi.Actions.Source
                         AcCurrent = new(0, 60, 0.01)
                     }
                 },
-                FrequencyRanges = new() {
+            FrequencyRanges = new() {
                     new(40, 60, 0.1, FrequencyMode.SYNTHETIC)
                 }
-            };
-        }
+        }, validator)
+        { }
 
         /// <summary>
-        /// Constructor that injects logger, configuration and capabilities.
+        /// 
         /// </summary>
-        /// <param name="logger">The logger to be used.</param>
-        /// <param name="sourceCapabilities">The capabilities of the source which should be simulated.</param>
-        public SimulatedSource(ILogger<SimulatedSource> logger, SourceCapabilities sourceCapabilities)
+        /// <param name="logger"></param>
+        /// <param name="sourceCapabilities"></param>
+        /// <param name="validator"></param>
+        public SimulatedSource(ILogger<SimulatedSource> logger, SourceCapabilities sourceCapabilities, ISourceCapabilityValidator validator) : base(logger, sourceCapabilities, validator)
         {
-            _logger = logger;
-            _sourceCapabilities = sourceCapabilities;
         }
 
-        #endregion
-
-        private SimulatedSourceState? _simulatedSourceState;
-        private TargetLoadpoint? _loadpoint;
-
-        /// <inheritdoc/>
-        public Task<SourceApiErrorCodes> SetLoadpoint(TargetLoadpoint loadpoint)
-        {
-            var isValid = SourceCapabilityValidator.IsValid(loadpoint, _sourceCapabilities);
-
-            if (isValid == SourceApiErrorCodes.SUCCESS)
-            {
-                _logger.LogTrace("Loadpoint set, source turned on.");
-                _loadpoint = loadpoint;
-
-                _info.IsActive = true;
-            }
-
-            _dosageMode = false;
-
-            _info.SavedAt = _info.ActivatedAt = DateTime.Now;
-
-            return Task.FromResult(isValid);
-        }
-
-        /// <inheritdoc/>
-        public Task<SourceApiErrorCodes> TurnOff()
-        {
-            _logger.LogTrace("Source turned off.");
-
-            _info.IsActive = false;
-
-            return Task.FromResult(SourceApiErrorCodes.SUCCESS);
-        }
-
-        /// <inheritdoc/>
-        public TargetLoadpoint? GetCurrentLoadpoint() => _loadpoint;
-
-        public Task<SourceCapabilities> GetCapabilities() => Task.FromResult(_sourceCapabilities);
-
-        public Task SetDosageMode(bool on)
-        {
-            _dosageMode = on;
-
-            return Task.CompletedTask;
-        }
-
-        public Task SetDosageEnergy(double value, double meterConstant)
-        {
-            _dosageEnergy = value;
-
-            return Task.CompletedTask;
-        }
-
-        public Task StartDosage()
-        {
-            _startTime = DateTime.Now;
-            _status.Active = true;
-            _dosageMode = false;
-
-            return Task.CompletedTask;
-        }
-
-        public Task CancelDosage()
-        {
-            _status.Active = false;
-            _status.Remaining = 0;
-
-            return Task.CompletedTask;
-        }
-
-        public Task<DosageProgress> GetDosageProgress(double meterConstant)
+        public override Task<DosageProgress> GetDosageProgress(double meterConstant)
         {
             var power = 0d;
 
@@ -161,31 +80,11 @@ namespace SourceApi.Actions.Source
             });
         }
 
-        public Task<bool> CurrentSwitchedOffForDosage()
-        {
-            _logger.LogTrace("Mock switches off the current for dosage");
-
-            return Task.FromResult(_dosageMode);
-        }
-
-        public LoadpointInfo GetActiveLoadpointInfo() => _info;
-
-        public bool Available => true;
-
         /// <inheritdoc/>
         public void SetSimulatedSourceState(SimulatedSourceState simulatedSourceState) =>
             _simulatedSourceState = simulatedSourceState;
 
         /// <inheritdoc/>
         public SimulatedSourceState? GetSimulatedSourceState() => _simulatedSourceState;
-
-        private double DosageDone()
-        {
-            _status.Active = false;
-
-            _dosageMode = true;
-
-            return _dosageEnergy;
-        }
     }
 }

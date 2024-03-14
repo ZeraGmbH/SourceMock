@@ -28,7 +28,8 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, I
     /// <param name="logger">Logger to use.</param>
     /// <param name="device">Access to the serial port.</param>
     /// <param name="capabilities">Static capabilities lookup table.</param>
-    public SerialPortMTSource(ILogger<SerialPortMTSource> logger, ISerialPortConnection device, ICapabilitiesMap capabilities) : base(logger, device, capabilities)
+    /// <param name="validator">Validate loadpoint against device capabilities.</param>
+    public SerialPortMTSource(ILogger<SerialPortMTSource> logger, ISerialPortConnection device, ICapabilitiesMap capabilities, ISourceCapabilityValidator validator) : base(logger, device, capabilities, validator)
     {
     }
 

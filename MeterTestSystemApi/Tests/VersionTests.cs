@@ -5,6 +5,7 @@ using RefMeterApi.Actions.Device;
 using SerialPortProxy;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.MT768;
+using SourceApi.Actions.Source;
 
 namespace MeterTestSystemApiTests;
 
@@ -131,7 +132,7 @@ public class VersionTests
             new SerialPortMTRefMeter(device, new NullLogger<SerialPortMTRefMeter>()),
             new SerialPortMTErrorCalculator(device, new NullLogger<SerialPortMTErrorCalculator>()),
             _portLogger,
-            new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), device, new CapabilitiesMap()));
+            new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), device, new CapabilitiesMap(), new SourceCapabilityValidator()));
 
         var ex = Assert.ThrowsAsync(exception ?? typeof(InvalidOperationException), dut.GetFirmwareVersion);
 

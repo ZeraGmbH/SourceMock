@@ -5,9 +5,9 @@ namespace SourceApi.Actions.Source
     /// <summary>
     /// Verifies wheather or not a loadpoint is suitable for a given source.
     /// </summary>
-    public static class SourceCapabilityValidator
+    public class SourceCapabilityValidator : ISourceCapabilityValidator
     {
-        public static SourceApiErrorCodes IsValid(TargetLoadpoint loadpoint, SourceCapabilities capabilities)
+        public SourceApiErrorCodes IsValid(TargetLoadpoint loadpoint, SourceCapabilities capabilities)
         {
             if (CheckNumberOfPhasesAreEqual(loadpoint, capabilities))
                 return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES;

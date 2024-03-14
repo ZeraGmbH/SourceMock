@@ -43,14 +43,14 @@ public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, I
         CurrentAmplifier.HasValue &&
         VoltageAuxiliary.HasValue &&
         CurrentAuxiliary.HasValue;
-
     /// <summary>
     /// 
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="device"></param>
     /// <param name="capabilities"></param>
-    public SerialPortFGSource(ILogger<SerialPortFGSource> logger, ISerialPortConnection device, ICapabilitiesMap capabilities) : base(logger, device, capabilities)
+    /// <param name="validator"></param>
+    public SerialPortFGSource(ILogger<SerialPortFGSource> logger, ISerialPortConnection device, ICapabilitiesMap capabilities, ISourceCapabilityValidator validator) : base(logger, device, capabilities, validator)
     {
     }
 

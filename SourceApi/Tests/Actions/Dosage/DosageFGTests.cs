@@ -23,7 +23,7 @@ public class DosageFGTests
 
     private ISource CreateDevice(params string[] replies)
     {
-        var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap());
+        var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
         device.SetAmplifiers(Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
 
@@ -89,7 +89,7 @@ public class DosageFGTests
     {
         var mock = new CommandPeekMock(new[] { "OK3PS45" });
 
-        var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromPortInstance(mock, _portLogger), new CapabilitiesMap());
+        var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromPortInstance(mock, _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
         device.SetAmplifiers(Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
 

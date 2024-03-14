@@ -59,6 +59,7 @@ public static class SourceApiConfiguration
         services.AddTransient<ISerialPortMTSource, SerialPortMTSource>();
         services.AddTransient<ISimulatedSource, SimulatedSource>();
         services.AddTransient<ISourceMock, SimulatedSource>();
+        services.AddTransient<ISourceCapabilityValidator, SourceCapabilityValidator>();
 
         /* Legacy configuration from setting files. */
         var useDatabase = configuration["UseDatabaseConfiguration"] == "yes";
@@ -71,6 +72,7 @@ public static class SourceApiConfiguration
                     if (integrated) break;
 
                     services.AddSingleton<ISource, SimulatedSource>();
+                    services.AddSingleton<ISourceCapabilityValidator, SourceCapabilityValidator>();
 
                     return;
                 case "vein":

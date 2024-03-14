@@ -43,17 +43,20 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     /// </summary>
     protected ILoadpointTranslator Translator { get; private set; } = new T();
 
+    protected ISourceCapabilityValidator _validator;
     /// <summary>
     /// 
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="device"></param>
     /// <param name="capabilities"></param>
-    protected CommonSource(ILogger<CommonSource<T>> logger, ISerialPortConnection device, ICapabilitiesMap capabilities)
+    /// <param name="validator"></param>
+    protected CommonSource(ILogger<CommonSource<T>> logger, ISerialPortConnection device, ICapabilitiesMap capabilities, ISourceCapabilityValidator validator)
     {
         Capabilities = capabilities;
         Device = device;
         Logger = logger;
+        _validator = validator;
     }
 
     /// <inheritdoc/>
@@ -66,7 +69,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     public virtual async Task<SourceApiErrorCodes> SetLoadpoint(TargetLoadpoint loadpoint)
     {
         /* Always validate the loadpoint against the device capabilities. */
-        var isValid = SourceCapabilityValidator.IsValid(loadpoint, await GetCapabilities());
+        var isValid = _validator.IsValid(loadpoint, await GetCapabilities());
 
         if (isValid != SourceApiErrorCodes.SUCCESS)
             return isValid;

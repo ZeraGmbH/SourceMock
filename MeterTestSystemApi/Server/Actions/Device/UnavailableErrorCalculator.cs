@@ -23,5 +23,7 @@ internal class UnavailableErrorCalculator : IErrorCalculator
 
     public Task SetErrorMeasurementParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant) => throw new ErrorCalculatorNotReadyException();
 
-    public Task StartErrorMeasurement(bool continuous) => throw new ErrorCalculatorNotReadyException();
+    public Task StartErrorMeasurement(bool continuous, ErrorCalculatorConnections? connection) => throw new ErrorCalculatorNotReadyException();
+
+    public Task<ErrorCalculatorConnections[]> GetSupportedConnections() => throw new ErrorCalculatorNotReadyException();
 }

@@ -109,7 +109,10 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
-    public Task StartErrorMeasurement(bool continuous)
+    public Task<ErrorCalculatorConnections[]> GetSupportedConnections() => Task.FromResult<ErrorCalculatorConnections[]>([]);
+
+    /// <inheritdoc/>
+    public Task StartErrorMeasurement(bool continuous, ErrorCalculatorConnections? connection)
     {
         /* Get the total power of all active phases of the current loadpoint (in W) */
         var totalPower = 0d;

@@ -58,7 +58,10 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public Task StartErrorMeasurement(bool continuous)
+    public Task<ErrorCalculatorConnections[]> GetSupportedConnections() => Task.FromResult(Enum.GetValues<ErrorCalculatorConnections>());
+
+    /// <inheritdoc/>
+    public Task StartErrorMeasurement(bool continuous, ErrorCalculatorConnections? connection)
     {
         throw new NotImplementedException();
     }

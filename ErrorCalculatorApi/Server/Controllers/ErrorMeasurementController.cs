@@ -82,11 +82,11 @@ public class ErrorMeasurementController(IErrorCalculator device) : ControllerBas
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> StartSingle() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.StartErrorMeasurement(false));
+    public Task<ActionResult> StartSingle(ErrorCalculatorConnections? connection) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.StartErrorMeasurement(false, connection));
 
     /// <summary>
-    /// Start a coninous error measurement.
+    /// Start a continous error measurement.
     /// </summary>
     [HttpPost("StartContinuous")]
     [SwaggerOperation(OperationId = "StartContinuous")]
@@ -96,8 +96,22 @@ public class ErrorMeasurementController(IErrorCalculator device) : ControllerBas
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> StartContinuous() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.StartErrorMeasurement(true));
+    public Task<ActionResult> StartContinuous(ErrorCalculatorConnections? connection) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.StartErrorMeasurement(true, connection));
+
+    /// <summary>
+    /// Get all supported physical connections.
+    /// </summary>
+    [HttpGet("SupportedConnections")]
+    [SwaggerOperation(OperationId = "GetSupportedConnections")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult<ErrorCalculatorConnections[]>> GetSupportedConnections() =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetSupportedConnections);
 
     /// <summary>
     /// Abort the error measurement.

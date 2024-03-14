@@ -59,7 +59,7 @@ public class ErrorCalculatorMockTest
 
         /* 200 impulses at 10000/kWh is equivalent to 20. */
         await cut.SetErrorMeasurementParameters(10000, 200, 6000d);
-        await cut.StartErrorMeasurement(false);
+        await cut.StartErrorMeasurement(false, null);
 
         /* 100ms delay generates ~1.8W. */
         Thread.Sleep(100);
@@ -93,7 +93,7 @@ public class ErrorCalculatorMockTest
 
         /* 200 impulses at 10000/kWh is equivalent to 20W. */
         await cut.SetErrorMeasurementParameters(10000, 200, 6000d);
-        await cut.StartErrorMeasurement(true);
+        await cut.StartErrorMeasurement(true, null);
 
         /* 1.5s delay generates 27.5W. */
         Thread.Sleep(1500);

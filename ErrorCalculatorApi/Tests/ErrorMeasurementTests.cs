@@ -83,8 +83,8 @@ public class ErrorMeasurementTests
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
-        await cut.StartErrorMeasurement(false);
-        await cut.StartErrorMeasurement(true);
+        await cut.StartErrorMeasurement(false, null);
+        await cut.StartErrorMeasurement(true, null);
     }
 
     [Test]

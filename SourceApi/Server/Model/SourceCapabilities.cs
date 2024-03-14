@@ -18,6 +18,6 @@ namespace SourceApi.Model
         /// 
         /// </summary>
         [NotNull, Required]
-        public List<FrequencyRange> FrequencyRanges { get; set; } = new();
+        public List<FrequencyRange>? FrequencyRanges { get; set; }
     }
 }

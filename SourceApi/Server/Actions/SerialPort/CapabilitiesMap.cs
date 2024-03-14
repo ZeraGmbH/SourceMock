@@ -157,6 +157,8 @@ public class CapabilitiesMap : ICapabilitiesMap
         if (current.FrequencyRanges[0].Mode != voltage.FrequencyRanges[0].Mode)
             throw new InvalidOperationException("data mismatch - expected same frequency mode");
 
+        capabilties.FrequencyRanges = new();
+
         capabilties.FrequencyRanges.Add(new()
         {
             Min = Math.Max(current.FrequencyRanges[0].Min, voltage.FrequencyRanges[0].Min),

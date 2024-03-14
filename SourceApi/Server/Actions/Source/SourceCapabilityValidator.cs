@@ -45,26 +45,58 @@ namespace SourceApi.Actions.Source
         {
             for (int i = 0; i < loadpoint.Phases.Count; ++i)
             {
-                var current = loadpoint.Phases[i].Current;
+                if (loadpoint.Phases[i].Current.On != true) continue;
 
-                if (current?.On != true) continue;
+                var acCurrent = loadpoint.Phases[i].Current.AcComponent;
 
-                var actualRms = current.AcComponent!.Rms;
-                var allowedRange = capabilities.Phases[i].AcCurrent;
+                if (acCurrent != null)
+                {
+                    if (capabilities.Phases[i].AcCurrent == null)
+                        return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_AC;
+                    return CheckAcCurrents(loadpoint, capabilities, i, acCurrent);
+                }
 
-                if (!allowedRange.IsIncluded(actualRms))
-                    return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
+                var dcCurrent = loadpoint.Phases[i].Current.DcComponent;
 
-                var firstActive = loadpoint.Phases.FirstOrDefault(p => p.Current?.On == true);
-
-                // IEC norm expects the first active current to be 0°
-                if (firstActive != null && firstActive.Current.AcComponent!.Angle != 0)
-                    return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
-
-                var isAngleValue = CheckAngle(current.AcComponent!.Angle);
-                if (isAngleValue != SourceApiErrorCodes.SUCCESS)
-                    return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
+                if (dcCurrent != null)
+                {
+                    if (capabilities.Phases[i].DcCurrent == null)
+                        return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_DC;
+                    return CheckDcCurrents(capabilities, i, (double)dcCurrent);
+                }
             }
+
+            return SourceApiErrorCodes.SUCCESS;
+        }
+
+        private static SourceApiErrorCodes CheckAcCurrents(TargetLoadpoint loadpoint, SourceCapabilities capabilities, int i, ElectricalVectorQuantity current)
+        {
+            var actualRms = current.Rms;
+            var allowedRange = capabilities.Phases[i].AcCurrent;
+
+            if (!allowedRange!.IsIncluded(actualRms))
+                return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
+
+            var firstActive = loadpoint.Phases.FirstOrDefault(p => p.Current?.On == true);
+
+            // IEC norm expects the first active current to be 0°
+            if (firstActive != null && firstActive.Current.AcComponent!.Angle != 0)
+                return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
+
+            var isAngleValue = CheckAngle(current.Angle);
+            if (isAngleValue != SourceApiErrorCodes.SUCCESS)
+                return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
+
+            return SourceApiErrorCodes.SUCCESS;
+        }
+
+        private static SourceApiErrorCodes CheckDcCurrents(SourceCapabilities capabilities, int i, double actualRms)
+        {
+            var allowedRange = capabilities.Phases[i].DcCurrent;
+
+            if (!allowedRange!.IsIncluded(actualRms))
+                return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
+
             return SourceApiErrorCodes.SUCCESS;
         }
 
@@ -72,24 +104,51 @@ namespace SourceApi.Actions.Source
         {
             for (int i = 0; i < loadpoint.Phases.Count; ++i)
             {
-                // Is a current-only source
-                if (capabilities.Phases[i].AcVoltage == null)
-                    continue;
+                if (loadpoint.Phases[i].Voltage?.On != true) continue;
 
-                var voltage = loadpoint.Phases[i].Voltage;
+                var acVoltage = loadpoint.Phases[i].Voltage.AcComponent;
 
-                if (voltage?.On != true) continue;
+                if (acVoltage != null)
+                {
+                    if (capabilities.Phases[i].AcVoltage == null)
+                        return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_AC;
+                    return CheckAcVoltage(capabilities, i, acVoltage);
+                }
 
-                var actualRms = voltage.AcComponent!.Rms;
-                var allowedRange = capabilities.Phases[i].AcVoltage;
+                var dcVoltage = loadpoint.Phases[i].Voltage.DcComponent;
 
-                if (!allowedRange.IsIncluded(actualRms))
-                    return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID;
-
-                var isAngleValue = CheckAngle(voltage.AcComponent!.Angle);
-                if (isAngleValue != SourceApiErrorCodes.SUCCESS)
-                    return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
+                if (dcVoltage != null)
+                {
+                    if (capabilities.Phases[i].DcVoltage == null)
+                        return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_AC;
+                    return CheckDcVoltage(capabilities, i, (double)dcVoltage);
+                }
             }
+
+            return SourceApiErrorCodes.SUCCESS;
+        }
+
+        private static SourceApiErrorCodes CheckAcVoltage(SourceCapabilities capabilities, int i, ElectricalVectorQuantity voltage)
+        {
+            var actualRms = voltage!.Rms;
+            var allowedRange = capabilities.Phases[i].AcVoltage;
+
+            if (!allowedRange!.IsIncluded(actualRms))
+                return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID;
+
+            var isAngleValue = CheckAngle(voltage.Angle);
+            if (isAngleValue != SourceApiErrorCodes.SUCCESS)
+                return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
+
+            return SourceApiErrorCodes.SUCCESS;
+        }
+
+        private static SourceApiErrorCodes CheckDcVoltage(SourceCapabilities capabilities, int i, double voltage)
+        {
+            var allowedRange = capabilities.Phases[i].DcVoltage;
+
+            if (!allowedRange!.IsIncluded(voltage))
+                return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID;
 
             return SourceApiErrorCodes.SUCCESS;
         }
@@ -100,7 +159,8 @@ namespace SourceApi.Actions.Source
                 return SourceApiErrorCodes.SUCCESS;
 
             var frequency = loadpoint.Frequency.Value;
-
+            if (capabilities.FrequencyRanges == null)
+                return SourceApiErrorCodes.SUCCESS;
             foreach (var range in capabilities.FrequencyRanges)
                 if (range.Mode == FrequencyMode.SYNTHETIC)
                     if (frequency >= range.Min && frequency <= range.Max)

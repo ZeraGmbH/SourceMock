@@ -9,6 +9,14 @@ namespace SourceApi.Tests.Actions.Source
 {
     internal class SimulatedSourceTests
     {
+        Mock<ILogger<SimulatedSource>> logger = new();
+        SimulatedSource mock;
+
+        [SetUp]
+        public void SetUp()
+        {
+            mock = new(logger.Object, new SourceCapabilityValidator());
+        }
 
         const string CONFIG_KEY_NUMBER_OF_PHASES = "SourceProperties:NumberOfPhases";
 
@@ -137,10 +145,6 @@ namespace SourceApi.Tests.Actions.Source
         [Test]
         public async Task Returns_Correct_Dosage_Progress()
         {
-            Mock<ILogger<SimulatedSource>> logger = new();
-
-            SimulatedSource mock = new(logger.Object, new SourceCapabilityValidator());
-
             await mock.SetLoadpoint(GetLoadpoint());
             await mock.SetDosageEnergy(20, 1);
             await mock.StartDosage();
@@ -155,10 +159,6 @@ namespace SourceApi.Tests.Actions.Source
         [Test]
         public async Task Turns_Off_Loadpoint()
         {
-            Mock<ILogger<SimulatedSource>> logger = new();
-
-            SimulatedSource mock = new(logger.Object, new SourceCapabilityValidator());
-
             var loadpoint = GetLoadpoint();
             await mock.SetLoadpoint(loadpoint);
 

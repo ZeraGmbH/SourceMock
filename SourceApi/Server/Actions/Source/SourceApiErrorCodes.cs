@@ -57,5 +57,15 @@ namespace SourceApi.Actions.Source
         /// 
         /// </summary>
         SOURCE_NOT_READY,
+
+        /// <summary>
+        /// AC component in loadpoint can't be set
+        /// </summary>
+        SOURCE_NOT_COMPATIBLE_TO_AC,
+
+        /// <summary>
+        /// DC component in loadpoint can't be set
+        /// </summary>
+        SOURCE_NOT_COMPATIBLE_TO_DC,
     }
 }

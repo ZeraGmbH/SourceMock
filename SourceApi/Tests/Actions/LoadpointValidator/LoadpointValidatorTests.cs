@@ -31,7 +31,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
             // Act
             var error = validator.IsValid(loadpoint, new()
             {
-                FrequencyRanges = { new() { Max = 100, Min = 0, PrecisionStepSize = 1 } },
+                FrequencyRanges = new() { new() { Max = 100, Min = 0, PrecisionStepSize = 1 } },
                 Phases = loadpoint.Phases
                     .Select(
                         p => new PhaseCapability

@@ -91,7 +91,7 @@ namespace SourceApi.Tests.Actions.Source
             // Arrange 
             ISource source = GenerateSimulatedSource();
             TargetLoadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
-            lp.Phases[0].Voltage.AcComponent.Rms = 500;
+            lp.Phases[0].Voltage.AcComponent!.Rms = 500;
 
             // Act
             var result = await source.SetLoadpoint(lp);
@@ -109,7 +109,7 @@ namespace SourceApi.Tests.Actions.Source
             // Arrange 
             ISource source = GenerateSimulatedSource();
             TargetLoadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
-            lp.Phases[0].Current.AcComponent.Rms = 100;
+            lp.Phases[0].Current.AcComponent!.Rms = 100;
 
             // Act
             var result = await source.SetLoadpoint(lp);

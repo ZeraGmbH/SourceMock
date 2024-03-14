@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SourceApi.Model;
 
 namespace RefMeterApi.Actions.Device;
 
@@ -39,7 +40,20 @@ partial class SerialPortMTRefMeter
         /* Prepare response with three phases. */
         var response = new MeasuredLoadpoint
         {
-            Phases = { new MeasuredLoadpointPhase(), new MeasuredLoadpointPhase(), new MeasuredLoadpointPhase(), }
+            Phases = {
+                new MeasuredLoadpointPhase {
+                    Current = new ElectricalQuantity { AcComponent = new() } ,
+                    Voltage = new ElectricalQuantity { AcComponent = new() }
+                },
+                new MeasuredLoadpointPhase {
+                    Current = new ElectricalQuantity { AcComponent = new() } ,
+                    Voltage = new ElectricalQuantity { AcComponent = new() }
+                },
+                new MeasuredLoadpointPhase {
+                    Current = new ElectricalQuantity { AcComponent = new() } ,
+                    Voltage = new ElectricalQuantity { AcComponent = new() }
+                },
+            }
         };
 
         for (var i = 0; i < replies.Length - 1; i++)
@@ -87,40 +101,40 @@ partial class SerialPortMTRefMeter
             switch (index)
             {
                 case 0:
-                    response.Phases[0].Voltage.AcComponent.Rms = value;
+                    response.Phases[0].Voltage.AcComponent!.Rms = value;
                     break;
                 case 1:
-                    response.Phases[1].Voltage.AcComponent.Rms = value;
+                    response.Phases[1].Voltage.AcComponent!.Rms = value;
                     break;
                 case 2:
-                    response.Phases[2].Voltage.AcComponent.Rms = value;
+                    response.Phases[2].Voltage.AcComponent!.Rms = value;
                     break;
                 case 3:
-                    response.Phases[0].Current.AcComponent.Rms = value;
+                    response.Phases[0].Current.AcComponent!.Rms = value;
                     break;
                 case 4:
-                    response.Phases[1].Current.AcComponent.Rms = value;
+                    response.Phases[1].Current.AcComponent!.Rms = value;
                     break;
                 case 5:
-                    response.Phases[2].Current.AcComponent.Rms = value;
+                    response.Phases[2].Current.AcComponent!.Rms = value;
                     break;
                 case 6:
-                    response.Phases[0].Voltage.AcComponent.Angle = value;
+                    response.Phases[0].Voltage.AcComponent!.Angle = value;
                     break;
                 case 7:
-                    response.Phases[1].Voltage.AcComponent.Angle = value;
+                    response.Phases[1].Voltage.AcComponent!.Angle = value;
                     break;
                 case 8:
-                    response.Phases[2].Voltage.AcComponent.Angle = value;
+                    response.Phases[2].Voltage.AcComponent!.Angle = value;
                     break;
                 case 9:
-                    response.Phases[0].Current.AcComponent.Angle = value;
+                    response.Phases[0].Current.AcComponent!.Angle = value;
                     break;
                 case 10:
-                    response.Phases[1].Current.AcComponent.Angle = value;
+                    response.Phases[1].Current.AcComponent!.Angle = value;
                     break;
                 case 11:
-                    response.Phases[2].Current.AcComponent.Angle = value;
+                    response.Phases[2].Current.AcComponent!.Angle = value;
                     break;
                 case 12:
                     response.Phases[0].PowerFactor = value;

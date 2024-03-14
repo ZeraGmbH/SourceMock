@@ -37,8 +37,8 @@ public static class Utils
         // reverse all angles
         foreach (var phase in measureOutput.Phases)
         {
-            phase.Voltage.AcComponent.Angle = (360 - phase.Voltage.AcComponent.Angle) % 360;
-            phase.Current.AcComponent.Angle = (360 - phase.Current.AcComponent.Angle) % 360;
+            phase.Voltage.AcComponent!.Angle = (360 - phase.Voltage.AcComponent!.Angle) % 360;
+            phase.Current.AcComponent!.Angle = (360 - phase.Current.AcComponent!.Angle) % 360;
         };
 
         // All current phases are off
@@ -46,7 +46,7 @@ public static class Utils
             return;
 
         // get the current angle of the first phase, that is on
-        var angle = measureOutput.Phases[firstPhaseAngle].Current.AcComponent.Angle;
+        var angle = measureOutput.Phases[firstPhaseAngle].Current.AcComponent!.Angle;
 
         // reference angle is already 0°
         if (angle == 0)
@@ -55,8 +55,8 @@ public static class Utils
         // first current angle must be 0°. The rest we add up
         foreach (var phase in measureOutput.Phases)
         {
-            phase.Voltage.AcComponent.Angle = (phase.Voltage.AcComponent.Angle - angle + 360) % 360;
-            phase.Current.AcComponent.Angle = (phase.Current.AcComponent.Angle - angle + 360) % 360;
+            phase.Voltage.AcComponent!.Angle = (phase.Voltage.AcComponent!.Angle - angle + 360) % 360;
+            phase.Current.AcComponent!.Angle = (phase.Current.AcComponent!.Angle - angle + 360) % 360;
         }
     }
 }

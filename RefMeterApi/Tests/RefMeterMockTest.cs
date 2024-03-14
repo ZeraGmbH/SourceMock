@@ -69,10 +69,10 @@ public class RefMeterMockTest
         MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues().Result;
 
         Assert.That(measureOutput.Frequency, Is.InRange(GetMinValue(frequencyValue, 0.0002), GetMaxValue(frequencyValue, 0.0002)));
-        Assert.That(measureOutput.Phases[0].Current.AcComponent.Rms, Is.InRange(GetMinValue(current, 0.0001), GetMaxValue(current, 0.0001)));
-        Assert.That(measureOutput.Phases[0].Current.AcComponent.Angle, Is.InRange(GetAbsoluteMinValue(currentAngle, 0.1), GetAbsoluteMaxValue(current, 0.1)));
-        Assert.That(measureOutput.Phases[0].Voltage.AcComponent.Rms, Is.InRange(GetMinValue(voltage, 0.0005), GetMaxValue(voltage, 0.0005)));
-        Assert.That(measureOutput.Phases[0].Voltage.AcComponent.Angle, Is.InRange(GetAbsoluteMinValue(voltageAngle, 0.1), GetAbsoluteMaxValue(voltageAngle, 0.1)));
+        Assert.That(measureOutput.Phases[0].Current.AcComponent!.Rms, Is.InRange(GetMinValue(current, 0.0001), GetMaxValue(current, 0.0001)));
+        Assert.That(measureOutput.Phases[0].Current.AcComponent!.Angle, Is.InRange(GetAbsoluteMinValue(currentAngle, 0.1), GetAbsoluteMaxValue(current, 0.1)));
+        Assert.That(measureOutput.Phases[0].Voltage.AcComponent!.Rms, Is.InRange(GetMinValue(voltage, 0.0005), GetMaxValue(voltage, 0.0005)));
+        Assert.That(measureOutput.Phases[0].Voltage.AcComponent!.Angle, Is.InRange(GetAbsoluteMinValue(voltageAngle, 0.1), GetAbsoluteMaxValue(voltageAngle, 0.1)));
     }
 
     [Test]
@@ -90,20 +90,20 @@ public class RefMeterMockTest
 
         Assert.That(mo.Phases.Count, Is.EqualTo(3));
 
-        Assert.That(mo.Phases[0].Voltage.AcComponent.Rms, Is.EqualTo(230).Within(double.Epsilon));
-        Assert.That(mo.Phases[0].Voltage.AcComponent.Angle, Is.EqualTo(0).Within(double.Epsilon));
-        Assert.That(mo.Phases[0].Current.AcComponent.Rms, Is.EqualTo(100).Within(double.Epsilon));
-        Assert.That(mo.Phases[0].Current.AcComponent.Angle, Is.EqualTo(0).Within(double.Epsilon));
+        Assert.That(mo.Phases[0].Voltage.AcComponent!.Rms, Is.EqualTo(230).Within(double.Epsilon));
+        Assert.That(mo.Phases[0].Voltage.AcComponent!.Angle, Is.EqualTo(0).Within(double.Epsilon));
+        Assert.That(mo.Phases[0].Current.AcComponent!.Rms, Is.EqualTo(100).Within(double.Epsilon));
+        Assert.That(mo.Phases[0].Current.AcComponent!.Angle, Is.EqualTo(0).Within(double.Epsilon));
 
-        Assert.That(mo.Phases[1].Voltage.AcComponent.Rms, Is.EqualTo(235).Within(double.Epsilon));
-        Assert.That(mo.Phases[1].Voltage.AcComponent.Angle, Is.EqualTo(120).Within(double.Epsilon));
-        Assert.That(mo.Phases[1].Current.AcComponent.Rms, Is.EqualTo(80).Within(double.Epsilon));
-        Assert.That(mo.Phases[1].Current.AcComponent.Angle, Is.EqualTo(120).Within(double.Epsilon));
+        Assert.That(mo.Phases[1].Voltage.AcComponent!.Rms, Is.EqualTo(235).Within(double.Epsilon));
+        Assert.That(mo.Phases[1].Voltage.AcComponent!.Angle, Is.EqualTo(120).Within(double.Epsilon));
+        Assert.That(mo.Phases[1].Current.AcComponent!.Rms, Is.EqualTo(80).Within(double.Epsilon));
+        Assert.That(mo.Phases[1].Current.AcComponent!.Angle, Is.EqualTo(120).Within(double.Epsilon));
 
-        Assert.That(mo.Phases[2].Voltage.AcComponent.Rms, Is.EqualTo(240).Within(double.Epsilon));
-        Assert.That(mo.Phases[2].Voltage.AcComponent.Angle, Is.EqualTo(240).Within(double.Epsilon));
-        Assert.That(mo.Phases[2].Current.AcComponent.Rms, Is.EqualTo(60).Within(double.Epsilon));
-        Assert.That(mo.Phases[2].Current.AcComponent.Angle, Is.EqualTo(240).Within(double.Epsilon));
+        Assert.That(mo.Phases[2].Voltage.AcComponent!.Rms, Is.EqualTo(240).Within(double.Epsilon));
+        Assert.That(mo.Phases[2].Voltage.AcComponent!.Angle, Is.EqualTo(240).Within(double.Epsilon));
+        Assert.That(mo.Phases[2].Current.AcComponent!.Rms, Is.EqualTo(60).Within(double.Epsilon));
+        Assert.That(mo.Phases[2].Current.AcComponent!.Angle, Is.EqualTo(240).Within(double.Epsilon));
     }
 
     [Test]

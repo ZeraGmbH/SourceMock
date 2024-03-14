@@ -63,10 +63,10 @@ public partial class ACRefMeterMock : RefMeterMock
 
         foreach (var phase in lp.Phases)
         {
-            var current = phase.Current.On ? phase.Current.AcComponent.Rms : 0;
-            var voltage = phase.Voltage.On ? phase.Voltage.AcComponent.Rms : 0;
+            var current = phase.Current.On ? phase.Current.AcComponent!.Rms : 0;
+            var voltage = phase.Voltage.On ? phase.Voltage.AcComponent!.Rms : 0;
 
-            var angle = Math.Abs(phase.Current.AcComponent.Angle - phase.Voltage.AcComponent.Angle);
+            var angle = Math.Abs(phase.Current.AcComponent!.Angle - phase.Voltage.AcComponent!.Angle);
 
             var measureOutputPhase = new MeasuredLoadpointPhase()
             {
@@ -76,7 +76,7 @@ public partial class ACRefMeterMock : RefMeterMock
                     AcComponent = new()
                     {
                         Rms = current,
-                        Angle = phase.Current.AcComponent.Angle,
+                        Angle = phase.Current.AcComponent!.Angle,
                     },
                 },
                 Voltage = new()
@@ -85,7 +85,7 @@ public partial class ACRefMeterMock : RefMeterMock
                     AcComponent = new()
                     {
                         Rms = voltage,
-                        Angle = phase.Voltage.AcComponent.Angle,
+                        Angle = phase.Voltage.AcComponent!.Angle,
                     },
                 },
                 ActivePower = current * voltage * Math.Cos(angle * PI_BY_180),
@@ -170,14 +170,14 @@ public partial class ACRefMeterMock : RefMeterMock
         if (phaseCount < 3) return "123";
 
         /* Find the first angle - the first voltage seen by any consumer. */
-        var minAngle = phases.Min(v => v.AcComponent.Angle);
-        var l1 = phases.FindIndex(v => v.AcComponent.Angle == minAngle);
+        var minAngle = phases.Min(v => v.AcComponent!.Angle);
+        var l1 = phases.FindIndex(v => v.AcComponent!.Angle == minAngle);
 
         /* Get the following phases and compare angles. */
         var l2 = (l1 + 1) % phaseCount;
         var l3 = (l2 + 1) % phaseCount;
 
-        return phases[l2].AcComponent.Angle < phases[l3].AcComponent.Angle ? "132" : "123";
+        return phases[l2].AcComponent!.Angle < phases[l3].AcComponent!.Angle ? "132" : "123";
     }
 
     private static void MeasureOutputPhaseNullCheck(MeasuredLoadpointPhase phase)
@@ -214,16 +214,16 @@ public partial class ACRefMeterMock : RefMeterMock
     {
         MeasureOutputPhaseNullCheck(phase);
 
-        phase.Current.AcComponent.Rms = phase.Current.AcComponent.Rms != 0
-            ? GetRandomNumberWithPercentageDeviation(phase.Current.AcComponent.Rms, 0.01)
-            : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.AcComponent.Rms, 0.01));
-        phase.Current.AcComponent.Angle = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.AcComponent.Angle, 0.1));
-        phase.Voltage.AcComponent.Rms = phase.Voltage.AcComponent.Rms != 0
-            ? GetRandomNumberWithPercentageDeviation(phase.Voltage.AcComponent.Rms, 0.05)
-            : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.AcComponent.Rms, 0.05));
-        phase.Voltage.AcComponent.Angle = phase.Voltage.AcComponent.Angle != 0
-            ? GetRandomNumberWithPercentageDeviation(phase.Voltage.AcComponent.Angle, 0.05)
-            : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.AcComponent.Angle, 0.05));
+        phase.Current.AcComponent!.Rms = phase.Current.AcComponent!.Rms != 0
+            ? GetRandomNumberWithPercentageDeviation(phase.Current.AcComponent!.Rms, 0.01)
+            : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.AcComponent!.Rms, 0.01));
+        phase.Current.AcComponent!.Angle = Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Current.AcComponent!.Angle, 0.1));
+        phase.Voltage.AcComponent!.Rms = phase.Voltage.AcComponent!.Rms != 0
+            ? GetRandomNumberWithPercentageDeviation(phase.Voltage.AcComponent!.Rms, 0.05)
+            : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.AcComponent!.Rms, 0.05));
+        phase.Voltage.AcComponent!.Angle = phase.Voltage.AcComponent!.Angle != 0
+            ? GetRandomNumberWithPercentageDeviation(phase.Voltage.AcComponent!.Angle, 0.05)
+            : Math.Abs(GetRandomNumberWithAbsoluteDeviation(phase.Voltage.AcComponent!.Angle, 0.05));
         phase.ActivePower = GetRandomNumberWithAbsoluteDeviation(phase.ActivePower!.Value, 0.02);
         phase.ReactivePower = GetRandomNumberWithAbsoluteDeviation(phase.ReactivePower!.Value, 0.02);
         phase.ApparentPower = GetRandomNumberWithAbsoluteDeviation(phase.ApparentPower!.Value, 0.02);

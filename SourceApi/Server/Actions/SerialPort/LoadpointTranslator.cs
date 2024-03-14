@@ -184,23 +184,23 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
     {
         foreach (var phase in loadpoint.Phases)
         {
-            phase.Voltage.AcComponent.Angle = (360 - phase.Voltage.AcComponent.Angle) % 360;
-            phase.Current.AcComponent.Angle = (360 - phase.Current.AcComponent.Angle) % 360;
+            phase.Voltage.AcComponent!.Angle = (360 - phase.Voltage.AcComponent.Angle) % 360;
+            phase.Current.AcComponent!.Angle = (360 - phase.Current.AcComponent.Angle) % 360;
         };
 
 
         if (firstActiveVoltagePhase < 0)
             return;
 
-        var angle = loadpoint.Phases[firstActiveVoltagePhase].Voltage.AcComponent.Angle;
+        var angle = loadpoint.Phases[firstActiveVoltagePhase].Voltage.AcComponent!.Angle;
 
         if (angle == 0)
             return;
 
         foreach (var phase in loadpoint.Phases)
         {
-            phase.Voltage.AcComponent.Angle = (phase.Voltage.AcComponent.Angle - angle + 360) % 360;
-            phase.Current.AcComponent.Angle = (phase.Current.AcComponent.Angle - angle + 360) % 360;
+            phase.Voltage.AcComponent!.Angle = (phase.Voltage.AcComponent.Angle - angle + 360) % 360;
+            phase.Current.AcComponent!.Angle = (phase.Current.AcComponent.Angle - angle + 360) % 360;
         }
     }
 

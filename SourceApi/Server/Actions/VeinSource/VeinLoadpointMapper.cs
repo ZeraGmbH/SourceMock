@@ -19,11 +19,11 @@ namespace SourceApi.Actions.VeinSource
             ret["Frequency"] = frequency;
 
             bool globalOn = false;
-            var i =0;
+            var i = 0;
             foreach (var phase in inLoadpoint.Phases)
             {
-                ret[$"I{i + 1}"] = MapElectricalVectorQuantityToJObject(phase.Current.AcComponent);
-                ret[$"U{i + 1}"] = MapElectricalVectorQuantityToJObject(phase.Voltage.AcComponent);
+                ret[$"I{i + 1}"] = MapElectricalVectorQuantityToJObject(phase.Current.AcComponent!);
+                ret[$"U{i + 1}"] = MapElectricalVectorQuantityToJObject(phase.Voltage.AcComponent!);
 
                 globalOn |= inLoadpoint.Phases[i].Current.On || inLoadpoint.Phases[i].Voltage.On;
                 ++i;
@@ -45,8 +45,8 @@ namespace SourceApi.Actions.VeinSource
             while (json.ContainsKey($"I{counter + 1}"))
             {
                 if (ret.Phases.Count <= counter) ret.Phases.Add(new TargetLoadpointPhase());
-                ret.Phases[counter].Current.AcComponent.Rms = json[$"I{counter + 1}"]?["rms"]?.ToObject<double>() ?? 0;
-                ret.Phases[counter].Current.AcComponent.Angle = json[$"I{counter + 1}"]?["angle"]?.ToObject<double>() ?? 0;
+                ret.Phases[counter].Current.AcComponent!.Rms = json[$"I{counter + 1}"]?["rms"]?.ToObject<double>() ?? 0;
+                ret.Phases[counter].Current.AcComponent!.Angle = json[$"I{counter + 1}"]?["angle"]?.ToObject<double>() ?? 0;
                 ret.Phases[counter].Current.On = json[$"I{counter + 1}"]?["on"]?.ToObject<bool>() ?? false;
                 counter += 1;
             }
@@ -55,8 +55,8 @@ namespace SourceApi.Actions.VeinSource
             while (json.ContainsKey($"U{counter + 1}"))
             {
                 if (ret.Phases.Count <= counter) ret.Phases.Add(new TargetLoadpointPhase());
-                ret.Phases[counter].Voltage.AcComponent.Rms = json[$"U{counter + 1}"]?["rms"]?.ToObject<double>() ?? 0;
-                ret.Phases[counter].Voltage.AcComponent.Angle = json[$"U{counter + 1}"]?["angle"]?.ToObject<double>() ?? 0;
+                ret.Phases[counter].Voltage.AcComponent!.Rms = json[$"U{counter + 1}"]?["rms"]?.ToObject<double>() ?? 0;
+                ret.Phases[counter].Voltage.AcComponent!.Angle = json[$"U{counter + 1}"]?["angle"]?.ToObject<double>() ?? 0;
                 ret.Phases[counter].Voltage.On = json[$"U{counter + 1}"]?["on"]?.ToObject<bool>() ?? false;
                 counter += 1;
             }

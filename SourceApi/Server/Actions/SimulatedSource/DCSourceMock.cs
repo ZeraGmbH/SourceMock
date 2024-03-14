@@ -28,7 +28,7 @@ public class DCSourceMock : SourceMock
 
     public override Task<DosageProgress> GetDosageProgress(double meterConstant)
     {
-        var power = _loadpoint!.Phases[0].Voltage.DcComponent * _loadpoint!.Phases[0].Current.DcComponent;
+        var power = (_loadpoint!.Phases[0].Voltage.DcComponent ?? 0) * (_loadpoint!.Phases[0].Current.DcComponent ?? 0);
         var elapsedHours = (DateTime.Now - _startTime).TotalHours;
         var energy = power * elapsedHours;
 

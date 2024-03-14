@@ -58,8 +58,8 @@ namespace SourceApi.Actions.Source
 
             foreach (var phase in _loadpoint!.Phases)
                 if (phase.Voltage.On && phase.Current.On)
-                    power += phase.Voltage.AcComponent.Rms * phase.Current.AcComponent.Rms *
-                        Math.Cos((phase.Voltage.AcComponent.Angle - phase.Current.AcComponent.Angle) *
+                    power += phase.Voltage.AcComponent!.Rms * phase.Current.AcComponent!.Rms *
+                        Math.Cos((phase.Voltage.AcComponent!.Angle - phase.Current.AcComponent!.Angle) *
                         Math.PI / 180d);
 
             var elapsedHours = (DateTime.Now - _startTime).TotalHours;

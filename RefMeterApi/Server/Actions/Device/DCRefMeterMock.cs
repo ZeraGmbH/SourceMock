@@ -102,8 +102,8 @@ public class DCRefMeterMock : RefMeterMock
 
     private static void CalculateDeviations(MeasuredLoadpoint mo)
     {
-        mo.Phases[0].Voltage.DcComponent = GetRandomNumberWithPercentageDeviation(mo.Phases[0].Voltage.DcComponent, 0.01);
-        mo.Phases[0].Current.DcComponent = GetRandomNumberWithPercentageDeviation(mo.Phases[0].Current.DcComponent, 0.01);
+        mo.Phases[0].Voltage.DcComponent = GetRandomNumberWithPercentageDeviation(mo.Phases[0].Voltage.DcComponent ?? 0, 0.01);
+        mo.Phases[0].Current.DcComponent = GetRandomNumberWithPercentageDeviation(mo.Phases[0].Current.DcComponent ?? 0, 0.01);
         mo.Phases[0].ApparentPower = GetRandomNumberWithPercentageDeviation(mo.Phases[0].ApparentPower!.Value, 0.01);
     }
 }

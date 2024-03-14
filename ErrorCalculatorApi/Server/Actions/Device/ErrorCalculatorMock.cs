@@ -100,9 +100,9 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(double meterConstant, long impulses)
+    public Task SetErrorMeasurementParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant)
     {
-        _meterConstant = meterConstant;
+        _meterConstant = dutMeterConstant;
         _totalImpulses = impulses;
 
         return Task.CompletedTask;

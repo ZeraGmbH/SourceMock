@@ -205,7 +205,7 @@ public class ErrorMeasurementTests
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
-        await cut.SetErrorMeasurementParameters(meterConstant, impluses);
+        await cut.SetErrorMeasurementParameters(meterConstant, impluses, 6000d);
 
         Assert.That(_port.ActiveParameters, Is.EqualTo(expected));
     }

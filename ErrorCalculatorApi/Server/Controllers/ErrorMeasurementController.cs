@@ -27,8 +27,9 @@ public class ErrorMeasurementController(IErrorCalculator device) : ControllerBas
     /// <summary>
     /// Configure the error measurement.
     /// </summary>
-    /// <param name="meterConstant">Meter constant for the DUT - impulses per kWh.</param>
+    /// <param name="dutMeterConstant">Meter constant for the DUT - impulses per kWh.</param>
     /// <param name="impulses">Number of impulses.</param>
+    /// <param name="refMeterMeterConstant">Meter constant for the reference meter - impulses per kWh.</param>
     [HttpPut]
     [SwaggerOperation(OperationId = "SetParameters")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -37,8 +38,8 @@ public class ErrorMeasurementController(IErrorCalculator device) : ControllerBas
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetParameters(double meterConstant, long impulses) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.SetErrorMeasurementParameters(meterConstant, impulses));
+    public Task<ActionResult> SetParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.SetErrorMeasurementParameters(dutMeterConstant, impulses, refMeterMeterConstant));
 
     /// <summary>
     /// Retrieve the current firmware of the error calculator.

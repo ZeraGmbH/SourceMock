@@ -58,7 +58,7 @@ public class ErrorCalculatorMockTest
         var cut = Services.GetRequiredService<IErrorCalculatorMock>();
 
         /* 200 impulses at 10000/kWh is equivalent to 20. */
-        await cut.SetErrorMeasurementParameters(10000, 200);
+        await cut.SetErrorMeasurementParameters(10000, 200, 6000d);
         await cut.StartErrorMeasurement(false);
 
         /* 100ms delay generates ~1.8W. */
@@ -92,7 +92,7 @@ public class ErrorCalculatorMockTest
         var cut = Services.GetRequiredService<IErrorCalculatorMock>();
 
         /* 200 impulses at 10000/kWh is equivalent to 20W. */
-        await cut.SetErrorMeasurementParameters(10000, 200);
+        await cut.SetErrorMeasurementParameters(10000, 200, 6000d);
         await cut.StartErrorMeasurement(true);
 
         /* 1.5s delay generates 27.5W. */

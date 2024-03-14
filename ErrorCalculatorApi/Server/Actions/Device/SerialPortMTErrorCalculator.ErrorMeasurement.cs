@@ -144,16 +144,16 @@ partial class SerialPortMTErrorCalculator
     }
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(double meterConstant, long impulses)
+    public Task SetErrorMeasurementParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant)
     {
         /* Create the text representation of the meter constant and see if it fits the protocol requirements. */
-        var (rawMeter, powMeter) = ClipNumberToProtocol((long)Math.Round(meterConstant * 1E5), 16);
+        var (rawMeter, powMeter) = ClipNumberToProtocol((long)Math.Round(dutMeterConstant * 1E5), 16);
 
         if (powMeter > 10)
         {
-            _logger.LogDebug($"Invalid meter constant {meterConstant}");
+            _logger.LogDebug($"Invalid meter constant {dutMeterConstant}");
 
-            throw new ArgumentOutOfRangeException(nameof(meterConstant));
+            throw new ArgumentOutOfRangeException(nameof(dutMeterConstant));
         }
 
         /* Create the text representation of the number of impulses and see if it fits the protocol requirements. */

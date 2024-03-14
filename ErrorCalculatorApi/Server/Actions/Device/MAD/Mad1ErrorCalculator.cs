@@ -52,7 +52,7 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(double meterConstant, long impulses)
+    public Task SetErrorMeasurementParameters(double dutMeterConstant, long impulse, double refMeterMeterConstant)
     {
         throw new NotImplementedException();
     }

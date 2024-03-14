@@ -76,7 +76,7 @@ partial class Mad1ErrorCalculator
         : long.Parse(seen.InnerText);
 
       if (impulses != null && _dutImpules != null)
-        reply.Progress = impulses * 1.0d / _dutImpules;
+        reply.Progress = impulses * 100.0d / _dutImpules;
     }
 
     /* Report summary. */

@@ -14,22 +14,22 @@ public enum ErrorCalculatorConnections
     NoInput = 0,
 
     /// <summary>
-    /// Scanning head input, back, active power
+    /// Scanning head input, back, e.g. active power
     /// </summary>
     Intern1 = 1,
 
     /// <summary>
-    /// Scanning head input, back, reactive power
+    /// Scanning head input, back, e.g. reactive power
     /// </summary>
     Intern2 = 2,
 
     /// <summary>
-    /// Scanning head input, front, active power
+    /// Scanning head input, front, e.g. active power
     /// </summary>
     Extern1 = 3,
 
     /// <summary>
-    /// Scanning head input, front, reactive power
+    /// Scanning head input, front, e.g. reactive power
     /// </summary>
     Extern2 = 4,
 
@@ -109,7 +109,7 @@ public enum ErrorCalculatorConnections
     RefMeter2 = 19,
 
     /// <summary>
-    /// eference meter input 3 (e.g. apparent power)
+    /// Reference meter input 3 (e.g. apparent power)
     /// </summary>
     RefMeter3 = 20,
 
@@ -119,27 +119,27 @@ public enum ErrorCalculatorConnections
     ResetKey = 21,
 
     /// <summary>
-    /// Software input(eHZ meter mode)
+    /// Software input (eHZ meter mode)
     /// </summary>
     Software = 22,
 
     /// <summary>
-    /// COM server 1, In(UART-1 input)
+    /// COM server 1, In (UART-1 input)
     /// </summary>
     COM1InUART1 = 23,
 
     /// <summary>
-    /// outCOM server 1, Out(UART-2 input)
+    /// COM server 1, Out (UART-2 input)
     /// </summary>
     COM1OutUART2 = 24,
 
     /// <summary>
-    /// COM server 2, In(UART-3 input)
+    /// COM server 2, In (UART-3 input)
     /// </summary>
     COM2InUART3 = 25,
 
     /// <summary>
-    /// COM server 2, Out(UART-4 input)
+    /// COM server 2, Out (UART-4 input)
     /// </summary>
     COM2OutUART4 = 26,
 }

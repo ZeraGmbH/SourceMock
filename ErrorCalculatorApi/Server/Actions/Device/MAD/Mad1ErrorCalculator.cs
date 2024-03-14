@@ -1,7 +1,6 @@
 using System.Xml;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
-using ZstdSharp.Unsafe;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;
 
@@ -18,8 +17,6 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     private long? _dutImpules;
 
     private long? _dutImpulesNext;
-
-    private long? _refMeterImpulses;
 
     private long? _refMeterImpulsesNext;
 
@@ -85,6 +82,5 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
         _jobId = await StartErrorMeasurement(continuous, connection, (long)dut, (long)meter);
 
         _dutImpules = dut;
-        _refMeterImpulses = meter;
     }
 }

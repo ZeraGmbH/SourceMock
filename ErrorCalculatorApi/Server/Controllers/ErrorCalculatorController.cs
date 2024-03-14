@@ -13,24 +13,20 @@ namespace ErrorCalculatorApi.Controllers;
 /// <remarks>
 /// Initialize a new controller.
 /// </remarks>
-/// <param name="device">Serial port connected device to use.</param>
+/// <param name="devices">Connected device to use.</param>
 [ApiVersion("1.0")]
 [ApiController]
-[Route("api/v{version:apiVersion}/ErrorCalculator/[controller]")]
-public class ErrorMeasurementController(IErrorCalculator device) : ControllerBase
+[Route("api/v{version:apiVersion}/[controller]")]
+public class ErrorCalculatorController(IErrorCalculator[] devices) : ControllerBase
 {
-    /// <summary>
-    /// The error calculator to use during this request execution.
-    /// </summary>
-    private readonly IErrorCalculator _device = device;
-
     /// <summary>
     /// Configure the error measurement.
     /// </summary>
     /// <param name="dutMeterConstant">Meter constant for the DUT - impulses per kWh.</param>
     /// <param name="impulses">Number of impulses.</param>
     /// <param name="refMeterMeterConstant">Meter constant for the reference meter - impulses per kWh.</param>
-    [HttpPut]
+    /// <param name="pos"></param>
+    [HttpPut("{pos?}")]
     [SwaggerOperation(OperationId = "SetParameters")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -38,14 +34,14 @@ public class ErrorMeasurementController(IErrorCalculator device) : ControllerBas
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.SetErrorMeasurementParameters(dutMeterConstant, impulses, refMeterMeterConstant));
+    public Task<ActionResult> SetParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant, int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].SetErrorMeasurementParameters(dutMeterConstant, impulses, refMeterMeterConstant));
 
     /// <summary>
     /// Retrieve the current firmware of the error calculator.
     /// </summary>
     /// <returns>Firmware information.</returns>
-    [HttpGet("Version")]
+    [HttpGet("Version/{pos?}")]
     [SwaggerOperation(OperationId = "GetFirmware")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -53,14 +49,14 @@ public class ErrorMeasurementController(IErrorCalculator device) : ControllerBas
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<ErrorCalculatorFirmwareVersion>> GetFirmware() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetFirmwareVersion);
+    public Task<ActionResult<ErrorCalculatorFirmwareVersion>> GetFirmware(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(devices[pos].GetFirmwareVersion);
 
     /// <summary>
     /// Retrieve the current status of the error measurement.
     /// </summary>
     /// <returns>Status information.</returns>
-    [HttpGet]
+    [HttpGet("{pos?}")]
     [SwaggerOperation(OperationId = "GetStatus")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -68,13 +64,13 @@ public class ErrorMeasurementController(IErrorCalculator device) : ControllerBas
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<ErrorMeasurementStatus>> GetStatus() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetErrorStatus);
+    public Task<ActionResult<ErrorMeasurementStatus>> GetStatus(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(devices[pos].GetErrorStatus);
 
     /// <summary>
     /// Start a single error measurement.
     /// </summary>
-    [HttpPost("StartSingle")]
+    [HttpPost("StartSingle/{pos?}")]
     [SwaggerOperation(OperationId = "StartSingle")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -82,13 +78,13 @@ public class ErrorMeasurementController(IErrorCalculator device) : ControllerBas
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> StartSingle(ErrorCalculatorConnections? connection) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.StartErrorMeasurement(false, connection));
+    public Task<ActionResult> StartSingle(ErrorCalculatorConnections? connection, int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].StartErrorMeasurement(false, connection));
 
     /// <summary>
     /// Start a continous error measurement.
     /// </summary>
-    [HttpPost("StartContinuous")]
+    [HttpPost("StartContinuous/{pos?}")]
     [SwaggerOperation(OperationId = "StartContinuous")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -96,13 +92,13 @@ public class ErrorMeasurementController(IErrorCalculator device) : ControllerBas
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> StartContinuous(ErrorCalculatorConnections? connection) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.StartErrorMeasurement(true, connection));
+    public Task<ActionResult> StartContinuous(ErrorCalculatorConnections? connection, int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].StartErrorMeasurement(true, connection));
 
     /// <summary>
     /// Get all supported physical connections.
     /// </summary>
-    [HttpGet("SupportedConnections")]
+    [HttpGet("SupportedConnections/{pos?}")]
     [SwaggerOperation(OperationId = "GetSupportedConnections")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -110,13 +106,13 @@ public class ErrorMeasurementController(IErrorCalculator device) : ControllerBas
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<ErrorCalculatorConnections[]>> GetSupportedConnections() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetSupportedConnections);
+    public Task<ActionResult<ErrorCalculatorConnections[]>> GetSupportedConnections(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(devices[pos].GetSupportedConnections);
 
     /// <summary>
     /// Abort the error measurement.
     /// </summary>
-    [HttpPost("Abort")]
+    [HttpPost("Abort/{pos?}")]
     [SwaggerOperation(OperationId = "Abort")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -124,15 +120,24 @@ public class ErrorMeasurementController(IErrorCalculator device) : ControllerBas
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> Abort() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(_device.AbortErrorMeasurement);
+    public Task<ActionResult> Abort(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(devices[pos].AbortErrorMeasurement);
 
     /// <summary>
     /// Report if the error calculator can be used.
     /// </summary>
-    [HttpGet("Available")]
+    [HttpGet("Available/{pos?}")]
     [SwaggerOperation(OperationId = "ErrorCalculatorIsAvailable")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<bool> IsAvailable() =>
-        Ok(_device.Available);
+    public ActionResult<bool> IsAvailable(int pos = 0) =>
+        Ok(devices[pos].Available);
+
+    /// <summary>
+    /// Report the number of error calculators.
+    /// </summary>
+    [HttpGet("Count")]
+    [SwaggerOperation(OperationId = "NumberOfErrorCalculators")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult<int> Count() =>
+        Ok(devices.Length);
 }

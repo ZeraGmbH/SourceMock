@@ -1,11 +1,10 @@
+using ErrorCalculatorApi.Models;
+
 namespace ErrorCalculatorApi.Actions.Device.MAD;
 
 partial class Mad1ErrorCalculator
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public static readonly string ErrorMeasurementStartXml =
+    private static readonly string ErrorMeasurementStartXml =
     @"<?xml version=""1.0"" encoding=""UTF-8""?>
       <KMA_XML_0_01 xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:noNamespaceSchemaLocation=""KoaLaKMA.xsd"">
         <!-- MAD_StartRichtigkeit.xml -->
@@ -33,4 +32,28 @@ partial class Mad1ErrorCalculator
         </kmaContainer>
       </KMA_XML_0_01>
     ";
+
+    private async Task<string> StartErrorMeasurement(bool continuous, ErrorCalculatorConnections? connection, long dutImpulses, long refMeterImpulses)
+    {
+        /* Create and configure request. */
+        var req = LoadXmlFromString(ErrorMeasurementStartXml);
+
+        var dutCounts = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureReq/fctErrorMeasurement/metrologicalCounts")!;
+        var mode = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureReq/fctErrorMeasurement/runMode")!;
+        var refCounts = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureReq/fctErrorMeasurement/referenceCounts")!;
+        var source = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureReq/fctErrorMeasurement/evaluationSrc")!;
+
+        dutCounts.InnerText = $"{dutImpulses}";
+        mode.InnerText = continuous ? "repetition" : "oneShot";
+        refCounts.InnerText = $"{refMeterImpulses}";
+        source.InnerText = _supportedConnections[connection ?? ErrorCalculatorConnections.Intern1];
+
+        /* Execute the request. */
+        var res = await _connection.Execute(req, "runErrorMeasureRes");
+        var jobId = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/jobDetails/jobId")?.InnerText;
+
+        if (string.IsNullOrEmpty(jobId)) throw new InvalidOperationException("got no job identifier");
+
+        return jobId;
+    }
 }

@@ -23,6 +23,7 @@ public interface IMadConnection : IDisposable
     /// Execute a single XML request.
     /// </summary>
     /// <param name="request">Request to send.</param>
+    /// <param name="reply">Reply node to expect.</param>
     /// <returns>Response received.</returns>
-    public Task<XmlDocument> Execute(XmlDocument request);
+    public Task<XmlDocument> Execute(XmlDocument request, string reply);
 }

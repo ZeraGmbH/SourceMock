@@ -1,6 +1,7 @@
 using System.Xml;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
+using ZstdSharp.Unsafe;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;
 
@@ -14,11 +15,15 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
 
     private IMadConnection _connection = null!;
 
-    /// <inheritdoc/>
-    public Task AbortErrorMeasurement()
-    {
-        throw new NotImplementedException();
-    }
+    private long? _dutImpules;
+
+    private long? _dutImpulesNext;
+
+    private long? _refMeterImpulses;
+
+    private long? _refMeterImpulsesNext;
+
+    private string? _jobId;
 
     /// <inheritdoc/>
     public void Destroy()
@@ -37,12 +42,6 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public Task<ErrorMeasurementStatus> GetErrorStatus()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
     public Task Initialize(ErrorCalculatorConfiguration configuration, IServiceProvider services)
     {
         /* Create connection implementation. */
@@ -52,17 +51,40 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(double dutMeterConstant, long impulse, double refMeterMeterConstant)
+    public Task SetErrorMeasurementParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant)
     {
-        throw new NotImplementedException();
+        /* Remember */
+        _refMeterImpulsesNext = (long)Math.Round(impulses * refMeterMeterConstant / dutMeterConstant);
+        _dutImpulesNext = impulses;
+
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorConnections[]> GetSupportedConnections() => Task.FromResult(Enum.GetValues<ErrorCalculatorConnections>());
+    public Task<ErrorCalculatorConnections[]> GetSupportedConnections() => Task.FromResult(_supportedConnections.Keys.ToArray());
 
     /// <inheritdoc/>
-    public Task StartErrorMeasurement(bool continuous, ErrorCalculatorConnections? connection)
+    public async Task StartErrorMeasurement(bool continuous, ErrorCalculatorConnections? connection)
     {
-        throw new NotImplementedException();
+        /* Already running. */
+        if (!string.IsNullOrEmpty(_jobId)) throw new InvalidOperationException("error measurement still active - abort first");
+
+        /* Validate. */
+        var dut = _dutImpulesNext;
+        var meter = _refMeterImpulsesNext;
+
+        _dutImpulesNext = null;
+        _refMeterImpulsesNext = null;
+
+        if (dut == null || meter == null) throw new InvalidOperationException("error measurement not configured");
+
+        /* Configure the measurement. */
+        await ConfigureErrorMeasurement(connection);
+
+        /* Start the measurement and remember context. */
+        _jobId = await StartErrorMeasurement(continuous, connection, (long)dut, (long)meter);
+
+        _dutImpules = dut;
+        _refMeterImpulses = meter;
     }
 }

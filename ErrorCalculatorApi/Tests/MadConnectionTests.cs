@@ -42,16 +42,14 @@ public class MadConnectionTests
             </kmaContainer>
             </KMA_XML_0_01>  
             "
-        ));
+        ), "serverVerRes");
 
         var info = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/serverVerRes");
-        var cmd = info?.SelectSingleNode("cmdResCode")?.InnerText?.Trim();
         var version = info?.SelectSingleNode("versionValue")?.InnerText.Trim();
         var model = info?.SelectSingleNode("hwZeraName")?.InnerText.Trim();
 
         Assert.Multiple(() =>
         {
-            Assert.That(cmd, Is.EqualTo("OK"));
             Assert.That(version, Is.EqualTo("1.04"));
             Assert.That(model, Is.EqualTo("SIMULATION"));
         });
@@ -131,12 +129,7 @@ public class MadConnectionTests
 
         source.InnerText = "src-intern-1";
 
-        var res = await cut.Execute(req);
-
-        var info = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/bindErrorCalculatorsRes");
-        var cmd = info?.SelectSingleNode("cmdResCode")?.InnerText?.Trim();
-
-        Assert.That(cmd, Is.EqualTo("OK"));
+        await cut.Execute(req, "bindErrorCalculatorsRes");
     }
 
     private async Task<string> StartErrorMeasurement()
@@ -189,18 +182,14 @@ public class MadConnectionTests
         refCounts.InnerText = "180000";
         source.InnerText = "src-intern-1";
 
-        var res = await cut.Execute(req);
+        var res = await cut.Execute(req, "runErrorMeasureRes");
 
         var jobInfo = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/jobDetails");
         var jobId = jobInfo?.SelectSingleNode("jobId")?.InnerText?.Trim();
         var status = jobInfo?.SelectSingleNode("jobStatusRes")?.InnerText?.Trim();
 
-        var info = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureRes");
-        var cmd = info?.SelectSingleNode("cmdResCode")?.InnerText?.Trim();
-
         Assert.Multiple(() =>
         {
-            Assert.That(cmd, Is.EqualTo("OK"));
             Assert.That(jobId, Is.Not.Empty);
             Assert.That(status, Is.EqualTo("running"));
         });
@@ -238,12 +227,9 @@ public class MadConnectionTests
         id.InnerText = jobId;
         op.InnerText = abort ? "true" : "false";
 
-        var res = await cut.Execute(req);
+        var res = await cut.Execute(req, "runErrorMeasureRes");
 
         var info = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureRes");
-        var cmd = info?.SelectSingleNode("cmdResCode")?.InnerText?.Trim();
-
-        Assert.That(cmd, Is.EqualTo("OK"));
 
         var jobInfo = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/jobDetails");
         var status = jobInfo?.SelectSingleNode("jobStatusRes")?.InnerText?.Trim();
@@ -258,9 +244,9 @@ public class MadConnectionTests
 
         return Tuple.Create(
             status!,
-            string.IsNullOrEmpty(done?.InnerXml) ? null : (int?)int.Parse(done.InnerText),
-            string.IsNullOrEmpty(seen?.InnerXml) ? null : (int?)int.Parse(seen.InnerText),
-            string.IsNullOrEmpty(error?.InnerXml) ? null : (double?)double.Parse(error.InnerText, CultureInfo.GetCultureInfo("de"))
+            string.IsNullOrEmpty(done?.InnerText) ? null : (int?)int.Parse(done.InnerText),
+            string.IsNullOrEmpty(seen?.InnerText) ? null : (int?)int.Parse(seen.InnerText),
+            string.IsNullOrEmpty(error?.InnerText) ? null : (double?)double.Parse(error.InnerText, CultureInfo.GetCultureInfo("de"))
         );
     }
 }

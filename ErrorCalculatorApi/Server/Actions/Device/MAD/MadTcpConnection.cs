@@ -167,7 +167,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
     }
 
     /// <inheritdoc/>
-    public Task<XmlDocument> Execute(XmlDocument request) => Task.Run(() =>
+    public Task<XmlDocument> Execute(XmlDocument request, string reply) => Task.Run(() =>
     {
         /* Wait for connect. */
         for (var i = 100; !client.Connected && i-- > 0; Thread.Sleep(100))
@@ -181,12 +181,28 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
             client.GetStream().Write(Encoding.UTF8.GetBytes(request.OuterXml + "\n"));
 
             /* Wait for reply. */
+            XmlDocument response;
+
             lock (_collector)
             {
                 Monitor.Wait(_collector);
 
-                return _response!;
+                response = _response!;
             }
+
+            /* Check job status. */
+            var jobInfo = response.SelectSingleNode(@"KMA_XML_0_01/kmaContainer/jobDetails");
+            var jobCode = jobInfo?.SelectSingleNode("jobResult")?.InnerText?.Trim();
+
+            if (jobCode != "OK") throw new InvalidOperationException("command execution failed");
+
+            /* Check command status. */
+            var resInfo = response.SelectSingleNode($"KMA_XML_0_01/kmaContainer/{reply}");
+            var resCode = resInfo?.SelectSingleNode("cmdResCode")?.InnerText?.Trim();
+
+            if (resCode != "OK") throw new InvalidOperationException("command execution failed");
+
+            return response;
         }
     });
 

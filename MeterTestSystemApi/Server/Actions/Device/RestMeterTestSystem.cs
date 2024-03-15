@@ -90,8 +90,8 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
         try
         {
             /* Create calculators based on configuration. */
-            foreach (var ec in config.ErrorCalculators)
-                errorCalculators.Add(await factory.Create(ec));
+            for (var i = 0; i < config.ErrorCalculators.Count; i++)
+                errorCalculators.Add(await factory.Create(i, config.ErrorCalculators[i]));
         }
         catch (Exception)
         {

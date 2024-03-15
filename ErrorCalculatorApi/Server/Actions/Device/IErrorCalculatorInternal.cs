@@ -10,9 +10,10 @@ public interface IErrorCalculatorInternal : IErrorCalculator
     /// <summary>
     /// Configure a brand new error calculator.
     /// </summary>
+    /// <param name="position">Position of the test system.</param>
     /// <param name="configuration">Configuration to use.</param>
     /// <param name="services">Dependency injection.</param>
-    Task Initialize(ErrorCalculatorConfiguration configuration, IServiceProvider services);
+    Task Initialize(int position, ErrorCalculatorConfiguration configuration, IServiceProvider services);
 
     /// <summary>
     /// Release all resources.

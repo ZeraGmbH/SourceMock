@@ -13,7 +13,7 @@ partial class Mad1ErrorCalculator
             <bindErrorCalculatorsReq>
                 <envSettings>
                     <devId/>
-                    <placeId>00</placeId>
+                    <placeId>##Position##</placeId>
                     <tOutUntilStateHasChanged>500</tOutUntilStateHasChanged>
                     <logPrefix/>
                     <logPath/>
@@ -79,8 +79,10 @@ partial class Mad1ErrorCalculator
         var req = LoadXmlFromString(ErrorMeasurementConfigurationXml);
 
         var source = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/bindErrorCalculatorsReq/fctErrorCalculators/errorCalculator/evaluationSrc")!;
+        var place = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/bindErrorCalculatorsReq/envSettings/placeId")!;
 
         source.InnerText = _supportedConnections[connection ?? ErrorCalculatorConnections.Intern1];
+        place.InnerText = $"{_position:00}";
 
         /* Execute the request. */
         return _connection.Execute(req, "bindErrorCalculatorsRes");

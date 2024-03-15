@@ -274,8 +274,8 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         try
         {
             /* Create calculators based on configuration. */
-            foreach (var ec in config)
-                errorCalculators.Add(await factory.Create(ec));
+            for (var i = 0; i < config.Count; i++)
+                errorCalculators.Add(await factory.Create(i, config[i]));
         }
         catch (Exception)
         {

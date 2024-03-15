@@ -10,7 +10,7 @@ namespace ErrorCalculatorApi.Actions.Device;
 public class ErrorCalculatorFactory(IServiceProvider services) : IErrorCalculatorFactory
 {
     /// <inheritdoc/>
-    public async Task<IErrorCalculatorInternal> Create(ErrorCalculatorConfiguration configuration)
+    public async Task<IErrorCalculatorInternal> Create(int position, ErrorCalculatorConfiguration configuration)
     {
         /* Create the implementation. */
         var ec = services.GetRequiredKeyedService<IErrorCalculatorInternal>(configuration.Protocol);
@@ -18,7 +18,7 @@ public class ErrorCalculatorFactory(IServiceProvider services) : IErrorCalculato
         /* Configure it. */
         try
         {
-            await ec.Initialize(configuration, services);
+            await ec.Initialize(position, configuration, services);
 
             /* Report configured instance. */
             return ec;

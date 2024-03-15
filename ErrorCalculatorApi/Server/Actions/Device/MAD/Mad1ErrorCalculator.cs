@@ -22,6 +22,8 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
 
     private string? _jobId;
 
+    private int _position;
+
     /// <inheritdoc/>
     public void Destroy()
     {
@@ -39,8 +41,10 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public Task Initialize(ErrorCalculatorConfiguration configuration, IServiceProvider services)
+    public Task Initialize(int position, ErrorCalculatorConfiguration configuration, IServiceProvider services)
     {
+        _position = position;
+
         /* Create connection implementation. */
         _connection = services.GetRequiredKeyedService<IMadConnection>(ErrorCalculatorConnectionTypes.TCP);
 

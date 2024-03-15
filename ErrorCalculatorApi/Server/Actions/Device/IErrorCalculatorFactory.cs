@@ -10,7 +10,8 @@ public interface IErrorCalculatorFactory
     /// <summary>
     /// Create a new error calculator using a given configuration.
     /// </summary>
+    /// <param name="position">Position of the test system.</param>
     /// <param name="configuration">Configuration to use.</param>
     /// <returns>Error calculator configured as requested.</returns>
-    Task<IErrorCalculatorInternal> Create(ErrorCalculatorConfiguration configuration);
+    Task<IErrorCalculatorInternal> Create(int position, ErrorCalculatorConfiguration configuration);
 }

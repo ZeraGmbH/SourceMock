@@ -17,16 +17,45 @@ public class ErrorCalculatorExceptionFilter : IExceptionFilter
     public void OnException(ExceptionContext context)
     {
         var exception = context.Exception;
+
         if (exception is ErrorCalculatorNotReadyException)
-        {
             context.Result = ErrorHelper.CreateProblemDetails(
-                exception.Message,
-                status: StatusCodes.Status400BadRequest,
-                samErrorCode: ErrorCalculatorApiErrorCodes.ERROR_CALCULATOR_NOT_READY
+                    exception.Message,
+                    status: StatusCodes.Status499ClientClosedRequest,
+                    samErrorCode: ErrorCalculatorApiErrorCodes.ERROR_CALCULATOR_NOT_READY
                 );
-            context.ExceptionHandled = true;
-            return;
-        }
+
+        else if (exception is CommandFailedException)
+            context.Result = ErrorHelper.CreateProblemDetails(
+                    exception.Message,
+                    status: StatusCodes.Status422UnprocessableEntity,
+                    samErrorCode: ErrorCalculatorApiErrorCodes.ERROR_CALCULATOR_COMMAND_FAILED
+                );
+
+        else if (exception is JobFailedException)
+            context.Result = ErrorHelper.CreateProblemDetails(
+                    exception.Message,
+                    status: StatusCodes.Status406NotAcceptable,
+                    samErrorCode: ErrorCalculatorApiErrorCodes.ERROR_CALCULATOR_JOB_FAILED
+                );
+
+        else if (exception is NotConnectedException)
+            context.Result = ErrorHelper.CreateProblemDetails(
+                    exception.Message,
+                    status: StatusCodes.Status408RequestTimeout,
+                    samErrorCode: ErrorCalculatorApiErrorCodes.ERROR_CALCULATOR_NOT_CONNECTED
+                );
+
+        else if (exception is UnableToSendException)
+            context.Result = ErrorHelper.CreateProblemDetails(
+                    exception.Message,
+                    status: StatusCodes.Status410Gone,
+                    samErrorCode: ErrorCalculatorApiErrorCodes.ERROR_CALCULATOR_SEND_FAILED
+                );
+
+        else return;
+
+        context.ExceptionHandled = true;
     }
 
 }

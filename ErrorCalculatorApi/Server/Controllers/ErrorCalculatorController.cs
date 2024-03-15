@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using ErrorCalculatorApi.Actions.Device;
 using ErrorCalculatorApi.Models;
 using Microsoft.AspNetCore.Http;

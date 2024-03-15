@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using ErrorCalculatorApi.Exceptions;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging;
 
@@ -172,13 +173,20 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
         /* Wait for connect. */
         for (var i = 100; !client.Connected && i-- > 0; Thread.Sleep(100))
             if (i == 0)
-                throw new InvalidOperationException("no connection to error calculator");
+                throw new NotConnectedException();
 
         /* There can be at most one outstaning request at any time. */
         lock (_sync)
         {
             /* Send request. */
-            client.GetStream().Write(Encoding.UTF8.GetBytes(request.OuterXml + "\n"));
+            try
+            {
+                client.GetStream().Write(Encoding.UTF8.GetBytes(request.OuterXml + "\n"));
+            }
+            catch (Exception e)
+            {
+                throw new UnableToSendException(e);
+            }
 
             /* Wait for reply. */
             XmlDocument response;
@@ -194,13 +202,13 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
             var jobInfo = response.SelectSingleNode(@"KMA_XML_0_01/kmaContainer/jobDetails");
             var jobCode = jobInfo?.SelectSingleNode("jobResult")?.InnerText?.Trim();
 
-            if (jobCode != "OK") throw new InvalidOperationException("command execution failed");
+            if (jobCode != "OK") throw new JobFailedException();
 
             /* Check command status. */
             var resInfo = response.SelectSingleNode($"KMA_XML_0_01/kmaContainer/{reply}");
             var resCode = resInfo?.SelectSingleNode("cmdResCode")?.InnerText?.Trim();
 
-            if (resCode != "OK") throw new InvalidOperationException("command execution failed");
+            if (resCode != "OK") throw new CommandFailedException();
 
             return response;
         }

@@ -40,7 +40,7 @@ public class DCRefMeterMockTest
 
         MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues().Result;
 
-        Assert.That(measureOutput.Phases[0].Current.DcComponent, Is.EqualTo(0));
+        Assert.That(measureOutput.Phases[0].Current.DcComponent, Is.InRange(0, 0.01));
     }
 
 

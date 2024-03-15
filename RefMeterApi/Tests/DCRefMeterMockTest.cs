@@ -97,7 +97,7 @@ public class DCRefMeterMockTest
         // Assert
         Assert.That(mo.Phases[0].Voltage.DcComponent, Is.InRange(GetMinValue(voltage, 0.01), GetMaxValue(voltage, 0.01)));
         Assert.That(mo.Phases[0].Current.DcComponent, Is.InRange(GetMinValue(current, 0.01), GetMaxValue(current, 0.01)));
-        Assert.That(mo.Phases[0].ApparentPower, Is.InRange(GetMinValue(current, 0.01), GetMaxValue(apparentPower, 0.02)));
+        Assert.That(mo.Phases[0].ActivePower, Is.InRange(GetMinValue(current, 0.01), GetMaxValue(apparentPower, 0.02)));
     }
 
 

@@ -40,7 +40,7 @@ public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
         var current = lp.Phases[0].Current.On ? lp.Phases[0].Current.DcComponent : 0;
         var voltage = lp.Phases[0].Voltage.On ? lp.Phases[0].Voltage.DcComponent : 0;
 
-        var apparentPower = current * voltage;
+        var activePower = current * voltage;
 
         var measureOutputPhase = new MeasuredLoadpointPhase()
         {
@@ -52,7 +52,7 @@ public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
             {
                 DcComponent = voltage
             },
-            ApparentPower = apparentPower
+            ActivePower = activePower
         };
 
         measureOutputPhases.Add(measureOutputPhase);
@@ -104,14 +104,19 @@ public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
         if (phase.Voltage.On && info.IsActive == false) phase.Voltage.On = false;
         if (phase.Current.On && (info.IsActive == false || currentSwitchedOffForDosage)) phase.Current.On = false;
 
-
         return loadpoint;
     }
 
     private static void CalculateDeviations(MeasuredLoadpoint mo)
     {
-        mo.Phases[0].Voltage.DcComponent = GetRandomNumberWithPercentageDeviation(mo.Phases[0].Voltage.DcComponent ?? 0, 0.01);
-        mo.Phases[0].Current.DcComponent = GetRandomNumberWithPercentageDeviation(mo.Phases[0].Current.DcComponent ?? 0, 0.01);
-        mo.Phases[0].ApparentPower = GetRandomNumberWithPercentageDeviation(mo.Phases[0].ApparentPower!.Value, 0.01);
+        var voltage = mo.Phases[0].Voltage.DcComponent;
+        var current = mo.Phases[0].Current.DcComponent;
+        var activePower = mo.Phases[0].Voltage.DcComponent;
+        if (voltage != null)
+            mo.Phases[0].Voltage.DcComponent = Math.Abs(GetRandomNumberWithAbsoluteDeviation((double)voltage, 0.01));
+        if (current != null)
+            mo.Phases[0].Current.DcComponent = Math.Abs(GetRandomNumberWithAbsoluteDeviation((double)current, 0.01));
+        if (activePower != null)
+            mo.Phases[0].ActivePower = Math.Abs(GetRandomNumberWithAbsoluteDeviation((double)activePower, 0.01));
     }
 }

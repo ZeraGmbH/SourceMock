@@ -39,6 +39,12 @@ public interface IErrorCalculator
     Task AbortErrorMeasurement();
 
     /// <summary>
+    /// Terminate all outstanding operations.
+    /// </summary>
+    /// <returns></returns>
+    Task AbortAllJobs();
+
+    /// <summary>
     /// Report the current status of the error measurement.
     /// </summary>
     /// <returns>The current status.</returns>

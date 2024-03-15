@@ -19,11 +19,15 @@ internal class UnavailableErrorCalculator : IErrorCalculator
 
     public Task<ErrorMeasurementStatus> GetErrorStatus() => throw new ErrorCalculatorNotReadyException();
 
-    public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion() => throw new NotImplementedException();
+    public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion() => throw new ErrorCalculatorNotReadyException();
 
     public Task SetErrorMeasurementParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant) => throw new ErrorCalculatorNotReadyException();
 
     public Task StartErrorMeasurement(bool continuous, ErrorCalculatorConnections? connection) => throw new ErrorCalculatorNotReadyException();
 
     public Task<ErrorCalculatorConnections[]> GetSupportedConnections() => throw new ErrorCalculatorNotReadyException();
+
+    /// <inheritdoc/>
+    public Task AbortAllJobs() => throw new ErrorCalculatorNotReadyException();
+
 }

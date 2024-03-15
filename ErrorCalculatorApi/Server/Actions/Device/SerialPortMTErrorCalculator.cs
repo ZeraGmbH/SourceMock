@@ -41,7 +41,9 @@ public partial class SerialPortMTErrorCalculator(ISerialPortConnection device, I
     public bool Available => true;
 
     /// <inheritdoc/>
+    public Task AbortAllJobs() => Task.CompletedTask;
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }

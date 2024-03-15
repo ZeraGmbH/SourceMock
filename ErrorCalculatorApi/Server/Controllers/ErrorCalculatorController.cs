@@ -124,6 +124,20 @@ public class ErrorCalculatorController(IErrorCalculator[] devices) : ControllerB
         ActionResultMapper.SafeExecuteSerialPortCommand(devices[pos].AbortErrorMeasurement);
 
     /// <summary>
+    /// Abort the error measurement.
+    /// </summary>
+    [HttpPost("AbortAll/{pos?}")]
+    [SwaggerOperation(OperationId = "AbortAll")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult> AbortAll(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(devices[pos].AbortAllJobs);
+
+    /// <summary>
     /// Report if the error calculator can be used.
     /// </summary>
     [HttpGet("Available/{pos?}")]

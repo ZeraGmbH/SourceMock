@@ -62,4 +62,8 @@ public class SerialPortFGErrorCalculator(ISerialPortConnection device, ILogger<S
 
     /// <inheritdoc/>
     public Task StartErrorMeasurement(bool continuous, ErrorCalculatorConnections? connection) => throw new NotImplementedException();
+
+    /// <inheritdoc/>
+    public Task AbortAllJobs() => throw new NotImplementedException();
+
 }

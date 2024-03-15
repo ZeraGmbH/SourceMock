@@ -52,6 +52,9 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
+    public Task AbortAllJobs() => Task.CompletedTask;
+
+    /// <inheritdoc/>
     public Task<ErrorMeasurementStatus> GetErrorStatus()
     {
         /* Time elapses in the current measurement - the mock does not use it's own thred for timing so calling this methode periodically is vital. */

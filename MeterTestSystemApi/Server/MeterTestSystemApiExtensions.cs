@@ -89,7 +89,7 @@ public static class MeterTestSystemApiConfiguration
             return factory;
         });
 
-        /* Access meter test system singlon through the factory. */
+        /* Access meter test system singleton through the factory. */
         services.AddTransient((ctx) => ctx.GetRequiredService<IMeterTestSystemFactory>().MeterTestSystem);
 
         /* 

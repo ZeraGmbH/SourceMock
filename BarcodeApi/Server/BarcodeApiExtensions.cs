@@ -28,11 +28,19 @@ public static class BarcodeApiConfiguration
     /// <param name="configuration">Current web server configuration.</param>
     public static void UseBarcodeApi(this IServiceCollection services, IConfiguration configuration)
     {
-        var device = configuration["BarcodeReader:Device"];
+        services.AddTransient<BarcodeReaderMock, BarcodeReaderMock>();
 
-        if (string.IsNullOrEmpty(device))
-            services.AddSingleton<IBarcodeReader, BarcodeReaderMock>();
-        else
-            services.AddSingleton<IBarcodeReader>(ctx => new BarcodeReader(device, ctx.GetRequiredService<ILogger<BarcodeReader>>()));
+        services.AddSingleton<IBarcodeReaderFactory>((di) =>
+        {
+            var factory = new BarcodeReaderFactory(di, di.GetRequiredService<ILogger<BarcodeReaderFactory>>());
+
+            if (configuration["UseDatabaseConfiguration"] != "yes")
+                factory.Initialize(new() { DevicePath = configuration["BarcodeReader:Device"] });
+
+            return factory;
+        });
+
+        /* Access barcode reader singleton through the factory. */
+        services.AddSingleton((ctx) => ctx.GetRequiredService<IBarcodeReaderFactory>().BarcodeReader);
     }
 }

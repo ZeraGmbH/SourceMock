@@ -136,9 +136,7 @@ public class BarcodeReader : IBarcodeReader, IDisposable
         _device = null!;
     }
 
-    /// <summary>
-    /// Close connection to the device.
-    /// </summary>
+    /// <inheritdoc/>
     public void Dispose()
     {
         Disconnect();

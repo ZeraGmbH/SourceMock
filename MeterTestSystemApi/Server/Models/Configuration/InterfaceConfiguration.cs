@@ -1,3 +1,4 @@
+using BarcodeApi.Models;
 using ErrorCalculatorApi.Models;
 using MongoDB.Bson.Serialization.Attributes;
 using SharedLibrary.Models;
@@ -15,6 +16,12 @@ public class InterfaceConfiguration
     /// </summary>
     [BsonElement("serial")]
     public SerialPortConfiguration? SerialPort { get; set; }
+
+    /// <summary>
+    /// Configuration for the barcode reader.
+    /// </summary>
+    [BsonElement("barcode")]
+    public BarcodeConfiguration? Barcode { get; set; }
 
     /// <summary>
     /// Endpoint of the source REST web service.

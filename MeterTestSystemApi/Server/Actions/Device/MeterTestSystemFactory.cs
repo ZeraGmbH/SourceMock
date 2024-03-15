@@ -84,10 +84,11 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                         _meterTestSystem = services.GetRequiredService<SerialPortMTMeterTestSystem>();
                         break;
                     case MeterTestSystemTypes.ACMock:
-                        _meterTestSystem = services.GetRequiredService<MeterTestSystemMock>();
+                        _meterTestSystem = services.GetRequiredService<MeterTestSystemAcMock>();
                         break;
                     case MeterTestSystemTypes.DCMock:
-                        throw new NotImplementedException();
+                        _meterTestSystem = services.GetRequiredService<MeterTestSystemDcMock>();
+                        break;
                     default:
                         _meterTestSystem = services.GetRequiredService<FallbackMeteringSystem>();
                         break;

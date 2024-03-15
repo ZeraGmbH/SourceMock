@@ -7,7 +7,15 @@ namespace SourceApi.Actions.SimulatedSource;
 /// <summary>
 /// 
 /// </summary>
-public class DCSourceMock : SourceMock
+public interface IDCSourceMock : ISource
+{
+
+}
+
+/// <summary>
+/// 
+/// </summary>
+public class DCSourceMock : SourceMock, IDCSourceMock
 {
     /// <summary>
     /// 
@@ -23,8 +31,7 @@ public class DCSourceMock : SourceMock
                     }
                 }
     }, validator)
-    {
-    }
+    { }
 
     public override Task<DosageProgress> GetDosageProgress(double meterConstant)
     {

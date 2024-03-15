@@ -9,7 +9,6 @@ namespace RefMeterApi.Actions.Device;
 /// </summary>
 public abstract class RefMeterMock : IMockRefMeter
 {
-
     /// <summary>
     /// 
     /// </summary>

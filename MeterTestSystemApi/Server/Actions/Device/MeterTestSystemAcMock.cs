@@ -16,7 +16,7 @@ namespace MeterTestSystemApi;
 /// <param name="errorCalculatorMock"></param>
 /// <param name="logger"></param>
 /// <param name="configuration"></param>
-public class MeterTestSystemMock(ISourceMock source, IMockRefMeter refMeter, IErrorCalculatorMock errorCalculatorMock, ILogger<SimulatedSource> logger, IConfiguration configuration) : IMeterTestSystem
+public class MeterTestSystemAcMock(ISourceMock source, IMockRefMeter refMeter, IErrorCalculatorMock errorCalculatorMock, ILogger<SimulatedSource> logger, IConfiguration configuration) : IMeterTestSystem
 {
     private readonly ILogger<SimulatedSource> _logger = logger;
 

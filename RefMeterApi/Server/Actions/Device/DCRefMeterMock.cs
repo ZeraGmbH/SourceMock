@@ -8,7 +8,15 @@ namespace RefMeterApi.Actions.Device;
 /// <summary>
 /// 
 /// </summary>
-public class DCRefMeterMock : RefMeterMock
+public interface IDCRefMeterMock : IMockRefMeter
+{
+
+}
+
+/// <summary>
+/// 
+/// </summary>
+public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
 {
     private readonly IServiceProvider _di;
 

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using SourceApi.Model.Configuration;
 using SharedLibrary.Models;
 using SourceApi.Actions.RestSource;
+using SourceApi.Actions.SimulatedSource;
 
 namespace SourceApi;
 
@@ -59,6 +60,7 @@ public static class SourceApiConfiguration
         services.AddTransient<ISerialPortMTSource, SerialPortMTSource>();
         services.AddTransient<ISimulatedSource, SimulatedSource>();
         services.AddTransient<ISourceMock, SimulatedSource>();
+        services.AddTransient<IDCSourceMock, DCSourceMock>();
         services.AddTransient<ISourceCapabilityValidator, SourceCapabilityValidator>();
 
         /* Legacy configuration from setting files. */

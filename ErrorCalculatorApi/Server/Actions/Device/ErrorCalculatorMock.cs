@@ -124,8 +124,10 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
 
         foreach (var phase in loadpoint.Phases)
             if (phase.Voltage.On && phase.Current.On)
-                totalPower += phase.Voltage.AcComponent!.Rms * phase.Current.AcComponent!.Rms *
-                Math.Cos((phase.Voltage.AcComponent!.Angle - phase.Current.AcComponent!.Angle) * Math.PI / 180d);
+            {
+                totalPower = CurrentCalculation.CalculateAcPower(totalPower, phase);
+                totalPower = CurrentCalculation.CalculateDcPower(totalPower, phase);
+            }
 
         /* Use total power in kW to ease calculations with meter constant. */
         _totalPower = totalPower / 1000d;

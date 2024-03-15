@@ -60,6 +60,7 @@ public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
         return new()
         {
             Phases = measureOutputPhases,
+            ActivePower = activePower
         };
     }
 
@@ -112,11 +113,15 @@ public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
         var voltage = mo.Phases[0].Voltage.DcComponent;
         var current = mo.Phases[0].Current.DcComponent;
         var activePower = mo.Phases[0].Voltage.DcComponent;
+
         if (voltage != null)
             mo.Phases[0].Voltage.DcComponent = Math.Abs(GetRandomNumberWithAbsoluteDeviation((double)voltage, 0.01));
         if (current != null)
             mo.Phases[0].Current.DcComponent = Math.Abs(GetRandomNumberWithAbsoluteDeviation((double)current, 0.01));
         if (activePower != null)
+        {
             mo.Phases[0].ActivePower = Math.Abs(GetRandomNumberWithAbsoluteDeviation((double)activePower, 0.01));
+            mo.ActivePower = mo.Phases[0].ActivePower;
+        }
     }
 }

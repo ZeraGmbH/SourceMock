@@ -9,6 +9,7 @@ using SourceApi.Actions.RestSource;
 using SourceApi.Actions.Source;
 using SharedLibrary;
 using RefMeterApi.Actions.RestSource;
+using Microsoft.Extensions.Logging;
 
 namespace MeterTestSystemApi.Actions.Device;
 
@@ -17,7 +18,8 @@ namespace MeterTestSystemApi.Actions.Device;
 /// </summary>
 /// <param name="httpClient">Connection to a remote meter test system.</param>
 /// <param name="factory">Factory instance to create error calculators.</param>
-public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory factory) : IMeterTestSystem
+/// <param name="logger">Loggin helper.</param>
+public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory factory, ILogger<RestMeterTestSystem> logger) : IMeterTestSystem
 {
     private Uri _baseUri = null!;
 
@@ -67,7 +69,13 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
     public async void Configure(InterfaceConfiguration config, IServiceProvider di)
     {
         /* Validate. */
-        if (string.IsNullOrEmpty(config.MeterTestSystem?.Endpoint)) throw new InvalidOperationException("no meter test system connection configured");
+        if (string.IsNullOrEmpty(config.MeterTestSystem?.Endpoint))
+        {
+            /* Repot but start to allow correction of configuration. */
+            logger.LogCritical("no meter test system connection configured");
+
+            return;
+        }
 
         _baseUri = new Uri(config.MeterTestSystem.Endpoint.TrimEnd('/') + "/");
 
@@ -93,12 +101,15 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
             for (var i = 0; i < config.ErrorCalculators.Count; i++)
                 errorCalculators.Add(await factory.Create(i, config.ErrorCalculators[i]));
         }
-        catch (Exception)
+        catch (Exception e)
         {
             /* Release anything we have configured so far. */
             errorCalculators.ForEach(ec => ec.Destroy());
 
-            throw;
+            /* Repot but start to allow correction of configuration. */
+            logger.LogCritical("unable to attach error calculators: {Exception}", e.Message);
+
+            return;
         }
 
         /* Use. */

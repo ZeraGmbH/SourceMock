@@ -1,4 +1,3 @@
-using System.Globalization;
 using ErrorCalculatorApi.Models;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;
@@ -51,13 +50,15 @@ partial class Mad1ErrorCalculator
       ? ErrorMeasurementStates.Finished
       : ErrorMeasurementStates.Active;
 
-    /* Set the error value - we use , as a decimal separator, see start command. */
-    var error = errorValues?.SelectSingleNode("formattedErrorValue");
+    /* Set the error value. */
+    var error = errorValues?.SelectSingleNode("lastDeviationRaw");
 
-    reply.ErrorValue =
-      string.IsNullOrEmpty(error?.InnerText)
-      ? null
-      : double.Parse(error.InnerText, CultureInfo.GetCultureInfo("de"));
+    if (!string.IsNullOrEmpty(error?.InnerText))
+    {
+      var rawValue = long.Parse(error.InnerText);
+
+      reply.ErrorValue = rawValue / 10000d;
+    }
 
     /* Set the progress. */
     if (status != "running")

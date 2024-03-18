@@ -226,9 +226,9 @@ partial class SerialPortMTErrorCalculator
     }
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorConnections[]> GetSupportedConnections() => Task.FromResult<ErrorCalculatorConnections[]>([]);
+    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections() => Task.FromResult<ErrorCalculatorMeterConnections[]>([]);
 
     /// <inheritdoc/>
-    public Task StartErrorMeasurement(bool continuous, ErrorCalculatorConnections? connection) =>
+    public Task StartErrorMeasurement(bool continuous, ErrorCalculatorMeterConnections? connection) =>
         _device.Execute(SerialPortRequest.Create(continuous ? "AEB1" : "AEB0", "AEBACK"))[0];
 }

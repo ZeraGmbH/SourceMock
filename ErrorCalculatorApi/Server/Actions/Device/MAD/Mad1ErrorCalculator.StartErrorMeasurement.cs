@@ -33,7 +33,7 @@ partial class Mad1ErrorCalculator
       </KMA_XML_0_01>
     ";
 
-    private async Task<string> StartErrorMeasurement(bool continuous, ErrorCalculatorConnections? connection, long dutImpulses, long refMeterImpulses)
+    private async Task<string> StartErrorMeasurement(bool continuous, ErrorCalculatorMeterConnections? connection, long dutImpulses, long refMeterImpulses)
     {
         /* Create and configure request. */
         var req = LoadXmlFromString(ErrorMeasurementStartXml);
@@ -46,7 +46,7 @@ partial class Mad1ErrorCalculator
         dutCounts.InnerText = $"{dutImpulses}";
         mode.InnerText = continuous ? "repetition" : "oneShot";
         refCounts.InnerText = $"{refMeterImpulses}";
-        source.InnerText = _supportedConnections[connection ?? ErrorCalculatorConnections.Intern1];
+        source.InnerText = _supportedMeterConnections[connection ?? ErrorCalculatorMeterConnections.Intern1];
 
         /* Execute the request. */
         var res = await _connection.Execute(req, "runErrorMeasureRes");

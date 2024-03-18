@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using ErrorCalculatorApi.Actions.Device;
 using ErrorCalculatorApi.Models;
 using Microsoft.AspNetCore.Http;
@@ -79,7 +78,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices) : ControllerB
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> StartSingle(ErrorCalculatorConnections? connection, int pos = 0) =>
+    public Task<ActionResult> StartSingle(ErrorCalculatorMeterConnections? connection, int pos = 0) =>
         ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].StartErrorMeasurement(false, connection));
 
     /// <summary>
@@ -93,22 +92,22 @@ public class ErrorCalculatorController(IErrorCalculator[] devices) : ControllerB
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> StartContinuous(ErrorCalculatorConnections? connection, int pos = 0) =>
+    public Task<ActionResult> StartContinuous(ErrorCalculatorMeterConnections? connection, int pos = 0) =>
         ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].StartErrorMeasurement(true, connection));
 
     /// <summary>
     /// Get all supported physical connections.
     /// </summary>
-    [HttpGet("SupportedConnections/{pos?}")]
-    [SwaggerOperation(OperationId = "GetSupportedConnections")]
+    [HttpGet("GetSupportedMeterConnections/{pos?}")]
+    [SwaggerOperation(OperationId = "GetSupportedMeterConnections")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<ErrorCalculatorConnections[]>> GetSupportedConnections(int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(devices[pos].GetSupportedConnections);
+    public Task<ActionResult<ErrorCalculatorMeterConnections[]>> GetSupportedMeterConnections(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(devices[pos].GetSupportedMeterConnections);
 
     /// <summary>
     /// Abort the error measurement.

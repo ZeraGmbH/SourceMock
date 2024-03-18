@@ -62,10 +62,10 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorConnections[]> GetSupportedConnections() => Task.FromResult(_supportedConnections.Keys.ToArray());
+    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections() => Task.FromResult(_supportedMeterConnections.Keys.ToArray());
 
     /// <inheritdoc/>
-    public async Task StartErrorMeasurement(bool continuous, ErrorCalculatorConnections? connection)
+    public async Task StartErrorMeasurement(bool continuous, ErrorCalculatorMeterConnections? connection)
     {
         /* Already running. */
         if (!string.IsNullOrEmpty(_jobId)) throw new InvalidOperationException("error measurement still active - abort first");

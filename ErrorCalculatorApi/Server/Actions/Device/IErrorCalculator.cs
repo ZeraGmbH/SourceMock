@@ -25,13 +25,13 @@ public interface IErrorCalculator
     /// </summary>
     /// <param name="continuous">Unset for a single measurement.</param>
     /// <param name="connection">The physical line to use.</param>
-    Task StartErrorMeasurement(bool continuous, ErrorCalculatorConnections? connection);
+    Task StartErrorMeasurement(bool continuous, ErrorCalculatorMeterConnections? connection);
 
     /// <summary>
     /// Report all connections that can be used as a parameter of StartErrorMeasurement.
     /// </summary>
     /// <returns>List of supported connections, may be empty.</returns>
-    Task<ErrorCalculatorConnections[]> GetSupportedConnections();
+    Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections();
 
     /// <summary>
     /// Terminate the error measurement.

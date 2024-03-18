@@ -6,7 +6,7 @@ namespace ErrorCalculatorApi.Models;
 /// All known connections of an error calculator.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum ErrorCalculatorConnections
+public enum ErrorCalculatorMeterConnections
 {
     /// <summary>
     /// No input used
@@ -99,47 +99,32 @@ public enum ErrorCalculatorConnections
     S0x12 = 17,
 
     /// <summary>
-    /// Reference meter input 1 (e.g. active power)
-    /// </summary>
-    RefMeter1 = 18,
-
-    /// <summary>
-    /// Reference meter input 2 (e.g. reactive power)
-    /// </summary>
-    RefMeter2 = 19,
-
-    /// <summary>
-    /// Reference meter input 3 (e.g. apparent power)
-    /// </summary>
-    RefMeter3 = 20,
-
-    /// <summary>
     /// Input reset button
     /// </summary>
-    ResetKey = 21,
+    ResetKey = 18,
 
     /// <summary>
     /// Software input (eHZ meter mode)
     /// </summary>
-    Software = 22,
+    Software = 19,
 
     /// <summary>
     /// COM server 1, In (UART-1 input)
     /// </summary>
-    COM1InUART1 = 23,
+    COM1InUART1 = 20,
 
     /// <summary>
     /// COM server 1, Out (UART-2 input)
     /// </summary>
-    COM1OutUART2 = 24,
+    COM1OutUART2 = 21,
 
     /// <summary>
     /// COM server 2, In (UART-3 input)
     /// </summary>
-    COM2InUART3 = 25,
+    COM2InUART3 = 22,
 
     /// <summary>
     /// COM server 2, Out (UART-4 input)
     /// </summary>
-    COM2OutUART4 = 26,
+    COM2OutUART4 = 23,
 }

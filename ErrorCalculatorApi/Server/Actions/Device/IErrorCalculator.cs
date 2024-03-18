@@ -55,4 +55,10 @@ public interface IErrorCalculator
     /// </summary>
     /// <returns>The firmware version.</returns>
     Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion();
+
+    /// <summary>
+    /// Make sure that source is connected to the device under test.
+    /// </summary>
+    /// <param name="on">Set to connect else disconnect.</param>
+    Task ActivateSource(bool on);
 }

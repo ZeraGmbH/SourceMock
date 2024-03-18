@@ -44,6 +44,9 @@ public partial class SerialPortMTErrorCalculator(ISerialPortConnection device, I
     public Task AbortAllJobs() => Task.CompletedTask;
 
     /// <inheritdoc/>
+    public Task ActivateSource(bool on) => Task.CompletedTask;
+
+    /// <inheritdoc/>
     public void Dispose()
     {
     }

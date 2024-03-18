@@ -66,4 +66,7 @@ public class SerialPortFGErrorCalculator(ISerialPortConnection device, ILogger<S
     /// <inheritdoc/>
     public Task AbortAllJobs() => throw new NotImplementedException();
 
+    /// <inheritdoc/>
+    public Task ActivateSource(bool on) => Task.CompletedTask;
+
 }

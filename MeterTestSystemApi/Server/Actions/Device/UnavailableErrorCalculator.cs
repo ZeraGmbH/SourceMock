@@ -30,4 +30,6 @@ internal class UnavailableErrorCalculator : IErrorCalculator
     /// <inheritdoc/>
     public Task AbortAllJobs() => throw new ErrorCalculatorNotReadyException();
 
+    /// <inheritdoc/>
+    public Task ActivateSource(bool on) => Task.CompletedTask;
 }

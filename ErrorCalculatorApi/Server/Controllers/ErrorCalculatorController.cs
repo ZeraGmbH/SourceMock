@@ -139,6 +139,34 @@ public class ErrorCalculatorController(IErrorCalculator[] devices) : ControllerB
         ActionResultMapper.SafeExecuteSerialPortCommand(devices[pos].AbortAllJobs);
 
     /// <summary>
+    /// Make sure that source is connected to device under test.
+    /// </summary>
+    [HttpPost("ActivateSource/{pos?}")]
+    [SwaggerOperation(OperationId = "ActivateSource")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult> ActivateSource(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].ActivateSource(true));
+
+    /// <summary>
+    /// Disconnect source from all devices under test.
+    /// </summary>
+    [HttpPost("DeactivateSource/{pos?}")]
+    [SwaggerOperation(OperationId = "DeactivateSource")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult> DeactivateSource(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].ActivateSource(false));
+
+    /// <summary>
     /// Report if the error calculator can be used.
     /// </summary>
     [HttpGet("Available/{pos?}")]

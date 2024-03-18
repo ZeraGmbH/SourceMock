@@ -149,6 +149,9 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
         });
 
     /// <inheritdoc/>
+    public Task ActivateSource(bool on) => Task.CompletedTask;
+
+    /// <inheritdoc/>
     public void Dispose()
     {
     }

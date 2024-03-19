@@ -103,8 +103,14 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
         for (var buffer = new byte[10000]; ;)
             try
             {
+                // Check for cancel.
+                if (_doneReader.IsCancellationRequested) break;
+
                 /* Connect to the device - once. */
                 await Connect();
+
+                // Check for cancel after await.
+                if (_doneReader.IsCancellationRequested) break;
 
                 /* Read the next chunk of data. */
                 var data = await client.GetStream().ReadAsync(buffer, _doneReader.Token);

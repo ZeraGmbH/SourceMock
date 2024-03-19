@@ -72,7 +72,6 @@ public partial class ACRefMeterMock : RefMeterMock
             {
                 Current = new()
                 {
-                    DcComponent = 0,
                     AcComponent = new()
                     {
                         Rms = current,
@@ -81,7 +80,6 @@ public partial class ACRefMeterMock : RefMeterMock
                 },
                 Voltage = new()
                 {
-                    DcComponent = 0,
                     AcComponent = new()
                     {
                         Rms = voltage,

@@ -67,14 +67,12 @@ partial class SerialPortFGRefMeter
             Phases = {
                 new() {
                     Current = new() {
-                      DcComponent = 0,
                       AcComponent = new() {
                         Rms = current1,
                         Angle = current1Angle,
-                      }, 
+                      },
                     },
                     Voltage = new() {
-                        DcComponent = 0,
                         AcComponent = new() {
                             Rms = voltage1,
                             Angle = voltage1Angle,
@@ -86,14 +84,12 @@ partial class SerialPortFGRefMeter
                     ReactivePower = reactive1,
                 }, new() {
                     Current = new() {
-                      DcComponent = 0,
                       AcComponent = new() {
                         Rms = current2,
                         Angle = current2Angle,
-                      }, 
+                      },
                     },
                     Voltage = new() {
-                        DcComponent = 0,
                         AcComponent = new() {
                             Rms = voltage2,
                             Angle = voltage2Angle,
@@ -105,14 +101,12 @@ partial class SerialPortFGRefMeter
                     ReactivePower = reactive2,
                 }, new() {
                     Current = new() {
-                      DcComponent = 0,
                       AcComponent = new() {
                         Rms = current3,
                         Angle = current3Angle,
-                      }, 
+                      },
                     },
                     Voltage = new() {
-                        DcComponent = 0,
                         AcComponent = new() {
                             Rms = voltage3,
                             Angle = voltage3Angle,

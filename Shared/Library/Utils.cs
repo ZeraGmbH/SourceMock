@@ -38,6 +38,9 @@ public static class Utils
         /* Execute the request. */
         var response = await request;
 
+        /* No result. */
+        if (response.StatusCode == HttpStatusCode.NoContent) return default(T)!;
+
         /* Failed. */
         if (response.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException(response.ReasonPhrase);
 

@@ -9,7 +9,7 @@ namespace BarcodeApi.Actions.Device;
 /// </summary>
 /// <param name="services">Dependency injection.</param>
 /// <param name="logger">Logging helper.</param>
-public class BarcodeReaderFactory(IServiceProvider services, ILogger<BarcodeReaderFactory> logger) : IBarcodeReaderFactory
+public class BarcodeReaderFactory(IServiceProvider services, ILogger<BarcodeReaderFactory> logger) : IBarcodeReaderFactory, IDisposable
 {
     private readonly object _sync = new();
 
@@ -23,12 +23,19 @@ public class BarcodeReaderFactory(IServiceProvider services, ILogger<BarcodeRead
         get
         {
             /* Wait until instance has been created. */
-            while (!_initialized)
-                lock (_sync)
+            lock (_sync)
+                while (!_initialized)
                     Monitor.Wait(_sync);
 
             return _reader!;
         }
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        lock (_sync)
+            _initialized = true;
     }
 
     /// <inheritdoc/>

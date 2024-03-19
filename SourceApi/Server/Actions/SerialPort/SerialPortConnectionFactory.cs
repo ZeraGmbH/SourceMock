@@ -14,7 +14,7 @@ namespace SourceApi.Actions.SerialPort;
 /// </summary>
 /// <param name="services"></param>
 /// <param name="logger"></param>
-public class SerialPortConnectionFactory(IServiceProvider services, ILogger<SerialPortConnectionFactory> logger) : ISerialPortConnectionFactory
+public class SerialPortConnectionFactory(IServiceProvider services, ILogger<SerialPortConnectionFactory> logger) : ISerialPortConnectionFactory, IDisposable
 {
     class NullConnection : ISerialPortConnection
     {
@@ -41,12 +41,19 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
     {
         get
         {
-            while (!_initialized)
-                lock (_sync)
+            lock (_sync)
+                while (!_initialized)
                     Monitor.Wait(_sync);
 
             return _connection!;
         }
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        lock (_sync)
+            _initialized = true;
     }
 
     /// <inheritdoc/>

@@ -12,7 +12,7 @@ namespace MeterTestSystemApi.Actions.Device;
 /// <param name="services">Dependency injection to use.</param>
 /// <param name="factory">Factory to create error calculators.</param>
 /// <param name="logger">Logging helper.</param>
-public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorFactory factory, ILogger<MeterTestSystemFactory> logger) : IMeterTestSystemFactory
+public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorFactory factory, ILogger<MeterTestSystemFactory> logger) : IMeterTestSystemFactory, IDisposable
 {
     private readonly object _sync = new();
 
@@ -26,12 +26,19 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
         get
         {
             /* Wait until instance has been created. */
-            while (!_initialized)
-                lock (_sync)
+            lock (_sync)
+                while (!_initialized)
                     Monitor.Wait(_sync);
 
             return _meterTestSystem!;
         }
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        lock (_sync)
+            _initialized = true;
     }
 
     /// <inheritdoc/>

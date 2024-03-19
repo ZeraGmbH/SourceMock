@@ -51,7 +51,8 @@ public partial class SerialPortFGRefMeter(ISerialPortConnection device, ILogger<
         var voltage = double.Parse(buRequest.EndMatch!.Groups[1].Value);
         var current = double.Parse(biRequest.EndMatch!.Groups[1].Value);
 
-        var phases = SupportedModes.Single(e => e.Value == _measurementMode).Key[0] switch
+        var mode = SupportedModes.FirstOrDefault(e => e.Value == _measurementMode);
+        var phases = string.IsNullOrEmpty(mode.Key) ? 0d : mode.Key[0] switch
         {
             '4' => 3d,
             '3' => 2d,
@@ -59,8 +60,8 @@ public partial class SerialPortFGRefMeter(ISerialPortConnection device, ILogger<
             _ => throw new ArgumentException($"unsupported measurement mode {_measurementMode}")
         };
 
-        /* Calculate according to formula - see MT78x_MAN_EXT_GB.pdf section 5.6.*/
-        return 1000d * 3600d * 60000d / (phases * (double)voltage * (double)current);
+        /* Calculate according to formula - currently a pure guess*/
+        return 1000d * 3600d * 600000d / (phases * (double)voltage * (double)current);
     }
 
     /// <summary>

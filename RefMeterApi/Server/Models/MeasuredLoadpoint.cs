@@ -7,7 +7,9 @@ namespace RefMeterApi.Models;
 /// <summary>
 /// Report the actual values of a reference meter.
 /// </summary>
-public class MeasuredLoadpoint : AbstractLoadpoint<MeasuredLoadpointPhase, ElectricalQuantity>
+public class MeasuredLoadpoint<TPhase, TQuantity> : AbstractLoadpoint<TPhase, TQuantity>
+   where TPhase : AbstractLoadpointPhase<TQuantity>
+   where TQuantity : ElectricalQuantity, new()
 {
     /// <summary>
     /// Order of phases, default is 123.
@@ -33,4 +35,11 @@ public class MeasuredLoadpoint : AbstractLoadpoint<MeasuredLoadpointPhase, Elect
     /// Frequency.
     /// </summary>
     public double? Frequency { get; set; }
+}
+
+/// <summary>
+/// Report the actual values of a reference meter.
+/// </summary>
+public class MeasuredLoadpoint : MeasuredLoadpoint<MeasuredLoadpointPhase, ElectricalQuantity>
+{
 }

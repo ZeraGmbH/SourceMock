@@ -5,7 +5,7 @@ namespace RefMeterApi.Models;
 /// <summary>
 /// Reports the actual values for a single phase of a reference meter.
 /// </summary>
-public class MeasuredLoadpointPhase : AbstractLoadpointPhase<ElectricalQuantity>
+public class MeasuredLoadpointPhase<T> : AbstractLoadpointPhase<T> where T : ElectricalQuantity, new()
 {
     /// <summary>
     /// [tbd]
@@ -26,4 +26,11 @@ public class MeasuredLoadpointPhase : AbstractLoadpointPhase<ElectricalQuantity>
     /// Apparent power (VA).
     /// </summary>
     public double? ApparentPower { get; set; }
+}
+
+/// <summary>
+/// Reports the actual values for a single phase of a reference meter.
+/// </summary>
+public class MeasuredLoadpointPhase : MeasuredLoadpointPhase<ElectricalQuantity>
+{
 }

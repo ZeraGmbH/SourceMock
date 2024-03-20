@@ -58,6 +58,7 @@ public static class SharedLibraryConfiguration
         SwaggerModelExtender
             .AddType<SamDetailExtensions>()
             .AddType<SamDatabaseError>()
+            .AddType<SamGlobalErrors>()
             .Register(options);
     }
 }

@@ -72,7 +72,7 @@ public class MadConnectionTests
 
         var jobId = await StartErrorMeasurement();
 
-        for (var i = 10; i-- > 0;)
+        for (var i = 3; i-- > 0;)
             TestContext.WriteLine(await ReadJobStatus(jobId, false));
 
         for (var i = 0; ; i = 1)

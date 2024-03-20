@@ -9,6 +9,16 @@ namespace ErrorCalculatorApiTests;
 [TestFixture]
 public class MadConnectionTests
 {
+    private string MADServer = null!;
+
+    [SetUp]
+    public void Setup()
+    {
+        MADServer = Environment.GetEnvironmentVariable("EXECUTE_KOALA_MAD_TESTS")!;
+
+        if (string.IsNullOrEmpty(MADServer))
+            Assert.Ignore("not running MAD tests");
+    }
 
     private static XmlDocument LoadXmlFromString(string xml)
     {
@@ -19,7 +29,7 @@ public class MadConnectionTests
         return doc;
     }
 
-    [Test, Ignore("requires local MAD server running")]
+    [Test]
     public async Task Get_Firmware_Version()
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
@@ -28,7 +38,7 @@ public class MadConnectionTests
         {
             Connection = ErrorCalculatorConnectionTypes.TCP,
             Protocol = ErrorCalculatorProtocols.MAD_1,
-            Endpoint = "manns1:14207"
+            Endpoint = $"{MADServer}:14207"
         });
 
         var res = await cut.Execute(LoadXmlFromString(
@@ -55,7 +65,7 @@ public class MadConnectionTests
         });
     }
 
-    [Test, Ignore("requires local MAD server running")]
+    [Test]
     public async Task Run_Error_Measurement()
     {
         await ConfigureErrorMeasurement();
@@ -83,7 +93,7 @@ public class MadConnectionTests
         {
             Connection = ErrorCalculatorConnectionTypes.TCP,
             Protocol = ErrorCalculatorProtocols.MAD_1,
-            Endpoint = "manns1:14207"
+            Endpoint = $"{MADServer}:14207"
         });
 
         var req = LoadXmlFromString(
@@ -140,7 +150,7 @@ public class MadConnectionTests
         {
             Connection = ErrorCalculatorConnectionTypes.TCP,
             Protocol = ErrorCalculatorProtocols.MAD_1,
-            Endpoint = "manns1:14207"
+            Endpoint = $"{MADServer}:14207"
         });
 
         var req = LoadXmlFromString(
@@ -205,7 +215,7 @@ public class MadConnectionTests
         {
             Connection = ErrorCalculatorConnectionTypes.TCP,
             Protocol = ErrorCalculatorProtocols.MAD_1,
-            Endpoint = "manns1:14207"
+            Endpoint = $"{MADServer}:14207"
         });
 
         var req = LoadXmlFromString(

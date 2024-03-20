@@ -112,7 +112,9 @@ public class RefMeterTests
     public async Task FG_RefMeter_Will_Report_List_Of_Measuring_Modes()
     {
         var device = SerialPortConnection.FromMock<MeasuringModesMock>(new NullLogger<SerialPortConnection>());
-        var refMeter = new SerialPortFGRefMeter(device, new NullLogger<SerialPortFGRefMeter>());
+        var refMeter = new SerialPortFGRefMeter(device, null!, new NullLogger<SerialPortFGRefMeter>());
+
+        refMeter.SetReferenceMeter(ReferenceMeters.COM3000);
 
         var modes = await refMeter.GetMeasurementModes();
 
@@ -123,7 +125,9 @@ public class RefMeterTests
     public async Task FG_RefMeter_Can_Set_And_Remeber_Measuring_Mode()
     {
         var device = SerialPortConnection.FromMock<MeasuringModesMock>(new NullLogger<SerialPortConnection>());
-        var refMeter = new SerialPortFGRefMeter(device, new NullLogger<SerialPortFGRefMeter>());
+        var refMeter = new SerialPortFGRefMeter(device, null!, new NullLogger<SerialPortFGRefMeter>());
+
+        refMeter.SetReferenceMeter(ReferenceMeters.COM3000);
 
         var mode = await refMeter.GetActualMeasurementMode();
 
@@ -138,7 +142,9 @@ public class RefMeterTests
     public async Task FG_RefMeter_Will_Report_Actual_Values()
     {
         var device = SerialPortConnection.FromMock<MeasuringModesMock>(new NullLogger<SerialPortConnection>());
-        var refMeter = new SerialPortFGRefMeter(device, new NullLogger<SerialPortFGRefMeter>());
+        var refMeter = new SerialPortFGRefMeter(device, null!, new NullLogger<SerialPortFGRefMeter>());
+
+        refMeter.SetReferenceMeter(ReferenceMeters.COM3000);
 
         var values = await refMeter.GetActualValues(0);
 

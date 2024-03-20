@@ -142,6 +142,10 @@ public class SerialPortFGMock : ISerialPort
             case "SM":
                 _replies.Enqueue((DateTime.Now.Minute % 2 == 0) ? "SM4200000200200000080000" : "SM0000000000000000000000");
                 break;
+            /* Reference meter nominal frequency. */
+            case "FI":
+                _replies.Enqueue("FI 60000");
+                break;
             default:
                 {
                     Match? match;

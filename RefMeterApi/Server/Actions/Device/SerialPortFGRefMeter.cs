@@ -1,6 +1,8 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
+using RefMeterApi.Actions.MeterConstant;
 using RefMeterApi.Exceptions;
+using RefMeterApi.Models;
 using SerialPortProxy;
 
 namespace RefMeterApi.Actions.Device;
@@ -11,6 +13,11 @@ namespace RefMeterApi.Actions.Device;
 /// </summary>
 public interface ISerialPortFGRefMeter : IRefMeter
 {
+    /// <summary>
+    /// Reference meter to use.
+    /// </summary>
+    /// <param name="refereneceMeter">Reference meter.</param>
+    void SetReferenceMeter(ReferenceMeters refereneceMeter);
 }
 
 /// <summary>
@@ -20,8 +27,9 @@ public interface ISerialPortFGRefMeter : IRefMeter
 /// Initialize device manager.
 /// </remarks>
 /// <param name="device">Service to access the current serial port.</param>
+/// <param name="meterConstant">Algorithm to calculate the meter constant.</param>
 /// <param name="logger">Logging service for this device type.</param>
-public partial class SerialPortFGRefMeter(ISerialPortConnection device, ILogger<SerialPortFGRefMeter> logger) : ISerialPortFGRefMeter
+public partial class SerialPortFGRefMeter(ISerialPortConnection device, IMeterConstantCalculator meterConstant, ILogger<SerialPortFGRefMeter> logger) : ISerialPortFGRefMeter
 {
     /// <summary>
     /// Device connection to use.
@@ -34,7 +42,12 @@ public partial class SerialPortFGRefMeter(ISerialPortConnection device, ILogger<
     private readonly ILogger<SerialPortFGRefMeter> _logger = logger;
 
     /// <inheritdoc/>
-    public bool Available => true;
+    public bool Available => _referenceMeter.HasValue;
+
+    /// <summary>
+    /// The reference meter to use.
+    /// </summary>
+    private ReferenceMeters? _referenceMeter;
 
     /// <inheritdoc/>
     public async Task<double> GetMeterConstant()
@@ -44,24 +57,24 @@ public partial class SerialPortFGRefMeter(ISerialPortConnection device, ILogger<
         /* Request raw data from device. */
         var biRequest = SerialPortRequest.Create("BI", new Regex(@"^BI(.+)$"));
         var buRequest = SerialPortRequest.Create("BU", new Regex(@"^BU(.+)$"));
+        var fiRequest = SerialPortRequest.Create("FI", new Regex(@"^FI(.+)$"));
 
-        await Task.WhenAll(_device.Execute(biRequest, buRequest));
+        await Task.WhenAll(_device.Execute(biRequest, buRequest, fiRequest));
 
         /* Convert text representations to numbers. */
         var voltage = double.Parse(buRequest.EndMatch!.Groups[1].Value);
         var current = double.Parse(biRequest.EndMatch!.Groups[1].Value);
+        var frequency = double.Parse(fiRequest.EndMatch!.Groups[1].Value);
 
-        var mode = SupportedModes.FirstOrDefault(e => e.Value == _measurementMode);
-        var phases = string.IsNullOrEmpty(mode.Key) ? 0d : mode.Key[0] switch
-        {
-            '4' => 3d,
-            '3' => 2d,
-            '2' => 1d,
-            _ => throw new ArgumentException($"unsupported measurement mode {_measurementMode}")
-        };
+        return meterConstant.GetMeterConstant(_referenceMeter!.Value, frequency, _measurementMode ?? MeasurementModes.FourWireActivePower, voltage, current);
+    }
 
-        /* Calculate according to formula - currently a pure guess*/
-        return 1000d * 3600d * 600000d / (phases * (double)voltage * (double)current);
+    /// <inheritdoc/>
+    public void SetReferenceMeter(ReferenceMeters refereneceMeter)
+    {
+        if (_referenceMeter != null) throw new InvalidOperationException("already initialized");
+
+        _referenceMeter = refereneceMeter;
     }
 
     /// <summary>

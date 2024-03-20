@@ -87,7 +87,7 @@ public class MeterTestSystemTests
         var services = new ServiceCollection();
 
         services.AddSingleton(Source);
-        services.AddSingleton<ISerialPortFGRefMeter>(new SerialPortFGRefMeter(Device, new NullLogger<SerialPortFGRefMeter>()));
+        services.AddSingleton<ISerialPortFGRefMeter>(new SerialPortFGRefMeter(Device, null!, new NullLogger<SerialPortFGRefMeter>()));
         services.AddSingleton<ISerialPortFGErrorCalculator>(new SerialPortFGErrorCalculator(Device, new NullLogger<SerialPortFGErrorCalculator>()));
 
         Services = services.BuildServiceProvider();

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Actions.Device;
+using RefMeterApi.Actions.MeterConstant;
 using RefMeterApi.Actions.RestSource;
 using RefMeterApi.Exceptions;
 using RefMeterApi.Models;
@@ -42,6 +43,8 @@ public static class RefMeterApiConfiguration
     /// <param name="configuration">Configuration of the web server.</param>
     public static void UseRefMeterApi(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddTransient<IMeterConstantCalculator, MeterConstantCalculator>();
+
         /* The concrete implementations are transient and the lifetime is controlled by the corresponding meter test system. */
         services.AddTransient<IMockRefMeter, ACRefMeterMock>();
         services.AddTransient<IDCRefMeterMock, DCRefMeterMock>();

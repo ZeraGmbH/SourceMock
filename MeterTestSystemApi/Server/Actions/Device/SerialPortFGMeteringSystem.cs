@@ -198,6 +198,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         var source = _services.GetRequiredService<ISerialPortFGSource>();
 
         /* Configure the sub devices if necessary. */
+        refMeter.SetReferenceMeter(settings.ReferenceMeter);
         source.SetAmplifiers(settings.VoltageAmplifier, settings.CurrentAmplifier, settings.VoltageAuxiliary, settings.CurrentAuxiliary);
 
         try

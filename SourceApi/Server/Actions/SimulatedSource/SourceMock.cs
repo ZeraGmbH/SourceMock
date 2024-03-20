@@ -32,12 +32,11 @@ public abstract class SourceMock : ISourceMock
             _logger?.LogTrace("Loadpoint set, source turned on.");
             _loadpoint = loadpoint;
 
+            _info.SavedAt = _info.ActivatedAt = DateTime.Now;
             _info.IsActive = true;
         }
 
         _dosageMode = false;
-
-        _info.SavedAt = _info.ActivatedAt = DateTime.Now;
 
         return Task.FromResult(isValid);
     }

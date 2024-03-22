@@ -3,6 +3,13 @@ namespace SourceApi.Model
     /// <summary>
     /// Describes a specific loadpoint.
     /// </summary>
+    /// <remarks>
+    /// IMPORTANT: order of properties is important to use with blockly. 
+    /// The dedicated loadpoint editor expects the following order:
+    ///     [0] Phases
+    ///     [1] VoltageNeutralConnected
+    ///     [2] Frequency
+    /// </remarks>
     [Serializable]
     public class TargetLoadpoint : AbstractLoadpoint<TargetLoadpointPhase, ActivatableElectricalQuantity>
     {

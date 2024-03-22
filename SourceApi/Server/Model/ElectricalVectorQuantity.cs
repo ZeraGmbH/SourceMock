@@ -6,6 +6,12 @@ namespace SourceApi.Model
     /// Objects of this class are to represent electical quantities typically displayed in vector form, 
     /// so primarily voltage and current.
     /// </summary>
+    /// <remarks>
+    /// IMPORTANT: order of properties is important to use with blockly. 
+    /// The dedicated loadpoint editor expects the following order:
+    ///     [0] Rms
+    ///     [1] Angle
+    /// </remarks>
     [Serializable]
     public class ElectricalVectorQuantity
     {

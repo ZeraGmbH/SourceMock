@@ -1,4 +1,3 @@
-
 using System.Linq.Expressions;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -37,6 +36,10 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, strin
 
     private IMongoCollection<T> GetHistoryCollection<T>() => _database.GetDatabase(_category).GetCollection<T>(HistoryCollectionName);
 
+    private IMongoCollection<BsonDocument> GetBsonCollection() => GetCollection<BsonDocument>();
+
+    private IMongoCollection<BsonDocument> GetBsonHistoryCollection() => GetHistoryCollection<BsonDocument>();
+
     private readonly Collation _noCase = new("en", strength: CollationStrength.Secondary);
 
     /// <inheritdoc/>
@@ -66,7 +69,7 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, strin
         doc[HistoryField] = history.ToBsonDocument();
 
         /* Add item to the database an report a new item instance. */
-        return GetCollection<BsonDocument>()
+        return GetBsonCollection()
             .InsertOneAsync(doc)
             .ContinueWith((task) => BsonSerializer.Deserialize<TItem>(doc), TaskContinuationOptions.OnlyOnRanToCompletion);
     }
@@ -83,7 +86,7 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, strin
         var id = doc["_id"].ToString();
 
         /* Update the item itself. */
-        var self = GetCollection<BsonDocument>();
+        var self = GetBsonCollection();
 
         var previous = await self
             .FindOneAndUpdateAsync(
@@ -96,7 +99,7 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, strin
             ).ContinueWith(t => t.Result ?? throw new ArgumentException("item not found", nameof(item)));
 
         /* Then apply the history entry, */
-        await GetHistoryCollection<BsonDocument>().InsertOneAsync(new BsonDocument{
+        await GetBsonHistoryCollection().InsertOneAsync(new BsonDocument{
             { "_id", Guid.NewGuid().ToString() },
             { "item", previous }
         });
@@ -110,7 +113,7 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, strin
     /// <inheritdoc/>
     public async Task<TItem> DeleteItem(string id, string user, bool silent = false)
     {
-        var self = GetCollection<BsonDocument>();
+        var self = GetBsonCollection();
 
         var previous = await self
             .FindOneAndUpdateAsync(
@@ -127,7 +130,7 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, strin
 
         if (previous == null) return default!;
 
-        await GetHistoryCollection<BsonDocument>().InsertOneAsync(new BsonDocument{
+        await GetBsonHistoryCollection().InsertOneAsync(new BsonDocument{
             { "_id", Guid.NewGuid().ToString() },
             { "item", previous }
         });
@@ -136,7 +139,7 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, strin
             .FindOneAndDeleteAsync(new BsonDocument { { "_id", id } })
             .ContinueWith(t => t.Result ?? throw new ArgumentException("item not found", nameof(id)));
 
-        await GetHistoryCollection<BsonDocument>().InsertOneAsync(new BsonDocument {
+        await GetBsonHistoryCollection().InsertOneAsync(new BsonDocument {
             { "_id", Guid.NewGuid().ToString() },
             { "item", deleted }
         });
@@ -150,8 +153,8 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, strin
     /// <returns>Conroller of the outstanding operation.</returns>
     public Task<long> RemoveAll() =>
        Task.WhenAll(
-           GetCollection<BsonDocument>().DeleteManyAsync(FilterDefinition<BsonDocument>.Empty),
-           GetHistoryCollection<BsonDocument>().DeleteManyAsync(FilterDefinition<BsonDocument>.Empty)
+           GetBsonCollection().DeleteManyAsync(FilterDefinition<BsonDocument>.Empty),
+           GetBsonHistoryCollection().DeleteManyAsync(FilterDefinition<BsonDocument>.Empty)
        ).ContinueWith(tasks => tasks.Result.Sum(r => r.DeletedCount), TaskContinuationOptions.OnlyOnRanToCompletion);
 
     /// <inheritdoc/>
@@ -167,7 +170,7 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, strin
             .Match(new BsonDocument { { "item._id", id } })
             .ReplaceRoot<BsonDocument, BsonDocument, BsonDocument>("$item")
             /* Add the current item itself - up to now we have only history entries. */
-            .UnionWith(GetCollection<BsonDocument>(), PipelineDefinitionBuilder
+            .UnionWith(GetBsonCollection(), PipelineDefinitionBuilder
                 .For<BsonDocument>()
                 .Match(new BsonDocument { { "_id", id } })
             )
@@ -177,7 +180,7 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, strin
             .ReplaceRoot<BsonDocument, BsonDocument, BsonDocument>($"${HistoryField}");
 
         /* Execute the pipeline and recreated the items. */
-        return GetHistoryCollection<BsonDocument>()
+        return GetBsonHistoryCollection()
             .Aggregate(pipeline)
             .ToListAsync()
             .ContinueWith((task) => task.Result.Select(doc => BsonSerializer.Deserialize<HistoryInfo>(doc)), TaskContinuationOptions.OnlyOnRanToCompletion);
@@ -193,7 +196,7 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, strin
             .Match(new BsonDocument { { "item._id", id } })
             .ReplaceRoot<BsonDocument, BsonDocument, BsonDocument>("$item")
             /* Add the current item itself - up to now we have only history entries. */
-            .UnionWith(GetCollection<BsonDocument>(), PipelineDefinitionBuilder
+            .UnionWith(GetBsonCollection(), PipelineDefinitionBuilder
                 .For<BsonDocument>()
                 .Match(new BsonDocument { { "_id", id } })
             )
@@ -201,7 +204,7 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, strin
             .Match(new BsonDocument { { HistoryVersionPath, version } });
 
         /* Execute the pipeline and recreated the items. */
-        return GetHistoryCollection<BsonDocument>()
+        return GetBsonHistoryCollection()
             .Aggregate(pipeline)
             .ToListAsync()
             .ContinueWith((task) =>

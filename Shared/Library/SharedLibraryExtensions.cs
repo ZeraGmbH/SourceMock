@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SharedLibrary.Actions.Database;
+using SharedLibrary.Actions.User;
 using SharedLibrary.ExceptionHandling;
 using SharedLibrary.Models;
 using SharedLibrary.Services;
@@ -40,6 +41,8 @@ public static class SharedLibraryConfiguration
     public static void UseSharedLibrary(this IServiceCollection services, IConfiguration configuration)
     {
         ConfigureDatabase(services, configuration);
+
+        services.AddScoped<ICurrentUser, CurrentUser>();
     }
 
     /// <summary>

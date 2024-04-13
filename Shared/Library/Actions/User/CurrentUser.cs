@@ -15,7 +15,7 @@ public class CurrentUser(IServiceProvider services, TokenValidationParameters _v
     private ClaimsPrincipal? _byToken;
 
     /// <inheritdoc/>
-    public ClaimsPrincipal User => services.GetService<IHttpContextAccessor>()?.HttpContext?.User ?? _byToken ?? new();
+    public ClaimsPrincipal User => _byToken ?? services.GetService<IHttpContextAccessor>()?.HttpContext?.User ?? new();
 
     /// <inheritdoc/>
     public void FromToken(string userToken)
@@ -23,7 +23,7 @@ public class CurrentUser(IServiceProvider services, TokenValidationParameters _v
         /* Reset current user information. */
         _byToken = new();
 
-        if (!string.IsNullOrEmpty(userToken)) return;
+        if (string.IsNullOrEmpty(userToken)) return;
 
         try
         {

@@ -1,8 +1,11 @@
+using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 using SharedLibrary.Actions.Database;
+using SharedLibrary.Actions.User;
 using SharedLibrary.Models;
 using SharedLibrary.Services;
 
@@ -13,6 +16,8 @@ public abstract class DatabaseTestCore
     protected abstract bool UseMongoDb { get; }
 
     protected ServiceProvider Services;
+
+    protected string UserId;
 
     [TearDown]
     public void Teardown()
@@ -64,6 +69,17 @@ public abstract class DatabaseTestCore
             services.AddTransient(typeof(IHistoryCollectionFactory<,>), typeof(InMemoryHistoryCollectionFactory<,>));
             services.AddTransient<ICounterCollectionFactory, InMemoryCountersFactory>();
         }
+
+        UserId = "autotest";
+
+        var userMock = new Mock<ICurrentUser>();
+
+        userMock.Setup(u => u.User).Returns(() =>
+            new ClaimsPrincipal([
+                new ClaimsIdentity([
+                    new Claim(ClaimTypes.NameIdentifier, UserId)])]));
+
+        services.AddSingleton(userMock.Object);
 
         Services = services.BuildServiceProvider();
 

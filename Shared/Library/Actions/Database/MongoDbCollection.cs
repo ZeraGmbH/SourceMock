@@ -32,17 +32,17 @@ sealed class MongoDbCollection<TItem, TSingleton>(string collectionName, string 
     private IMongoCollection<TItem> GetCollection() => GetCollection<TItem>();
 
     /// <inheritdoc/>
-    public Task<TItem> AddItem(TItem item, string user) => GetCollection()
+    public Task<TItem> AddItem(TItem item) => GetCollection()
         .InsertOneAsync(item)
         .ContinueWith((task) => item, TaskContinuationOptions.OnlyOnRanToCompletion);
 
     /// <inheritdoc/>
-    public Task<TItem> UpdateItem(TItem item, string user) => GetCollection()
+    public Task<TItem> UpdateItem(TItem item) => GetCollection()
         .FindOneAndReplaceAsync(Builders<TItem>.Filter.Eq(nameof(IDatabaseObject.Id), item.Id), item, new() { ReturnDocument = ReturnDocument.After })
         .ContinueWith(t => t.Result ?? throw new ArgumentException("item not found", nameof(item)), TaskContinuationOptions.OnlyOnRanToCompletion);
 
     /// <inheritdoc/>
-    public Task<TItem> DeleteItem(string id, string user, bool silent = false) => GetCollection()
+    public Task<TItem> DeleteItem(string id, bool silent = false) => GetCollection()
         .FindOneAndDeleteAsync(Builders<TItem>.Filter.Eq(nameof(IDatabaseObject.Id), id))
         .ContinueWith(t => t.Result ?? (silent ? default(TItem)! : throw new ArgumentException("item not found", nameof(id))), TaskContinuationOptions.OnlyOnRanToCompletion);
 

@@ -44,7 +44,7 @@ public abstract class CollectionTests : DatabaseTestCore
         Assert.That(Collection, Is.Not.Null);
 
         var item = new TestItem() { Name = "Test 1" };
-        var added = await Collection.AddItem(item, "autotest");
+        var added = await Collection.AddItem(item);
 
         Assert.Multiple(() =>
         {
@@ -71,9 +71,9 @@ public abstract class CollectionTests : DatabaseTestCore
 
         var item = new TestItem() { Name = "Test 2" };
 
-        await Collection.AddItem(item, "autotest");
+        await Collection.AddItem(item);
 
-        Assert.That(() => Collection.AddItem(item, "autotest").Wait(), Throws.Exception);
+        Assert.That(() => Collection.AddItem(item).Wait(), Throws.Exception);
     }
 
     [Test]
@@ -83,11 +83,11 @@ public abstract class CollectionTests : DatabaseTestCore
 
         var item = new TestItem() { Name = "Test 3" };
 
-        await Collection.AddItem(item, "autotest");
+        await Collection.AddItem(item);
 
         item.Name = "Test 4";
 
-        var updated = await Collection.UpdateItem(item, "autotest");
+        var updated = await Collection.UpdateItem(item);
 
         Assert.Multiple(() =>
         {
@@ -113,7 +113,7 @@ public abstract class CollectionTests : DatabaseTestCore
 
         var item = new TestItem() { Name = "Test 5" };
 
-        Assert.ThrowsAsync<ArgumentException>(() => Collection.UpdateItem(item, "autotest"));
+        Assert.ThrowsAsync<ArgumentException>(() => Collection.UpdateItem(item));
     }
 
     [Test]
@@ -123,9 +123,9 @@ public abstract class CollectionTests : DatabaseTestCore
 
         var item = new TestItem() { Name = "Test 6" };
 
-        await Collection.AddItem(item, "autotest");
+        await Collection.AddItem(item);
 
-        var deleted = await Collection.DeleteItem(item.Id, "autotest");
+        var deleted = await Collection.DeleteItem(item.Id);
 
         Assert.Multiple(() =>
         {
@@ -145,7 +145,7 @@ public abstract class CollectionTests : DatabaseTestCore
 
         var item = new TestItem() { Name = "Test 7" };
 
-        Assert.That(() => Collection.DeleteItem(item.Id, "autotest").Wait(), Throws.Exception);
+        Assert.That(() => Collection.DeleteItem(item.Id).Wait(), Throws.Exception);
     }
 
     [Test]
@@ -153,11 +153,11 @@ public abstract class CollectionTests : DatabaseTestCore
     {
         Assert.That(Collection, Is.Not.Null);
 
-        await Collection.AddItem(new TestItem() { Name = "Test 1", Data = "Data 1" }, "autotest");
+        await Collection.AddItem(new TestItem() { Name = "Test 1", Data = "Data 1" });
 
-        Assert.ThrowsAsync<TaskCanceledException>(async () => await Collection.AddItem(new TestItem() { Name = "Test 2", Data = "data 1" }, "autotest"));
+        Assert.ThrowsAsync<TaskCanceledException>(async () => await Collection.AddItem(new TestItem() { Name = "Test 2", Data = "data 1" }));
 
-        await Collection.AddItem(new TestItem() { Name = "Test 2", Data = "data 2" }, "autotest");
+        await Collection.AddItem(new TestItem() { Name = "Test 2", Data = "data 2" });
     }
 }
 

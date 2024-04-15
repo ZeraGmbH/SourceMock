@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using SharedLibrary.Actions.User;
 using SharedLibrary.Models;
 using SharedLibrary.Services;
 
@@ -15,8 +16,9 @@ namespace SharedLibrary.Actions.Database;
 /// <param name="collectionName"></param>
 /// <param name="_category">Category of the database.</param>
 /// <param name="singleton"></param>
+/// <param name="user"></param>
 /// <param name="_database">Database connection to use.</param>
-sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, string _category, TSingleton singleton, IMongoDbDatabaseService _database) : IHistoryCollection<TItem, TSingleton>
+sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, string _category, TSingleton singleton, ICurrentUser user, IMongoDbDatabaseService _database) : IHistoryCollection<TItem, TSingleton>
     where TItem : IDatabaseObject
     where TSingleton : ICollectionInitializer<TItem>
 {
@@ -63,11 +65,12 @@ sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, 
     }
 
     /// <inheritdoc/>
-    public Task<TItem> AddItem(TItem item, string user)
+    public Task<TItem> AddItem(TItem item)
     {
         /* Create all fields used for historisation. */
         var now = DateTime.Now;
-        var history = new HistoryInfo { ChangeCount = 1, CreatedAt = now, CreatedBy = user, ModifiedAt = now, ModifiedBy = user };
+        var userId = user.GetUserId();
+        var history = new HistoryInfo { ChangeCount = 1, CreatedAt = now, CreatedBy = userId, ModifiedAt = now, ModifiedBy = userId };
 
         /* Convert item to document and add historisation data. */
         var doc = item.ToBsonDocument();
@@ -81,13 +84,13 @@ sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, 
     }
 
     /// <inheritdoc/>
-    public async Task<TItem> UpdateItem(TItem item, string user)
+    public async Task<TItem> UpdateItem(TItem item)
     {
         /* Apply history information. */
         var doc = item.ToBsonDocument();
 
         doc[$"{HistoryField}.modifiedAt"] = DateTime.Now;
-        doc[$"{HistoryField}.modifiedBy"] = user;
+        doc[$"{HistoryField}.modifiedBy"] = user.GetUserId();
 
         var id = doc["_id"].ToString();
 
@@ -117,7 +120,7 @@ sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, 
     }
 
     /// <inheritdoc/>
-    public async Task<TItem> DeleteItem(string id, string user, bool silent = false)
+    public async Task<TItem> DeleteItem(string id, bool silent = false)
     {
         var self = GetBsonCollection();
 
@@ -127,7 +130,7 @@ sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, 
                 new BsonDocument {
                     { "$set", new BsonDocument {
                         { $"{HistoryField}.modifiedAt", DateTime.Now },
-                        { $"{HistoryField}.modifiedBy", user } }
+                        { $"{HistoryField}.modifiedBy", user.GetUserId() } }
                     },
                     { "$inc", new BsonDocument{ { HistoryVersionPath, 1 } } }
                 },
@@ -232,14 +235,15 @@ sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, 
 /// <typeparam name="TSingleton"></typeparam>
 /// <param name="database"></param>
 /// <param name="singleton"></param>
-public class MongoDbHistoryCollectionFactory<TItem, TSingleton>(IMongoDbDatabaseService database, TSingleton singleton) : IHistoryCollectionFactory<TItem, TSingleton>
+/// <param name="user"></param>
+public class MongoDbHistoryCollectionFactory<TItem, TSingleton>(IMongoDbDatabaseService database, TSingleton singleton, ICurrentUser user) : IHistoryCollectionFactory<TItem, TSingleton>
     where TItem : IDatabaseObject
     where TSingleton : ICollectionInitializer<TItem>
 {
     /// <inheritdoc/>
     public IHistoryCollection<TItem, TSingleton> Create(string uniqueName, string category)
     {
-        var collection = new MongoDbHistoryCollection<TItem, TSingleton>(uniqueName, category, singleton, database);
+        var collection = new MongoDbHistoryCollection<TItem, TSingleton>(uniqueName, category, singleton, user, database);
 
         singleton.Initialize(collection).Wait();
 
@@ -252,7 +256,9 @@ public class MongoDbHistoryCollectionFactory<TItem, TSingleton>(IMongoDbDatabase
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
 /// <param name="database"></param>
-public class MongoDbHistoryCollectionFactory<TItem>(IMongoDbDatabaseService database) : MongoDbHistoryCollectionFactory<TItem, NoopInitializer<TItem>>(database, new()), IHistoryCollectionFactory<TItem> where TItem : IDatabaseObject
+/// <param name="user"></param>
+public class MongoDbHistoryCollectionFactory<TItem>(IMongoDbDatabaseService database, ICurrentUser user) : MongoDbHistoryCollectionFactory<TItem, NoopInitializer<TItem>>(database, new(), user), IHistoryCollectionFactory<TItem>
+    where TItem : IDatabaseObject
 {
 }
 

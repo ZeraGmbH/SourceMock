@@ -18,7 +18,7 @@ public abstract class ScopedTests : DatabaseTestCore
     {
         string Id { get; }
 
-        Task<TheStoreItem> Create(string userId);
+        Task<TheStoreItem> Create();
     }
 
 
@@ -42,7 +42,7 @@ public abstract class ScopedTests : DatabaseTestCore
 
         private readonly IObjectCollection<TheStoreItem, TheStoreCommon> _collection = factory.Create("the-store-test", DatabaseCategories.Master);
 
-        public Task<TheStoreItem> Create(string userId) => _collection.AddItem(new() { Id = Guid.NewGuid().ToString() }, userId);
+        public Task<TheStoreItem> Create() => _collection.AddItem(new() { Id = Guid.NewGuid().ToString() });
     }
 
     protected override Task OnPostSetup()

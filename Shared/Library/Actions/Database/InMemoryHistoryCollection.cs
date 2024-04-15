@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
+using SharedLibrary.Actions.User;
 using SharedLibrary.Models;
 
 namespace SharedLibrary.Actions.Database;
@@ -11,7 +12,8 @@ namespace SharedLibrary.Actions.Database;
 /// <typeparam name="TItem">Type of the related document.</typeparam>
 /// <typeparam name="TSingleton"></typeparam>
 /// <param name="singleton"></param>
-sealed class InMemoryHistoryCollection<TItem, TSingleton>(InMemoryHistoryCollection<TItem, TSingleton>.Initializer singleton) : IHistoryCollection<TItem, TSingleton>
+/// <param name="user"></param>
+sealed class InMemoryHistoryCollection<TItem, TSingleton>(InMemoryHistoryCollection<TItem, TSingleton>.Initializer singleton, ICurrentUser user) : IHistoryCollection<TItem, TSingleton>
     where TItem : IDatabaseObject
     where TSingleton : ICollectionInitializer<TItem>
 {
@@ -55,10 +57,11 @@ sealed class InMemoryHistoryCollection<TItem, TSingleton>(InMemoryHistoryCollect
     }
 
     /// <inheritdoc/>
-    public Task<TItem> AddItem(TItem item, string user)
+    public Task<TItem> AddItem(TItem item)
     {
         /* Create all fields used for historisation. */
         var now = DateTime.Now;
+        var userId = user.GetUserId();
 
         /* Always create a fully detached clone. */
         var clone = new HistoryItem<TItem>
@@ -68,9 +71,9 @@ sealed class InMemoryHistoryCollection<TItem, TSingleton>(InMemoryHistoryCollect
             {
                 ChangeCount = 1,
                 CreatedAt = now,
-                CreatedBy = user,
+                CreatedBy = userId,
                 ModifiedAt = now,
-                ModifiedBy = user
+                ModifiedBy = userId
             }
         };
 
@@ -89,7 +92,7 @@ sealed class InMemoryHistoryCollection<TItem, TSingleton>(InMemoryHistoryCollect
     }
 
     /// <inheritdoc/>
-    public Task<TItem> UpdateItem(TItem item, string user)
+    public Task<TItem> UpdateItem(TItem item)
     {
         var now = DateTime.Now;
 
@@ -117,7 +120,7 @@ sealed class InMemoryHistoryCollection<TItem, TSingleton>(InMemoryHistoryCollect
                     CreatedAt = previous.Version.CreatedAt,
                     CreatedBy = previous.Version.CreatedBy,
                     ModifiedAt = now,
-                    ModifiedBy = user
+                    ModifiedBy = user.GetUserId()
                 }
             });
         }
@@ -127,7 +130,7 @@ sealed class InMemoryHistoryCollection<TItem, TSingleton>(InMemoryHistoryCollect
     }
 
     /// <inheritdoc/>
-    public Task<TItem> DeleteItem(string id, string user, bool silent = false)
+    public Task<TItem> DeleteItem(string id, bool silent = false)
     {
         /* Remove from dictionary. */
         lock (singleton.Data)
@@ -226,7 +229,7 @@ sealed class InMemoryHistoryCollection<TItem, TSingleton>(InMemoryHistoryCollect
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
 /// <typeparam name="TSingleton"></typeparam>
-public class InMemoryHistoryCollectionFactory<TItem, TSingleton>(TSingleton singleton) : IHistoryCollectionFactory<TItem, TSingleton>
+public class InMemoryHistoryCollectionFactory<TItem, TSingleton>(TSingleton singleton, ICurrentUser user) : IHistoryCollectionFactory<TItem, TSingleton>
     where TItem : IDatabaseObject
     where TSingleton : ICollectionInitializer<TItem>
 {
@@ -234,7 +237,7 @@ public class InMemoryHistoryCollectionFactory<TItem, TSingleton>(TSingleton sing
     public IHistoryCollection<TItem, TSingleton> Create(string uniqueName, string category)
     {
         var initializer = new InMemoryHistoryCollection<TItem, TSingleton>.Initializer(singleton);
-        var collection = new InMemoryHistoryCollection<TItem, TSingleton>(initializer);
+        var collection = new InMemoryHistoryCollection<TItem, TSingleton>(initializer, user);
 
         initializer.Initialize(collection).Wait();
 
@@ -246,6 +249,7 @@ public class InMemoryHistoryCollectionFactory<TItem, TSingleton>(TSingleton sing
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public class InMemoryHistoryCollectionFactory<TItem>() : InMemoryHistoryCollectionFactory<TItem, NoopInitializer<TItem>>(new()), IHistoryCollectionFactory<TItem> where TItem : IDatabaseObject
+public class InMemoryHistoryCollectionFactory<TItem>(ICurrentUser user) : InMemoryHistoryCollectionFactory<TItem, NoopInitializer<TItem>>(new(), user), IHistoryCollectionFactory<TItem>
+    where TItem : IDatabaseObject
 {
 }

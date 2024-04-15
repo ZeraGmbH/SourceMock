@@ -25,28 +25,25 @@ public interface IObjectCollection<T> : IObjectCollection where T : IDatabaseObj
     /// Add a brand new document to the collection.
     /// </summary>
     /// <param name="item">The data for the new item.</param>
-    /// <param name="user">Name of the user adding the document.</param>
     /// <returns>The item as added to the database.</returns>
-    Task<T> AddItem(T item, string user);
+    Task<T> AddItem(T item);
 
     /// <summary>
     /// Update an existing item.
     /// </summary>
     /// <param name="item">New item data.</param>
-    /// <param name="user">User requesting the update.</param>
     /// <returns>The new item data.</returns>
     /// <exception cref="ArgumentException">There is no such item.</exception>
-    Task<T> UpdateItem(T item, string user);
+    Task<T> UpdateItem(T item);
 
     /// <summary>
     /// Delete an existing item.
     /// </summary>
     /// <param name="id">The unique identifier of the item.</param>
-    /// <param name="user">The user deleting the item.</param>
     /// <param name="silent">Set to avoid an exception if the item does not exist.</param>
     /// <returns>The item which has been deleted.</returns>
     /// <exception cref="ArgumentException">There is no such item.</exception>
-    Task<T> DeleteItem(string id, string user, bool silent = false);
+    Task<T> DeleteItem(string id, bool silent = false);
 
     /// <summary>
     /// Start a query on the collection.

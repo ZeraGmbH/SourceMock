@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
+using SharedLibrary.Actions.User;
 using SharedLibrary.Models;
 
 namespace SharedLibrary.Actions.Database;
@@ -51,7 +52,7 @@ sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TItem, TSi
     }
 
     /// <inheritdoc/>
-    public Task<TItem> AddItem(TItem item, string user)
+    public Task<TItem> AddItem(TItem item)
     {
         /* Always create a fully detached clone. */
         var clone = CloneItem(item);
@@ -71,7 +72,7 @@ sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TItem, TSi
     }
 
     /// <inheritdoc/>
-    public Task<TItem> UpdateItem(TItem item, string user)
+    public Task<TItem> UpdateItem(TItem item)
     {
         /* Always create a fully detached clone. */
         var clone = CloneItem(item);
@@ -93,7 +94,7 @@ sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TItem, TSi
     }
 
     /// <inheritdoc/>
-    public Task<TItem> DeleteItem(string id, string user, bool silent = false)
+    public Task<TItem> DeleteItem(string id, bool silent = false)
     {
         /* Remove from dictionary. */
         lock (singleton.Data)

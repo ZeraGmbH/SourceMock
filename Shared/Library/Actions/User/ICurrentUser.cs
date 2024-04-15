@@ -18,3 +18,16 @@ public interface ICurrentUser
     /// <param name="userToken">A token to identify a user.</param>
     void FromToken(string userToken);
 }
+
+/// <summary>
+/// 
+/// </summary>
+public static class ICurrentUserExtensions
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    public static string GetUserId(this ICurrentUser user) => Utils.GetUserId(user?.User) ?? "anonymous";
+}

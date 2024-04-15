@@ -13,12 +13,15 @@ namespace SharedLibrary.Actions.Database;
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
 /// <typeparam name="TSingleton"></typeparam>
+/// <remarks>
+/// 
+/// </remarks>
 /// <param name="collectionName"></param>
 /// <param name="_category">Category of the database.</param>
 /// <param name="singleton"></param>
-/// <param name="user"></param>
+/// <param name="_userContext"></param>
 /// <param name="_database">Database connection to use.</param>
-sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, string _category, TSingleton singleton, ICurrentUser user, IMongoDbDatabaseService _database) : IHistoryCollection<TItem, TSingleton>
+sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, string _category, TSingleton singleton, ICurrentUser _userContext, IMongoDbDatabaseService _database) : IHistoryCollection<TItem, TSingleton>
     where TItem : IDatabaseObject
     where TSingleton : ICollectionInitializer<TItem>
 {
@@ -69,7 +72,7 @@ sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, 
     {
         /* Create all fields used for historisation. */
         var now = DateTime.Now;
-        var userId = user.GetUserId();
+        var userId = _userContext.GetUserId();
         var history = new HistoryInfo { ChangeCount = 1, CreatedAt = now, CreatedBy = userId, ModifiedAt = now, ModifiedBy = userId };
 
         /* Convert item to document and add historisation data. */
@@ -90,7 +93,7 @@ sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, 
         var doc = item.ToBsonDocument();
 
         doc[$"{HistoryField}.modifiedAt"] = DateTime.Now;
-        doc[$"{HistoryField}.modifiedBy"] = user.GetUserId();
+        doc[$"{HistoryField}.modifiedBy"] = _userContext.GetUserId();
 
         var id = doc["_id"].ToString();
 
@@ -130,7 +133,7 @@ sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, 
                 new BsonDocument {
                     { "$set", new BsonDocument {
                         { $"{HistoryField}.modifiedAt", DateTime.Now },
-                        { $"{HistoryField}.modifiedBy", user.GetUserId() } }
+                        { $"{HistoryField}.modifiedBy", _userContext.GetUserId() } }
                     },
                     { "$inc", new BsonDocument{ { HistoryVersionPath, 1 } } }
                 },

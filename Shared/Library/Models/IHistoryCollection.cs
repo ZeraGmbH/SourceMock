@@ -21,3 +21,17 @@ public interface IHistoryCollection<T> : IObjectCollection<T> where T : IDatabas
     /// <returns>The item in the indicated version</returns>
     Task<T> GetHistoryItem(string id, long version);
 }
+
+
+/// <summary>
+/// Base class for implementing historized collections.
+/// </summary>
+/// <typeparam name="T">Type of the item to use</typeparam>
+/// <typeparam name="TCommon"></typeparam>
+public interface IHistoryCollection<T, TCommon> : IHistoryCollection<T> where T : IDatabaseObject where TCommon : ICollectionInitializer<T>
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    TCommon Common { get; }
+}

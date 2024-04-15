@@ -51,16 +51,18 @@ public abstract class DatabaseTestCore
 
             services.AddSingleton<IMongoDbDatabaseService, MongoDbDatabaseService>();
             services.AddTransient(typeof(IObjectCollectionFactory<>), typeof(MongoDbCollectionFactory<>));
+            services.AddTransient(typeof(IObjectCollectionFactory<,>), typeof(MongoDbCollectionFactory<,>));
             services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(MongoDbHistoryCollectionFactory<>));
-
-            services.AddSingleton<ICounterCollectionFactory, MongoDbCountersFactory>();
+            services.AddTransient(typeof(IHistoryCollectionFactory<,>), typeof(MongoDbHistoryCollectionFactory<,>));
+            services.AddTransient<ICounterCollectionFactory, MongoDbCountersFactory>();
         }
         else
         {
             services.AddTransient(typeof(IObjectCollectionFactory<>), typeof(InMemoryCollectionFactory<>));
+            services.AddTransient(typeof(IObjectCollectionFactory<,>), typeof(InMemoryCollectionFactory<,>));
             services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
-
-            services.AddSingleton<ICounterCollectionFactory, InMemoryCountersFactory>();
+            services.AddTransient(typeof(IHistoryCollectionFactory<,>), typeof(InMemoryHistoryCollectionFactory<,>));
+            services.AddTransient<ICounterCollectionFactory, InMemoryCountersFactory>();
         }
 
         Services = services.BuildServiceProvider();

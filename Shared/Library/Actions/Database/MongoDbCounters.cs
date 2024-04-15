@@ -8,7 +8,7 @@ namespace SharedLibrary.Actions.Database;
 /// <summary>
 /// Database managed counters.
 /// </summary>
-public sealed class MongoDbCounters : ICounterCollection
+sealed class MongoDbCounters : ICounterCollection
 {
     private readonly IMongoDbDatabaseService _database;
 

@@ -9,8 +9,14 @@ namespace SharedLibrary.Actions.Database;
 /// In memory collection.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
-public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem> where TItem : IDatabaseObject
+/// <typeparam name="TSingleton"></typeparam>
+/// <param name="singleton"></param>
+sealed class InMemoryHistoryCollection<TItem, TSingleton>(TSingleton singleton) : IHistoryCollection<TItem, TSingleton>
+    where TItem : IDatabaseObject
+    where TSingleton : ICollectionInitializer<TItem>
 {
+    public TSingleton Common => singleton;
+
     private readonly Dictionary<string, List<HistoryItem<TItem>>> _data = [];
 
     private event Func<TItem, bool>? _indexCheck = null;
@@ -40,7 +46,7 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
         /* Always create a fully detached clone. */
         var clone = new HistoryItem<TItem>
         {
-            Item = InMemoryHistoryCollection<TItem>.CloneItem(item),
+            Item = CloneItem(item),
             Version = new HistoryInfo
             {
                 ChangeCount = 1,
@@ -62,7 +68,7 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
         }
 
         /* Report a second clone to make sure no one messes with our internal structure. */
-        return Task.FromResult(InMemoryHistoryCollection<TItem>.CloneItem(clone.Item));
+        return Task.FromResult(CloneItem(clone.Item));
     }
 
     /// <inheritdoc/>
@@ -71,7 +77,7 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
         var now = DateTime.Now;
 
         /* Always create a fully detached clone. */
-        var clone = InMemoryHistoryCollection<TItem>.CloneItem(item);
+        var clone = CloneItem(item);
 
         /* Replace in dictionary. */
         lock (_data)
@@ -100,7 +106,7 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
         }
 
         /* Report a second clone to make sure no one messes with our internal structure. */
-        return Task.FromResult(InMemoryHistoryCollection<TItem>.CloneItem(clone));
+        return Task.FromResult(CloneItem(clone));
     }
 
     /// <inheritdoc/>
@@ -148,7 +154,7 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
             if (!_data.TryGetValue(id, out var list))
                 list = [];
 
-            return Task.FromResult(list.Select(i => InMemoryHistoryCollection<TItem>.CloneItem(i).Version).Reverse());
+            return Task.FromResult(list.Select(i => CloneItem(i).Version).Reverse());
         }
     }
 
@@ -161,7 +167,7 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
             if (!_data.TryGetValue(id, out var list))
                 list = [];
 
-            return Task.FromResult(InMemoryHistoryCollection<TItem>.CloneItem(list.Single(i => i.Version.ChangeCount == version).Item));
+            return Task.FromResult(CloneItem(list.Single(i => i.Version.ChangeCount == version).Item));
         }
     }
 
@@ -202,9 +208,26 @@ public sealed class InMemoryHistoryCollection<TItem> : IHistoryCollection<TItem>
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public class InMemoryHistoryCollectionFactory<TItem> : IHistoryCollectionFactory<TItem> where TItem : IDatabaseObject
+/// <typeparam name="TSingleton"></typeparam>
+public class InMemoryHistoryCollectionFactory<TItem, TSingleton>(TSingleton singleton) : IHistoryCollectionFactory<TItem, TSingleton>
+    where TItem : IDatabaseObject
+    where TSingleton : ICollectionInitializer<TItem>
 {
     /// <inheritdoc/>
-    public IHistoryCollection<TItem> Create(string uniqueName, string category) => new InMemoryHistoryCollection<TItem>();
+    public IHistoryCollection<TItem, TSingleton> Create(string uniqueName, string category)
+    {
+        var collection = new InMemoryHistoryCollection<TItem, TSingleton>(singleton);
+
+        singleton.Initialize(collection).Wait();
+
+        return collection;
+    }
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TItem"></typeparam>
+public class InMemoryHistoryCollectionFactory<TItem>() : InMemoryHistoryCollectionFactory<TItem, NoopInitializer<TItem>>(new()), IHistoryCollectionFactory<TItem> where TItem : IDatabaseObject
+{
+}

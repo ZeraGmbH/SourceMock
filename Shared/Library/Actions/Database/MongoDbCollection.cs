@@ -11,11 +11,17 @@ namespace SharedLibrary.Actions.Database;
 /// MongoDb collection.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
+/// <typeparam name="TSingleton"></typeparam>
 /// <param name="collectionName"></param>
 /// <param name="category">Category of the database.</param>
+/// <param name="singleton"></param>
 /// <param name="_database">Database connection to use.</param>
-public sealed class MongoDbCollection<TItem>(string collectionName, string category, IMongoDbDatabaseService _database) : IObjectCollection<TItem> where TItem : IDatabaseObject
+sealed class MongoDbCollection<TItem, TSingleton>(string collectionName, string category, TSingleton singleton, IMongoDbDatabaseService _database) : IObjectCollection<TItem, TSingleton>
+    where TItem : IDatabaseObject
+    where TSingleton : ICollectionInitializer<TItem>
 {
+    public TSingleton Common => singleton;
+
     /// <summary>
     /// Name of the collection to use.
     /// </summary>
@@ -51,7 +57,7 @@ public sealed class MongoDbCollection<TItem>(string collectionName, string categ
     /// <inheritdoc/>
     public IQueryable<TItem> CreateQueryable() => GetCollection().AsQueryable();
 
-    private readonly Collation _noCase = new("en", strength: CollationStrength.Secondary);
+    private static readonly Collation _noCase = new("en", strength: CollationStrength.Secondary);
 
     /// <inheritdoc/>
     public Task<string> CreateIndex(string name, Expression<Func<TItem, object>> keyAccessor, bool ascending = true, bool unique = true, bool caseSensitive = true)
@@ -72,13 +78,30 @@ public sealed class MongoDbCollection<TItem>(string collectionName, string categ
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-/// <remarks>
-/// 
-/// </remarks>
-/// <param name="_database"></param>
-public class MongoDbCollectionFactory<TItem>(IMongoDbDatabaseService _database) : IObjectCollectionFactory<TItem> where TItem : IDatabaseObject
+/// <typeparam name="TSingleton"></typeparam>
+/// <param name="database"></param>
+/// <param name="singleton"></param>
+public class MongoDbCollectionFactory<TItem, TSingleton>(IMongoDbDatabaseService database, TSingleton singleton) : IObjectCollectionFactory<TItem, TSingleton>
+    where TItem : IDatabaseObject
+    where TSingleton : ICollectionInitializer<TItem>
 {
     /// <inheritdoc/>
-    public IObjectCollection<TItem> Create(string uniqueName, string category) => new MongoDbCollection<TItem>(uniqueName, category, _database);
+    public IObjectCollection<TItem, TSingleton> Create(string uniqueName, string category)
+    {
+        var collection = new MongoDbCollection<TItem, TSingleton>(uniqueName, category, singleton, database);
+
+        singleton.Initialize(collection).Wait();
+
+        return collection;
+    }
+}
+
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TItem"></typeparam>
+/// <param name="database"></param>
+public class MongoDbCollectionFactory<TItem>(IMongoDbDatabaseService database) : MongoDbCollectionFactory<TItem, NoopInitializer<TItem>>(database, new()), IObjectCollectionFactory<TItem> where TItem : IDatabaseObject
+{
 }
 

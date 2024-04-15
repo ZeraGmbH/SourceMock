@@ -5,7 +5,7 @@ namespace SharedLibrary.Actions.Database;
 /// <summary>
 /// Manage counters,
 /// </summary>
-public sealed class InMemoryCounters : ICounterCollection
+sealed class InMemoryCounters : ICounterCollection
 {
     private readonly Dictionary<string, long> _counters = [];
 

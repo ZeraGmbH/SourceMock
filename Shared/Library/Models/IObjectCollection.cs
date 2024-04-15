@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Amazon.SecurityToken.Model;
 
 namespace SharedLibrary.Models;
 
@@ -63,4 +64,17 @@ public interface IObjectCollection<T> : IObjectCollection where T : IDatabaseObj
     /// <param name="unique">Unset to use an index without a unique constraint.</param>
     /// <returns>Task waiting for the index to be created.</returns>
     Task<string> CreateIndex(string name, Expression<Func<T, object>> keyAccessor, bool ascending = true, bool unique = true, bool caseSensitive = true);
+}
+
+/// <summary>
+/// Base class for implementing historized collections.
+/// </summary>
+/// <typeparam name="T">Type of the item to use</typeparam>
+/// <typeparam name="TCommon"></typeparam>
+public interface IObjectCollection<T, TCommon> : IObjectCollection<T> where T : IDatabaseObject where TCommon : ICollectionInitializer<T>
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    TCommon Common { get; }
 }

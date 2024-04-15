@@ -6,7 +6,8 @@ namespace SharedLibrary.Actions.Database;
 /// 
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IObjectCollectionFactory<T> where T : IDatabaseObject
+/// <typeparam name="TSingleton"></typeparam>
+public interface IObjectCollectionFactory<T, TSingleton> where T : IDatabaseObject where TSingleton : ICollectionInitializer<T>
 {
     /// <summary>
     /// 
@@ -14,5 +15,14 @@ public interface IObjectCollectionFactory<T> where T : IDatabaseObject
     /// <param name="uniqueName"></param>
     /// <param name="category"></param>
     /// <returns></returns>
-    IObjectCollection<T> Create(string uniqueName, string category);
+    IObjectCollection<T, TSingleton> Create(string uniqueName, string category);
 }
+
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public interface IObjectCollectionFactory<T> : IObjectCollectionFactory<T, NoopInitializer<T>> where T : IDatabaseObject
+{
+}
+

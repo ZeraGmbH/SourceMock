@@ -11,11 +11,17 @@ namespace SharedLibrary.Actions.Database;
 /// MongoDb collection with automatic document history.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
+/// <typeparam name="TSingleton"></typeparam>
 /// <param name="collectionName"></param>
 /// <param name="_category">Category of the database.</param>
+/// <param name="singleton"></param>
 /// <param name="_database">Database connection to use.</param>
-public sealed class MongoDbHistoryCollection<TItem>(string collectionName, string _category, IMongoDbDatabaseService _database) : IHistoryCollection<TItem> where TItem : IDatabaseObject
+sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, string _category, TSingleton singleton, IMongoDbDatabaseService _database) : IHistoryCollection<TItem, TSingleton>
+    where TItem : IDatabaseObject
+    where TSingleton : ICollectionInitializer<TItem>
 {
+    public TSingleton Common => singleton;
+
     /// <summary>
     /// Field added to each item containing history information.
     /// </summary>
@@ -40,7 +46,7 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, strin
 
     private IMongoCollection<BsonDocument> GetBsonHistoryCollection() => GetHistoryCollection<BsonDocument>();
 
-    private readonly Collation _noCase = new("en", strength: CollationStrength.Secondary);
+    private static readonly Collation _noCase = new("en", strength: CollationStrength.Secondary);
 
     /// <inheritdoc/>
     public Task<string> CreateIndex(string name, Expression<Func<TItem, object>> keyAccessor, bool ascending = true, bool unique = true, bool caseSensitive = true)
@@ -223,13 +229,30 @@ public sealed class MongoDbHistoryCollection<TItem>(string collectionName, strin
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-/// <remarks>
-/// 
-/// </remarks>
-/// <param name="_database"></param>
-public class MongoDbHistoryCollectionFactory<TItem>(IMongoDbDatabaseService _database) : IHistoryCollectionFactory<TItem> where TItem : IDatabaseObject
+/// <typeparam name="TSingleton"></typeparam>
+/// <param name="database"></param>
+/// <param name="singleton"></param>
+public class MongoDbHistoryCollectionFactory<TItem, TSingleton>(IMongoDbDatabaseService database, TSingleton singleton) : IHistoryCollectionFactory<TItem, TSingleton>
+    where TItem : IDatabaseObject
+    where TSingleton : ICollectionInitializer<TItem>
 {
     /// <inheritdoc/>
-    public IHistoryCollection<TItem> Create(string uniqueName, string category) => new MongoDbHistoryCollection<TItem>(uniqueName, category, _database);
+    public IHistoryCollection<TItem, TSingleton> Create(string uniqueName, string category)
+    {
+        var collection = new MongoDbHistoryCollection<TItem, TSingleton>(uniqueName, category, singleton, database);
+
+        singleton.Initialize(collection).Wait();
+
+        return collection;
+    }
+}
+
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TItem"></typeparam>
+/// <param name="database"></param>
+public class MongoDbHistoryCollectionFactory<TItem>(IMongoDbDatabaseService database) : MongoDbHistoryCollectionFactory<TItem, NoopInitializer<TItem>>(database, new()), IHistoryCollectionFactory<TItem> where TItem : IDatabaseObject
+{
 }
 

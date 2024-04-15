@@ -11,18 +11,20 @@ namespace SharedLibrary.Actions.Database;
 /// In memory collection.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
-/// <remarks>
-/// Initializes a new collection.
-/// </remarks>
-public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where TItem : IDatabaseObject
+/// <typeparam name="TSingleton"></typeparam>
+/// <param name="singleton"></param>
+sealed class InMemoryCollection<TItem, TSingleton>(TSingleton singleton) : IObjectCollection<TItem, TSingleton>
+    where TItem : IDatabaseObject
+    where TSingleton : ICollectionInitializer<TItem>
 {
+    public TSingleton Common => singleton;
 
     private readonly Dictionary<string, TItem> _data = [];
 
     private event Func<TItem, bool>? _indexCheck = null;
 
     /// <summary>
-    /// Clone item using the standard MongoDb serialisation mechanisms. 
+    /// Clone item using the standard InMemory serialisation mechanisms. 
     /// </summary>
     /// <param name="item">Some item.</param>
     /// <returns>Clone of the item.</returns>
@@ -146,13 +148,32 @@ public sealed class InMemoryCollection<TItem> : IObjectCollection<TItem> where T
     }
 }
 
+
 /// <summary>
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public class InMemoryCollectionFactory<TItem> : IObjectCollectionFactory<TItem> where TItem : IDatabaseObject
+/// <typeparam name="TSingleton"></typeparam>
+public class InMemoryCollectionFactory<TItem, TSingleton>(TSingleton singleton) : IObjectCollectionFactory<TItem, TSingleton>
+    where TItem : IDatabaseObject
+    where TSingleton : ICollectionInitializer<TItem>
 {
     /// <inheritdoc/>
-    public IObjectCollection<TItem> Create(string uniqueName, string category) => new InMemoryCollection<TItem>();
+    public IObjectCollection<TItem, TSingleton> Create(string uniqueName, string category)
+    {
+        var collection = new InMemoryCollection<TItem, TSingleton>(singleton);
+
+        singleton.Initialize(collection).Wait();
+
+        return collection;
+    }
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TItem"></typeparam>
+public class InMemoryCollectionFactory<TItem>() : InMemoryCollectionFactory<TItem, NoopInitializer<TItem>>(new()), IObjectCollectionFactory<TItem>
+    where TItem : IDatabaseObject
+{
+}

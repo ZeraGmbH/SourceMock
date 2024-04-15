@@ -11,15 +11,32 @@ namespace SharedLibrary.Actions.Database;
 /// <typeparam name="TItem">Type of the related document.</typeparam>
 /// <typeparam name="TSingleton"></typeparam>
 /// <param name="singleton"></param>
-sealed class InMemoryHistoryCollection<TItem, TSingleton>(TSingleton singleton) : IHistoryCollection<TItem, TSingleton>
+sealed class InMemoryHistoryCollection<TItem, TSingleton>(InMemoryHistoryCollection<TItem, TSingleton>.Initializer singleton) : IHistoryCollection<TItem, TSingleton>
     where TItem : IDatabaseObject
     where TSingleton : ICollectionInitializer<TItem>
 {
-    public TSingleton Common => singleton;
+    /// <summary>
+    /// 
+    /// </summary>
+    public class Initializer(TSingleton singleton) : CollectionInitializer<TItem>
+    {
+        public readonly TSingleton Singleton = singleton;
 
-    private readonly Dictionary<string, List<HistoryItem<TItem>>> _data = [];
+        public Dictionary<string, List<HistoryItem<TItem>>> Data = null!;
 
-    private event Func<TItem, bool>? _indexCheck = null;
+        public event Func<TItem, bool>? IndexCheck = null;
+
+        public bool? CheckIndex(TItem item) => IndexCheck?.Invoke(item);
+
+        protected override Task OnInitialize(IObjectCollection<TItem> collection)
+        {
+            Data = [];
+
+            return Singleton.Initialize(collection);
+        }
+    }
+
+    public TSingleton Common => singleton.Singleton;
 
     /// <summary>
     /// Clone item using the standard MongoDb serialisation mechanisms. 
@@ -58,12 +75,12 @@ sealed class InMemoryHistoryCollection<TItem, TSingleton>(TSingleton singleton) 
         };
 
         /* Add to dictionary. */
-        lock (_data)
+        lock (singleton.Data)
         {
-            if (_indexCheck?.Invoke(item) == false)
+            if (singleton.CheckIndex(item) == false)
                 return Task.FromException<TItem>(new TaskCanceledException("index"));
 
-            if (!_data.TryAdd(clone.Item.Id, [clone]))
+            if (!singleton.Data.TryAdd(clone.Item.Id, [clone]))
                 return Task.FromException<TItem>(new ArgumentException("duplicate item", nameof(item)));
         }
 
@@ -80,15 +97,15 @@ sealed class InMemoryHistoryCollection<TItem, TSingleton>(TSingleton singleton) 
         var clone = CloneItem(item);
 
         /* Replace in dictionary. */
-        lock (_data)
+        lock (singleton.Data)
         {
-            if (_indexCheck?.Invoke(item) == false)
+            if (singleton.CheckIndex(item) == false)
                 return Task.FromException<TItem>(new TaskCanceledException("index"));
 
-            if (!_data.ContainsKey(clone.Id))
+            if (!singleton.Data.ContainsKey(clone.Id))
                 return Task.FromException<TItem>(new ArgumentException("item not found", nameof(item)));
 
-            var list = _data[clone.Id];
+            var list = singleton.Data[clone.Id];
             var previous = list[^1];
 
             list.Add(new HistoryItem<TItem>
@@ -113,12 +130,12 @@ sealed class InMemoryHistoryCollection<TItem, TSingleton>(TSingleton singleton) 
     public Task<TItem> DeleteItem(string id, string user, bool silent = false)
     {
         /* Remove from dictionary. */
-        lock (_data)
+        lock (singleton.Data)
         {
-            if (!_data.TryGetValue(id, out var clone))
+            if (!singleton.Data.TryGetValue(id, out var clone))
                 return silent ? Task.FromResult(default(TItem)!) : Task.FromException<TItem>(new ArgumentException("item not found", nameof(id)));
 
-            _data.Remove(id);
+            singleton.Data.Remove(id);
 
             return Task.FromResult(clone[^1].Item);
         }
@@ -127,31 +144,31 @@ sealed class InMemoryHistoryCollection<TItem, TSingleton>(TSingleton singleton) 
     /// <inheritdoc/>
     public Task<long> RemoveAll()
     {
-        lock (_data)
+        lock (singleton.Data)
             try
             {
-                return Task.FromResult<long>(_data.Count);
+                return Task.FromResult<long>(singleton.Data.Count);
             }
             finally
             {
-                _data.Clear();
+                singleton.Data.Clear();
             }
     }
 
     /// <inheritdoc/>
     public IQueryable<TItem> CreateQueryable()
     {
-        lock (_data)
-            return _data.Values.Select(list => CloneItem(list[^1].Item)).ToArray().AsQueryable();
+        lock (singleton.Data)
+            return singleton.Data.Values.Select(list => CloneItem(list[^1].Item)).ToArray().AsQueryable();
     }
 
     /// <inheritdoc/>
     public Task<IEnumerable<HistoryInfo>> GetHistory(string id)
     {
         /* Find in dictionary. */
-        lock (_data)
+        lock (singleton.Data)
         {
-            if (!_data.TryGetValue(id, out var list))
+            if (!singleton.Data.TryGetValue(id, out var list))
                 list = [];
 
             return Task.FromResult(list.Select(i => CloneItem(i).Version).Reverse());
@@ -162,9 +179,9 @@ sealed class InMemoryHistoryCollection<TItem, TSingleton>(TSingleton singleton) 
     public Task<TItem> GetHistoryItem(string id, long version)
     {
         /* Find in dictionary. */
-        lock (_data)
+        lock (singleton.Data)
         {
-            if (!_data.TryGetValue(id, out var list))
+            if (!singleton.Data.TryGetValue(id, out var list))
                 list = [];
 
             return Task.FromResult(CloneItem(list.Single(i => i.Version.ChangeCount == version).Item));
@@ -178,13 +195,13 @@ sealed class InMemoryHistoryCollection<TItem, TSingleton>(TSingleton singleton) 
         {
             var getKey = keyAccessor.Compile();
 
-            _indexCheck += (newItem) =>
+            singleton.IndexCheck += (newItem) =>
             {
                 var newValue = (string)getKey.Invoke(newItem);
 
                 if (!caseSensitive) newValue = newValue?.ToLowerInvariant();
 
-                var match = _data.Values.SingleOrDefault(i =>
+                var match = singleton.Data.Values.SingleOrDefault(i =>
                 {
                     var latest = i[^1].Item;
                     var oldValue = (string)getKey.Invoke(latest);
@@ -216,9 +233,10 @@ public class InMemoryHistoryCollectionFactory<TItem, TSingleton>(TSingleton sing
     /// <inheritdoc/>
     public IHistoryCollection<TItem, TSingleton> Create(string uniqueName, string category)
     {
-        var collection = new InMemoryHistoryCollection<TItem, TSingleton>(singleton);
+        var initializer = new InMemoryHistoryCollection<TItem, TSingleton>.Initializer(singleton);
+        var collection = new InMemoryHistoryCollection<TItem, TSingleton>(initializer);
 
-        singleton.Initialize(collection).Wait();
+        initializer.Initialize(collection).Wait();
 
         return collection;
     }

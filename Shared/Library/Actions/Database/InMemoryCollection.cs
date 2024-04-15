@@ -13,15 +13,27 @@ namespace SharedLibrary.Actions.Database;
 /// <typeparam name="TItem">Type of the related document.</typeparam>
 /// <typeparam name="TSingleton"></typeparam>
 /// <param name="singleton"></param>
-sealed class InMemoryCollection<TItem, TSingleton>(TSingleton singleton) : IObjectCollection<TItem, TSingleton>
+sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TItem, TSingleton>.Initializer singleton) : IObjectCollection<TItem, TSingleton>
     where TItem : IDatabaseObject
     where TSingleton : ICollectionInitializer<TItem>
 {
-    public TSingleton Common => singleton;
+    /// <summary>
+    /// 
+    /// </summary>
+    public class Initializer(TSingleton singleton) : CollectionInitializer<TItem>
+    {
+        public readonly TSingleton Singleton = singleton;
 
-    private readonly Dictionary<string, TItem> _data = [];
+        public Dictionary<string, TItem> Data { get; private set; } = [];
 
-    private event Func<TItem, bool>? _indexCheck = null;
+        public event Func<TItem, bool>? IndexCheck = null;
+
+        public bool? CheckIndex(TItem item) => IndexCheck?.Invoke(item);
+
+        protected override Task OnInitialize(IObjectCollection<TItem> collection) => Singleton.Initialize(collection);
+    }
+
+    public TSingleton Common => singleton.Singleton;
 
     /// <summary>
     /// Clone item using the standard InMemory serialisation mechanisms. 
@@ -45,12 +57,12 @@ sealed class InMemoryCollection<TItem, TSingleton>(TSingleton singleton) : IObje
         var clone = CloneItem(item);
 
         /* Add to dictionary. */
-        lock (_data)
+        lock (singleton.Data)
         {
-            if (_indexCheck?.Invoke(item) == false)
+            if (singleton.CheckIndex(item) == false)
                 return Task.FromException<TItem>(new TaskCanceledException("index"));
 
-            if (!_data.TryAdd(clone.Id, clone))
+            if (!singleton.Data.TryAdd(clone.Id, clone))
                 return Task.FromException<TItem>(new ArgumentException("duplicate item", nameof(item)));
         }
 
@@ -65,15 +77,15 @@ sealed class InMemoryCollection<TItem, TSingleton>(TSingleton singleton) : IObje
         var clone = CloneItem(item);
 
         /* Replace in dictionary. */
-        lock (_data)
+        lock (singleton.Data)
         {
-            if (_indexCheck?.Invoke(item) == false)
+            if (singleton.CheckIndex(item) == false)
                 return Task.FromException<TItem>(new TaskCanceledException("index"));
 
-            if (!_data.ContainsKey(item.Id))
+            if (!singleton.Data.ContainsKey(item.Id))
                 return Task.FromException<TItem>(new ArgumentException("item not found", nameof(item)));
 
-            _data[clone.Id] = clone;
+            singleton.Data[clone.Id] = clone;
         }
 
         /* Report a second clone to make sure no one messes with our internal structure. */
@@ -84,12 +96,12 @@ sealed class InMemoryCollection<TItem, TSingleton>(TSingleton singleton) : IObje
     public Task<TItem> DeleteItem(string id, string user, bool silent = false)
     {
         /* Remove from dictionary. */
-        lock (_data)
+        lock (singleton.Data)
         {
-            if (!_data.TryGetValue(id, out var clone))
+            if (!singleton.Data.TryGetValue(id, out var clone))
                 return silent ? Task.FromResult(default(TItem)!) : Task.FromException<TItem>(new ArgumentException("item not found", nameof(id)));
 
-            _data.Remove(id);
+            singleton.Data.Remove(id);
 
             return Task.FromResult(clone);
         }
@@ -98,22 +110,22 @@ sealed class InMemoryCollection<TItem, TSingleton>(TSingleton singleton) : IObje
     /// <inheritdoc/>
     public Task<long> RemoveAll()
     {
-        lock (_data)
+        lock (singleton.Data)
             try
             {
-                return Task.FromResult<long>(_data.Count);
+                return Task.FromResult<long>(singleton.Data.Count);
             }
             finally
             {
-                _data.Clear();
+                singleton.Data.Clear();
             }
     }
 
     /// <inheritdoc/>
     public IQueryable<TItem> CreateQueryable()
     {
-        lock (_data)
-            return _data.Values.Select(CloneItem).ToArray().AsQueryable();
+        lock (singleton.Data)
+            return singleton.Data.Values.Select(CloneItem).ToArray().AsQueryable();
     }
 
     /// <inheritdoc/>
@@ -123,13 +135,13 @@ sealed class InMemoryCollection<TItem, TSingleton>(TSingleton singleton) : IObje
         {
             var getKey = keyAccessor.Compile();
 
-            _indexCheck += (newItem) =>
+            singleton.IndexCheck += (newItem) =>
             {
                 var newValue = (string)getKey.Invoke(newItem);
 
                 if (!caseSensitive) newValue = newValue?.ToLowerInvariant();
 
-                var match = _data.Values.SingleOrDefault(i =>
+                var match = singleton.Data.Values.SingleOrDefault(i =>
                 {
                     var oldValue = (string)getKey.Invoke(i);
 
@@ -161,9 +173,10 @@ public class InMemoryCollectionFactory<TItem, TSingleton>(TSingleton singleton) 
     /// <inheritdoc/>
     public IObjectCollection<TItem, TSingleton> Create(string uniqueName, string category)
     {
-        var collection = new InMemoryCollection<TItem, TSingleton>(singleton);
+        var initializer = new InMemoryCollection<TItem, TSingleton>.Initializer(singleton);
+        var collection = new InMemoryCollection<TItem, TSingleton>(initializer);
 
-        singleton.Initialize(collection).Wait();
+        initializer.Initialize(collection).Wait();
 
         return collection;
     }

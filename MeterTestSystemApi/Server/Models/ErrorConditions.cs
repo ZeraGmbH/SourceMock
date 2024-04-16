@@ -63,7 +63,8 @@ public class ErrorConditions
     public bool? WrongRangeReferenceMeter { get; set; }
 
     /// <summary>
-    /// Individual error conditions for all amplifiers.
+    /// Individual error conditions for all amplifiers. This amplifiers
+    /// Dictionary uses the enumeration Amplifiers as its key.
     /// </summary>
     [NotNull, Required]
     public Dictionary<Amplifiers, AmplifierErrorConditions> Amplifiers { get; set; } = new() {

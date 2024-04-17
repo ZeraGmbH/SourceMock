@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using Amazon.SecurityToken.Model;
 
 namespace SharedLibrary.Models;
 

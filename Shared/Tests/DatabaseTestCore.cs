@@ -68,6 +68,11 @@ public abstract class DatabaseTestCore
             services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
             services.AddTransient(typeof(IHistoryCollectionFactory<,>), typeof(InMemoryHistoryCollectionFactory<,>));
             services.AddTransient<ICounterCollectionFactory, InMemoryCountersFactory>();
+
+            services.AddTransient(typeof(NoopInitializer<>));
+
+            services.AddSingleton(typeof(InMemoryCollection<,>.InitializerFactory));
+            services.AddSingleton(typeof(InMemoryHistoryCollection<,>.InitializerFactory));
         }
 
         UserId = "autotest";

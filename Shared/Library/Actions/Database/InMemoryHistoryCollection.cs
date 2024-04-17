@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using System.Linq.Expressions;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 using SharedLibrary.Actions.User;
@@ -13,23 +15,58 @@ namespace SharedLibrary.Actions.Database;
 /// <typeparam name="TSingleton"></typeparam>
 /// <param name="singleton"></param>
 /// <param name="user"></param>
-sealed class InMemoryHistoryCollection<TItem, TSingleton>(InMemoryHistoryCollection<TItem, TSingleton>.Initializer singleton, ICurrentUser user) : IHistoryCollection<TItem, TSingleton>
+public sealed class InMemoryHistoryCollection<TItem, TSingleton>(InMemoryHistoryCollection<TItem, TSingleton>.Initializer singleton, ICurrentUser user) : IHistoryCollection<TItem, TSingleton>
     where TItem : IDatabaseObject
     where TSingleton : ICollectionInitializer<TItem>
 {
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="services"></param>
+    public class InitializerFactory(IServiceProvider services)
+    {
+        private readonly ConcurrentDictionary<string, Initializer> _map = [];
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public Initializer GetOrAdd(string key) => _map.GetOrAdd(key, _ => new Initializer(services.GetRequiredService<TSingleton>()));
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public class Initializer(TSingleton singleton) : CollectionInitializer<TItem>
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public readonly TSingleton Singleton = singleton;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, List<HistoryItem<TItem>>> Data = null!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public event Func<TItem, bool>? IndexCheck = null;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public bool? CheckIndex(TItem item) => IndexCheck?.Invoke(item);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <returns></returns>
         protected override Task OnInitialize(IObjectCollection<TItem> collection)
         {
             Data = [];
@@ -38,6 +75,9 @@ sealed class InMemoryHistoryCollection<TItem, TSingleton>(InMemoryHistoryCollect
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public TSingleton Common => singleton.Singleton;
 
     /// <summary>
@@ -229,14 +269,14 @@ sealed class InMemoryHistoryCollection<TItem, TSingleton>(InMemoryHistoryCollect
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
 /// <typeparam name="TSingleton"></typeparam>
-public class InMemoryHistoryCollectionFactory<TItem, TSingleton>(TSingleton singleton, ICurrentUser user) : IHistoryCollectionFactory<TItem, TSingleton>
+public class InMemoryHistoryCollectionFactory<TItem, TSingleton>(InMemoryHistoryCollection<TItem, TSingleton>.InitializerFactory factory, ICurrentUser user) : IHistoryCollectionFactory<TItem, TSingleton>
     where TItem : IDatabaseObject
     where TSingleton : ICollectionInitializer<TItem>
 {
     /// <inheritdoc/>
     public IHistoryCollection<TItem, TSingleton> Create(string uniqueName, string category)
     {
-        var initializer = new InMemoryHistoryCollection<TItem, TSingleton>.Initializer(singleton);
+        var initializer = factory.GetOrAdd($"{category}:{uniqueName}");
         var collection = new InMemoryHistoryCollection<TItem, TSingleton>(initializer, user);
 
         initializer.Initialize(collection).Wait();
@@ -249,7 +289,7 @@ public class InMemoryHistoryCollectionFactory<TItem, TSingleton>(TSingleton sing
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public class InMemoryHistoryCollectionFactory<TItem>(ICurrentUser user) : InMemoryHistoryCollectionFactory<TItem, NoopInitializer<TItem>>(new(), user), IHistoryCollectionFactory<TItem>
+public class InMemoryHistoryCollectionFactory<TItem>(InMemoryHistoryCollection<TItem, NoopInitializer<TItem>>.InitializerFactory factory, ICurrentUser user) : InMemoryHistoryCollectionFactory<TItem, NoopInitializer<TItem>>(factory, user), IHistoryCollectionFactory<TItem>
     where TItem : IDatabaseObject
 {
 }

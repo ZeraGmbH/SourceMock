@@ -1,12 +1,14 @@
 
+using System.Collections.Concurrent;
 using System.Linq.Expressions;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
-using SharedLibrary.Actions.User;
 using SharedLibrary.Models;
 
 namespace SharedLibrary.Actions.Database;
+
 
 /// <summary>
 /// In memory collection.
@@ -14,26 +16,60 @@ namespace SharedLibrary.Actions.Database;
 /// <typeparam name="TItem">Type of the related document.</typeparam>
 /// <typeparam name="TSingleton"></typeparam>
 /// <param name="singleton"></param>
-sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TItem, TSingleton>.Initializer singleton) : IObjectCollection<TItem, TSingleton>
+public sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TItem, TSingleton>.Initializer singleton) : IObjectCollection<TItem, TSingleton>
     where TItem : IDatabaseObject
     where TSingleton : ICollectionInitializer<TItem>
 {
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="services"></param>
+    public class InitializerFactory(IServiceProvider services)
+    {
+        private readonly ConcurrentDictionary<string, Initializer> _map = [];
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public Initializer GetOrAdd(string key) => _map.GetOrAdd(key, _ => new Initializer(services.GetRequiredService<TSingleton>()));
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public class Initializer(TSingleton singleton) : CollectionInitializer<TItem>
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public readonly TSingleton Singleton = singleton;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, TItem> Data { get; private set; } = [];
 
+        /// <summary>
+        /// 
+        /// </summary>
         public event Func<TItem, bool>? IndexCheck = null;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public bool? CheckIndex(TItem item) => IndexCheck?.Invoke(item);
 
+        /// <inheritdoc/>
         protected override Task OnInitialize(IObjectCollection<TItem> collection) => Singleton.Initialize(collection);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public TSingleton Common => singleton.Singleton;
 
     /// <summary>
@@ -167,14 +203,14 @@ sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TItem, TSi
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
 /// <typeparam name="TSingleton"></typeparam>
-public class InMemoryCollectionFactory<TItem, TSingleton>(TSingleton singleton) : IObjectCollectionFactory<TItem, TSingleton>
+public class InMemoryCollectionFactory<TItem, TSingleton>(InMemoryCollection<TItem, TSingleton>.InitializerFactory factory) : IObjectCollectionFactory<TItem, TSingleton>
     where TItem : IDatabaseObject
     where TSingleton : ICollectionInitializer<TItem>
 {
     /// <inheritdoc/>
     public IObjectCollection<TItem, TSingleton> Create(string uniqueName, string category)
     {
-        var initializer = new InMemoryCollection<TItem, TSingleton>.Initializer(singleton);
+        var initializer = factory.GetOrAdd($"{category}:{uniqueName}");
         var collection = new InMemoryCollection<TItem, TSingleton>(initializer);
 
         initializer.Initialize(collection).Wait();
@@ -187,7 +223,7 @@ public class InMemoryCollectionFactory<TItem, TSingleton>(TSingleton singleton) 
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public class InMemoryCollectionFactory<TItem>() : InMemoryCollectionFactory<TItem, NoopInitializer<TItem>>(new()), IObjectCollectionFactory<TItem>
+public class InMemoryCollectionFactory<TItem>(InMemoryCollection<TItem, NoopInitializer<TItem>>.InitializerFactory factory) : InMemoryCollectionFactory<TItem, NoopInitializer<TItem>>(factory), IObjectCollectionFactory<TItem>
     where TItem : IDatabaseObject
 {
 }

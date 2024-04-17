@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 using SharedLibrary.Models;
@@ -80,7 +79,7 @@ public sealed class InMemoryCollection<TItem, TInitializer>(InMemoryCollection<T
     public TItem CloneItem(TItem item)
     {
         /* Make us behave just like real implementations will do. */
-        using var writer = new BsonDocumentWriter(new BsonDocument());
+        using var writer = new BsonDocumentWriter([]);
 
         BsonSerializer.Serialize(writer, item);
 

@@ -11,23 +11,23 @@ namespace SharedLibrary.Actions.Database;
 /// MongoDb collection.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
-/// <typeparam name="TSingleton"></typeparam>
-/// <param name="collectionName"></param>
-/// <param name="category">Category of the database.</param>
-/// <param name="singleton"></param>
+/// <typeparam name="TInitializer"></typeparam>
+/// <param name="_collectionName"></param>
+/// <param name="_category">Category of the database.</param>
+/// <param name="_onetimeInitializer"></param>
 /// <param name="_database">Database connection to use.</param>
-sealed class MongoDbCollection<TItem, TSingleton>(string collectionName, string category, TSingleton singleton, IMongoDbDatabaseService _database) : IObjectCollection<TItem, TSingleton>
+sealed class MongoDbCollection<TItem, TInitializer>(string _collectionName, string _category, TInitializer _onetimeInitializer, IMongoDbDatabaseService _database) : IObjectCollection<TItem, TInitializer>
     where TItem : IDatabaseObject
-    where TSingleton : ICollectionInitializer<TItem>
+    where TInitializer : ICollectionInitializer<TItem>
 {
-    public TSingleton Common => singleton;
+    public TInitializer Common => _onetimeInitializer;
 
     /// <summary>
     /// Name of the collection to use.
     /// </summary>
-    public readonly string CollectionName = collectionName;
+    public readonly string CollectionName = _collectionName;
 
-    private IMongoCollection<T> GetCollection<T>() => _database.GetDatabase(category).GetCollection<T>(CollectionName);
+    private IMongoCollection<T> GetCollection<T>() => _database.GetDatabase(_category).GetCollection<T>(CollectionName);
 
     private IMongoCollection<TItem> GetCollection() => GetCollection<TItem>();
 
@@ -78,19 +78,19 @@ sealed class MongoDbCollection<TItem, TSingleton>(string collectionName, string 
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-/// <typeparam name="TSingleton"></typeparam>
+/// <typeparam name="TInitializer"></typeparam>
 /// <param name="database"></param>
-/// <param name="singleton"></param>
-public class MongoDbCollectionFactory<TItem, TSingleton>(IMongoDbDatabaseService database, TSingleton singleton) : IObjectCollectionFactory<TItem, TSingleton>
+/// <param name="onetimeInitializer"></param>
+public class MongoDbCollectionFactory<TItem, TInitializer>(IMongoDbDatabaseService database, TInitializer onetimeInitializer) : IObjectCollectionFactory<TItem, TInitializer>
     where TItem : IDatabaseObject
-    where TSingleton : ICollectionInitializer<TItem>
+    where TInitializer : ICollectionInitializer<TItem>
 {
     /// <inheritdoc/>
-    public IObjectCollection<TItem, TSingleton> Create(string uniqueName, string category)
+    public IObjectCollection<TItem, TInitializer> Create(string uniqueName, string category)
     {
-        var collection = new MongoDbCollection<TItem, TSingleton>(uniqueName, category, singleton, database);
+        var collection = new MongoDbCollection<TItem, TInitializer>(uniqueName, category, onetimeInitializer, database);
 
-        singleton.Initialize(collection).Wait();
+        onetimeInitializer.Initialize(collection).Wait();
 
         return collection;
     }

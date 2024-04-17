@@ -14,37 +14,37 @@ namespace SharedLibrary.Actions.Database;
 /// In memory collection.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
-/// <typeparam name="TSingleton"></typeparam>
-/// <param name="singleton"></param>
-public sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TItem, TSingleton>.Initializer singleton) : IObjectCollection<TItem, TSingleton>
+/// <typeparam name="TInitializer"></typeparam>
+/// <param name="_onetimeInitializer"></param>
+public sealed class InMemoryCollection<TItem, TInitializer>(InMemoryCollection<TItem, TInitializer>.State _onetimeInitializer) : IObjectCollection<TItem, TInitializer>
     where TItem : IDatabaseObject
-    where TSingleton : ICollectionInitializer<TItem>
+    where TInitializer : ICollectionInitializer<TItem>
 {
     /// <summary>
     /// 
     /// </summary>
     /// <param name="services"></param>
-    public class InitializerFactory(IServiceProvider services)
+    public class StateFactory(IServiceProvider services)
     {
-        private readonly ConcurrentDictionary<string, Initializer> _map = [];
+        private readonly ConcurrentDictionary<string, State> _map = [];
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Initializer GetOrAdd(string key) => _map.GetOrAdd(key, _ => new Initializer(services.GetRequiredService<TSingleton>()));
+        public State GetOrAdd(string key) => _map.GetOrAdd(key, _ => new State(services.GetRequiredService<TInitializer>()));
     }
 
     /// <summary>
     /// 
     /// </summary>
-    public class Initializer(TSingleton singleton) : CollectionInitializer<TItem>
+    public class State(TInitializer _onetimeInitializer) : CollectionInitializer<TItem>
     {
         /// <summary>
         /// 
         /// </summary>
-        public readonly TSingleton Singleton = singleton;
+        public readonly TInitializer OnetimeInitializer = _onetimeInitializer;
 
         /// <summary>
         /// 
@@ -64,13 +64,13 @@ public sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TIt
         public bool? CheckIndex(TItem item) => IndexCheck?.Invoke(item);
 
         /// <inheritdoc/>
-        protected override Task OnInitialize(IObjectCollection<TItem> collection) => Singleton.Initialize(collection);
+        protected override Task OnInitialize(IObjectCollection<TItem> collection) => OnetimeInitializer.Initialize(collection);
     }
 
     /// <summary>
     /// 
     /// </summary>
-    public TSingleton Common => singleton.Singleton;
+    public TInitializer Common => _onetimeInitializer.OnetimeInitializer;
 
     /// <summary>
     /// Clone item using the standard InMemory serialisation mechanisms. 
@@ -94,12 +94,12 @@ public sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TIt
         var clone = CloneItem(item);
 
         /* Add to dictionary. */
-        lock (singleton.Data)
+        lock (_onetimeInitializer.Data)
         {
-            if (singleton.CheckIndex(item) == false)
+            if (_onetimeInitializer.CheckIndex(item) == false)
                 return Task.FromException<TItem>(new TaskCanceledException("index"));
 
-            if (!singleton.Data.TryAdd(clone.Id, clone))
+            if (!_onetimeInitializer.Data.TryAdd(clone.Id, clone))
                 return Task.FromException<TItem>(new ArgumentException("duplicate item", nameof(item)));
         }
 
@@ -114,15 +114,15 @@ public sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TIt
         var clone = CloneItem(item);
 
         /* Replace in dictionary. */
-        lock (singleton.Data)
+        lock (_onetimeInitializer.Data)
         {
-            if (singleton.CheckIndex(item) == false)
+            if (_onetimeInitializer.CheckIndex(item) == false)
                 return Task.FromException<TItem>(new TaskCanceledException("index"));
 
-            if (!singleton.Data.ContainsKey(item.Id))
+            if (!_onetimeInitializer.Data.ContainsKey(item.Id))
                 return Task.FromException<TItem>(new ArgumentException("item not found", nameof(item)));
 
-            singleton.Data[clone.Id] = clone;
+            _onetimeInitializer.Data[clone.Id] = clone;
         }
 
         /* Report a second clone to make sure no one messes with our internal structure. */
@@ -133,12 +133,12 @@ public sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TIt
     public Task<TItem> DeleteItem(string id, bool silent = false)
     {
         /* Remove from dictionary. */
-        lock (singleton.Data)
+        lock (_onetimeInitializer.Data)
         {
-            if (!singleton.Data.TryGetValue(id, out var clone))
+            if (!_onetimeInitializer.Data.TryGetValue(id, out var clone))
                 return silent ? Task.FromResult(default(TItem)!) : Task.FromException<TItem>(new ArgumentException("item not found", nameof(id)));
 
-            singleton.Data.Remove(id);
+            _onetimeInitializer.Data.Remove(id);
 
             return Task.FromResult(clone);
         }
@@ -147,22 +147,22 @@ public sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TIt
     /// <inheritdoc/>
     public Task<long> RemoveAll()
     {
-        lock (singleton.Data)
+        lock (_onetimeInitializer.Data)
             try
             {
-                return Task.FromResult<long>(singleton.Data.Count);
+                return Task.FromResult<long>(_onetimeInitializer.Data.Count);
             }
             finally
             {
-                singleton.Data.Clear();
+                _onetimeInitializer.Data.Clear();
             }
     }
 
     /// <inheritdoc/>
     public IQueryable<TItem> CreateQueryable()
     {
-        lock (singleton.Data)
-            return singleton.Data.Values.Select(CloneItem).ToArray().AsQueryable();
+        lock (_onetimeInitializer.Data)
+            return _onetimeInitializer.Data.Values.Select(CloneItem).ToArray().AsQueryable();
     }
 
     /// <inheritdoc/>
@@ -172,13 +172,13 @@ public sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TIt
         {
             var getKey = keyAccessor.Compile();
 
-            singleton.IndexCheck += (newItem) =>
+            _onetimeInitializer.IndexCheck += (newItem) =>
             {
                 var newValue = (string)getKey.Invoke(newItem);
 
                 if (!caseSensitive) newValue = newValue?.ToLowerInvariant();
 
-                var match = singleton.Data.Values.SingleOrDefault(i =>
+                var match = _onetimeInitializer.Data.Values.SingleOrDefault(i =>
                 {
                     var oldValue = (string)getKey.Invoke(i);
 
@@ -202,16 +202,16 @@ public sealed class InMemoryCollection<TItem, TSingleton>(InMemoryCollection<TIt
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-/// <typeparam name="TSingleton"></typeparam>
-public class InMemoryCollectionFactory<TItem, TSingleton>(InMemoryCollection<TItem, TSingleton>.InitializerFactory factory) : IObjectCollectionFactory<TItem, TSingleton>
+/// <typeparam name="TInitializer"></typeparam>
+public class InMemoryCollectionFactory<TItem, TInitializer>(InMemoryCollection<TItem, TInitializer>.StateFactory factory) : IObjectCollectionFactory<TItem, TInitializer>
     where TItem : IDatabaseObject
-    where TSingleton : ICollectionInitializer<TItem>
+    where TInitializer : ICollectionInitializer<TItem>
 {
     /// <inheritdoc/>
-    public IObjectCollection<TItem, TSingleton> Create(string uniqueName, string category)
+    public IObjectCollection<TItem, TInitializer> Create(string uniqueName, string category)
     {
         var initializer = factory.GetOrAdd($"{category}:{uniqueName}");
-        var collection = new InMemoryCollection<TItem, TSingleton>(initializer);
+        var collection = new InMemoryCollection<TItem, TInitializer>(initializer);
 
         initializer.Initialize(collection).Wait();
 
@@ -223,7 +223,7 @@ public class InMemoryCollectionFactory<TItem, TSingleton>(InMemoryCollection<TIt
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public class InMemoryCollectionFactory<TItem>(InMemoryCollection<TItem, NoopInitializer<TItem>>.InitializerFactory factory) : InMemoryCollectionFactory<TItem, NoopInitializer<TItem>>(factory), IObjectCollectionFactory<TItem>
+public class InMemoryCollectionFactory<TItem>(InMemoryCollection<TItem, NoopInitializer<TItem>>.StateFactory factory) : InMemoryCollectionFactory<TItem, NoopInitializer<TItem>>(factory), IObjectCollectionFactory<TItem>
     where TItem : IDatabaseObject
 {
 }

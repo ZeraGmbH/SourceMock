@@ -12,20 +12,17 @@ namespace SharedLibrary.Actions.Database;
 /// MongoDb collection with automatic document history.
 /// </summary>
 /// <typeparam name="TItem">Type of the related document.</typeparam>
-/// <typeparam name="TSingleton"></typeparam>
-/// <remarks>
-/// 
-/// </remarks>
-/// <param name="collectionName"></param>
+/// <typeparam name="TInitializer"></typeparam>
+/// <param name="_collectionName"></param>
 /// <param name="_category">Category of the database.</param>
-/// <param name="singleton"></param>
+/// <param name="_onetimeInitializer"></param>
 /// <param name="_userContext"></param>
 /// <param name="_database">Database connection to use.</param>
-sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, string _category, TSingleton singleton, ICurrentUser _userContext, IMongoDbDatabaseService _database) : IHistoryCollection<TItem, TSingleton>
+sealed class MongoDbHistoryCollection<TItem, TInitializer>(string _collectionName, string _category, TInitializer _onetimeInitializer, ICurrentUser _userContext, IMongoDbDatabaseService _database) : IHistoryCollection<TItem, TInitializer>
     where TItem : IDatabaseObject
-    where TSingleton : ICollectionInitializer<TItem>
+    where TInitializer : ICollectionInitializer<TItem>
 {
-    public TSingleton Common => singleton;
+    public TInitializer Common => _onetimeInitializer;
 
     /// <summary>
     /// Field added to each item containing history information.
@@ -39,7 +36,7 @@ sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, 
     /// <summary>
     /// Name of the collection to use.
     /// </summary>
-    public readonly string CollectionName = collectionName;
+    public readonly string CollectionName = _collectionName;
 
     private string HistoryCollectionName => $"{CollectionName}-history";
 
@@ -235,20 +232,20 @@ sealed class MongoDbHistoryCollection<TItem, TSingleton>(string collectionName, 
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-/// <typeparam name="TSingleton"></typeparam>
+/// <typeparam name="TInitializer"></typeparam>
 /// <param name="database"></param>
-/// <param name="singleton"></param>
+/// <param name="onetimeInitializer"></param>
 /// <param name="user"></param>
-public class MongoDbHistoryCollectionFactory<TItem, TSingleton>(IMongoDbDatabaseService database, TSingleton singleton, ICurrentUser user) : IHistoryCollectionFactory<TItem, TSingleton>
+public class MongoDbHistoryCollectionFactory<TItem, TInitializer>(IMongoDbDatabaseService database, TInitializer onetimeInitializer, ICurrentUser user) : IHistoryCollectionFactory<TItem, TInitializer>
     where TItem : IDatabaseObject
-    where TSingleton : ICollectionInitializer<TItem>
+    where TInitializer : ICollectionInitializer<TItem>
 {
     /// <inheritdoc/>
-    public IHistoryCollection<TItem, TSingleton> Create(string uniqueName, string category)
+    public IHistoryCollection<TItem, TInitializer> Create(string uniqueName, string category)
     {
-        var collection = new MongoDbHistoryCollection<TItem, TSingleton>(uniqueName, category, singleton, user, database);
+        var collection = new MongoDbHistoryCollection<TItem, TInitializer>(uniqueName, category, onetimeInitializer, user, database);
 
-        singleton.Initialize(collection).Wait();
+        onetimeInitializer.Initialize(collection).Wait();
 
         return collection;
     }

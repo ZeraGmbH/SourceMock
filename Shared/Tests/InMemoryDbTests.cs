@@ -26,7 +26,7 @@ public class InMemoryDbTests
 
         services.AddTransient(typeof(NoopInitializer<>));
 
-        services.AddSingleton(typeof(InMemoryCollection<,>.InitializerFactory));
+        services.AddSingleton(typeof(InMemoryCollection<,>.StateFactory));
         services.AddSingleton(typeof(InMemoryHistoryCollection<,>.InitializerFactory));
 
         var currentUser = new Mock<ICurrentUser>();

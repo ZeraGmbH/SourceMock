@@ -1,9 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using SharedLibrary.Actions.Database;
 using SharedLibrary.Models;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
-using MongoDB.Bson.Serialization.Attributes;
 using SharedLibrary.Actions.User;
 using Moq;
 

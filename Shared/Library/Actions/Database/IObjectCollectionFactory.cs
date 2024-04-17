@@ -6,8 +6,8 @@ namespace SharedLibrary.Actions.Database;
 /// 
 /// </summary>
 /// <typeparam name="T"></typeparam>
-/// <typeparam name="TSingleton"></typeparam>
-public interface IObjectCollectionFactory<T, TSingleton> where T : IDatabaseObject where TSingleton : ICollectionInitializer<T>
+/// <typeparam name="TInitializer"></typeparam>
+public interface IObjectCollectionFactory<T, TInitializer> where T : IDatabaseObject where TInitializer : ICollectionInitializer<T>
 {
     /// <summary>
     /// 
@@ -15,7 +15,7 @@ public interface IObjectCollectionFactory<T, TSingleton> where T : IDatabaseObje
     /// <param name="uniqueName"></param>
     /// <param name="category"></param>
     /// <returns></returns>
-    IObjectCollection<T, TSingleton> Create(string uniqueName, string category);
+    IObjectCollection<T, TInitializer> Create(string uniqueName, string category);
 }
 
 /// <summary>

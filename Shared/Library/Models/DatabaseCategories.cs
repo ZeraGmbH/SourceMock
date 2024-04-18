@@ -34,4 +34,9 @@ public static class DatabaseCategories
     /// Test results - e.g. logging.
     /// </summary>
     public const string Results = "results";
+
+    /// <summary>
+    /// Assets, typically shared between all configurations.
+    /// </summary>
+    public const string Assets = "assets";
 }

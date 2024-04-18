@@ -101,7 +101,7 @@ public class MongoDbCollectionFactory<TItem, TInitializer>(IMongoDbDatabaseServi
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
 /// <param name="database"></param>
-public class MongoDbCollectionFactory<TItem>(IMongoDbDatabaseService database) : MongoDbCollectionFactory<TItem, NoopInitializer<TItem>>(database, new()), IObjectCollectionFactory<TItem> where TItem : IDatabaseObject
+public class MongoDbCollectionFactory<TItem>(IMongoDbDatabaseService database) : MongoDbCollectionFactory<TItem, NoopCollectionInitializer<TItem>>(database, new()), IObjectCollectionFactory<TItem> where TItem : IDatabaseObject
 {
 }
 

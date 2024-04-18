@@ -2,6 +2,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
+using SharedLibrary.Actions.User;
 using SharedLibrary.Models;
 using SharedLibrary.Services;
 
@@ -16,9 +17,12 @@ namespace SharedLibrary.Actions.Database;
 /// <param name="_category"></param>
 /// <param name="_onetimeInitializer"></param>
 /// <param name="_database"></param>
-sealed class MongoDbFiles<TItem, TInitializer>(string _bucketName, string _category, TInitializer _onetimeInitializer, IMongoDbDatabaseService _database) : IFileCollection<TItem, TInitializer>
-    where TInitializer : IFileInitializer<TItem>
+/// <param name="_user"></param>
+sealed class MongoDbFiles<TItem, TInitializer>(string _bucketName, string _category, TInitializer _onetimeInitializer, IMongoDbDatabaseService _database, ICurrentUser _user) : IFilesCollection<TItem, TInitializer>
+    where TInitializer : IFilesInitializer<TItem>
 {
+    private const string UserId = "__userId__";
+
     /// <summary>
     /// 
     /// </summary>
@@ -29,7 +33,11 @@ sealed class MongoDbFiles<TItem, TInitializer>(string _bucketName, string _categ
     /// <inheritdoc/>
     public async Task<string> AddFile(string name, TItem meta, Stream content)
     {
-        var id = await _bucket.UploadFromStreamAsync(name, content, new GridFSUploadOptions() { Metadata = meta.ToBsonDocument() });
+        var dbMeta = meta.ToBsonDocument();
+
+        dbMeta[UserId] = _user.GetUserId();
+
+        var id = await _bucket.UploadFromStreamAsync(name, content, new GridFSUploadOptions() { Metadata = dbMeta });
 
         return id.ToString();
     }
@@ -42,13 +50,19 @@ sealed class MongoDbFiles<TItem, TInitializer>(string _bucketName, string _categ
 
         if (file == null) return default;
 
+        var rawMeta = file.Metadata;
+        var userId = rawMeta[UserId].AsString;
+
+        rawMeta.Remove(UserId);
+
         return new()
         {
             Id = file.Id.ToString(),
             Length = file.Length,
-            Meta = BsonSerializer.Deserialize<TItem>(file.Metadata),
+            Meta = BsonSerializer.Deserialize<TItem>(rawMeta),
             Name = file.Filename,
             UploadedAt = file.UploadDateTime,
+            UserId = userId,
         };
     }
 
@@ -69,13 +83,14 @@ sealed class MongoDbFiles<TItem, TInitializer>(string _bucketName, string _categ
 /// <typeparam name="TInitializer"></typeparam>
 /// <param name="database"></param>
 /// <param name="onetimeInitializer"></param>
-public class MongoDbFileFactory<TItem, TInitializer>(IMongoDbDatabaseService database, TInitializer onetimeInitializer) : IFileCollectionFactory<TItem, TInitializer>
-    where TInitializer : IFileInitializer<TItem>
+/// <param name="user"></param>
+public class MongoDbFilesCollectionFactory<TItem, TInitializer>(IMongoDbDatabaseService database, TInitializer onetimeInitializer, ICurrentUser user) : IFilesCollectionFactory<TItem, TInitializer>
+    where TInitializer : IFilesInitializer<TItem>
 {
     /// <inheritdoc/>
-    public IFileCollection<TItem, TInitializer> Create(string uniqueName, string category)
+    public IFilesCollection<TItem, TInitializer> Create(string uniqueName, string category)
     {
-        var collection = new MongoDbFiles<TItem, TInitializer>(uniqueName, category, onetimeInitializer, database);
+        var collection = new MongoDbFiles<TItem, TInitializer>(uniqueName, category, onetimeInitializer, database, user);
 
         onetimeInitializer.Initialize(collection).Wait();
 
@@ -88,6 +103,7 @@ public class MongoDbFileFactory<TItem, TInitializer>(IMongoDbDatabaseService dat
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
 /// <param name="database"></param>
-public class MongoDbFileFactory<TItem>(IMongoDbDatabaseService database) : MongoDbFileFactory<TItem, NoopFileInitializer<TItem>>(database, new()), IFileCollectionFactory<TItem>
+/// <param name="user"></param>
+public class MongoDbFilesCollectionFactory<TItem>(IMongoDbDatabaseService database, ICurrentUser user) : MongoDbFilesCollectionFactory<TItem, NoopFilesInitializer<TItem>>(database, new(), user), IFilesCollectionFactory<TItem>
 {
 }

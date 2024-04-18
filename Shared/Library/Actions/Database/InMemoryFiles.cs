@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
+using SharedLibrary.Actions.User;
 using SharedLibrary.Models;
 
 namespace SharedLibrary.Actions.Database;
@@ -15,8 +16,9 @@ namespace SharedLibrary.Actions.Database;
 /// <typeparam name="TItem">Type of the related document.</typeparam>
 /// <typeparam name="TInitializer"></typeparam>
 /// <param name="_onetimeInitializer"></param>
-public sealed class InMemoryFiles<TItem, TInitializer>(InMemoryFiles<TItem, TInitializer>.State _onetimeInitializer) : IFileCollection<TItem, TInitializer>
-    where TInitializer : IFileInitializer<TItem>
+/// <param name="_user"></param>
+public sealed class InMemoryFiles<TItem, TInitializer>(InMemoryFiles<TItem, TInitializer>.State _onetimeInitializer, ICurrentUser _user) : IFilesCollection<TItem, TInitializer>
+    where TInitializer : IFilesInitializer<TItem>
 {
     /// <summary>
     /// 
@@ -48,7 +50,7 @@ public sealed class InMemoryFiles<TItem, TInitializer>(InMemoryFiles<TItem, TIni
     /// <summary>
     /// 
     /// </summary>
-    public class State(TInitializer _onetimeInitializer) : FileInitializer<TItem>
+    public class State(TInitializer _onetimeInitializer) : FilesInitializer<TItem>
     {
         /// <summary>
         /// 
@@ -61,7 +63,7 @@ public sealed class InMemoryFiles<TItem, TInitializer>(InMemoryFiles<TItem, TIni
         public Dictionary<string, Item> Data { get; private set; } = [];
 
         /// <inheritdoc/>
-        protected override Task OnInitialize(IFileCollection<TItem> collection) => OnetimeInitializer.Initialize(collection);
+        protected override Task OnInitialize(IFilesCollection<TItem> collection) => OnetimeInitializer.Initialize(collection);
     }
 
     /// <summary>
@@ -100,6 +102,7 @@ public sealed class InMemoryFiles<TItem, TInitializer>(InMemoryFiles<TItem, TIni
             Meta = meta,
             Name = name,
             UploadedAt = DateTime.Now,
+            UserId = _user.GetUserId()
         });
 
         /* Add to dictionary. */
@@ -152,14 +155,14 @@ public sealed class InMemoryFiles<TItem, TInitializer>(InMemoryFiles<TItem, TIni
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
 /// <typeparam name="TInitializer"></typeparam>
-public class InMemoryFilesFactory<TItem, TInitializer>(InMemoryFiles<TItem, TInitializer>.StateFactory factory) : IFileCollectionFactory<TItem, TInitializer>
-    where TInitializer : IFileInitializer<TItem>
+public class InMemoryFilesFactory<TItem, TInitializer>(InMemoryFiles<TItem, TInitializer>.StateFactory factory, ICurrentUser user) : IFilesCollectionFactory<TItem, TInitializer>
+    where TInitializer : IFilesInitializer<TItem>
 {
     /// <inheritdoc/>
-    public IFileCollection<TItem, TInitializer> Create(string uniqueName, string category)
+    public IFilesCollection<TItem, TInitializer> Create(string uniqueName, string category)
     {
         var initializer = factory.GetOrAdd($"{category}:{uniqueName}");
-        var collection = new InMemoryFiles<TItem, TInitializer>(initializer);
+        var collection = new InMemoryFiles<TItem, TInitializer>(initializer, user);
 
         initializer.Initialize(collection).Wait();
 
@@ -171,6 +174,7 @@ public class InMemoryFilesFactory<TItem, TInitializer>(InMemoryFiles<TItem, TIni
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public class InMemoryFilesFactory<TItem>(InMemoryFiles<TItem, NoopFileInitializer<TItem>>.StateFactory factory) : InMemoryFilesFactory<TItem, NoopFileInitializer<TItem>>(factory), IFileCollectionFactory<TItem>
+public class InMemoryFilesFactory<TItem>(InMemoryFiles<TItem, NoopFilesInitializer<TItem>>.StateFactory factory, ICurrentUser user)
+    : InMemoryFilesFactory<TItem, NoopFilesInitializer<TItem>>(factory, user), IFilesCollectionFactory<TItem>
 {
 }

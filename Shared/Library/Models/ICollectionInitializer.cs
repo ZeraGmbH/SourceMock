@@ -45,7 +45,7 @@ public abstract class CollectionInitializer<T> : ICollectionInitializer<T> where
 /// <summary>
 /// 
 /// </summary>
-public class NoopInitializer<T> : CollectionInitializer<T> where T : IDatabaseObject
+public class NoopCollectionInitializer<T> : CollectionInitializer<T> where T : IDatabaseObject
 {
     /// <inheritdoc/>
     protected override Task OnInitialize(IObjectCollection<T> collection) => Task.CompletedTask;

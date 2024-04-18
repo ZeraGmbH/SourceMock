@@ -7,7 +7,7 @@ namespace SharedLibrary.Actions.Database;
 /// </summary>
 /// <typeparam name="T"></typeparam>
 /// <typeparam name="TInitializer"></typeparam>
-public interface IFileCollectionFactory<T, TInitializer> where TInitializer : IFileInitializer<T>
+public interface IFilesCollectionFactory<T, TInitializer> where TInitializer : IFilesInitializer<T>
 {
     /// <summary>
     /// 
@@ -15,14 +15,14 @@ public interface IFileCollectionFactory<T, TInitializer> where TInitializer : IF
     /// <param name="uniqueName"></param>
     /// <param name="category"></param>
     /// <returns></returns>
-    IFileCollection<T, TInitializer> Create(string uniqueName, string category);
+    IFilesCollection<T, TInitializer> Create(string uniqueName, string category);
 }
 
 /// <summary>
 /// 
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IFileCollectionFactory<T> : IFileCollectionFactory<T, NoopFileInitializer<T>>
+public interface IFilesCollectionFactory<T> : IFilesCollectionFactory<T, NoopFilesInitializer<T>>
 {
 }
 

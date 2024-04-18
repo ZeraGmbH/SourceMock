@@ -24,8 +24,8 @@ public static class SharedLibraryConfiguration
             services.AddSingleton(mongoDb);
             services.AddSingleton<IMongoDbDatabaseService, MongoDbDatabaseService>();
 
-            services.AddTransient(typeof(IFileCollectionFactory<,>), typeof(MongoDbFileFactory<,>));
-            services.AddTransient(typeof(IFileCollectionFactory<>), typeof(MongoDbFileFactory<>));
+            services.AddTransient(typeof(IFilesCollectionFactory<,>), typeof(MongoDbFilesCollectionFactory<,>));
+            services.AddTransient(typeof(IFilesCollectionFactory<>), typeof(MongoDbFilesCollectionFactory<>));
             services.AddTransient(typeof(IHistoryCollectionFactory<,>), typeof(MongoDbHistoryCollectionFactory<,>));
             services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(MongoDbHistoryCollectionFactory<>));
             services.AddTransient(typeof(IObjectCollectionFactory<,>), typeof(MongoDbCollectionFactory<,>));
@@ -35,15 +35,15 @@ public static class SharedLibraryConfiguration
         }
         else
         {
-            services.AddTransient(typeof(IFileCollectionFactory<,>), typeof(InMemoryFilesFactory<,>));
-            services.AddTransient(typeof(IFileCollectionFactory<>), typeof(InMemoryFilesFactory<>));
+            services.AddTransient(typeof(IFilesCollectionFactory<,>), typeof(InMemoryFilesFactory<,>));
+            services.AddTransient(typeof(IFilesCollectionFactory<>), typeof(InMemoryFilesFactory<>));
             services.AddTransient(typeof(IHistoryCollectionFactory<,>), typeof(InMemoryHistoryCollectionFactory<,>));
             services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
             services.AddTransient(typeof(IObjectCollectionFactory<,>), typeof(InMemoryCollectionFactory<,>));
             services.AddTransient(typeof(IObjectCollectionFactory<>), typeof(InMemoryCollectionFactory<>));
 
-            services.AddTransient(typeof(NoopInitializer<>));
-            services.AddTransient(typeof(NoopFileInitializer<>));
+            services.AddTransient(typeof(NoopCollectionInitializer<>));
+            services.AddTransient(typeof(NoopFilesInitializer<>));
 
             services.AddSingleton(typeof(InMemoryCollection<,>.StateFactory));
             services.AddSingleton(typeof(InMemoryHistoryCollection<,>.InitializerFactory));

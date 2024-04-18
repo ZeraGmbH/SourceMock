@@ -21,7 +21,7 @@ public class InMemoryDbTests
         services.AddTransient(typeof(IHistoryCollectionFactory<>), typeof(InMemoryHistoryCollectionFactory<>));
         services.AddTransient(typeof(IHistoryCollectionFactory<,>), typeof(InMemoryHistoryCollectionFactory<,>));
 
-        services.AddTransient(typeof(NoopInitializer<>));
+        services.AddTransient(typeof(NoopCollectionInitializer<>));
 
         services.AddSingleton(typeof(InMemoryCollection<,>.StateFactory));
         services.AddSingleton(typeof(InMemoryHistoryCollection<,>.InitializerFactory));

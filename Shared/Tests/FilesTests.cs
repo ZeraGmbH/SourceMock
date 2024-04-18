@@ -13,11 +13,11 @@ class TestFile
 
 public abstract class FilesTests : DatabaseTestCore
 {
-    private IFileCollection<TestFile> Collection = null!;
+    private IFilesCollection<TestFile> Collection = null!;
 
     protected override async Task OnPostSetup()
     {
-        Collection = Services.GetRequiredService<IFileCollectionFactory<TestFile>>().Create("file-collection", DatabaseCategories.Master);
+        Collection = Services.GetRequiredService<IFilesCollectionFactory<TestFile>>().Create("file-collection", DatabaseCategories.Master);
 
         await Collection.RemoveAll();
     }
@@ -45,6 +45,7 @@ public abstract class FilesTests : DatabaseTestCore
             Assert.That(info.Name, Is.EqualTo("TheFile.txt"));
             Assert.That(info.Length, Is.EqualTo(16));
             Assert.That(info.Meta.MimeType, Is.EqualTo("text/plain"));
+            Assert.That(info.UserId, Is.EqualTo("autotest"));
         });
 
         using var reader = new StreamReader(await Collection.Open(id));

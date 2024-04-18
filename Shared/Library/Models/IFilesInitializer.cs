@@ -3,20 +3,20 @@ namespace SharedLibrary.Models;
 /// <summary>
 /// 
 /// </summary>
-public interface IFileInitializer<T>
+public interface IFilesInitializer<T>
 {
     /// <summary>
     /// 
     /// </summary>
     /// <param name="collection"></param>
     /// <returns></returns>
-    Task Initialize(IFileCollection<T> collection);
+    Task Initialize(IFilesCollection<T> collection);
 }
 
 /// <summary>
 /// 
 /// </summary>
-public abstract class FileInitializer<T> : IFileInitializer<T>
+public abstract class FilesInitializer<T> : IFilesInitializer<T>
 {
     private readonly object _sync = new();
 
@@ -27,10 +27,10 @@ public abstract class FileInitializer<T> : IFileInitializer<T>
     /// </summary>
     /// <param name="collection"></param>
     /// <returns></returns>
-    protected abstract Task OnInitialize(IFileCollection<T> collection);
+    protected abstract Task OnInitialize(IFilesCollection<T> collection);
 
     /// <inheritdoc/>
-    public Task Initialize(IFileCollection<T> collection)
+    public Task Initialize(IFilesCollection<T> collection)
     {
         lock (_sync)
             if (_initializer == null)
@@ -43,9 +43,9 @@ public abstract class FileInitializer<T> : IFileInitializer<T>
 /// <summary>
 /// 
 /// </summary>
-public class NoopFileInitializer<T> : FileInitializer<T>
+public class NoopFilesInitializer<T> : FilesInitializer<T>
 {
     /// <inheritdoc/>
-    protected override Task OnInitialize(IFileCollection<T> collection) => Task.CompletedTask;
+    protected override Task OnInitialize(IFilesCollection<T> collection) => Task.CompletedTask;
 }
 

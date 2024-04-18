@@ -222,7 +222,7 @@ public class InMemoryCollectionFactory<TItem, TInitializer>(InMemoryCollection<T
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public class InMemoryCollectionFactory<TItem>(InMemoryCollection<TItem, NoopInitializer<TItem>>.StateFactory factory) : InMemoryCollectionFactory<TItem, NoopInitializer<TItem>>(factory), IObjectCollectionFactory<TItem>
+public class InMemoryCollectionFactory<TItem>(InMemoryCollection<TItem, NoopCollectionInitializer<TItem>>.StateFactory factory) : InMemoryCollectionFactory<TItem, NoopCollectionInitializer<TItem>>(factory), IObjectCollectionFactory<TItem>
     where TItem : IDatabaseObject
 {
 }

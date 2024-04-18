@@ -22,7 +22,7 @@ public interface IObjectCollectionFactory<T, TInitializer> where T : IDatabaseOb
 /// 
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IObjectCollectionFactory<T> : IObjectCollectionFactory<T, NoopInitializer<T>> where T : IDatabaseObject
+public interface IObjectCollectionFactory<T> : IObjectCollectionFactory<T, NoopCollectionInitializer<T>> where T : IDatabaseObject
 {
 }
 

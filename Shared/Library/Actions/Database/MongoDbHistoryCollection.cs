@@ -257,7 +257,7 @@ public class MongoDbHistoryCollectionFactory<TItem, TInitializer>(IMongoDbDataba
 /// <typeparam name="TItem"></typeparam>
 /// <param name="database"></param>
 /// <param name="user"></param>
-public class MongoDbHistoryCollectionFactory<TItem>(IMongoDbDatabaseService database, ICurrentUser user) : MongoDbHistoryCollectionFactory<TItem, NoopInitializer<TItem>>(database, new(), user), IHistoryCollectionFactory<TItem>
+public class MongoDbHistoryCollectionFactory<TItem>(IMongoDbDatabaseService database, ICurrentUser user) : MongoDbHistoryCollectionFactory<TItem, NoopCollectionInitializer<TItem>>(database, new(), user), IHistoryCollectionFactory<TItem>
     where TItem : IDatabaseObject
 {
 }

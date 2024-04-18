@@ -284,7 +284,7 @@ public class InMemoryHistoryCollectionFactory<TItem, TInitializer>(InMemoryHisto
 /// 
 /// </summary>
 /// <typeparam name="TItem"></typeparam>
-public class InMemoryHistoryCollectionFactory<TItem>(InMemoryHistoryCollection<TItem, NoopInitializer<TItem>>.InitializerFactory factory, ICurrentUser user) : InMemoryHistoryCollectionFactory<TItem, NoopInitializer<TItem>>(factory, user), IHistoryCollectionFactory<TItem>
+public class InMemoryHistoryCollectionFactory<TItem>(InMemoryHistoryCollection<TItem, NoopCollectionInitializer<TItem>>.InitializerFactory factory, ICurrentUser user) : InMemoryHistoryCollectionFactory<TItem, NoopCollectionInitializer<TItem>>(factory, user), IHistoryCollectionFactory<TItem>
     where TItem : IDatabaseObject
 {
 }

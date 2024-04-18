@@ -6,6 +6,7 @@ using SerialPortProxy;
 using SharedLibrary;
 using SourceApi;
 using SharedLibrary.ExceptionHandling;
+using SharedLibrary.Models.Logging;
 
 CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo(string.Empty);
 
@@ -64,6 +65,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.UseSharedLibrary(builder.Configuration);
 builder.Services.UseSourceApi(builder.Configuration, false);
+
+builder.Services.AddScoped<IInterfaceLogger, NoopInterfaceLogger>();
 
 var app = builder.Build();
 

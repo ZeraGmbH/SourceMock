@@ -3,8 +3,13 @@ namespace SharedLibrary.Models.Logging;
 /// <summary>
 /// Describe an interface activity.
 /// </summary>
-public class InterfaceLogEntry
+public class InterfaceLogEntry : IDatabaseObject
 {
+    /// <summary>
+    /// Unique identifier of the database entry.
+    /// </summary>
+    public string Id { get; set; } = null!;
+
     /// <summary>
     /// Connection to the device.
     /// </summary>

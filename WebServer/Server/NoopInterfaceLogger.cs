@@ -9,6 +9,9 @@ public class NoopInterfaceLogger : IInterfaceLogger
     {
         /// <inheritdoc/>
         public InterfaceLogEntry? Finish(InterfaceLogPayload payload) => null!;
+
+        /// <inheritdoc/>
+        public Task<InterfaceLogEntry?> FinishAsync(InterfaceLogPayload payload) => Task.FromResult<InterfaceLogEntry?>(null);
     }
 
     private class Connection : IInterfaceConnection

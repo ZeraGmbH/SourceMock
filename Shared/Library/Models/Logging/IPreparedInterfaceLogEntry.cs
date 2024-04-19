@@ -13,4 +13,12 @@ public interface IPreparedInterfaceLogEntry
     /// <param name="payload">Payload data.</param>
     /// <returns>New log entry if any created.</returns>
     InterfaceLogEntry? Finish(InterfaceLogPayload payload);
+
+    /// <summary>
+    /// Create a log entry after a communication completed -
+    /// eventuall including some error information.
+    /// </summary>
+    /// <param name="payload">Payload data.</param>
+    /// <returns>New log entry if any created.</returns>
+    Task<InterfaceLogEntry?> FinishAsync(InterfaceLogPayload payload);
 }

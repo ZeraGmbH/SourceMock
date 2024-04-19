@@ -1,5 +1,8 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Events;
 using SharedLibrary.Models;
 
 namespace SharedLibrary.Services;
@@ -40,6 +43,11 @@ public class MongoDbDatabaseService : IMongoDbDatabaseService
 
             if (!string.IsNullOrEmpty(settings.UserName) && !string.IsNullOrEmpty(settings.Password))
                 config.Credential = MongoCredential.CreateCredential(settings.DatabaseName, settings.UserName, settings.Password);
+
+            /* Check for logging. */
+            if (settings.MqlDebugLogging)
+                config.ClusterConfigurator = builder =>
+                    builder.Subscribe<CommandStartedEvent>(cmd => Debug.WriteLine($"MongoDb: {cmd.Command}"));
 
             /* Create the client. */
             var client = new MongoClient(config);

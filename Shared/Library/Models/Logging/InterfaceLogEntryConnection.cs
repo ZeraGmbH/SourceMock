@@ -8,7 +8,7 @@ public class InterfaceLogEntryConnection
     /// <summary>
     /// The logical entity generating the entry.
     /// </summary>
-    public InterfaceLogSourceTypes WebSamType { get; set; }
+    public required InterfaceLogSourceTypes WebSamType { get; set; }
 
     /// <summary>
     /// Unique identifier of the source if there are muliple
@@ -19,10 +19,10 @@ public class InterfaceLogEntryConnection
     /// <summary>
     /// Protcol used.
     /// </summary>
-    public InterfaceLogProtocolTypes Protocol { get; set; }
+    public required InterfaceLogProtocolTypes Protocol { get; set; }
 
     /// <summary>
     /// Unique identifier of the endpoint relative to the protocol.
     /// </summary>
-    public string Endpoint { get; set; } = null!;
+    public required string Endpoint { get; set; }
 }

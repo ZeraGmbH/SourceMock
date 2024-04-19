@@ -29,4 +29,9 @@ public class MongoDbSettings
     /// Optional password.
     /// </summary>
     public string Password { get; set; } = "";
+
+    /// <summary>
+    /// Enable MQL logging.
+    /// </summary>
+    public bool MqlDebugLogging { get; set; }
 }

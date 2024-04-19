@@ -8,9 +8,7 @@ public class NoopInterfaceLogger : IInterfaceLogger
     private class PreparedEntry : IPreparedInterfaceLogEntry
     {
         /// <inheritdoc/>
-        public void Finish(InterfaceLogPayload payload)
-        {
-        }
+        public InterfaceLogEntry? Finish(InterfaceLogPayload payload) => null!;
     }
 
     private class Connection : IInterfaceConnection
@@ -21,4 +19,6 @@ public class NoopInterfaceLogger : IInterfaceLogger
 
     /// <inheritdoc/>
     public IInterfaceConnection CreateConnection(InterfaceLogEntryConnection connection) => new Connection();
+
+    public IQueryable<InterfaceLogEntry> Query() => Array.Empty<InterfaceLogEntry>().AsQueryable();
 }

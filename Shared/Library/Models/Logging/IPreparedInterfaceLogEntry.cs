@@ -11,5 +11,6 @@ public interface IPreparedInterfaceLogEntry
     /// eventuall including some error information.
     /// </summary>
     /// <param name="payload">Payload data.</param>
-    void Finish(InterfaceLogPayload payload);
+    /// <returns>New log entry if any created.</returns>
+    InterfaceLogEntry? Finish(InterfaceLogPayload payload);
 }

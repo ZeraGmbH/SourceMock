@@ -8,25 +8,25 @@ public class InterfaceLogEntry : IDatabaseObject
     /// <summary>
     /// Unique identifier of the database entry.
     /// </summary>
-    public string Id { get; set; } = null!;
+    public required string Id { get; set; }
 
     /// <summary>
     /// Connection to the device.
     /// </summary>
-    public InterfaceLogEntryConnection Connection { get; set; } = new();
+    public required InterfaceLogEntryConnection Connection { get; set; }
 
     /// <summary>
     /// The context of the communication.
     /// </summary>
-    public InterfaceLogEntryScope Scope { get; set; } = new();
+    public required InterfaceLogEntryScope Scope { get; set; }
 
     /// <summary>
     /// System information on the log entry.
     /// </summary>
-    public InterfaceLogEntryInfo Info { get; set; } = new();
+    public required InterfaceLogEntryInfo Info { get; set; }
 
     /// <summary>
     /// Payload of the data.
     /// </summary>
-    public InterfaceLogPayload Message { get; set; } = new();
+    public InterfaceLogPayload Message { get; set; } = null!;
 }

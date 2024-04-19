@@ -15,6 +15,8 @@ public abstract class DatabaseTestCore
 {
     protected abstract bool UseMongoDb { get; }
 
+    protected virtual bool EnforceServiceScope => false;
+
     protected ServiceProvider Services;
 
     protected string UserId;
@@ -95,7 +97,9 @@ public abstract class DatabaseTestCore
 
         services.AddSingleton(userMock.Object);
 
-        Services = services.BuildServiceProvider();
+        Services = EnforceServiceScope
+            ? services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true })
+            : services.BuildServiceProvider();
 
         await OnPostSetup();
     }

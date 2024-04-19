@@ -18,5 +18,5 @@ public class InterfaceLogEntryScope
     /// <summary>
     /// Set for sent data, unset for incoming.
     /// </summary>
-    public bool Outgoing { get; set; }
+    public required bool Outgoing { get; set; }
 }

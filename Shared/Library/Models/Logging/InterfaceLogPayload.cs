@@ -24,5 +24,5 @@ public class InterfaceLogPayload
     /// <summary>
     /// Error received during communication.
     /// </summary>
-    public Exception? TransferExecption { get; set; }
+    public string? TransferExecption { get; set; }
 }

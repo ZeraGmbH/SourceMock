@@ -11,4 +11,10 @@ public interface IInterfaceLogger
     /// <param name="connection">Description of a connection.</param>
     /// <returns>Service to create log entries.</returns>
     IInterfaceConnection CreateConnection(InterfaceLogEntryConnection connection);
+
+    /// <summary>
+    /// Query interface log entries.
+    /// </summary>
+    /// <returns>Query builder.</returns>
+    IQueryable<InterfaceLogEntry> Query();
 }

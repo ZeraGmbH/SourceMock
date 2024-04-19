@@ -67,7 +67,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     /// <inheritdoc/>
     public Task<bool> CurrentSwitchedOffForDosage() =>
         (_dosageUri == null)
-            ? throw new NotImplementedException("Dosage")
+            ? Task.FromResult(false)
             : httpDosage.GetAsync(new Uri(_dosageUri, "IsDosageCurrentOff")).GetJsonResponse<bool>();
 
     /// <inheritdoc/>

@@ -38,17 +38,21 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
     public IErrorCalculator[] ErrorCalculators => _errorCalculators.ToArray();
 
     /// <inheritdoc/>
-#pragma warning disable CS0414
     public event Action<ErrorConditions> ErrorConditionsChanged = null!;
-#pragma warning restore CS0414
 
     /// <inheritdoc/>
     public Task<MeterTestSystemCapabilities> GetCapabilities() =>
         Task.FromResult<MeterTestSystemCapabilities>(null!);
 
     /// <inheritdoc/>
-    public Task<ErrorConditions> GetErrorConditions() =>
-        httpClient.GetAsync(new Uri(_baseUri, "ErrorConditions")).GetJsonResponse<ErrorConditions>();
+    public async Task<ErrorConditions> GetErrorConditions()
+    {
+        var errors = await httpClient.GetAsync(new Uri(_baseUri, "ErrorConditions")).GetJsonResponse<ErrorConditions>();
+
+        ErrorConditionsChanged?.Invoke(errors);
+
+        return errors;
+    }
 
     /// <inheritdoc/>
     public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion() =>

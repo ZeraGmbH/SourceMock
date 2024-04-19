@@ -23,5 +23,6 @@ public class NoopInterfaceLogger : IInterfaceLogger
     /// <inheritdoc/>
     public IInterfaceConnection CreateConnection(InterfaceLogEntryConnection connection) => new Connection();
 
+    /// <inheritdoc/>
     public IQueryable<InterfaceLogEntry> Query() => Array.Empty<InterfaceLogEntry>().AsQueryable();
 }

@@ -17,6 +17,7 @@ namespace SourceApi.Controllers;
 /// Initialize a new controller.
 /// </remarks>
 /// <param name="device">Serial port connected device to use.</param>
+/// <param name="interfaceLogger"></param>
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/Source/[controller]")]

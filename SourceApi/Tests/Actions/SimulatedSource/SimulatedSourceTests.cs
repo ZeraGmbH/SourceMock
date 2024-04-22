@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SharedLibrary.Actions;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 using SourceApi.Tests.Actions.LoadpointValidator;
@@ -31,7 +32,7 @@ namespace SourceApi.Tests.Actions.Source
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
             // Act
-            var result = await source.SetLoadpoint(loadpoint);
+            var result = await source.SetLoadpoint(new NoopInterfaceLogger(), loadpoint);
 
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
@@ -52,10 +53,10 @@ namespace SourceApi.Tests.Actions.Source
 
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
-            await source.SetLoadpoint(loadpoint);
+            await source.SetLoadpoint(new NoopInterfaceLogger(), loadpoint);
 
             // Act
-            var result = await source.TurnOff();
+            var result = await source.TurnOff(new NoopInterfaceLogger());
 
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
@@ -78,7 +79,7 @@ namespace SourceApi.Tests.Actions.Source
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
             // Act
-            var result = await source.SetLoadpoint(loadpoint);
+            var result = await source.SetLoadpoint(new NoopInterfaceLogger(), loadpoint);
 
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
@@ -102,7 +103,7 @@ namespace SourceApi.Tests.Actions.Source
             lp.Phases[0].Voltage.AcComponent!.Rms = 500;
 
             // Act
-            var result = await source.SetLoadpoint(lp);
+            var result = await source.SetLoadpoint(new NoopInterfaceLogger(), lp);
 
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
@@ -120,7 +121,7 @@ namespace SourceApi.Tests.Actions.Source
             lp.Phases[0].Current.AcComponent!.Rms = 100;
 
             // Act
-            var result = await source.SetLoadpoint(lp);
+            var result = await source.SetLoadpoint(new NoopInterfaceLogger(), lp);
 
             // Assert
             var currentLoadpoint = source.GetCurrentLoadpoint();
@@ -145,11 +146,11 @@ namespace SourceApi.Tests.Actions.Source
         [Test]
         public async Task Returns_Correct_Dosage_Progress()
         {
-            await mock.SetLoadpoint(GetLoadpoint());
-            await mock.SetDosageEnergy(20, 1);
-            await mock.StartDosage();
+            await mock.SetLoadpoint(new NoopInterfaceLogger(), GetLoadpoint());
+            await mock.SetDosageEnergy(new NoopInterfaceLogger(), 20, 1);
+            await mock.StartDosage(new NoopInterfaceLogger());
 
-            DosageProgress result = await mock.GetDosageProgress(1);
+            DosageProgress result = await mock.GetDosageProgress(new NoopInterfaceLogger(), 1);
 
             Assert.That(result.Active, Is.EqualTo(true));
             Assert.That(result.Remaining, Is.LessThan(20));
@@ -160,9 +161,9 @@ namespace SourceApi.Tests.Actions.Source
         public async Task Turns_Off_Loadpoint()
         {
             var loadpoint = GetLoadpoint();
-            await mock.SetLoadpoint(loadpoint);
+            await mock.SetLoadpoint(new NoopInterfaceLogger(), loadpoint);
 
-            await mock.TurnOff();
+            await mock.TurnOff(new NoopInterfaceLogger());
 
             foreach (var phase in loadpoint.Phases)
             {

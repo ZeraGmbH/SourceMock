@@ -4,6 +4,8 @@ using SourceApi.Actions.Source;
 using RefMeterApi.Models;
 using SourceApi.Model;
 using Microsoft.Extensions.DependencyInjection;
+using SharedLibrary.Models.Logging;
+using SharedLibrary.Actions;
 
 namespace RefMeterApiTests;
 
@@ -36,7 +38,7 @@ public class RefMeterMockTest
     {
         ACRefMeterMock refMeterMock = new(Services);
 
-        MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues().Result;
+        MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues(new NoopInterfaceLogger()).Result;
 
         Assert.That(measureOutput.Frequency, Is.EqualTo(0));
     }
@@ -63,10 +65,10 @@ public class RefMeterMockTest
             });
 
         SourceMock.Setup(s => s.GetActiveLoadpointInfo()).Returns(new LoadpointInfo { IsActive = true });
-        SourceMock.Setup(s => s.CurrentSwitchedOffForDosage()).ReturnsAsync(false);
+        SourceMock.Setup(s => s.CurrentSwitchedOffForDosage(It.IsAny<IInterfaceLogger>())).ReturnsAsync(false);
 
         ACRefMeterMock refMeterMock = new(Services);
-        MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues().Result;
+        MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues(new NoopInterfaceLogger()).Result;
 
         Assert.That(measureOutput.Frequency, Is.InRange(GetMinValue(frequencyValue, 0.0002), GetMaxValue(frequencyValue, 0.0002)));
         Assert.That(measureOutput.Phases[0].Current.AcComponent!.Rms, Is.InRange(GetMinValue(current, 0.0001), GetMaxValue(current, 0.0001)));

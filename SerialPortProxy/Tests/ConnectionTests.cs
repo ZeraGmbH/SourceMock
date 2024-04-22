@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
+using SharedLibrary.Actions;
 using SharedLibrary.Models.Logging;
 
 namespace Tests;
@@ -58,7 +59,7 @@ public class ConnectionTests
     {
         using var cut = SerialPortConnection.FromMock<PortMock>(_logger);
 
-        var reply = await cut.CreateExecutor(InterfaceLogSourceTypes.Source).Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
+        var reply = await cut.CreateExecutor(InterfaceLogSourceTypes.Source).Execute(new NoopInterfaceLogger(), SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
         Assert.That(reply.Length, Is.EqualTo(2));
 
@@ -75,7 +76,7 @@ public class ConnectionTests
         using var cut = SerialPortConnection.FromMock<PortMock>(_logger);
 
         var request = SerialPortRequest.Create("S3CM1", new Regex("^SOK3CM([1-4])$"));
-        var reply = await cut.CreateExecutor(InterfaceLogSourceTypes.Source).Execute(request)[0];
+        var reply = await cut.CreateExecutor(InterfaceLogSourceTypes.Source).Execute(new NoopInterfaceLogger(), request)[0];
 
         Assert.That(reply, Has.Length.EqualTo(2));
 

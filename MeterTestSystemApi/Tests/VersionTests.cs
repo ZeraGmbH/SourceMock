@@ -3,6 +3,7 @@ using MeterTestSystemApi.Actions.Device;
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
 using SerialPortProxy;
+using SharedLibrary.Actions;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
@@ -134,7 +135,7 @@ public class VersionTests
             _portLogger,
             new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), device, new CapabilitiesMap(), new SourceCapabilityValidator()));
 
-        var ex = Assert.ThrowsAsync(exception ?? typeof(InvalidOperationException), dut.GetFirmwareVersion);
+        var ex = Assert.ThrowsAsync(exception ?? typeof(InvalidOperationException), async () => await dut.GetFirmwareVersion(new NoopInterfaceLogger()));
 
         Assert.That(ex.Message, Is.EqualTo(message));
     }

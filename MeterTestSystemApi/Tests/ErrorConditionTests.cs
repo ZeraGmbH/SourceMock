@@ -3,6 +3,7 @@ using MeterTestSystemApi.Models;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
+using SharedLibrary.Actions;
 
 namespace MeterTestSystemApiTests;
 
@@ -146,7 +147,7 @@ public class ErrorConditionTests
                 byEvent.Add(errors);
         };
 
-        var errors = await cut.GetErrorConditions();
+        var errors = await cut.GetErrorConditions(new NoopInterfaceLogger());
 
         Thread.Sleep(500);
 
@@ -198,7 +199,7 @@ public class ErrorConditionTests
                 byEvent.Add(errors);
         };
 
-        var errors = await cut.GetErrorConditions();
+        var errors = await cut.GetErrorConditions(new NoopInterfaceLogger());
 
         Thread.Sleep(500);
 

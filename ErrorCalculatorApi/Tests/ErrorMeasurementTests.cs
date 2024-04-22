@@ -3,6 +3,7 @@ using ErrorCalculatorApi.Models;
 using SerialPortProxy;
 using ErrorCalculatorApi.Actions.Device;
 using Moq;
+using SharedLibrary.Actions;
 
 namespace ErrorCalculatorApiTests;
 
@@ -13,7 +14,7 @@ public class ErrorMeasurementTests
     {
         private readonly Queue<string> _queue = new();
 
-        public string[] StatusResponse = { };
+        public string[] StatusResponse = [];
 
         public string ActiveParameters = "";
 
@@ -84,8 +85,8 @@ public class ErrorMeasurementTests
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
-        await cut.StartErrorMeasurement(false, null);
-        await cut.StartErrorMeasurement(true, null);
+        await cut.StartErrorMeasurement(new NoopInterfaceLogger(), false, null);
+        await cut.StartErrorMeasurement(new NoopInterfaceLogger(), true, null);
     }
 
     [Test]
@@ -93,7 +94,7 @@ public class ErrorMeasurementTests
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
-        await cut.AbortErrorMeasurement();
+        await cut.AbortErrorMeasurement(new NoopInterfaceLogger());
     }
 
     [Test]
@@ -101,7 +102,7 @@ public class ErrorMeasurementTests
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
-        var status = await cut.GetErrorStatus();
+        var status = await cut.GetErrorStatus(new NoopInterfaceLogger());
 
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
@@ -112,9 +113,9 @@ public class ErrorMeasurementTests
             Assert.That(status.ErrorValue, Is.Null);
         });
 
-        _port.StatusResponse = new string[] { "00", "oo.oo", "0.000000;0.000000" };
+        _port.StatusResponse = ["00", "oo.oo", "0.000000;0.000000"];
 
-        status = await cut.GetErrorStatus();
+        status = await cut.GetErrorStatus(new NoopInterfaceLogger());
 
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
@@ -125,9 +126,9 @@ public class ErrorMeasurementTests
             Assert.That(status.Energy, Is.EqualTo(0d));
         });
 
-        _port.StatusResponse = new string[] { "11", "--.--", "0.000000;0.000000" };
+        _port.StatusResponse = ["11", "--.--", "0.000000;0.000000"];
 
-        status = await cut.GetErrorStatus();
+        status = await cut.GetErrorStatus(new NoopInterfaceLogger());
 
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
@@ -138,9 +139,9 @@ public class ErrorMeasurementTests
             Assert.That(status.Energy, Is.EqualTo(0d));
         });
 
-        _port.StatusResponse = new string[] { "12", "--.--", "51.234112;912.38433" };
+        _port.StatusResponse = ["12", "--.--", "51.234112;912.38433"];
 
-        status = await cut.GetErrorStatus();
+        status = await cut.GetErrorStatus(new NoopInterfaceLogger());
 
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
@@ -151,9 +152,9 @@ public class ErrorMeasurementTests
             Assert.That(status.Energy, Is.EqualTo(912.38433d));
         });
 
-        _port.StatusResponse = new string[] { "13", "0.5", "51.234112;912.38433" };
+        _port.StatusResponse = ["13", "0.5", "51.234112;912.38433"];
 
-        status = await cut.GetErrorStatus();
+        status = await cut.GetErrorStatus(new NoopInterfaceLogger());
 
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
@@ -164,9 +165,9 @@ public class ErrorMeasurementTests
             Assert.That(status.Energy, Is.EqualTo(912.38433d));
         });
 
-        _port.StatusResponse = new string[] { "13", "-0.2", "51.234112;912.38433" };
+        _port.StatusResponse = ["13", "-0.2", "51.234112;912.38433"];
 
-        status = await cut.GetErrorStatus();
+        status = await cut.GetErrorStatus(new NoopInterfaceLogger());
 
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
@@ -177,9 +178,9 @@ public class ErrorMeasurementTests
             Assert.That(status.Energy, Is.EqualTo(912.38433d));
         });
 
-        _port.StatusResponse = new string[] { "03", "-.2", "51.234112;912.38433" };
+        _port.StatusResponse = ["03", "-.2", "51.234112;912.38433"];
 
-        status = await cut.GetErrorStatus();
+        status = await cut.GetErrorStatus(new NoopInterfaceLogger());
 
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
@@ -206,7 +207,7 @@ public class ErrorMeasurementTests
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
-        await cut.SetErrorMeasurementParameters(meterConstant, impluses, 6000d);
+        await cut.SetErrorMeasurementParameters(new NoopInterfaceLogger(), meterConstant, impluses, 6000d);
 
         Assert.That(_port.ActiveParameters, Is.EqualTo(expected));
     }

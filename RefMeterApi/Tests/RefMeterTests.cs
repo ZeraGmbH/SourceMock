@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SharedLibrary.Actions;
 
 namespace RefMeterApiTests;
 
@@ -116,7 +117,7 @@ public class RefMeterTests
 
         refMeter.SetReferenceMeter(ReferenceMeters.COM3000);
 
-        var modes = await refMeter.GetMeasurementModes();
+        var modes = await refMeter.GetMeasurementModes(new NoopInterfaceLogger());
 
         Assert.That(modes, Has.Length.EqualTo(9));
     }
@@ -129,13 +130,13 @@ public class RefMeterTests
 
         refMeter.SetReferenceMeter(ReferenceMeters.COM3000);
 
-        var mode = await refMeter.GetActualMeasurementMode();
+        var mode = await refMeter.GetActualMeasurementMode(new NoopInterfaceLogger());
 
         Assert.That(mode, Is.Null);
 
-        await refMeter.SetActualMeasurementMode(MeasurementModes.FourWireApparentPower);
+        await refMeter.SetActualMeasurementMode(new NoopInterfaceLogger(), MeasurementModes.FourWireApparentPower);
 
-        Assert.That(await refMeter.GetActualMeasurementMode(), Is.EqualTo(MeasurementModes.FourWireApparentPower));
+        Assert.That(await refMeter.GetActualMeasurementMode(new NoopInterfaceLogger()), Is.EqualTo(MeasurementModes.FourWireApparentPower));
     }
 
     [Test]
@@ -146,7 +147,7 @@ public class RefMeterTests
 
         refMeter.SetReferenceMeter(ReferenceMeters.COM3000);
 
-        var values = await refMeter.GetActualValues(0);
+        var values = await refMeter.GetActualValues(new NoopInterfaceLogger(), 0);
 
         Assert.Multiple(() =>
         {

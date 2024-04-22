@@ -3,6 +3,7 @@ using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using RefMeterApiTests.PortMocks;
 using SerialPortProxy;
+using SharedLibrary.Actions;
 
 namespace RefMeterApiTests;
 
@@ -23,7 +24,7 @@ public class AMLParserTests
             new NullLogger<SerialPortMTRefMeter>()
         );
 
-        var modes = await device.GetMeasurementModes();
+        var modes = await device.GetMeasurementModes(new NoopInterfaceLogger());
 
         Assert.That(modes.Length, Is.EqualTo(1));
         Assert.That(modes[0], Is.EqualTo(mode));
@@ -45,7 +46,7 @@ public class AMLParserTests
             new NullLogger<SerialPortMTRefMeter>()
         );
 
-        var modes = await device.GetMeasurementModes();
+        var modes = await device.GetMeasurementModes(new NoopInterfaceLogger());
 
         Assert.That(modes.Length, Is.EqualTo(2));
     }
@@ -60,7 +61,7 @@ public class AMLParserTests
             new NullLogger<SerialPortMTRefMeter>()
         );
 
-        var reply = await device.GetActualMeasurementMode();
+        var reply = await device.GetActualMeasurementMode(new NoopInterfaceLogger());
 
         Assert.That(reply, Is.EqualTo(mode));
     }
@@ -80,7 +81,7 @@ public class AMLParserTests
             new NullLogger<SerialPortMTRefMeter>()
         );
 
-        var mode = await device.GetActualMeasurementMode();
+        var mode = await device.GetActualMeasurementMode(new NoopInterfaceLogger());
 
         Assert.That(mode, Is.Null);
     }

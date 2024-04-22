@@ -2,6 +2,7 @@ using ErrorCalculatorApi.Actions.Device;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using SharedLibrary.Actions;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 
@@ -58,13 +59,13 @@ public class ErrorCalculatorMockTest
         var cut = Services.GetRequiredService<IErrorCalculatorMock>();
 
         /* 200 impulses at 10000/kWh is equivalent to 20. */
-        await cut.SetErrorMeasurementParameters(10000, 200, 6000d);
-        await cut.StartErrorMeasurement(false, null);
+        await cut.SetErrorMeasurementParameters(new NoopInterfaceLogger(), 10000, 200, 6000d);
+        await cut.StartErrorMeasurement(new NoopInterfaceLogger(), false, null);
 
         /* 100ms delay generates ~1.8W. */
         Thread.Sleep(100);
 
-        var result = await cut.GetErrorStatus();
+        var result = await cut.GetErrorStatus(new NoopInterfaceLogger());
 
         Assert.Multiple(() =>
         {
@@ -76,7 +77,7 @@ public class ErrorCalculatorMockTest
         /* 1.5s delay generates 27.5W. */
         Thread.Sleep(1500);
 
-        result = await cut.GetErrorStatus();
+        result = await cut.GetErrorStatus(new NoopInterfaceLogger());
 
         Assert.Multiple(() =>
         {
@@ -92,13 +93,13 @@ public class ErrorCalculatorMockTest
         var cut = Services.GetRequiredService<IErrorCalculatorMock>();
 
         /* 200 impulses at 10000/kWh is equivalent to 20W. */
-        await cut.SetErrorMeasurementParameters(10000, 200, 6000d);
-        await cut.StartErrorMeasurement(true, null);
+        await cut.SetErrorMeasurementParameters(new NoopInterfaceLogger(), 10000, 200, 6000d);
+        await cut.StartErrorMeasurement(new NoopInterfaceLogger(), true, null);
 
         /* 1.5s delay generates 27.5W. */
         Thread.Sleep(1500);
 
-        var result = await cut.GetErrorStatus();
+        var result = await cut.GetErrorStatus(new NoopInterfaceLogger());
         var error = result.ErrorValue;
 
         Assert.Multiple(() =>
@@ -110,7 +111,7 @@ public class ErrorCalculatorMockTest
 
         Thread.Sleep(100);
 
-        result = await cut.GetErrorStatus();
+        result = await cut.GetErrorStatus(new NoopInterfaceLogger());
 
         /* There should be no full cycle be done and the error value keeps its value. */
         Assert.That(error, Is.EqualTo(result.ErrorValue));
@@ -118,7 +119,7 @@ public class ErrorCalculatorMockTest
         /* 1.5s delay generates 27.5W. */
         Thread.Sleep(1500);
 
-        result = await cut.GetErrorStatus();
+        result = await cut.GetErrorStatus(new NoopInterfaceLogger());
 
         /* Now the second iteration should be complete and the error value "should" change - indeed there is a tin chance of random generation clashes. */
         Assert.That(error, Is.Not.EqualTo(result.ErrorValue));

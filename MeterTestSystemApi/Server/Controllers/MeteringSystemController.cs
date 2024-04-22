@@ -15,6 +15,7 @@ namespace MeterTestSystemApi.Controllers;
 /// Initialize a new meter test system controller.
 /// </remarks>
 /// <param name="device">Meter test system to use.</param>
+/// <param name="interfaceLogger"></param>
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]

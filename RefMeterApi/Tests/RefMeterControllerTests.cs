@@ -5,6 +5,7 @@ using RefMeterApi.Controllers;
 using RefMeterApi.Models;
 using RefMeterApiTests.PortMocks;
 using SerialPortProxy;
+using SharedLibrary.Actions;
 
 namespace RefMeterApiTests;
 
@@ -20,7 +21,7 @@ public class RefMeterControllerTests
     {
         using var port = SerialPortConnection.FromMock<StandardPortMock>(_portLogger);
 
-        var cut = new RefMeterController(new SerialPortMTRefMeter(port, _deviceLogger));
+        var cut = new RefMeterController(new SerialPortMTRefMeter(port, _deviceLogger), new NoopInterfaceLogger());
 
         var response = await cut.GetActualValues();
         var result = response.Result as OkObjectResult;

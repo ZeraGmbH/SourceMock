@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework.Internal;
 using SerialPortProxy;
+using SharedLibrary.Actions;
 using SharedLibrary.Models.Logging;
 
 namespace Tests;
@@ -50,9 +51,10 @@ public class QueueTests
 
         using var cut = SerialPortConnection.FromMockedPortInstance(groups, _logger);
 
-        await Task.WhenAll(cut.CreateExecutor(InterfaceLogSourceTypes.Source).Execute(SerialPortRequest.Create("R1", "R1")));
+        await Task.WhenAll(cut.CreateExecutor(InterfaceLogSourceTypes.Source).Execute(new NoopInterfaceLogger(), SerialPortRequest.Create("R1", "R1")));
 
         var tasks = cut.CreateExecutor(InterfaceLogSourceTypes.Source).Execute(
+            new NoopInterfaceLogger(),
             /* Will process. */
             SerialPortRequest.Create("R2", "R2"),
             /* Will be discarded and therefore generate a TimeoutException. */
@@ -61,7 +63,7 @@ public class QueueTests
             SerialPortRequest.Create("R4", "R4"));
 
         /* Just add another valid command. */
-        await cut.CreateExecutor(InterfaceLogSourceTypes.Source).Execute(SerialPortRequest.Create("R9", "R9"))[0];
+        await cut.CreateExecutor(InterfaceLogSourceTypes.Source).Execute(new NoopInterfaceLogger(), SerialPortRequest.Create("R9", "R9"))[0];
 
         await tasks[0];
 

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
+using SharedLibrary.Actions;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.Source;
@@ -33,25 +34,25 @@ public class DosageFGTests
     [Test]
     public async Task Can_Turn_Off_DOS_Mode()
     {
-        await CreateDevice(["OK3CM4"]).SetDosageMode(false);
+        await CreateDevice(["OK3CM4"]).SetDosageMode(new NoopInterfaceLogger(), false);
     }
 
     [Test]
     public async Task Can_Turn_On_DOS_Mode()
     {
-        await CreateDevice(["OK3CM3"]).SetDosageMode(true);
+        await CreateDevice(["OK3CM3"]).SetDosageMode(new NoopInterfaceLogger(), true);
     }
 
     [Test]
     public async Task Can_Start_Dosage()
     {
-        await CreateDevice(["OK3CM1"]).StartDosage();
+        await CreateDevice(["OK3CM1"]).StartDosage(new NoopInterfaceLogger());
     }
 
     [Test]
     public async Task Can_Abort_Dosage()
     {
-        await CreateDevice(["OK3CM2"]).CancelDosage();
+        await CreateDevice(["OK3CM2"]).CancelDosage(new NoopInterfaceLogger());
     }
 
     [TestCase(2, "113834")]
@@ -67,7 +68,7 @@ public class DosageFGTests
             $"OK3SA1;{dosage}",
             $"OK3MA1;{remaining}",
             "OK3PA45;918.375",
-        ]).GetDosageProgress(1d);
+        ]).GetDosageProgress(new NoopInterfaceLogger(), 1d);
 
         var rest = double.Parse(remaining) * 1000d;
 
@@ -93,7 +94,7 @@ public class DosageFGTests
 
         device.SetAmplifiers(Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
 
-        await device.SetDosageEnergy(energy, 1d);
+        await device.SetDosageEnergy(new NoopInterfaceLogger(), energy, 1d);
 
         Assert.That(mock.Commands[0], Is.EqualTo($"3PS45;{energy / 1000d}"));
     }

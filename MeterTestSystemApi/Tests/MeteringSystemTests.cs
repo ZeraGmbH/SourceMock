@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SharedLibrary.Actions;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.SerialPort.MT768;
@@ -134,7 +135,7 @@ public class MeterTestSystemTests
             new NullLogger<SerialPortMTMeterTestSystem>(),
             new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), Device, new CapabilitiesMap(), new SourceCapabilityValidator()));
 
-        var version = await generator.GetFirmwareVersion();
+        var version = await generator.GetFirmwareVersion(new NoopInterfaceLogger());
 
         Assert.Multiple(() =>
         {
@@ -146,7 +147,7 @@ public class MeterTestSystemTests
     [Test]
     public async Task Can_Get_Firmware_Version_For_FG()
     {
-        var version = await Generator.GetFirmwareVersion();
+        var version = await Generator.GetFirmwareVersion(new NoopInterfaceLogger());
 
         Assert.Multiple(() =>
         {
@@ -163,7 +164,7 @@ public class MeterTestSystemTests
     {
         if (errorOrResponse.StartsWith("ZP"))
         {
-            await Generator.SetAmplifiersAndReferenceMeter(new()
+            await Generator.SetAmplifiersAndReferenceMeter(new NoopInterfaceLogger(), new()
             {
                 CurrentAmplifier = current,
                 CurrentAuxiliary = CurrentAuxiliaries.V200,
@@ -177,7 +178,7 @@ public class MeterTestSystemTests
         }
         else
         {
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => Generator.SetAmplifiersAndReferenceMeter(new()
+            var exception = Assert.ThrowsAsync<ArgumentException>(() => Generator.SetAmplifiersAndReferenceMeter(new NoopInterfaceLogger(), new()
             {
                 CurrentAmplifier = current,
                 CurrentAuxiliary = CurrentAuxiliaries.V200,
@@ -197,7 +198,7 @@ public class MeterTestSystemTests
     {
         if (errorOrResponse.StartsWith("ZP"))
         {
-            await Generator.SetAmplifiersAndReferenceMeter(new()
+            await Generator.SetAmplifiersAndReferenceMeter(new NoopInterfaceLogger(), new()
             {
                 CurrentAmplifier = CurrentAmplifiers.VUI302,
                 CurrentAuxiliary = current,
@@ -211,7 +212,7 @@ public class MeterTestSystemTests
         }
         else
         {
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => Generator.SetAmplifiersAndReferenceMeter(new()
+            var exception = Assert.ThrowsAsync<ArgumentException>(() => Generator.SetAmplifiersAndReferenceMeter(new NoopInterfaceLogger(), new()
             {
                 CurrentAmplifier = CurrentAmplifiers.VUI302,
                 CurrentAuxiliary = current,

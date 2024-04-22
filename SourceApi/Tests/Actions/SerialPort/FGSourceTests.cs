@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
+using SharedLibrary.Actions;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.Source;
@@ -53,7 +54,7 @@ public class FGSourceTests
     {
         Assert.That(_source.GetCurrentLoadpoint(), Is.Null);
 
-        var result = await _source.SetLoadpoint(new Model.TargetLoadpoint
+        var result = await _source.SetLoadpoint(new NoopInterfaceLogger(), new Model.TargetLoadpoint
         {
             Frequency = new()
             {
@@ -97,7 +98,7 @@ public class FGSourceTests
     {
         Assert.That(_source.GetCurrentLoadpoint(), Is.Null);
 
-        var result = await _source.SetLoadpoint(new Model.TargetLoadpoint
+        var result = await _source.SetLoadpoint(new NoopInterfaceLogger(), new Model.TargetLoadpoint
         {
             Frequency = new()
             {

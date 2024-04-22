@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
+using SharedLibrary.Actions;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
@@ -76,7 +77,7 @@ public class MTSourceTests
 
         Assert.That(sut.GetCurrentLoadpoint(), Is.Null);
 
-        var result = await sut.SetLoadpoint(new Model.TargetLoadpoint
+        var result = await sut.SetLoadpoint(new NoopInterfaceLogger(), new Model.TargetLoadpoint
         {
             Frequency = new Model.Frequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = 50 },
             Phases = new List<Model.TargetLoadpointPhase>() {
@@ -120,7 +121,7 @@ public class MTSourceTests
 
         Assert.That(sut.GetCurrentLoadpoint(), Is.Null);
 
-        var result = await sut.SetLoadpoint(new Model.TargetLoadpoint
+        var result = await sut.SetLoadpoint(new NoopInterfaceLogger(), new Model.TargetLoadpoint
         {
             Frequency = new Model.Frequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = 50 },
             Phases = new List<Model.TargetLoadpointPhase>() {

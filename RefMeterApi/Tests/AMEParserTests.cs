@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
 using RefMeterApiTests.PortMocks;
 using SerialPortProxy;
+using SharedLibrary.Actions;
 
 namespace RefMeterApiTests;
 
@@ -27,7 +28,7 @@ public class AMEParserTests
         ameResponse.Insert(0, "ATIACK");
 
         var device = CreateDevice(ameResponse.ToArray());
-        var parsed = await device.GetActualValues();
+        var parsed = await device.GetActualValues(new NoopInterfaceLogger());
 
         Assert.Multiple(() =>
         {
@@ -57,16 +58,16 @@ public class AMEParserTests
         );
 
         /* Bad replies will only log a warning but not throw any exception. */
-        await device.GetActualValues();
+        await device.GetActualValues(new NoopInterfaceLogger());
 
         /* Each log entry will create an ArgumentException. */
-        Assert.ThrowsAsync<ArgumentException>(async () => await CreateDevice(new[] { "ATIACK", reply, "AMEACK" }).GetActualValues());
+        Assert.ThrowsAsync<ArgumentException>(async () => await CreateDevice(new[] { "ATIACK", reply, "AMEACK" }).GetActualValues(new NoopInterfaceLogger()));
     }
 
     [Test]
     public async Task Will_Overwrite_Index_Value()
     {
-        var data = await CreateDevice(new[] { "ATIACK", "28;1", "28;2", "AMEACK" }).GetActualValues();
+        var data = await CreateDevice(new[] { "ATIACK", "28;1", "28;2", "AMEACK" }).GetActualValues(new NoopInterfaceLogger());
 
         Assert.That(data.Frequency, Is.EqualTo(2));
     }
@@ -74,7 +75,7 @@ public class AMEParserTests
     [Test]
     public async Task Can_Handle_Empty_Reply()
     {
-        await CreateDevice(new[] { "ATIACK", "AMEACK" }).GetActualValues();
+        await CreateDevice(new[] { "ATIACK", "AMEACK" }).GetActualValues(new NoopInterfaceLogger());
 
         Assert.Pass();
     }
@@ -82,7 +83,7 @@ public class AMEParserTests
     [Test]
     public void Will_Detect_Missing_ACK()
     {
-        Assert.ThrowsAsync<TimeoutException>(async () => await CreateDevice(new[] { "ATIACK", "0;1" }).GetActualValues());
+        Assert.ThrowsAsync<TimeoutException>(async () => await CreateDevice(new[] { "ATIACK", "0;1" }).GetActualValues(new NoopInterfaceLogger()));
     }
 
     [Test]
@@ -91,14 +92,14 @@ public class AMEParserTests
         var device = new SerialPortMTRefMeter(SerialPortConnection.FromMock<CountingMock>(_portLogger), _deviceLogger);
 
         /* Since all task execute at the same time they all should get the same result. */
-        var first = await Task.WhenAll(Enumerable.Range(0, 10).Select(_ => device.GetActualValues()));
+        var first = await Task.WhenAll(Enumerable.Range(0, 10).Select(_ => device.GetActualValues(new NoopInterfaceLogger())));
 
         Array.ForEach(first, r => Assert.That(r.Frequency, Is.EqualTo(50)));
 
         Thread.Sleep(100);
 
         /* After all tasks complete a new request is necessary. */
-        var second = await Task.WhenAll(Enumerable.Range(0, 10).Select(_ => device.GetActualValues()));
+        var second = await Task.WhenAll(Enumerable.Range(0, 10).Select(_ => device.GetActualValues(new NoopInterfaceLogger())));
 
         Array.ForEach(second, r => Assert.That(r.Frequency, Is.EqualTo(51)));
     }

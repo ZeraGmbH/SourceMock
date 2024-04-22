@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
+using SharedLibrary.Actions;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
@@ -26,25 +27,25 @@ public class DosageTests
     [Test]
     public async Task Can_Turn_Off_DOS_Mode()
     {
-        await CreateDevice(new[] { "SOK3CM4" }).SetDosageMode(false);
+        await CreateDevice(new[] { "SOK3CM4" }).SetDosageMode(new NoopInterfaceLogger(), false);
     }
 
     [Test]
     public async Task Can_Turn_On_DOS_Mode()
     {
-        await CreateDevice(new[] { "SOK3CM3" }).SetDosageMode(true);
+        await CreateDevice(new[] { "SOK3CM3" }).SetDosageMode(new NoopInterfaceLogger(), true);
     }
 
     [Test]
     public async Task Can_Start_Dosage()
     {
-        await CreateDevice(new[] { "SOK3CM1" }).StartDosage();
+        await CreateDevice(new[] { "SOK3CM1" }).StartDosage(new NoopInterfaceLogger());
     }
 
     [Test]
     public async Task Can_Abort_Dosage()
     {
-        await CreateDevice(new[] { "SOK3CM2" }).CancelDosage();
+        await CreateDevice(new[] { "SOK3CM2" }).CancelDosage(new NoopInterfaceLogger());
     }
 
     [TestCase(2, "113834")]
@@ -61,7 +62,7 @@ public class DosageTests
             $"SOK3MA4;{remaining}",
             "SOK3MA5;303541",
             "SOK3SA5;218375",
-        }).GetDosageProgress(600000000d);
+        }).GetDosageProgress(new NoopInterfaceLogger(), 600000000d);
 
         Assert.Multiple(() =>
         {
@@ -85,7 +86,7 @@ public class DosageTests
 
         var device = new SerialPortMTSource(_deviceLogger, SerialPortConnection.FromMockedPortInstance(mock, _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        await device.SetDosageEnergy(energy, 600000000d);
+        await device.SetDosageEnergy(new NoopInterfaceLogger(), energy, 600000000d);
 
         Assert.That(mock.Commands[0], Is.EqualTo($"S3PS46;{(long)(6000E5 * energy / 1000d):0000000000}"));
     }

@@ -17,6 +17,7 @@ namespace SourceApi.Controllers
     /// </remarks>
     /// <param name="logger">Injected logger.</param>
     /// <param name="source">Injected source.</param>
+    /// <param name="interfaceLogger"></param>
     [ApiVersion("1.0")]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]

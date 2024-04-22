@@ -24,4 +24,9 @@ public enum InterfaceLogSourceTypes
     /// A device under test.
     /// </summary>
     DeviceUnderTest = 3,
+
+    /// <summary>
+    /// The meter test system itself.
+    /// </summary>
+    MeterTestSystem = 4,
 }

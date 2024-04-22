@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using SharedLibrary.Models;
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Model.Configuration;
@@ -33,7 +34,7 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
         {
         }
 
-        public ISerialPortConnectionExecutor CreateExecutor() => new Executor();
+        public ISerialPortConnectionExecutor CreateExecutor(InterfaceLogSourceTypes type, string id) => new Executor();
     }
 
     private readonly object _sync = new();

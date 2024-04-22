@@ -1,7 +1,7 @@
 
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
-
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 
@@ -21,7 +21,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     /// <summary>
     /// 
     /// </summary>
-    protected readonly ISerialPortConnection Device;
+    protected readonly ISerialPortConnectionExecutor Device;
 
     /// <summary>
     /// 
@@ -53,10 +53,11 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     /// <param name="validator"></param>
     protected CommonSource(ILogger<CommonSource<T>> logger, ISerialPortConnection device, ICapabilitiesMap capabilities, ISourceCapabilityValidator validator)
     {
-        Capabilities = capabilities;
-        Device = device;
-        Logger = logger;
         _validator = validator;
+        Capabilities = capabilities;
+        Logger = logger;
+
+        Device = device.CreateExecutor(InterfaceLogSourceTypes.Source);
     }
 
     /// <inheritdoc/>
@@ -82,7 +83,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
 
         try
         {
-            await Task.WhenAll(Device.CreateExecutor().Execute(Translator.ToSerialPortRequests(loadpoint)));
+            await Task.WhenAll(Device.Execute(Translator.ToSerialPortRequests(loadpoint)));
 
             Info.ActivatedAt = DateTime.Now;
             Info.IsActive = true;

@@ -92,7 +92,7 @@ public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, I
 
         Logger.LogTrace("Switching anything off.");
 
-        await Task.WhenAll(Device.CreateExecutor().Execute(SerialPortRequest.Create("UIAAAAAAAAA", "OKUI")));
+        await Task.WhenAll(Device.Execute(SerialPortRequest.Create("UIAAAAAAAAA", "OKUI")));
 
         Info.IsActive = false;
 

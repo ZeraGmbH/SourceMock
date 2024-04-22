@@ -23,13 +23,13 @@ partial class SerialPortMTErrorCalculator
     private static readonly Regex MatchErrorStatus3 = new(@"^([^;]+);([^;]+)$");
 
     /// <inheritdoc/>
-    public Task AbortErrorMeasurement() => _device.CreateExecutor().Execute(SerialPortRequest.Create("AEE", "AEEACK"))[0];
+    public Task AbortErrorMeasurement() => _device.Execute(SerialPortRequest.Create("AEE", "AEEACK"))[0];
 
     /// <inheritdoc/>
     public async Task<ErrorMeasurementStatus> GetErrorStatus()
     {
         /* Ask the device for the current status. */
-        var replies = await _device.CreateExecutor().Execute(SerialPortRequest.Create("AES1", "AESACK"))[0];
+        var replies = await _device.Execute(SerialPortRequest.Create("AES1", "AESACK"))[0];
 
         /* Prepare for the result. */
         var result = new ErrorMeasurementStatus { State = ErrorMeasurementStates.NotActive };
@@ -167,7 +167,7 @@ partial class SerialPortMTErrorCalculator
         }
 
         /* Now we can send the resulting texts and power factors to the device. */
-        return _device.CreateExecutor().Execute(SerialPortRequest.Create($"AEP{rawMeter};{powMeter:00};{rawImpulses};{powImpulses}", "AEPACK"))[0];
+        return _device.Execute(SerialPortRequest.Create($"AEP{rawMeter};{powMeter:00};{rawImpulses};{powImpulses}", "AEPACK"))[0];
     }
 
     /// <summary>
@@ -230,5 +230,5 @@ partial class SerialPortMTErrorCalculator
 
     /// <inheritdoc/>
     public Task StartErrorMeasurement(bool continuous, ErrorCalculatorMeterConnections? connection) =>
-        _device.CreateExecutor().Execute(SerialPortRequest.Create(continuous ? "AEB1" : "AEB0", "AEBACK"))[0];
+        _device.Execute(SerialPortRequest.Create(continuous ? "AEB1" : "AEB0", "AEBACK"))[0];
 }

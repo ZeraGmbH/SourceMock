@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
+using SharedLibrary.Models.Logging;
 
 namespace RefMeterApi.Actions.Device;
 
@@ -19,7 +20,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     /// <summary>
     /// Connection to the device.
     /// </summary>
-    private readonly ISerialPortConnection _device;
+    private readonly ISerialPortConnectionExecutor _device;
 
     /// <summary>
     /// Logging helper.
@@ -33,8 +34,9 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     /// <param name="logger">Logging service for this device type.</param>
     public SerialPortMTRefMeter(ISerialPortConnection device, ILogger<SerialPortMTRefMeter> logger)
     {
-        _device = device;
         _logger = logger;
+
+        _device = device.CreateExecutor(InterfaceLogSourceTypes.ReferenceMeter);
 
         /* Setup caches for shared request results. */
         _actualValues = new(CreateActualValueRequest);
@@ -46,7 +48,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     /// <inheritdoc/>
     public async Task<double> GetMeterConstant()
     {
-        var reply = await _device.CreateExecutor().Execute(SerialPortRequest.Create("AST", "ASTACK"))[0];
+        var reply = await _device.Execute(SerialPortRequest.Create("AST", "ASTACK"))[0];
 
         /* We need the range of voltage and current and the measurement mode as well. */
         double? voltage = null, current = null;

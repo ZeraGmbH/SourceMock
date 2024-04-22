@@ -4,6 +4,7 @@ using MeterTestSystemApi.Models;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions.Device;
 using SerialPortProxy;
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
 
@@ -27,7 +28,7 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     /// <summary>
     /// Serial port connection to the system.
     /// </summary>
-    private readonly ISerialPortConnection _device;
+    private readonly ISerialPortConnectionExecutor _device;
 
     /// <summary>
     /// Logging helper.
@@ -66,18 +67,18 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
 
         _errorCalculators.Add(errorCalculator);
 
-        _device = device;
+        _device = device.CreateExecutor(InterfaceLogSourceTypes.MeterTestSystem);
         _logger = logger;
 
         /* Register out-of-band processing of error conditions. */
-        _device.RegisterEvent(_smRegEx, reply => ErrorConditionsChanged?.Invoke(ErrorConditionParser.Parse(reply.Groups[1].Value, true)));
+        device.RegisterEvent(_smRegEx, reply => ErrorConditionsChanged?.Invoke(ErrorConditionParser.Parse(reply.Groups[1].Value, true)));
     }
 
     /// <inheritdoc/>
     public async Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion()
     {
         /* Execute the request and wait for the information string. */
-        var reply = await _device.CreateExecutor().Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
+        var reply = await _device.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
         if (reply.Length < 2)
             throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");
@@ -116,7 +117,7 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("SSM", _smRegEx);
 
-        await _device.CreateExecutor().Execute(request)[0];
+        await _device.Execute(request)[0];
 
         /* Create response structure. */
         return ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, false);

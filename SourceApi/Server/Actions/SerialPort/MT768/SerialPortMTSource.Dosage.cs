@@ -10,7 +10,7 @@ partial class SerialPortMTSource
 {
     /// <inheritdoc/>
     public override Task CancelDosage() =>
-        Task.WhenAll(Device.CreateExecutor().Execute(SerialPortRequest.Create("S3CM2", "SOK3CM2")));
+        Task.WhenAll(Device.Execute(SerialPortRequest.Create("S3CM2", "SOK3CM2")));
 
     /// <inheritdoc/>
     public override async Task<DosageProgress> GetDosageProgress(double meterConstant)
@@ -24,7 +24,7 @@ partial class SerialPortMTSource
         var progress = SerialPortRequest.Create("S3MA5", new Regex(@"^SOK3MA5;(.+)$"));
         var total = SerialPortRequest.Create("S3SA5", new Regex(@"^SOK3SA5;(.+)$"));
 
-        await Task.WhenAll(Device.CreateExecutor().Execute(active, countdown, progress, total));
+        await Task.WhenAll(Device.Execute(active, countdown, progress, total));
 
         /* Scale actual values to energy - in Wh. */
         return new()
@@ -45,7 +45,7 @@ partial class SerialPortMTSource
         /* Calculate the number of impulses from the energy (in Wh) and the meter constant. */
         var impulses = (long)Math.Round(meterConstant * value / 1000d);
 
-        await Task.WhenAll(Device.CreateExecutor().Execute(SerialPortRequest.Create($"S3PS46;{impulses:0000000000}", "SOK3PS46")));
+        await Task.WhenAll(Device.Execute(SerialPortRequest.Create($"S3PS46;{impulses:0000000000}", "SOK3PS46")));
     }
 
     /// <inheritdoc/>
@@ -53,12 +53,12 @@ partial class SerialPortMTSource
     {
         var onAsNumber = on ? 3 : 4;
 
-        return Task.WhenAll(Device.CreateExecutor().Execute(SerialPortRequest.Create($"S3CM{onAsNumber}", $"SOK3CM{onAsNumber}")));
+        return Task.WhenAll(Device.Execute(SerialPortRequest.Create($"S3CM{onAsNumber}", $"SOK3CM{onAsNumber}")));
     }
 
     /// <inheritdoc/>
     public override Task StartDosage() =>
-        Task.WhenAll(Device.CreateExecutor().Execute(SerialPortRequest.Create("S3CM1", "SOK3CM1")));
+        Task.WhenAll(Device.Execute(SerialPortRequest.Create("S3CM1", "SOK3CM1")));
 
     /// <inheritdoc/>
     public override async Task<bool> CurrentSwitchedOffForDosage()
@@ -67,7 +67,7 @@ partial class SerialPortMTSource
         var dosage = SerialPortRequest.Create("S3SA1", new Regex(@"^SOK3SA1;([0123])$"));
         var mode = SerialPortRequest.Create("S3SA3", new Regex(@"^SOK3SA3;([012])$"));
 
-        await Task.WhenAll(Device.CreateExecutor().Execute(dosage, mode));
+        await Task.WhenAll(Device.Execute(dosage, mode));
 
         /* Current should be switched off if dosage mode is on mode dosage itself is not yet active. */
         return mode.EndMatch?.Groups[1].Value == "2" && dosage.EndMatch?.Groups[1].Value == "1";

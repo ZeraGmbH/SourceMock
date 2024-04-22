@@ -35,7 +35,7 @@ partial class SerialPortMTRefMeter
     public async Task<MeasurementModes?> GetActualMeasurementMode()
     {
         /* Execute the request and get the answer from the device. */
-        var replies = await _device.CreateExecutor().Execute(
+        var replies = await _device.Execute(
             SerialPortRequest.Create("AST", "ASTACK")
         )[0];
 
@@ -52,7 +52,7 @@ partial class SerialPortMTRefMeter
     public async Task<MeasurementModes[]> GetMeasurementModes()
     {
         /* Execute the request and get the answer from the device. */
-        var replies = await _device.CreateExecutor().Execute(
+        var replies = await _device.Execute(
             SerialPortRequest.Create("AML", "AMLACK")
         )[0];
 
@@ -89,6 +89,6 @@ partial class SerialPortMTRefMeter
         var supported = SupportedModes.Single(m => m.Value == mode);
 
         /* Send the command to the device. */
-        return _device.CreateExecutor().Execute(SerialPortRequest.Create($"AMT{supported.Key}", "AMTACK"))[0];
+        return _device.Execute(SerialPortRequest.Create($"AMT{supported.Key}", "AMTACK"))[0];
     }
 }

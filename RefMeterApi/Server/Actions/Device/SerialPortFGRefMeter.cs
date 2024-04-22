@@ -4,6 +4,7 @@ using RefMeterApi.Actions.MeterConstant;
 using RefMeterApi.Exceptions;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SharedLibrary.Models.Logging;
 
 namespace RefMeterApi.Actions.Device;
 
@@ -34,7 +35,7 @@ public partial class SerialPortFGRefMeter(ISerialPortConnection device, IMeterCo
     /// <summary>
     /// Device connection to use.
     /// </summary>
-    private readonly ISerialPortConnection _device = device;
+    private readonly ISerialPortConnectionExecutor _device = device.CreateExecutor(InterfaceLogSourceTypes.ReferenceMeter);
 
     /// <summary>
     /// Logging helper.
@@ -59,7 +60,7 @@ public partial class SerialPortFGRefMeter(ISerialPortConnection device, IMeterCo
         var buRequest = SerialPortRequest.Create("BU", new Regex(@"^BU(.+)$"));
         var fiRequest = SerialPortRequest.Create("FI", new Regex(@"^FI(.+)$"));
 
-        await Task.WhenAll(_device.CreateExecutor().Execute(biRequest, buRequest, fiRequest));
+        await Task.WhenAll(_device.Execute(biRequest, buRequest, fiRequest));
 
         /* Convert text representations to numbers. */
         var voltage = double.Parse(buRequest.EndMatch!.Groups[1].Value);

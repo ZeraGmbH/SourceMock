@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
+using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device;
 
@@ -30,7 +31,7 @@ public partial class SerialPortMTErrorCalculator(ISerialPortConnection device, I
     /// <summary>
     /// Communication interface to the device.
     /// </summary>
-    private readonly ISerialPortConnection _device = device;
+    private readonly ISerialPortConnectionExecutor _device = device.CreateExecutor(InterfaceLogSourceTypes.ErrorCalculator, "0");
 
     /// <summary>
     /// Logging helper.
@@ -55,7 +56,7 @@ public partial class SerialPortMTErrorCalculator(ISerialPortConnection device, I
     public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion()
     {
         /* Execute the request and wait for the information string. */
-        var reply = await _device.CreateExecutor().Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
+        var reply = await _device.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
         if (reply.Length < 2)
             throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");

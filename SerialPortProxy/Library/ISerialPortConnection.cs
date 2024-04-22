@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using SharedLibrary.Models.Logging;
 
 namespace SerialPortProxy;
 
@@ -24,8 +25,10 @@ public interface ISerialPortConnection : IDisposable
     /// <summary>
     /// Create scoped helper to execute commands.
     /// </summary>
+    /// <param name="type">Type of the websam device using this connection.</param>
+    /// <param name="id">Optional unique identifier of the device - only if multiple devices of the same type are used.</param>
     /// <returns>A new executor instance.</returns>
-    ISerialPortConnectionExecutor CreateExecutor();
+    ISerialPortConnectionExecutor CreateExecutor(InterfaceLogSourceTypes type, string id = "");
 
     /// <summary>
     /// Registeres Out-Of-Band essage handling.

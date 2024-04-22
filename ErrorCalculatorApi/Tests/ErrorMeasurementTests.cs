@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using ErrorCalculatorApi.Models;
 using SerialPortProxy;
 using ErrorCalculatorApi.Actions.Device;
+using Moq;
 
 namespace ErrorCalculatorApiTests;
 
@@ -226,7 +227,9 @@ public class ErrorMeasurementTests
     [TestCase(99999999, "100000", 3)]
     public void Can_Clip_Numbers_To_Protocol_Restriction(long number, string expectedString, int expectedScale)
     {
-        var (asString, power) = new SerialPortMTErrorCalculator(null!, new NullLogger<SerialPortMTErrorCalculator>()).ClipNumberToProtocol(number, 11);
+        var device = new Mock<ISerialPortConnection>();
+
+        var (asString, power) = new SerialPortMTErrorCalculator(device.Object, new NullLogger<SerialPortMTErrorCalculator>()).ClipNumberToProtocol(number, 11);
 
         Assert.Multiple(() =>
         {

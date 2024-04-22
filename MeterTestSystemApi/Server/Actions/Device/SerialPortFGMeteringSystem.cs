@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
@@ -27,7 +28,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     /// <summary>
     /// Physical connection to the frequency generator.
     /// </summary>
-    private readonly ISerialPortConnection _device;
+    private readonly ISerialPortConnectionExecutor _device;
 
     /// <summary>
     /// Logging helper.
@@ -66,12 +67,12 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     /// <param name="services">Dependency injection system.</param>
     public SerialPortFGMeterTestSystem(ISerialPortConnection device, ILogger<SerialPortFGMeterTestSystem> logger, IServiceProvider services)
     {
-        _device = device;
+        _device = device.CreateExecutor(InterfaceLogSourceTypes.MeterTestSystem);
         _logger = logger;
         _services = services;
 
         /* Register out-of-band processing of error conditions. */
-        _device.RegisterEvent(_smRegEx, reply => ErrorConditionsChanged?.Invoke(ErrorConditionParser.Parse(reply.Groups[1].Value, true)));
+        device.RegisterEvent(_smRegEx, reply => ErrorConditionsChanged?.Invoke(ErrorConditionParser.Parse(reply.Groups[1].Value, true)));
     }
 
     /// <inheritdoc/>
@@ -211,7 +212,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
             var voltageCode = CodeMappings.Voltage[settings.VoltageAmplifier];
 
             /* Send the combined command to the meter test system. */
-            await _device.CreateExecutor().Execute(SerialPortRequest.Create($"ZP{voltageCode:00}{currentCode:00}{auxVoltageCode:00}{auxCurrentCode:00}{refMeterCode:00}", "OKZP"))[0];
+            await _device.Execute(SerialPortRequest.Create($"ZP{voltageCode:00}{currentCode:00}{auxVoltageCode:00}{auxCurrentCode:00}{refMeterCode:00}", "OKZP"))[0];
         }
         catch (Exception)
         {
@@ -238,7 +239,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("TS", new Regex("^TS(.{8})(.{4})$"));
 
-        await _device.CreateExecutor().Execute(request)[0];
+        await _device.Execute(request)[0];
 
         /* Create response structure. */
         return new()
@@ -254,7 +255,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("SM", _smRegEx);
 
-        await _device.CreateExecutor().Execute(request)[0];
+        await _device.Execute(request)[0];
 
         /* Create response structure. */
         return ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, true);

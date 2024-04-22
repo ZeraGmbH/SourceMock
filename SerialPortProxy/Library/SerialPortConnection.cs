@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using SharedLibrary.Models.Logging;
+using SharpCompress.Archives.Tar;
 
 namespace SerialPortProxy;
 
@@ -11,10 +12,12 @@ namespace SerialPortProxy;
 /// </summary>
 public class SerialPortConnection : ISerialPortConnection
 {
-    private class Executor(SerialPortConnection connection) : ISerialPortConnectionExecutor
+#pragma warning disable CS9113 // Parameter is unread.
+    private class Executor(SerialPortConnection port, InterfaceLogEntryConnection connection) : ISerialPortConnectionExecutor
+#pragma warning restore CS9113 // Parameter is unread.
     {
         /// <inheritdoc/>
-        public Task<string[]>[] Execute(params SerialPortRequest[] requests) => connection.Execute(requests);
+        public Task<string[]>[] Execute(params SerialPortRequest[] requests) => port.Execute(requests);
     }
 
     /// <summary>
@@ -184,7 +187,14 @@ public class SerialPortConnection : ISerialPortConnection
     }
 
     /// <inheritdoc/>
-    public ISerialPortConnectionExecutor CreateExecutor() => new Executor(this);
+    public ISerialPortConnectionExecutor CreateExecutor(InterfaceLogSourceTypes type, string id)
+        => new Executor(this, new()
+        {
+            Protocol = _target.Protocol,
+            Endpoint = _target.Endpoint,
+            WebSamType = type,
+            WebSamId = id
+        });
 
     private Task<string[]>[] Execute(params SerialPortRequest[] requests)
     {

@@ -21,7 +21,7 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
     {
         class Executor : ISerialPortConnectionExecutor
         {
-            public Task<string[]>[] Execute(params SerialPortRequest[] requests) =>
+            public Task<string[]>[] Execute(IInterfaceLogger logger, params SerialPortRequest[] requests) =>
                 requests.Select(r => Task.FromException<string[]>(new NotSupportedException())).ToArray();
         }
 

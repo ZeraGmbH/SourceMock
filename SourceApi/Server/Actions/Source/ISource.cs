@@ -1,3 +1,4 @@
+using SharedLibrary.Models.Logging;
 using SourceApi.Model;
 
 namespace SourceApi.Actions.Source
@@ -21,15 +22,16 @@ namespace SourceApi.Actions.Source
         /// <summary>
         /// Sets a specified loadpoint imediatly.
         /// </summary>
+        /// <param name="logger"></param>
         /// <param name="loadpoint">The loadpoint to be set.</param>
         /// <returns>The corresponding value of <see cref="SourceApiErrorCodes"/> with regard to the success of the operation.</returns>
-        public Task<SourceApiErrorCodes> SetLoadpoint(TargetLoadpoint loadpoint);
+        public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint);
 
         /// <summary>
         /// Turns off the source.
         /// </summary>
         /// <returns>The corresponding value of <see cref="SourceApiErrorCodes"/> with regard to the success of the operation.</returns>
-        public Task<SourceApiErrorCodes> TurnOff();
+        public Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger);
 
         /// <summary>
         /// Gets the currently set loadpoint.
@@ -45,36 +47,39 @@ namespace SourceApi.Actions.Source
         /// <summary>
         /// Set the DOS mode.
         /// </summary>
+        /// <param name="logger"></param>
         /// <param name="on">set to turn on.</param>
-        Task SetDosageMode(bool on);
+        Task SetDosageMode(IInterfaceLogger logger, bool on);
 
         /// <summary>
         /// Define the dosage energy.
         /// </summary>
+        /// <param name="logger"></param>
         /// <param name="value">Value in Wh.</param>
         /// <param name="meterConstant">The meter constant used in the reference meter.</param>
-        Task SetDosageEnergy(double value, double meterConstant);
+        Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant);
 
         /// <summary>
         /// Start a dosage measurement.
         /// </summary>
-        Task StartDosage();
+        Task StartDosage(IInterfaceLogger logger);
 
         /// <summary>
         /// Terminate a dosage measurement.
         /// </summary>
-        Task CancelDosage();
+        Task CancelDosage(IInterfaceLogger logger);
 
         /// <summary>
         /// Reports the remaining energy in the current dosage operation.
         /// </summary>
+        /// <param name="logger"></param>
         /// <param name="meterConstant">The meter constant used in the reference meter.</param>
         /// <returns>Information on the current progress of the dosage measurement.</returns>
-        Task<DosageProgress> GetDosageProgress(double meterConstant);
+        Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant);
 
         /// <summary>
         /// If set the dosage mode has been activated but current is switch off.
         /// </summary>
-        Task<bool> CurrentSwitchedOffForDosage();
+        Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger);
     }
 }

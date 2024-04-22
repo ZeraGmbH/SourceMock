@@ -1,5 +1,6 @@
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 
 namespace ErrorCalculatorApi.Actions.Device;
@@ -44,7 +45,7 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
-    public Task AbortErrorMeasurement()
+    public Task AbortErrorMeasurement(IInterfaceLogger logger)
     {
         _status.State = ErrorMeasurementStates.Finished;
 
@@ -52,10 +53,10 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
-    public Task AbortAllJobs() => Task.CompletedTask;
+    public Task AbortAllJobs(IInterfaceLogger logger) => Task.CompletedTask;
 
     /// <inheritdoc/>
-    public Task<ErrorMeasurementStatus> GetErrorStatus()
+    public Task<ErrorMeasurementStatus> GetErrorStatus(IInterfaceLogger logger)
     {
         /* Time elapses in the current measurement - the mock does not use it's own thred for timing so calling this methode periodically is vital. */
         var hoursElapsed = (DateTime.UtcNow - _startTime).TotalHours;
@@ -103,7 +104,7 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant)
+    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, double dutMeterConstant, long impulses, double refMeterMeterConstant)
     {
         _meterConstant = dutMeterConstant;
         _totalImpulses = impulses;
@@ -115,7 +116,7 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections() => Task.FromResult<ErrorCalculatorMeterConnections[]>([]);
 
     /// <inheritdoc/>
-    public Task StartErrorMeasurement(bool continuous, ErrorCalculatorMeterConnections? connection)
+    public Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
     {
         /* Get the total power of all active phases of the current loadpoint (in W) */
         var totalPower = 0d;
@@ -141,7 +142,7 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion() =>
+    public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) =>
         Task.FromResult(new ErrorCalculatorFirmwareVersion()
         {
             ModelName = "CalculatorMock",
@@ -149,7 +150,7 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
         });
 
     /// <inheritdoc/>
-    public Task ActivateSource(bool on) => Task.CompletedTask;
+    public Task ActivateSource(IInterfaceLogger logger, bool on) => Task.CompletedTask;
 
     /// <inheritdoc/>
     public void Dispose()

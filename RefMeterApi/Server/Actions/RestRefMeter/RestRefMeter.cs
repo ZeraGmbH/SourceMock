@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using RefMeterApi.Models;
 using SharedLibrary;
 using SharedLibrary.Models;
+using SharedLibrary.Models.Logging;
 
 namespace RefMeterApi.Actions.RestSource;
 
@@ -49,19 +50,19 @@ public class RestRefMeter(HttpClient httpClient, ILogger<RestRefMeter> logger) :
     }
 
     /// <inheritdoc/>
-    public Task<MeasurementModes?> GetActualMeasurementMode() =>
+    public Task<MeasurementModes?> GetActualMeasurementMode(IInterfaceLogger logger) =>
         httpClient.GetAsync(new Uri(_baseUri, "MeasurementMode")).GetJsonResponse<MeasurementModes?>();
 
     /// <inheritdoc/>
-    public Task<double> GetMeterConstant() =>
+    public Task<double> GetMeterConstant(IInterfaceLogger logger) =>
         httpClient.GetAsync(new Uri(_baseUri, "MeterConstant")).GetJsonResponse<double>();
 
     /// <inheritdoc/>
-    public Task<MeasuredLoadpoint> GetActualValues(int firstActiveCurrentPhase = -1) =>
+    public Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1) =>
         httpClient.GetAsync($"{new Uri(_baseUri, "ActualValues")}?firstActiveCurrentPhase={JsonConvert.SerializeObject(firstActiveCurrentPhase)}").GetJsonResponse<MeasuredLoadpoint>();
 
     /// <inheritdoc/>
-    public Task<MeasurementModes[]> GetMeasurementModes() =>
+    public Task<MeasurementModes[]> GetMeasurementModes(IInterfaceLogger logger) =>
         httpClient.GetAsync(new Uri(_baseUri, "MeasurementModes")).GetJsonResponse<MeasurementModes[]>();
 
     /// <inheritdoc/>
@@ -88,6 +89,6 @@ public class RestRefMeter(HttpClient httpClient, ILogger<RestRefMeter> logger) :
     }
 
     /// <inheritdoc/>
-    public Task SetActualMeasurementMode(MeasurementModes mode) =>
+    public Task SetActualMeasurementMode(IInterfaceLogger logger, MeasurementModes mode) =>
         httpClient.PutAsync($"{new Uri(_baseUri, "MeasurementMode")}?mode={JsonConvert.SerializeObject(mode)}", null);
 }

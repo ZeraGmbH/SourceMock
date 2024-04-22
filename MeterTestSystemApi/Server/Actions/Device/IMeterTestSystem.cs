@@ -1,6 +1,7 @@
 using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Models;
 using RefMeterApi.Actions.Device;
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 
 namespace MeterTestSystemApi.Actions.Device;
@@ -14,7 +15,7 @@ public interface IMeterTestSystem
     /// Retrieve the firmware version of the meter test system.
     /// </summary>
     /// <returns>The firmware version.</returns>
-    Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion();
+    Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger);
 
     /// <summary>
     /// Request the capabilities of the meter test system.
@@ -25,14 +26,15 @@ public interface IMeterTestSystem
     /// <summary>
     /// Report the physical configuration to the meter test system implementation.
     /// </summary>
+    /// <param name="logger"></param>
     /// <param name="settings">Physical configuration to use.</param>
-    Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeter settings);
+    Task SetAmplifiersAndReferenceMeter(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings);
 
     /// <summary>
     /// Retrive the current error condition overview for the meter test system.
     /// </summary>
     /// <returns>All available error conditions.</returns>
-    Task<ErrorConditions> GetErrorConditions();
+    Task<ErrorConditions> GetErrorConditions(IInterfaceLogger logger);
 
     /// <summary>
     /// Request the current physical configuration used.

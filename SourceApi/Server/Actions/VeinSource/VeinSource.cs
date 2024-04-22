@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 
@@ -24,7 +24,7 @@ namespace SourceApi.Actions.VeinSource
 
         public bool Available => true;
 
-        public Task CancelDosage()
+        public Task CancelDosage(IInterfaceLogger logger)
         {
             throw new NotImplementedException();
         }
@@ -46,22 +46,22 @@ namespace SourceApi.Actions.VeinSource
             return ret;
         }
 
-        public Task<DosageProgress> GetDosageProgress(double meterConstant)
+        public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant)
         {
             throw new NotImplementedException();
         }
 
-        public Task SetDosageEnergy(double value, double meterConstant)
+        public Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant)
         {
             throw new NotImplementedException();
         }
 
-        public Task SetDosageMode(bool on)
+        public Task SetDosageMode(IInterfaceLogger logger, bool on)
         {
             throw new NotImplementedException();
         }
 
-        public Task<SourceApiErrorCodes> SetLoadpoint(TargetLoadpoint loadpoint)
+        public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
         {
             JObject veinRequest = VeinLoadpointMapper.ConvertToZeraJson(loadpoint);
 
@@ -73,16 +73,16 @@ namespace SourceApi.Actions.VeinSource
             return Task.FromResult(SourceApiErrorCodes.SUCCESS);
         }
 
-        public Task StartDosage()
+        public Task StartDosage(IInterfaceLogger logger)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> CurrentSwitchedOffForDosage()
+        public Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger)
         {
             throw new NotImplementedException();
         }
 
-        public Task<SourceApiErrorCodes> TurnOff() => Task.FromException<SourceApiErrorCodes>(new NotImplementedException());
+        public Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger) => Task.FromException<SourceApiErrorCodes>(new NotImplementedException());
     }
 }

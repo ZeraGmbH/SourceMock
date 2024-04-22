@@ -5,31 +5,23 @@ using Swashbuckle.AspNetCore.Annotations;
 
 using SourceApi.Actions.Source;
 using SourceApi.Model;
+using SharedLibrary.Models.Logging;
 
 namespace SourceApi.Controllers
 {
     /// <summary>
     /// Controls a source.
     /// </summary>
+    /// <remarks>
+    /// Constructor for a SouceController.
+    /// </remarks>
+    /// <param name="logger">Injected logger.</param>
+    /// <param name="source">Injected source.</param>
     [ApiVersion("1.0")]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
-    public class SourceController : Controller
+    public class SourceController(ILogger<SourceController> logger, ISource source, IInterfaceLogger interfaceLogger) : Controller
     {
-        private readonly ILogger _logger;
-        private readonly ISource _source;
-
-        /// <summary>
-        /// Constructor for a SouceController.
-        /// </summary>
-        /// <param name="logger">Injected logger.</param>
-        /// <param name="source">Injected source.</param>
-        public SourceController(ILogger<SourceController> logger, ISource source)
-        {
-            _logger = logger;
-            _source = source;
-        }
-
         /// <summary>
         /// Gets the capabilities of this source.
         /// </summary>
@@ -40,7 +32,7 @@ namespace SourceApi.Controllers
         [SwaggerOperation(OperationId = "GetCapabilities")]
         public async Task<ActionResult<SourceCapabilities>> GetCapablities()
         {
-            return Ok(await _source.GetCapabilities());
+            return Ok(await source.GetCapabilities());
         }
 
         /// <summary>
@@ -51,7 +43,7 @@ namespace SourceApi.Controllers
         [HttpGet("Available")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "SourceIsAvailable")]
-        public ActionResult<bool> IsAvailable() => Ok(_source.Available);
+        public ActionResult<bool> IsAvailable() => Ok(source.Available);
 
         /// <summary>
         /// Sets a loadpoint without turning on the source.
@@ -70,14 +62,14 @@ namespace SourceApi.Controllers
         [SwaggerOperation(OperationId = "SetLoadpoint")]
         public async Task<ActionResult> SetLoadpoint([FromBody] TargetLoadpoint loadpoint)
         {
-            _logger.LogTrace($"Loadpoint to be set: {loadpoint}");
+            logger.LogTrace($"Loadpoint to be set: {loadpoint}");
 
-            var srcResult = await _source.SetLoadpoint(loadpoint);
+            var srcResult = await source.SetLoadpoint(interfaceLogger, loadpoint);
 
             switch (srcResult)
             {
                 case SourceApiErrorCodes.SUCCESS:
-                    _logger.LogTrace("Loadpoint was successfully set.");
+                    logger.LogTrace("Loadpoint was successfully set.");
                     return Ok();
                 case SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES:
                 case SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID:
@@ -86,12 +78,12 @@ namespace SourceApi.Controllers
                 case SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_FREQUENCY_INVALID:
                 case SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID:
                 case SourceApiErrorCodes.SUCCESS_NOT_ACTIVATED:
-                    _logger.LogInformation(srcResult.ToString());
+                    logger.LogInformation(srcResult.ToString());
                     return Problem(
                         detail: srcResult.ToUserFriendlyString(),
                         statusCode: StatusCodes.Status422UnprocessableEntity);
                 default:
-                    _logger.LogError($"Unkown response from source: {srcResult}");
+                    logger.LogError($"Unkown response from source: {srcResult}");
                     return Problem(
                         detail: $"Unkown Response from source: {srcResult}, {srcResult.ToUserFriendlyString()}",
                         statusCode: StatusCodes.Status500InternalServerError);
@@ -113,16 +105,16 @@ namespace SourceApi.Controllers
         [SwaggerOperation(OperationId = "TurnOff")]
         public async Task<ActionResult> TurnOff()
         {
-            var srcResult = await _source.TurnOff();
+            var srcResult = await source.TurnOff(interfaceLogger);
 
 #pragma warning disable IDE0066 // Not all enum values are appicable here
             switch (srcResult)
             {
                 case SourceApiErrorCodes.SUCCESS:
-                    _logger.LogTrace("Source was turned off.");
+                    logger.LogTrace("Source was turned off.");
                     return Ok();
                 default:
-                    _logger.LogError($"Unkown response from source: {srcResult}");
+                    logger.LogError($"Unkown response from source: {srcResult}");
                     return Problem(
                         detail: "Unkown Response from source.",
                         statusCode: StatusCodes.Status500InternalServerError);
@@ -142,7 +134,7 @@ namespace SourceApi.Controllers
         [SwaggerOperation(OperationId = "GetLoadpoint")]
         public ActionResult<TargetLoadpoint> GetCurrentLoadpoint()
         {
-            var loadpoint = _source.GetCurrentLoadpoint();
+            var loadpoint = source.GetCurrentLoadpoint();
 
             return loadpoint == null
                 ? NoContent()
@@ -157,6 +149,6 @@ namespace SourceApi.Controllers
         [HttpGet("LoadpointInfo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetLoadpointInfo")]
-        public ActionResult<LoadpointInfo> GetLoadpointInfo() => _source.GetActiveLoadpointInfo();
+        public ActionResult<LoadpointInfo> GetLoadpointInfo() => source.GetActiveLoadpointInfo();
     }
 }

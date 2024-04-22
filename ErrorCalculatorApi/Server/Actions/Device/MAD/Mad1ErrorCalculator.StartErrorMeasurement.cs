@@ -1,4 +1,5 @@
 using ErrorCalculatorApi.Models;
+using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;
 
@@ -33,7 +34,7 @@ partial class Mad1ErrorCalculator
       </KMA_XML_0_01>
     ";
 
-    private async Task<string> StartErrorMeasurement(bool continuous, ErrorCalculatorMeterConnections? connection, long dutImpulses, long refMeterImpulses)
+    private async Task<string> StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection, long dutImpulses, long refMeterImpulses)
     {
         /* Create and configure request. */
         var req = LoadXmlFromString(ErrorMeasurementStartXml);

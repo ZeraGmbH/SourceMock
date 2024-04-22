@@ -1,3 +1,5 @@
+using SharedLibrary.Models.Logging;
+
 namespace ErrorCalculatorApi.Actions.Device.MAD;
 
 partial class Mad1ErrorCalculator
@@ -32,7 +34,7 @@ partial class Mad1ErrorCalculator
   ";
 
   /// <inheritdoc />
-  public Task ActivateSource(bool on)
+  public Task ActivateSource(IInterfaceLogger logger, bool on)
   {
     /* Create and configure request. */
     var req = LoadXmlFromString(ActivateXml);

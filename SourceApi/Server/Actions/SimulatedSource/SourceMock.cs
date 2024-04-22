@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using SharedLibrary.Models.Logging;
 using SourceApi.Model;
 
 namespace SourceApi.Actions.Source;
@@ -23,7 +24,7 @@ public abstract class SourceMock : ISourceMock
     }
 
     /// <inheritdoc/>
-    public Task<SourceApiErrorCodes> SetLoadpoint(TargetLoadpoint loadpoint)
+    public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
         var isValid = _validator.IsValid(loadpoint, _sourceCapabilities);
 
@@ -42,7 +43,7 @@ public abstract class SourceMock : ISourceMock
     }
 
     /// <inheritdoc/>
-    public Task<SourceApiErrorCodes> TurnOff()
+    public Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger)
     {
         _logger?.LogTrace("Source turned off.");
 
@@ -56,21 +57,21 @@ public abstract class SourceMock : ISourceMock
 
     public Task<SourceCapabilities> GetCapabilities() => Task.FromResult(_sourceCapabilities);
 
-    public Task SetDosageMode(bool on)
+    public Task SetDosageMode(IInterfaceLogger logger, bool on)
     {
         _dosageMode = on;
 
         return Task.CompletedTask;
     }
 
-    public Task SetDosageEnergy(double value, double meterConstant)
+    public Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant)
     {
         _dosageEnergy = value;
 
         return Task.CompletedTask;
     }
 
-    public Task StartDosage()
+    public Task StartDosage(IInterfaceLogger logger)
     {
         _startTime = DateTime.Now;
         _status.Active = true;
@@ -79,7 +80,7 @@ public abstract class SourceMock : ISourceMock
         return Task.CompletedTask;
     }
 
-    public Task CancelDosage()
+    public Task CancelDosage(IInterfaceLogger logger)
     {
         _status.Active = false;
         _status.Remaining = 0;
@@ -90,11 +91,12 @@ public abstract class SourceMock : ISourceMock
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="logger"></param>
     /// <param name="meterConstant"></param>
     /// <returns></returns>
-    public abstract Task<DosageProgress> GetDosageProgress(double meterConstant);
+    public abstract Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant);
 
-    public Task<bool> CurrentSwitchedOffForDosage()
+    public Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger)
     {
         _logger?.LogTrace("Mock switches off the current for dosage");
 

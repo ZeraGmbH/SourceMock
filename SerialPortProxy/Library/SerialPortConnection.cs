@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using SharedLibrary.Models.Logging;
-using SharpCompress.Archives.Tar;
 
 namespace SerialPortProxy;
 
@@ -12,12 +11,11 @@ namespace SerialPortProxy;
 /// </summary>
 public class SerialPortConnection : ISerialPortConnection
 {
-#pragma warning disable CS9113 // Parameter is unread.
     private class Executor(SerialPortConnection port, InterfaceLogEntryConnection connection) : ISerialPortConnectionExecutor
-#pragma warning restore CS9113 // Parameter is unread.
     {
         /// <inheritdoc/>
-        public Task<string[]>[] Execute(params SerialPortRequest[] requests) => port.Execute(requests);
+        public Task<string[]>[] Execute(IInterfaceLogger logger, params SerialPortRequest[] requests)
+            => port.Execute(logger.CreateConnection(connection), requests);
     }
 
     /// <summary>
@@ -34,7 +32,7 @@ public class SerialPortConnection : ISerialPortConnection
     /// <summary>
     /// Non thread-safe queue - may use ConcurrentQueue or Producer/Consumer pattern with integrated locking.
     /// </summary>
-    private readonly Queue<SerialPortRequest[]> _queue = new();
+    private readonly Queue<Tuple<SerialPortRequest[], IInterfaceConnection>> _queue = new();
 
     /// <summary>
     /// The physical connection to a serial port.
@@ -177,7 +175,7 @@ public class SerialPortConnection : ISerialPortConnection
 
             /* If there are any outstand requests notify the corresponding clients - callers of Execute. */
             foreach (var requests in pending)
-                foreach (var request in requests)
+                foreach (var request in requests.Item1)
                 {
                     _logger.LogWarning("Cancel command {Command}", request.Command);
 
@@ -196,7 +194,7 @@ public class SerialPortConnection : ISerialPortConnection
             WebSamId = id
         });
 
-    private Task<string[]>[] Execute(params SerialPortRequest[] requests)
+    private Task<string[]>[] Execute(IInterfaceConnection connection, params SerialPortRequest[] requests)
     {
         ArgumentNullException.ThrowIfNull(requests, nameof(requests));
 
@@ -205,7 +203,7 @@ public class SerialPortConnection : ISerialPortConnection
         {
             /* Queue is locked, we have exclusive access and can now safely add the entry. */
             if (requests.Length > 0)
-                _queue.Enqueue(requests);
+                _queue.Enqueue(Tuple.Create(requests, connection));
 
             /* If queue executer thread is waiting (Monitor.Wait) for new entries wake it up for immediate processing the new entry. */
             Monitor.Pulse(_queue);
@@ -314,7 +312,7 @@ public class SerialPortConnection : ISerialPortConnection
                 lock (_incoming)
                     _incoming.Clear();
 
-            SerialPortRequest[]? requests;
+            Tuple<SerialPortRequest[], IInterfaceConnection>? entry;
 
             /* Must have exclusive access to the queue to avoid data corruption. */
             lock (_queue)
@@ -324,7 +322,7 @@ public class SerialPortConnection : ISerialPortConnection
                     return;
 
                 /* Try to get the first (oldest) entry from the queue. */
-                if (!_queue.TryDequeue(out requests))
+                if (!_queue.TryDequeue(out entry))
                 {
                     _logger.LogDebug("Queue is empty, waiting for next request");
 
@@ -334,6 +332,8 @@ public class SerialPortConnection : ISerialPortConnection
                     continue;
                 }
             }
+
+            var (requests, _connection) = entry;
 
             /* Process the transaction until finished or some request failed - important: ExecuteCommand MUST NOT throw an exception. */
             _logger.LogDebug("Starting transaction processing, commands: {RequestCount}", requests.Length);

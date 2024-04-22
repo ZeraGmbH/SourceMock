@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Models;
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 
@@ -67,11 +68,12 @@ public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="logger"></param>
     /// <param name="firstActiveVoltagePhase">Not relevant in dc</param>
     /// <returns></returns>
-    public async override Task<MeasuredLoadpoint> GetActualValues(int firstActiveVoltagePhase = -1)
+    public async override Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveVoltagePhase = -1)
     {
-        var loadpoint = await GetLoadpoint();
+        var loadpoint = await GetLoadpoint(logger);
 
         var mo = CalcMeasureOutput(loadpoint);
 
@@ -80,7 +82,7 @@ public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
         return mo;
     }
 
-    private async Task<TargetLoadpoint> GetLoadpoint()
+    private async Task<TargetLoadpoint> GetLoadpoint(IInterfaceLogger logger)
     {
         var r = Random.Shared;
 
@@ -99,7 +101,7 @@ public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
         loadpoint = SharedLibrary.Utils.DeepCopy(loadpoint);
 
         var info = source.GetActiveLoadpointInfo();
-        var currentSwitchedOffForDosage = await source.CurrentSwitchedOffForDosage();
+        var currentSwitchedOffForDosage = await source.CurrentSwitchedOffForDosage(logger);
 
         var phase = loadpoint.Phases[0];
         if (phase.Voltage.On && info.IsActive == false) phase.Voltage.On = false;

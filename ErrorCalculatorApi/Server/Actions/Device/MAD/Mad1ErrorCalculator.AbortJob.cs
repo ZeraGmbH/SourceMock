@@ -1,3 +1,5 @@
+using SharedLibrary.Models.Logging;
+
 namespace ErrorCalculatorApi.Actions.Device.MAD;
 
 partial class Mad1ErrorCalculator
@@ -17,7 +19,7 @@ partial class Mad1ErrorCalculator
 
 
   /// <inheritdoc/>
-  public Task AbortErrorMeasurement()
+  public Task AbortErrorMeasurement(IInterfaceLogger logger)
   {
     /* Validate. */
     var jobId = _jobId;

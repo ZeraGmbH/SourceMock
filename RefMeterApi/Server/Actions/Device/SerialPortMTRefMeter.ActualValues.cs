@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SharedLibrary.Actions;
+using SharedLibrary.Models.Logging;
 using SourceApi.Model;
 
 namespace RefMeterApi.Actions.Device;
@@ -15,7 +17,7 @@ partial class SerialPortMTRefMeter
     private readonly ResponseShare<MeasuredLoadpoint> _actualValues;
 
     /// <inheritdoc/>
-    public async Task<MeasuredLoadpoint> GetActualValues(int firstActiveCurrentPhase = -1)
+    public async Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1)
     {
         /* Request the cached values and clone the result - so the caller must not care for accessing shared data. */
         var values = JsonConvert.DeserializeObject<MeasuredLoadpoint>(JsonConvert.SerializeObject(await _actualValues.Execute()))!;
@@ -33,6 +35,7 @@ partial class SerialPortMTRefMeter
     {
         /* Execute the request and get the answer from the device. */
         var replies = await _device.Execute(
+            new NoopInterfaceLogger(),
             SerialPortRequest.Create("ATI01", "ATIACK"),
             SerialPortRequest.Create("AME", "AMEACK")
         )[1];

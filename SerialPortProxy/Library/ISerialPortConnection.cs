@@ -11,10 +11,11 @@ public interface ISerialPortConnectionExecutor
     /// <summary>
     /// Add a command to be sent to the serial port to the queue.
     /// </summary>
+    /// <param name="logger">Current logging scope.</param>
     /// <param name="requests">The command to send to the device.</param>
     /// <exception cref="ArgumentNullException">Parameter must not be null.</exception>
     /// <returns>All lines sent from the device as a task.</returns>
-    Task<string[]>[] Execute(params SerialPortRequest[] requests);
+    Task<string[]>[] Execute(IInterfaceLogger logger, params SerialPortRequest[] requests);
 }
 
 /// <summary>

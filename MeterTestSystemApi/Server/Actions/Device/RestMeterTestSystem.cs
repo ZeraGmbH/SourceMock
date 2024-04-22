@@ -10,6 +10,7 @@ using SourceApi.Actions.Source;
 using SharedLibrary;
 using RefMeterApi.Actions.RestSource;
 using Microsoft.Extensions.Logging;
+using SharedLibrary.Models.Logging;
 
 namespace MeterTestSystemApi.Actions.Device;
 
@@ -45,7 +46,7 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
         Task.FromResult<MeterTestSystemCapabilities>(null!);
 
     /// <inheritdoc/>
-    public async Task<ErrorConditions> GetErrorConditions()
+    public async Task<ErrorConditions> GetErrorConditions(IInterfaceLogger logger)
     {
         var errors = await httpClient.GetAsync(new Uri(_baseUri, "ErrorConditions")).GetJsonResponse<ErrorConditions>();
 
@@ -55,11 +56,11 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
     }
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion() =>
+    public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) =>
         httpClient.GetAsync(new Uri(_baseUri, "FirmwareVersion")).GetJsonResponse<MeterTestSystemFirmwareVersion>();
 
     /// <inheritdoc/>
-    public Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeter settings)
+    public Task SetAmplifiersAndReferenceMeter(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings)
     {
         /* The fallback do not support amplifier configurations. */
         throw new InvalidOperationException();

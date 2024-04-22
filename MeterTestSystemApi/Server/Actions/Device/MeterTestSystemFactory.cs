@@ -2,6 +2,7 @@ using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Models.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SharedLibrary.Actions;
 using SharedLibrary.Models;
 
 namespace MeterTestSystemApi.Actions.Device;
@@ -67,7 +68,7 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                                 {
                                     /* Do all configurations. */
                                     _meterTestSystem
-                                        .SetAmplifiersAndReferenceMeter(configuration.AmplifiersAndReferenceMeter)
+                                        .SetAmplifiersAndReferenceMeter(new NoopInterfaceLogger(), configuration.AmplifiersAndReferenceMeter)
                                         .Wait();
                                 }
                                 catch (Exception e)

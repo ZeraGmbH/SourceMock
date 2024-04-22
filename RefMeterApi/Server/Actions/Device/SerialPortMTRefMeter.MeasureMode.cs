@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SharedLibrary.Models.Logging;
 
 namespace RefMeterApi.Actions.Device;
 
@@ -32,12 +33,10 @@ partial class SerialPortMTRefMeter
     private static readonly Regex MeasurementModeReg = new Regex(@"^(\d{1,3});([^;]+);(.+)$");
 
     /// <inheritdoc/>
-    public async Task<MeasurementModes?> GetActualMeasurementMode()
+    public async Task<MeasurementModes?> GetActualMeasurementMode(IInterfaceLogger logger)
     {
         /* Execute the request and get the answer from the device. */
-        var replies = await _device.Execute(
-            SerialPortRequest.Create("AST", "ASTACK")
-        )[0];
+        var replies = await _device.Execute(logger, SerialPortRequest.Create("AST", "ASTACK"))[0];
 
         /* Find the mode. */
         var modeAsString = replies.SingleOrDefault(r => r.StartsWith("M="));
@@ -49,12 +48,10 @@ partial class SerialPortMTRefMeter
     }
 
     /// <inheritdoc/>
-    public async Task<MeasurementModes[]> GetMeasurementModes()
+    public async Task<MeasurementModes[]> GetMeasurementModes(IInterfaceLogger logger)
     {
         /* Execute the request and get the answer from the device. */
-        var replies = await _device.Execute(
-            SerialPortRequest.Create("AML", "AMLACK")
-        )[0];
+        var replies = await _device.Execute(logger, SerialPortRequest.Create("AML", "AMLACK"))[0];
 
         /* Prepare response with three phases. */
         var response = new List<MeasurementModes>();
@@ -83,12 +80,12 @@ partial class SerialPortMTRefMeter
 
 
     /// <inheritdoc/>
-    public Task SetActualMeasurementMode(MeasurementModes mode)
+    public Task SetActualMeasurementMode(IInterfaceLogger logger, MeasurementModes mode)
     {
         /* Reverse lookup the raw string for the mode - somewhat slow. */
         var supported = SupportedModes.Single(m => m.Value == mode);
 
         /* Send the command to the device. */
-        return _device.Execute(SerialPortRequest.Create($"AMT{supported.Key}", "AMTACK"))[0];
+        return _device.Execute(logger, SerialPortRequest.Create($"AMT{supported.Key}", "AMTACK"))[0];
     }
 }

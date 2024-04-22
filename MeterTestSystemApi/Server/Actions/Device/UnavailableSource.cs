@@ -1,3 +1,4 @@
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Exceptions;
 using SourceApi.Model;
@@ -11,9 +12,9 @@ internal class UnavailableSource : ISource
 {
     public bool Available => false;
 
-    public Task CancelDosage() => throw new SourceNotReadyException();
+    public Task CancelDosage(IInterfaceLogger logger) => throw new SourceNotReadyException();
 
-    public Task<bool> CurrentSwitchedOffForDosage() => throw new SourceNotReadyException();
+    public Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger) => throw new SourceNotReadyException();
 
     public LoadpointInfo GetActiveLoadpointInfo() => throw new SourceNotReadyException();
 
@@ -21,15 +22,15 @@ internal class UnavailableSource : ISource
 
     public TargetLoadpoint? GetCurrentLoadpoint() => throw new SourceNotReadyException();
 
-    public Task<DosageProgress> GetDosageProgress(double meterConstant) => throw new SourceNotReadyException();
+    public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant) => throw new SourceNotReadyException();
 
-    public Task SetDosageEnergy(double value, double meterConstant) => throw new SourceNotReadyException();
+    public Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant) => throw new SourceNotReadyException();
 
-    public Task SetDosageMode(bool on) => throw new SourceNotReadyException();
+    public Task SetDosageMode(IInterfaceLogger logger, bool on) => throw new SourceNotReadyException();
 
-    public Task<SourceApiErrorCodes> SetLoadpoint(TargetLoadpoint loadpoint) => throw new SourceNotReadyException();
+    public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint) => throw new SourceNotReadyException();
 
-    public Task StartDosage() => throw new SourceNotReadyException();
+    public Task StartDosage(IInterfaceLogger logger) => throw new SourceNotReadyException();
 
-    public Task<SourceApiErrorCodes> TurnOff() => throw new SourceNotReadyException();
+    public Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger) => throw new SourceNotReadyException();
 }

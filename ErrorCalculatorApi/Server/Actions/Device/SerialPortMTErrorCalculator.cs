@@ -42,10 +42,10 @@ public partial class SerialPortMTErrorCalculator(ISerialPortConnection device, I
     public bool Available => true;
 
     /// <inheritdoc/>
-    public Task AbortAllJobs() => Task.CompletedTask;
+    public Task AbortAllJobs(IInterfaceLogger logger) => Task.CompletedTask;
 
     /// <inheritdoc/>
-    public Task ActivateSource(bool on) => Task.CompletedTask;
+    public Task ActivateSource(IInterfaceLogger logger, bool on) => Task.CompletedTask;
 
     /// <inheritdoc/>
     public void Dispose()
@@ -53,10 +53,10 @@ public partial class SerialPortMTErrorCalculator(ISerialPortConnection device, I
     }
 
     /// <inheritdoc/>
-    public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion()
+    public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger)
     {
         /* Execute the request and wait for the information string. */
-        var reply = await _device.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
+        var reply = await _device.Execute(logger, SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
         if (reply.Length < 2)
             throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");

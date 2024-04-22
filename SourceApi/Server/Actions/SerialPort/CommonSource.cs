@@ -67,7 +67,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     public virtual TargetLoadpoint? GetCurrentLoadpoint() => Loadpoint;
 
     /// <inheritdoc/>
-    public virtual async Task<SourceApiErrorCodes> SetLoadpoint(TargetLoadpoint loadpoint)
+    public virtual async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
         /* Always validate the loadpoint against the device capabilities. */
         var isValid = _validator.IsValid(loadpoint, await GetCapabilities());
@@ -83,7 +83,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
 
         try
         {
-            await Task.WhenAll(Device.Execute(Translator.ToSerialPortRequests(loadpoint)));
+            await Task.WhenAll(Device.Execute(logger, Translator.ToSerialPortRequests(loadpoint)));
 
             Info.ActivatedAt = DateTime.Now;
             Info.IsActive = true;
@@ -100,29 +100,29 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     }
 
     /// <inheritdoc/>
-    public abstract Task<SourceApiErrorCodes> TurnOff();
+    public abstract Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger);
 
     /// <inheritdoc/>
     public virtual LoadpointInfo GetActiveLoadpointInfo() => Info;
 
     /// <inheritdoc/>
-    public abstract Task SetDosageMode(bool on);
+    public abstract Task SetDosageMode(IInterfaceLogger logger, bool on);
 
     /// <inheritdoc/>
-    public abstract Task SetDosageEnergy(double value, double meterConstant);
+    public abstract Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant);
 
     /// <inheritdoc/>
-    public abstract Task StartDosage();
+    public abstract Task StartDosage(IInterfaceLogger logger);
 
     /// <inheritdoc/>
-    public abstract Task CancelDosage();
+    public abstract Task CancelDosage(IInterfaceLogger logger);
 
     /// <inheritdoc/>
-    public abstract Task<DosageProgress> GetDosageProgress(double meterConstant);
+    public abstract Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant);
 
     /// <inheritdoc/>
     public abstract bool Available { get; }
 
     /// <inheritdoc/>
-    public abstract Task<bool> CurrentSwitchedOffForDosage();
+    public abstract Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger);
 }

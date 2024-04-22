@@ -4,6 +4,7 @@ using MeterTestSystemApi.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions.Device;
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.SimulatedSource;
 using SourceApi.Actions.Source;
 
@@ -59,7 +60,7 @@ public class MeterTestSystemDcMock(IDCSourceMock source, IDCRefMeterMock refMete
     /// 
     /// </summary>
     /// <returns></returns>
-    public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion() =>
+    public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) =>
         Task.FromResult(new MeterTestSystemFirmwareVersion
         {
             ModelName = "DcDeviceMock",
@@ -69,13 +70,14 @@ public class MeterTestSystemDcMock(IDCSourceMock source, IDCRefMeterMock refMete
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="logger"></param>
     /// <param name="settings"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeter settings) => throw new NotImplementedException();
+    public Task SetAmplifiersAndReferenceMeter(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task<ErrorConditions> GetErrorConditions()
+    public Task<ErrorConditions> GetErrorConditions(IInterfaceLogger logger)
     {
         var errors = new ErrorConditions { HasFuseError = DateTime.Now.Minute % 2 == 0 };
 

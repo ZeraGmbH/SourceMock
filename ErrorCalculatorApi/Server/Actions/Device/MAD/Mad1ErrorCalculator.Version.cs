@@ -1,4 +1,5 @@
 using ErrorCalculatorApi.Models;
+using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;
 
@@ -17,7 +18,7 @@ partial class Mad1ErrorCalculator
   ";
 
   /// <inheritdoc/>
-  public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion()
+  public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger)
   {
     /* Execute the request. */
     var res = await _connection.Execute(LoadXmlFromString(VersionRequestXml), "serverVerRes");

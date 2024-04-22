@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
+using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device;
 
@@ -23,13 +24,13 @@ partial class SerialPortMTErrorCalculator
     private static readonly Regex MatchErrorStatus3 = new(@"^([^;]+);([^;]+)$");
 
     /// <inheritdoc/>
-    public Task AbortErrorMeasurement() => _device.Execute(SerialPortRequest.Create("AEE", "AEEACK"))[0];
+    public Task AbortErrorMeasurement(IInterfaceLogger logger) => _device.Execute(logger, SerialPortRequest.Create("AEE", "AEEACK"))[0];
 
     /// <inheritdoc/>
-    public async Task<ErrorMeasurementStatus> GetErrorStatus()
+    public async Task<ErrorMeasurementStatus> GetErrorStatus(IInterfaceLogger logger)
     {
         /* Ask the device for the current status. */
-        var replies = await _device.Execute(SerialPortRequest.Create("AES1", "AESACK"))[0];
+        var replies = await _device.Execute(logger, SerialPortRequest.Create("AES1", "AESACK"))[0];
 
         /* Prepare for the result. */
         var result = new ErrorMeasurementStatus { State = ErrorMeasurementStates.NotActive };
@@ -144,7 +145,7 @@ partial class SerialPortMTErrorCalculator
     }
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant)
+    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, double dutMeterConstant, long impulses, double refMeterMeterConstant)
     {
         /* Create the text representation of the meter constant and see if it fits the protocol requirements. */
         var (rawMeter, powMeter) = ClipNumberToProtocol((long)Math.Round(dutMeterConstant * 1E5), 16);
@@ -167,7 +168,7 @@ partial class SerialPortMTErrorCalculator
         }
 
         /* Now we can send the resulting texts and power factors to the device. */
-        return _device.Execute(SerialPortRequest.Create($"AEP{rawMeter};{powMeter:00};{rawImpulses};{powImpulses}", "AEPACK"))[0];
+        return _device.Execute(logger, SerialPortRequest.Create($"AEP{rawMeter};{powMeter:00};{rawImpulses};{powImpulses}", "AEPACK"))[0];
     }
 
     /// <summary>
@@ -229,6 +230,6 @@ partial class SerialPortMTErrorCalculator
     public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections() => Task.FromResult<ErrorCalculatorMeterConnections[]>([]);
 
     /// <inheritdoc/>
-    public Task StartErrorMeasurement(bool continuous, ErrorCalculatorMeterConnections? connection) =>
-        _device.Execute(SerialPortRequest.Create(continuous ? "AEB1" : "AEB0", "AEBACK"))[0];
+    public Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection) =>
+        _device.Execute(logger, SerialPortRequest.Create(continuous ? "AEB1" : "AEB0", "AEBACK"))[0];
 }

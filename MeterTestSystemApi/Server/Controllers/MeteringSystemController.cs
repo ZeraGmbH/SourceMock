@@ -3,6 +3,7 @@ using MeterTestSystemApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SerialPortProxy;
+using SharedLibrary.Models.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace MeterTestSystemApi.Controllers;
@@ -17,7 +18,7 @@ namespace MeterTestSystemApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class MeterTestSystemController(IMeterTestSystem device) : ControllerBase
+public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger interfaceLogger) : ControllerBase
 {
     /// <summary>
     /// The meter test system to use during this request.
@@ -51,7 +52,7 @@ public class MeterTestSystemController(IMeterTestSystem device) : ControllerBase
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SetAmplifiersAndReferenceMeter([FromBody] AmplifiersAndReferenceMeter request) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.SetAmplifiersAndReferenceMeter(request));
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.SetAmplifiersAndReferenceMeter(interfaceLogger, request));
 
     /// <summary>
     /// Report the current pysical configuration of the meter test system.
@@ -81,7 +82,7 @@ public class MeterTestSystemController(IMeterTestSystem device) : ControllerBase
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<MeterTestSystemFirmwareVersion>> GetFirmwareVersion() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetFirmwareVersion);
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetFirmwareVersion(interfaceLogger));
 
     /// <summary>
     /// Read the current error conditions of the meter test system.
@@ -96,5 +97,5 @@ public class MeterTestSystemController(IMeterTestSystem device) : ControllerBase
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<ErrorConditions>> GetErrorConditions() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetErrorConditions);
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetErrorConditions(interfaceLogger));
 }

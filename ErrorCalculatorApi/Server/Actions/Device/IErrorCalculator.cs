@@ -1,4 +1,5 @@
 using ErrorCalculatorApi.Models;
+using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device;
 
@@ -15,17 +16,19 @@ public interface IErrorCalculator
     /// <summary>
     /// Configure the error measurement.
     /// </summary>
+    /// <param name="logger"></param>
     /// <param name="dutMeterConstant">The meter constant of the device under test - impulses per kWh.</param>
     /// <param name="impulses">Number of impluses to sent.</param>
     /// <param name="refMeterMeterConstant">The meter constant of the reference meter - impulses per kWh.</param>
-    Task SetErrorMeasurementParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant);
+    Task SetErrorMeasurementParameters(IInterfaceLogger logger, double dutMeterConstant, long impulses, double refMeterMeterConstant);
 
     /// <summary>
     /// Start the error measurement.
     /// </summary>
+    /// <param name="logger"></param>
     /// <param name="continuous">Unset for a single measurement.</param>
     /// <param name="connection">The physical line to use.</param>
-    Task StartErrorMeasurement(bool continuous, ErrorCalculatorMeterConnections? connection);
+    Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection);
 
     /// <summary>
     /// Report all connections that can be used as a parameter of StartErrorMeasurement.
@@ -36,29 +39,30 @@ public interface IErrorCalculator
     /// <summary>
     /// Terminate the error measurement.
     /// </summary>
-    Task AbortErrorMeasurement();
+    Task AbortErrorMeasurement(IInterfaceLogger logger);
 
     /// <summary>
     /// Terminate all outstanding operations.
     /// </summary>
     /// <returns></returns>
-    Task AbortAllJobs();
+    Task AbortAllJobs(IInterfaceLogger logger);
 
     /// <summary>
     /// Report the current status of the error measurement.
     /// </summary>
     /// <returns>The current status.</returns>
-    Task<ErrorMeasurementStatus> GetErrorStatus();
+    Task<ErrorMeasurementStatus> GetErrorStatus(IInterfaceLogger logger);
 
     /// <summary>
     /// Retrieve the firmware version of the error calculator.
     /// </summary>
     /// <returns>The firmware version.</returns>
-    Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion();
+    Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger);
 
     /// <summary>
     /// Make sure that source is connected to the device under test.
     /// </summary>
+    /// <param name="logger"></param>
     /// <param name="on">Set to connect else disconnect.</param>
-    Task ActivateSource(bool on);
+    Task ActivateSource(IInterfaceLogger logger, bool on);
 }

@@ -1,13 +1,14 @@
 using System.Text.RegularExpressions;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SharedLibrary.Models.Logging;
 
 namespace RefMeterApi.Actions.Device;
 
 partial class SerialPortFGRefMeter
 {
     /// <inheritdoc/>
-    public async Task<MeasuredLoadpoint> GetActualValues(int firstActiveCurrentPhase = -1)
+    public async Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1)
     {
         TestConfigured();
 
@@ -22,7 +23,7 @@ partial class SerialPortFGRefMeter
         var mqRequest = SerialPortRequest.Create("MQ", new Regex(@"^MQR([^;]+);S([^;]+);T([^;]+);$"));
         var msRequest = SerialPortRequest.Create("MS", new Regex(@"^MSR([^;]+);S([^;]+);T([^;]+);$"));
 
-        await Task.WhenAll(_device.Execute(afRequest, aiRequest, auRequest, awRequest, biRequest, buRequest, mpRequest, mqRequest, msRequest));
+        await Task.WhenAll(_device.Execute(logger, afRequest, aiRequest, auRequest, awRequest, biRequest, buRequest, mpRequest, mqRequest, msRequest));
 
         /* Convert text representations to numbers. */
         var voltageRange = double.Parse(buRequest.EndMatch!.Groups[1].Value);

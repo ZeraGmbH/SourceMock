@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
-
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 
@@ -41,11 +41,11 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, I
     }
 
     /// <inheritdoc/>
-    public override async Task<SourceApiErrorCodes> TurnOff()
+    public override async Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger)
     {
         Logger.LogTrace("Switching anything off.");
 
-        await Task.WhenAll(Device.Execute(SerialPortRequest.Create("SUIAAAAAAAAA", "SOKUI")));
+        await Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("SUIAAAAAAAAA", "SOKUI")));
 
         Info.IsActive = false;
 

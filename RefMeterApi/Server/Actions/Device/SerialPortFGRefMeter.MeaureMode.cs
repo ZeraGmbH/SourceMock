@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SharedLibrary.Models.Logging;
 
 namespace RefMeterApi.Actions.Device;
 
@@ -28,12 +29,12 @@ partial class SerialPortFGRefMeter
     private MeasurementModes? _measurementMode = null;
 
     /// <inheritdoc/>
-    public async Task<MeasurementModes[]> GetMeasurementModes()
+    public async Task<MeasurementModes[]> GetMeasurementModes(IInterfaceLogger logger)
     {
         TestConfigured();
 
         /* Request from device. */
-        var replies = await _device.Execute(SerialPortRequest.Create("MI", new Regex(@"^MI([^;]+;)*$")))[0];
+        var replies = await _device.Execute(logger, SerialPortRequest.Create("MI", new Regex(@"^MI([^;]+;)*$")))[0];
 
         /* Analyse result and report all supported values. */
         var response = new List<MeasurementModes>();
@@ -46,7 +47,7 @@ partial class SerialPortFGRefMeter
     }
 
     /// <inheritdoc/>
-    public Task<MeasurementModes?> GetActualMeasurementMode()
+    public Task<MeasurementModes?> GetActualMeasurementMode(IInterfaceLogger logger)
     {
         TestConfigured();
 
@@ -55,7 +56,7 @@ partial class SerialPortFGRefMeter
     }
 
     /// <inheritdoc/>
-    public Task SetActualMeasurementMode(MeasurementModes mode)
+    public Task SetActualMeasurementMode(IInterfaceLogger logger, MeasurementModes mode)
     {
         TestConfigured();
 
@@ -64,7 +65,7 @@ partial class SerialPortFGRefMeter
 
         /* Send the command to the device. */
         return _device
-            .Execute(SerialPortRequest.Create($"MA{supported.Key}", "OKMA"))[0]
+            .Execute(logger, SerialPortRequest.Create($"MA{supported.Key}", "OKMA"))[0]
             .ContinueWith((_t) => _measurementMode = mode);
     }
 }

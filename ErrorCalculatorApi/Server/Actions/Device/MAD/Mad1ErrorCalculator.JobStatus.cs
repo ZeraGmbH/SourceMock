@@ -1,4 +1,5 @@
 using ErrorCalculatorApi.Models;
+using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;
 
@@ -17,7 +18,7 @@ partial class Mad1ErrorCalculator
     ";
 
   /// <inheritdoc/>
-  public async Task<ErrorMeasurementStatus> GetErrorStatus()
+  public async Task<ErrorMeasurementStatus> GetErrorStatus(IInterfaceLogger logger)
   {
     var reply = new ErrorMeasurementStatus { State = ErrorMeasurementStates.NotActive };
 

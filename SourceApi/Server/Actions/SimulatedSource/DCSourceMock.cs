@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 
@@ -33,7 +34,7 @@ public class DCSourceMock : SourceMock, IDCSourceMock
     }, validator)
     { }
 
-    public override Task<DosageProgress> GetDosageProgress(double meterConstant)
+    public override Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant)
     {
         var power = (_loadpoint!.Phases[0].Voltage.DcComponent ?? 0) * (_loadpoint!.Phases[0].Current.DcComponent ?? 0);
         var elapsedHours = (DateTime.Now - _startTime).TotalHours;

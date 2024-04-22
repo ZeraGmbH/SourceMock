@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using SharedLibrary.Models.Logging;
 using SourceApi.Model;
 
 namespace SourceApi.Actions.Source;
@@ -52,7 +53,7 @@ public class SimulatedSource : SourceMock, ISimulatedSource
     {
     }
 
-    public override Task<DosageProgress> GetDosageProgress(double meterConstant)
+    public override Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant)
     {
         var power = 0d;
 

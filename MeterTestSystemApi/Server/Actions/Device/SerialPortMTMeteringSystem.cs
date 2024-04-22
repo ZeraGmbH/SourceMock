@@ -75,10 +75,10 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public async Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion()
+    public async Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger)
     {
         /* Execute the request and wait for the information string. */
-        var reply = await _device.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
+        var reply = await _device.Execute(logger, SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
         if (reply.Length < 2)
             throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");
@@ -105,19 +105,19 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeter settings)
+    public Task SetAmplifiersAndReferenceMeter(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings)
     {
         /* The MT line systems do not support amplifier configurations. */
         throw new InvalidOperationException();
     }
 
     /// <inheritdoc/>
-    public async Task<ErrorConditions> GetErrorConditions()
+    public async Task<ErrorConditions> GetErrorConditions(IInterfaceLogger logger)
     {
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("SSM", _smRegEx);
 
-        await _device.Execute(request)[0];
+        await _device.Execute(logger, request)[0];
 
         /* Create response structure. */
         return ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, false);

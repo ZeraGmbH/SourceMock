@@ -1,6 +1,7 @@
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
+using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device;
 
@@ -40,7 +41,7 @@ public class SerialPortFGErrorCalculator(ISerialPortConnection device, ILogger<S
     public bool Available => false;
 
     /// <inheritdoc/>
-    public Task AbortErrorMeasurement() => throw new NotImplementedException();
+    public Task AbortErrorMeasurement(IInterfaceLogger logger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
 
@@ -49,24 +50,24 @@ public class SerialPortFGErrorCalculator(ISerialPortConnection device, ILogger<S
     }
 
     /// <inheritdoc/>
-    public Task<ErrorMeasurementStatus> GetErrorStatus() => throw new NotImplementedException();
+    public Task<ErrorMeasurementStatus> GetErrorStatus(IInterfaceLogger logger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion() => throw new NotImplementedException();
+    public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant) => throw new NotImplementedException();
+    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, double dutMeterConstant, long impulses, double refMeterMeterConstant) => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections() => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task StartErrorMeasurement(bool continuous, ErrorCalculatorMeterConnections? connection) => throw new NotImplementedException();
+    public Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task AbortAllJobs() => throw new NotImplementedException();
+    public Task AbortAllJobs(IInterfaceLogger logger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task ActivateSource(bool on) => Task.CompletedTask;
+    public Task ActivateSource(IInterfaceLogger logger, bool on) => Task.CompletedTask;
 
 }

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Models;
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 
@@ -34,9 +35,9 @@ public partial class ACRefMeterMock : RefMeterMock
     /// 
     /// </summary>
     /// <returns>ActualValues that fluctuate around the set loadpoint</returns>
-    public override async Task<MeasuredLoadpoint> GetActualValues(int firstActiveVoltagePhase = -1)
+    public override async Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveVoltagePhase = -1)
     {
-        var loadpoint = await GetLoadpoint();
+        var loadpoint = await GetLoadpoint(logger);
 
         var mo = CalcMeasureOutput(loadpoint);
 
@@ -112,7 +113,7 @@ public partial class ACRefMeterMock : RefMeterMock
         };
     }
 
-    private async Task<TargetLoadpoint> GetLoadpoint()
+    private async Task<TargetLoadpoint> GetLoadpoint(IInterfaceLogger logger)
     {
         var r = Random.Shared;
 
@@ -140,7 +141,7 @@ public partial class ACRefMeterMock : RefMeterMock
         loadpoint = SharedLibrary.Utils.DeepCopy(loadpoint);
 
         var info = source.GetActiveLoadpointInfo();
-        var currentSwitchedOffForDosage = await source.CurrentSwitchedOffForDosage();
+        var currentSwitchedOffForDosage = await source.CurrentSwitchedOffForDosage(logger);
 
         foreach (var phase in loadpoint.Phases)
         {

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SharedLibrary;
 using SharedLibrary.Models;
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 
@@ -55,7 +56,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     }
 
     /// <inheritdoc/>
-    public async Task CancelDosage()
+    public async Task CancelDosage(IInterfaceLogger logger)
     {
         if (_dosageUri == null) throw new NotImplementedException("Dosage");
 
@@ -65,7 +66,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     }
 
     /// <inheritdoc/>
-    public Task<bool> CurrentSwitchedOffForDosage() =>
+    public Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger) =>
         (_dosageUri == null)
             ? Task.FromResult(false)
             : httpDosage.GetAsync(new Uri(_dosageUri, "IsDosageCurrentOff")).GetJsonResponse<bool>();
@@ -95,7 +96,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     }
 
     /// <inheritdoc/>
-    public Task<DosageProgress> GetDosageProgress(double meterConstant) =>
+    public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant) =>
         (_dosageUri == null)
             ? throw new NotImplementedException("Dosage")
             : httpDosage.GetAsync(new Uri(_dosageUri, "Progress?meterConstant={JsonConvert.SerializeObject(meterConstant)}")).GetJsonResponse<DosageProgress>();
@@ -135,7 +136,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     }
 
     /// <inheritdoc/>
-    public async Task SetDosageEnergy(double value, double meterConstant)
+    public async Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant)
     {
         if (_dosageUri == null) throw new NotImplementedException("Dosage");
 
@@ -145,7 +146,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     }
 
     /// <inheritdoc/>
-    public async Task SetDosageMode(bool on)
+    public async Task SetDosageMode(IInterfaceLogger logger, bool on)
     {
         if (_dosageUri == null) throw new NotImplementedException("Dosage");
 
@@ -155,7 +156,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     }
 
     /// <inheritdoc/>
-    public async Task<SourceApiErrorCodes> SetLoadpoint(TargetLoadpoint loadpoint)
+    public async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
         var res = await httpSource.PutAsJsonAsync(new Uri(_sourceUri, "Loadpoint"), loadpoint);
 
@@ -163,7 +164,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     }
 
     /// <inheritdoc/>
-    public async Task StartDosage()
+    public async Task StartDosage(IInterfaceLogger logger)
     {
         if (_dosageUri == null) throw new NotImplementedException("Dosage");
 
@@ -173,7 +174,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     }
 
     /// <inheritdoc/>
-    public async Task<SourceApiErrorCodes> TurnOff()
+    public async Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger)
     {
         var res = await httpSource.PostAsync(new Uri(_sourceUri, "TurnOff"), null);
 

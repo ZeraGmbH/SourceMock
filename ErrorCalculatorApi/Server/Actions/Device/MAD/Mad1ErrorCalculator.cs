@@ -1,6 +1,7 @@
 using System.Xml;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
+using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;
 
@@ -52,7 +53,7 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant)
+    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, double dutMeterConstant, long impulses, double refMeterMeterConstant)
     {
         /* Remember */
         _refMeterImpulsesNext = (long)Math.Round(impulses * refMeterMeterConstant / dutMeterConstant);
@@ -65,7 +66,7 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections() => Task.FromResult(_supportedMeterConnections.Keys.ToArray());
 
     /// <inheritdoc/>
-    public async Task StartErrorMeasurement(bool continuous, ErrorCalculatorMeterConnections? connection)
+    public async Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
     {
         /* Already running. */
         if (!string.IsNullOrEmpty(_jobId)) throw new InvalidOperationException("error measurement still active - abort first");
@@ -83,7 +84,7 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
         await ConfigureErrorMeasurement(connection);
 
         /* Start the measurement and remember context. */
-        _jobId = await StartErrorMeasurement(continuous, connection, (long)dut, (long)meter);
+        _jobId = await StartErrorMeasurement(logger, continuous, connection, (long)dut, (long)meter);
 
         _dutImpules = dut;
     }

@@ -1,6 +1,7 @@
 using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Models;
 using RefMeterApi.Actions.Device;
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 
 namespace MeterTestSystemApi.Actions.Device;
@@ -34,11 +35,11 @@ public class FallbackMeteringSystem : IMeterTestSystem
         Task.FromResult<MeterTestSystemCapabilities>(null!);
 
     /// <inheritdoc/>
-    public Task<ErrorConditions> GetErrorConditions() =>
+    public Task<ErrorConditions> GetErrorConditions(IInterfaceLogger logger) =>
         Task.FromResult(new ErrorConditions());
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion() =>
+    public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) =>
         Task.FromResult(new MeterTestSystemFirmwareVersion
         {
             ModelName = "Unknown",
@@ -46,7 +47,7 @@ public class FallbackMeteringSystem : IMeterTestSystem
         });
 
     /// <inheritdoc/>
-    public Task SetAmplifiersAndReferenceMeter(AmplifiersAndReferenceMeter settings)
+    public Task SetAmplifiersAndReferenceMeter(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings)
     {
         /* The fallback do not support amplifier configurations. */
         throw new InvalidOperationException();

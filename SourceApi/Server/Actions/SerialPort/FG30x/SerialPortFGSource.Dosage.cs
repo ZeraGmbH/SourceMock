@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using SerialPortProxy;
+using SharedLibrary.Models.Logging;
 using SourceApi.Model;
 
 namespace SourceApi.Actions.SerialPort.FG30x;
@@ -7,15 +8,15 @@ namespace SourceApi.Actions.SerialPort.FG30x;
 partial class SerialPortFGSource
 {
     /// <inheritdoc/>
-    public override Task CancelDosage()
+    public override Task CancelDosage(IInterfaceLogger logger)
     {
         TestConfigured();
 
-        return Task.WhenAll(Device.Execute(SerialPortRequest.Create("3CM2", "OK3CM2")));
+        return Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("3CM2", "OK3CM2")));
     }
 
     /// <inheritdoc/>
-    public override async Task<DosageProgress> GetDosageProgress(double meterConstant)
+    public override async Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant)
     {
         TestConfigured();
 
@@ -24,7 +25,7 @@ partial class SerialPortFGSource
         var countdownReq = SerialPortRequest.Create("3MA1", new Regex(@"^OK3MA1;(.+)$"));
         var totalReq = SerialPortRequest.Create("3PA45", new Regex(@"^OK3PA45;(.+)$"));
 
-        await Task.WhenAll(Device.Execute(activeReq, countdownReq, totalReq));
+        await Task.WhenAll(Device.Execute(logger, activeReq, countdownReq, totalReq));
 
         /* Scale actual values to energy - in Wh. */
 
@@ -41,42 +42,42 @@ partial class SerialPortFGSource
     }
 
     /// <inheritdoc/>
-    public override Task SetDosageEnergy(double value, double meterConstant)
+    public override Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant)
     {
         TestConfigured();
 
         if (value < 0)
             throw new ArgumentOutOfRangeException(nameof(value));
 
-        return Device.Execute(SerialPortRequest.Create($"3PS45;{value / 1000d}", "OK3PS45"))[0];
+        return Device.Execute(logger, SerialPortRequest.Create($"3PS45;{value / 1000d}", "OK3PS45"))[0];
     }
 
     /// <inheritdoc/>
-    public override Task SetDosageMode(bool on)
+    public override Task SetDosageMode(IInterfaceLogger logger, bool on)
     {
         TestConfigured();
 
         var onAsNumber = on ? 3 : 4;
 
-        return Task.WhenAll(Device.Execute(SerialPortRequest.Create($"3CM{onAsNumber}", $"OK3CM{onAsNumber}")));
+        return Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create($"3CM{onAsNumber}", $"OK3CM{onAsNumber}")));
     }
 
     /// <inheritdoc/>
-    public override Task StartDosage()
+    public override Task StartDosage(IInterfaceLogger logger)
     {
         TestConfigured();
 
-        return Task.WhenAll(Device.Execute(SerialPortRequest.Create("3CM1", "OK3CM1")));
+        return Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("3CM1", "OK3CM1")));
     }
 
     /// <inheritdoc/>
-    public override async Task<bool> CurrentSwitchedOffForDosage()
+    public override async Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger)
     {
         /* Ask device. */
         var dosage = SerialPortRequest.Create("3SA1", new Regex(@"^OK3SA1;([0123])$"));
         var mode = SerialPortRequest.Create("3SA3", new Regex(@"^OK3SA3;([012])$"));
 
-        await Task.WhenAll(Device.Execute(dosage, mode));
+        await Task.WhenAll(Device.Execute(logger, dosage, mode));
 
         /* Current should be switched off if dosage mode is on mode dosage itself is not yet active. */
         return mode.EndMatch?.Groups[1].Value == "2" && dosage.EndMatch?.Groups[1].Value == "1";

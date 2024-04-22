@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
-
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Exceptions;
 using SourceApi.Model;
@@ -86,13 +86,13 @@ public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, I
     }
 
     /// <inheritdoc/>
-    public override async Task<SourceApiErrorCodes> TurnOff()
+    public override async Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger)
     {
         TestConfigured();
 
         Logger.LogTrace("Switching anything off.");
 
-        await Task.WhenAll(Device.Execute(SerialPortRequest.Create("UIAAAAAAAAA", "OKUI")));
+        await Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("UIAAAAAAAAA", "OKUI")));
 
         Info.IsActive = false;
 

@@ -5,7 +5,7 @@ namespace SerialPortProxy;
 /// <summary>
 /// Interface for a single serial port connection..
 /// </summary>
-public interface ISerialPortConnection : IDisposable
+public interface ISerialPortConnectionExecutor
 {
     /// <summary>
     /// Add a command to be sent to the serial port to the queue.
@@ -14,6 +14,18 @@ public interface ISerialPortConnection : IDisposable
     /// <exception cref="ArgumentNullException">Parameter must not be null.</exception>
     /// <returns>All lines sent from the device as a task.</returns>
     Task<string[]>[] Execute(params SerialPortRequest[] requests);
+}
+
+/// <summary>
+/// Interface for a single serial port connection..
+/// </summary>
+public interface ISerialPortConnection : IDisposable
+{
+    /// <summary>
+    /// Create scoped helper to execute commands.
+    /// </summary>
+    /// <returns>A new executor instance.</returns>
+    ISerialPortConnectionExecutor CreateExecutor();
 
     /// <summary>
     /// Registeres Out-Of-Band essage handling.

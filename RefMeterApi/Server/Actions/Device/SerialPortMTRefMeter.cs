@@ -46,7 +46,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     /// <inheritdoc/>
     public async Task<double> GetMeterConstant()
     {
-        var reply = await _device.Execute(SerialPortRequest.Create("AST", "ASTACK"))[0];
+        var reply = await _device.CreateExecutor().Execute(SerialPortRequest.Create("AST", "ASTACK"))[0];
 
         /* We need the range of voltage and current and the measurement mode as well. */
         double? voltage = null, current = null;

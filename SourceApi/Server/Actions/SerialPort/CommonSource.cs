@@ -82,7 +82,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
 
         try
         {
-            await Task.WhenAll(Device.Execute(Translator.ToSerialPortRequests(loadpoint)));
+            await Task.WhenAll(Device.CreateExecutor().Execute(Translator.ToSerialPortRequests(loadpoint)));
 
             Info.ActivatedAt = DateTime.Now;
             Info.IsActive = true;

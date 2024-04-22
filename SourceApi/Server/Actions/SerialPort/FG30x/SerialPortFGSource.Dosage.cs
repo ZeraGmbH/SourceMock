@@ -11,7 +11,7 @@ partial class SerialPortFGSource
     {
         TestConfigured();
 
-        return Task.WhenAll(Device.Execute(SerialPortRequest.Create("3CM2", "OK3CM2")));
+        return Task.WhenAll(Device.CreateExecutor().Execute(SerialPortRequest.Create("3CM2", "OK3CM2")));
     }
 
     /// <inheritdoc/>
@@ -24,7 +24,7 @@ partial class SerialPortFGSource
         var countdownReq = SerialPortRequest.Create("3MA1", new Regex(@"^OK3MA1;(.+)$"));
         var totalReq = SerialPortRequest.Create("3PA45", new Regex(@"^OK3PA45;(.+)$"));
 
-        await Task.WhenAll(Device.Execute(activeReq, countdownReq, totalReq));
+        await Task.WhenAll(Device.CreateExecutor().Execute(activeReq, countdownReq, totalReq));
 
         /* Scale actual values to energy - in Wh. */
 
@@ -48,7 +48,7 @@ partial class SerialPortFGSource
         if (value < 0)
             throw new ArgumentOutOfRangeException(nameof(value));
 
-        return Device.Execute(SerialPortRequest.Create($"3PS45;{value / 1000d}", "OK3PS45"))[0];
+        return Device.CreateExecutor().Execute(SerialPortRequest.Create($"3PS45;{value / 1000d}", "OK3PS45"))[0];
     }
 
     /// <inheritdoc/>
@@ -58,7 +58,7 @@ partial class SerialPortFGSource
 
         var onAsNumber = on ? 3 : 4;
 
-        return Task.WhenAll(Device.Execute(SerialPortRequest.Create($"3CM{onAsNumber}", $"OK3CM{onAsNumber}")));
+        return Task.WhenAll(Device.CreateExecutor().Execute(SerialPortRequest.Create($"3CM{onAsNumber}", $"OK3CM{onAsNumber}")));
     }
 
     /// <inheritdoc/>
@@ -66,7 +66,7 @@ partial class SerialPortFGSource
     {
         TestConfigured();
 
-        return Task.WhenAll(Device.Execute(SerialPortRequest.Create("3CM1", "OK3CM1")));
+        return Task.WhenAll(Device.CreateExecutor().Execute(SerialPortRequest.Create("3CM1", "OK3CM1")));
     }
 
     /// <inheritdoc/>
@@ -76,7 +76,7 @@ partial class SerialPortFGSource
         var dosage = SerialPortRequest.Create("3SA1", new Regex(@"^OK3SA1;([0123])$"));
         var mode = SerialPortRequest.Create("3SA3", new Regex(@"^OK3SA3;([012])$"));
 
-        await Task.WhenAll(Device.Execute(dosage, mode));
+        await Task.WhenAll(Device.CreateExecutor().Execute(dosage, mode));
 
         /* Current should be switched off if dosage mode is on mode dosage itself is not yet active. */
         return mode.EndMatch?.Groups[1].Value == "2" && dosage.EndMatch?.Groups[1].Value == "1";

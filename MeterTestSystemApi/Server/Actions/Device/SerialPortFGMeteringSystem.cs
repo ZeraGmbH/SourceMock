@@ -211,7 +211,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
             var voltageCode = CodeMappings.Voltage[settings.VoltageAmplifier];
 
             /* Send the combined command to the meter test system. */
-            await _device.Execute(SerialPortRequest.Create($"ZP{voltageCode:00}{currentCode:00}{auxVoltageCode:00}{auxCurrentCode:00}{refMeterCode:00}", "OKZP"))[0];
+            await _device.CreateExecutor().Execute(SerialPortRequest.Create($"ZP{voltageCode:00}{currentCode:00}{auxVoltageCode:00}{auxCurrentCode:00}{refMeterCode:00}", "OKZP"))[0];
         }
         catch (Exception)
         {
@@ -238,7 +238,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("TS", new Regex("^TS(.{8})(.{4})$"));
 
-        await _device.Execute(request)[0];
+        await _device.CreateExecutor().Execute(request)[0];
 
         /* Create response structure. */
         return new()
@@ -254,7 +254,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("SM", _smRegEx);
 
-        await _device.Execute(request)[0];
+        await _device.CreateExecutor().Execute(request)[0];
 
         /* Create response structure. */
         return ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, true);

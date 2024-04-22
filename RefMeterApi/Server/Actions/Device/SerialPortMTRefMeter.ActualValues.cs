@@ -32,7 +32,7 @@ partial class SerialPortMTRefMeter
     private async Task<MeasuredLoadpoint> CreateActualValueRequest()
     {
         /* Execute the request and get the answer from the device. */
-        var replies = await _device.Execute(
+        var replies = await _device.CreateExecutor().Execute(
             SerialPortRequest.Create("ATI01", "ATIACK"),
             SerialPortRequest.Create("AME", "AMEACK")
         )[1];

@@ -57,7 +57,7 @@ public class ConnectionTests
     {
         using var cut = SerialPortConnection.FromMock<PortMock>(_logger);
 
-        var reply = await cut.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
+        var reply = await cut.CreateExecutor().Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
         Assert.That(reply.Length, Is.EqualTo(2));
 
@@ -74,7 +74,7 @@ public class ConnectionTests
         using var cut = SerialPortConnection.FromMock<PortMock>(_logger);
 
         var request = SerialPortRequest.Create("S3CM1", new Regex("^SOK3CM([1-4])$"));
-        var reply = await cut.Execute(request)[0];
+        var reply = await cut.CreateExecutor().Execute(request)[0];
 
         Assert.That(reply, Has.Length.EqualTo(2));
 

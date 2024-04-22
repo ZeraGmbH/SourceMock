@@ -55,7 +55,7 @@ public partial class SerialPortMTErrorCalculator(ISerialPortConnection device, I
     public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion()
     {
         /* Execute the request and wait for the information string. */
-        var reply = await _device.Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
+        var reply = await _device.CreateExecutor().Execute(SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
         if (reply.Length < 2)
             throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");

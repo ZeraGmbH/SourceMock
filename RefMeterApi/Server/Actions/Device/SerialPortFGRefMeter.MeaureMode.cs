@@ -33,7 +33,7 @@ partial class SerialPortFGRefMeter
         TestConfigured();
 
         /* Request from device. */
-        var replies = await _device.Execute(SerialPortRequest.Create("MI", new Regex(@"^MI([^;]+;)*$")))[0];
+        var replies = await _device.CreateExecutor().Execute(SerialPortRequest.Create("MI", new Regex(@"^MI([^;]+;)*$")))[0];
 
         /* Analyse result and report all supported values. */
         var response = new List<MeasurementModes>();
@@ -64,6 +64,7 @@ partial class SerialPortFGRefMeter
 
         /* Send the command to the device. */
         return _device
+            .CreateExecutor()
             .Execute(SerialPortRequest.Create($"MA{supported.Key}", "OKMA"))[0]
             .ContinueWith((_t) => _measurementMode = mode);
     }

@@ -59,7 +59,7 @@ public partial class SerialPortFGRefMeter(ISerialPortConnection device, IMeterCo
         var buRequest = SerialPortRequest.Create("BU", new Regex(@"^BU(.+)$"));
         var fiRequest = SerialPortRequest.Create("FI", new Regex(@"^FI(.+)$"));
 
-        await Task.WhenAll(_device.Execute(biRequest, buRequest, fiRequest));
+        await Task.WhenAll(_device.CreateExecutor().Execute(biRequest, buRequest, fiRequest));
 
         /* Convert text representations to numbers. */
         var voltage = double.Parse(buRequest.EndMatch!.Groups[1].Value);

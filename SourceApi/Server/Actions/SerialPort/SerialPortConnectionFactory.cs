@@ -18,16 +18,22 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
 {
     class NullConnection : ISerialPortConnection
     {
+        class Executor : ISerialPortConnectionExecutor
+        {
+            public Task<string[]>[] Execute(params SerialPortRequest[] requests) =>
+                requests.Select(r => Task.FromException<string[]>(new NotSupportedException())).ToArray();
+        }
+
         public void Dispose()
         {
         }
 
-        public Task<string[]>[] Execute(params SerialPortRequest[] requests) =>
-            requests.Select(r => Task.FromException<string[]>(new NotSupportedException())).ToArray();
 
         public void RegisterEvent(Regex pattern, Action<Match> handler)
         {
         }
+
+        public ISerialPortConnectionExecutor CreateExecutor() => new Executor();
     }
 
     private readonly object _sync = new();

@@ -10,6 +10,12 @@ namespace SerialPortProxy;
 /// </summary>
 public class SerialPortConnection : ISerialPortConnection
 {
+    private class Executor(SerialPortConnection connection) : ISerialPortConnectionExecutor
+    {
+        /// <inheritdoc/>
+        public Task<string[]>[] Execute(params SerialPortRequest[] requests) => connection.Execute(requests);
+    }
+
     /// <summary>
     /// Read timeout - may be changed when running in unit test mode.
     /// </summary>
@@ -164,7 +170,9 @@ public class SerialPortConnection : ISerialPortConnection
     }
 
     /// <inheritdoc/>
-    public Task<string[]>[] Execute(params SerialPortRequest[] requests)
+    public ISerialPortConnectionExecutor CreateExecutor() => new Executor(this);
+
+    private Task<string[]>[] Execute(params SerialPortRequest[] requests)
     {
         ArgumentNullException.ThrowIfNull(requests, nameof(requests));
 

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Concurrent;
+using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using SharedLibrary.Models.Logging;
+using ZstdSharp.Unsafe;
 
 namespace SerialPortProxy;
 
@@ -217,12 +219,22 @@ public class SerialPortConnection : ISerialPortConnection
     /// Executes a single command.
     /// </summary>
     /// <param name="request">Describes the request.</param>
+    /// <param name="connection"></param>
     /// <returns>Gesetzt, wenn die Ausführung erfolgreich war.</returns>
-    private bool ExecuteCommand(SerialPortRequest request)
+    private bool ExecuteCommand(SerialPortRequest request, IInterfaceConnection connection)
     {
+        /* Prepare logging. */
+        var requestId = Guid.NewGuid().ToString();
+
+        IPreparedInterfaceLogEntry sendEntry = null!;
+        Exception sendError = null!;
+
         try
         {
             _logger.LogDebug("Sending command {Command}", request.Command);
+
+            /* Start logging. */
+            sendEntry = connection.Prepare(new() { Outgoing = true, RequestId = requestId });
 
             /* Send the command string to the device - <CR> is automatically added. */
             _port.WriteLine(request.Command);
@@ -231,13 +243,38 @@ public class SerialPortConnection : ISerialPortConnection
         }
         catch (Exception e)
         {
-            _logger.LogError("Command {Command} rejected: {Exception}", request.Command, e);
+            sendError = e;
+
+            _logger.LogError("Command {Command} rejected: {Exception}", request.Command, e.Message);
 
             /* Unable to sent the command - report error to caller. */
             request.Result.SetException(e);
-
-            return false;
         }
+
+        /* Finish logging. */
+        if (sendEntry != null)
+            try
+            {
+                sendEntry.Finish(new()
+                {
+                    Encoding = InterfaceLogPayloadEncodings.Raw,
+                    Payload = request.Command,
+                    PayloadType = "",
+                    TransferExecption = sendError?.Message
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Unable to create log entry: {Exception}", e.Message);
+            }
+
+        /* Failed - we can stop now. */
+        if (sendError != null) return false;
+
+        /* Prepare logging. */
+        IPreparedInterfaceLogEntry receiveEntry = null!;
+        Exception receiveError = null!;
+        StringBuilder received = new();
 
         /* Collect response strings until expected termination string is detected. */
         for (var answer = new List<string>(); ;)
@@ -246,18 +283,23 @@ public class SerialPortConnection : ISerialPortConnection
                 /* Read a single response line from the device. */
                 _logger.LogDebug("Wait for command {Command} reply", request.Command);
 
+                /* Start logging. */
+                receiveEntry = connection.Prepare(new() { Outgoing = false, RequestId = requestId });
+
                 var reply = ReadInput();
 
                 _logger.LogDebug("Got reply {Reply} for command {Command}", reply, request.Command);
+
+                received.AppendLine(reply);
 
                 /* If a device response ends with NAK there are invalid arguments. */
                 if (reply.EndsWith("NAK"))
                 {
                     _logger.LogError("Command {Command} reported NAK", request.Command);
 
-                    request.Result.SetException(new ArgumentException(request.Command));
+                    receiveError = new ArgumentException(request.Command);
 
-                    return false;
+                    break;
                 }
 
                 /* Error handling for ERR commands. */
@@ -265,9 +307,9 @@ public class SerialPortConnection : ISerialPortConnection
                 {
                     _logger.LogError("Command {Command} reported ERROR {Reply}", request.Command, reply);
 
-                    request.Result.SetException(new ArgumentException(request.Command));
+                    receiveError = new ArgumentException(request.Command);
 
-                    return false;
+                    break;
                 }
 
                 /* Always remember the reply - even the terminating string. */
@@ -279,9 +321,9 @@ public class SerialPortConnection : ISerialPortConnection
                     _logger.LogDebug("Command {Command} finished, replies: {ReplyCount}", request.Command, answer.Count);
 
                     /* Set the task result to all strings collected and therefore finish the task with success. */
-                    request.Result.SetResult(answer.ToArray());
+                    request.Result.SetResult([.. answer]);
 
-                    return true;
+                    break;
                 }
             }
             catch (Exception e)
@@ -293,10 +335,32 @@ public class SerialPortConnection : ISerialPortConnection
                     In case the device does not recognize the command it will not respond anything. Then
                     the read method call will throw a time exception as configured in the constructor.
                 */
-                request.Result.SetException(e);
+                receiveError = e;
 
-                return false;
+                break;
             }
+
+        /* Finish the task. */
+        if (receiveError != null) request.Result.SetException(receiveError);
+
+        /* Finish logging. */
+        if (receiveEntry != null)
+            try
+            {
+                receiveEntry.Finish(new()
+                {
+                    Encoding = InterfaceLogPayloadEncodings.Raw,
+                    Payload = received.ToString(),
+                    PayloadType = "",
+                    TransferExecption = receiveError?.Message
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Unable to create log entry: {Exception}", e.Message);
+            }
+
+        return receiveError == null;
     }
 
     /// <summary>
@@ -333,7 +397,7 @@ public class SerialPortConnection : ISerialPortConnection
                 }
             }
 
-            var (requests, _connection) = entry;
+            var (requests, connection) = entry;
 
             /* Process the transaction until finished or some request failed - important: ExecuteCommand MUST NOT throw an exception. */
             _logger.LogDebug("Starting transaction processing, commands: {RequestCount}", requests.Length);
@@ -344,7 +408,7 @@ public class SerialPortConnection : ISerialPortConnection
                 if (failed)
                     request.Result.SetException(new OperationCanceledException("previous command failed"));
                 else
-                    failed = !ExecuteCommand(request);
+                    failed = !ExecuteCommand(request, connection);
         }
     }
 

@@ -3,7 +3,23 @@ namespace SharedLibrary.Models.Logging;
 /// <summary>
 /// Describes the connection to a device.
 /// </summary>
-public class InterfaceLogEntryConnection
+public class InterfaceLogEntryTargetConnection
+{
+    /// <summary>
+    /// Protcol used.
+    /// </summary>
+    public required InterfaceLogProtocolTypes Protocol { get; set; }
+
+    /// <summary>
+    /// Unique identifier of the endpoint relative to the protocol.
+    /// </summary>
+    public required string Endpoint { get; set; }
+}
+
+/// <summary>
+/// Describes the connection to a device.
+/// </summary>
+public class InterfaceLogEntryConnection : InterfaceLogEntryTargetConnection
 {
     /// <summary>
     /// The logical entity generating the entry.
@@ -15,14 +31,4 @@ public class InterfaceLogEntryConnection
     /// instances.
     /// </summary>
     public string WebSamId { get; set; } = null!;
-
-    /// <summary>
-    /// Protcol used.
-    /// </summary>
-    public required InterfaceLogProtocolTypes Protocol { get; set; }
-
-    /// <summary>
-    /// Unique identifier of the endpoint relative to the protocol.
-    /// </summary>
-    public required string Endpoint { get; set; }
 }

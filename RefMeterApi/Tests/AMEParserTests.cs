@@ -96,7 +96,7 @@ public class AMEParserTests
 
         Array.ForEach(first, r => Assert.That(r.Frequency, Is.EqualTo(50)));
 
-        Thread.Sleep(100);
+        Thread.Sleep(1500);
 
         /* After all tasks complete a new request is necessary. */
         var second = await Task.WhenAll(Enumerable.Range(0, 10).Select(_ => device.GetActualValues(new NoopInterfaceLogger())));

@@ -1,9 +1,7 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using RefMeterApi.Models;
 using SerialPortProxy;
-using SharedLibrary.Actions;
 using SharedLibrary.Models.Logging;
 using SourceApi.Model;
 
@@ -14,28 +12,22 @@ partial class SerialPortMTRefMeter
     private static readonly Regex ActualValueReg = new Regex(@"^(\d{1,3});(.+)$");
 
     /* Outstanding AME request - only works properly if the device instance is a singleton. */
-    private readonly ResponseShare<MeasuredLoadpoint> _actualValues;
+    private readonly ResponseShare<MeasuredLoadpoint, IInterfaceLogger> _actualValues;
 
     /// <inheritdoc/>
     public async Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1)
-    {
-        /* Request the cached values and clone the result - so the caller must not care for accessing shared data. */
-        var values = JsonConvert.DeserializeObject<MeasuredLoadpoint>(JsonConvert.SerializeObject(await _actualValues.Execute()))!;
-
-        /* Report the corrected and converted result. */
-        return Utils.ConvertFromDINtoIEC(values, firstActiveCurrentPhase); ;
-    }
+        => Utils.ConvertFromDINtoIEC(SharedLibrary.Utils.DeepCopy(await _actualValues.Execute(logger)), firstActiveCurrentPhase);
 
     /// <summary>
     /// Begin reading the actual values - this may take some time.
     /// </summary>
     /// <returns>Task reading the actual values.</returns>
     /// <exception cref="ArgumentException">Reply from the device was not recognized.</exception>
-    private async Task<MeasuredLoadpoint> CreateActualValueRequest()
+    private async Task<MeasuredLoadpoint> CreateActualValueRequest(IInterfaceLogger logger)
     {
         /* Execute the request and get the answer from the device. */
         var replies = await _device.Execute(
-            new NoopInterfaceLogger(),
+            logger,
             SerialPortRequest.Create("ATI01", "ATIACK"),
             SerialPortRequest.Create("AME", "AMEACK")
         )[1];
@@ -68,7 +60,7 @@ partial class SerialPortMTRefMeter
             if (!match.Success)
             {
                 /* Report bad reply and ignore it. */
-                _logger.LogWarning($"bad reply {reply}");
+                _logger.LogWarning("bad reply {Reply}", reply);
 
                 continue;
             }
@@ -87,7 +79,7 @@ partial class SerialPortMTRefMeter
             catch (FormatException)
             {
                 /* Report bad number and ignore reply. */
-                _logger.LogWarning($"invalid number in reply {reply}");
+                _logger.LogWarning("invalid number in reply {Reply}", reply);
 
                 continue;
             }
@@ -95,7 +87,7 @@ partial class SerialPortMTRefMeter
             if (index < 0)
             {
                 /* Report bad number and ignore reply. */
-                _logger.LogWarning($"bad reply {reply}");
+                _logger.LogWarning("bad reply {Reply}", reply);
 
                 continue;
             }

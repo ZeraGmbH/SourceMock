@@ -3,7 +3,12 @@ namespace SerialPortProxy;
 /// <summary>
 /// Share some response as long as the next request arrives while still executing.
 /// </summary>
-public class ResponseShare<T>
+/// <remarks>
+/// Initialize zhe response share instance.
+/// </remarks>
+/// <param name="factory">Method to create a new request task.</param>
+/// <param name="debounceMs"></param>
+public class ResponseShare<TResult, TContext>(Func<TContext, Task<TResult>> factory, int debounceMs = 0)
 {
     /// <summary>
     /// Synchronize access to _task;
@@ -13,7 +18,7 @@ public class ResponseShare<T>
     /// <summary>
     /// The current executing request if any.
     /// </summary>
-    private Task<T>? _task;
+    private Task<TResult>? _task;
 
     /// <summary>
     /// For testing purposes see if task is active.
@@ -21,32 +26,21 @@ public class ResponseShare<T>
     public bool IsBusy => _task != null;
 
     /// <summary>
-    /// Method to create a new request task.
-    /// </summary>
-    private readonly Func<Task<T>> _factory;
-
-    /// <summary>
-    /// Initialize zhe response share instance.
-    /// </summary>
-    /// <param name="factory">Method to create a new request task.</param>
-    public ResponseShare(Func<Task<T>> factory)
-    {
-        _factory = factory;
-    }
-
-    /// <summary>
     /// Create a new request task and reset cache when done.
     /// </summary>
     /// <returns>The new task.</returns>
-    private async Task<T> CreateTask()
+    private async Task<TResult> CreateTask(TContext context)
     {
         try
         {
             /* Must await to make finally work correctly. */
-            return await _factory();
+            return await factory(context);
         }
         finally
         {
+            /* Use debounce time. */
+            if (debounceMs > 0) await Task.Delay(debounceMs);
+
             /*
                 We have to process the reset of the active task
                 to avoid a possible race condition. In case the
@@ -70,10 +64,10 @@ public class ResponseShare<T>
     /// Execute some request.
     /// </summary>
     /// <returns>A task related with the request.</returns>
-    public Task<T> Execute()
+    public Task<TResult> Execute(TContext context)
     {
         /* Make sure there is only one request running. */
         lock (_lock)
-            return _task ??= CreateTask();
+            return _task ??= CreateTask(context);
     }
 }

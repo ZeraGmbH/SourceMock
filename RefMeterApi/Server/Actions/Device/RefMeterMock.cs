@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Options;
 using RefMeterApi.Models;
 using SharedLibrary.Models.Logging;
 using SourceApi.Model;

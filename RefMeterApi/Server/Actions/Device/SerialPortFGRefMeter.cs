@@ -24,23 +24,28 @@ public interface ISerialPortFGRefMeter : IRefMeter
 /// <summary>
 /// Handle all requests to a FG30x compatible devices.
 /// </summary>
-/// <remarks>
-/// Initialize device manager.
-/// </remarks>
-/// <param name="device">Service to access the current serial port.</param>
-/// <param name="meterConstant">Algorithm to calculate the meter constant.</param>
-/// <param name="logger">Logging service for this device type.</param>
-public partial class SerialPortFGRefMeter(ISerialPortConnection device, IMeterConstantCalculator meterConstant, ILogger<SerialPortFGRefMeter> logger) : ISerialPortFGRefMeter
+public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
 {
+    /// <summary>
+    /// Initialize device manager.
+    /// </summary>
+    /// <param name="device">Service to access the current serial port.</param>
+    /// <param name="meterConstant">Algorithm to calculate the meter constant.</param>
+    public SerialPortFGRefMeter(ISerialPortConnection device, IMeterConstantCalculator meterConstant)
+    {
+        _device = device.CreateExecutor(InterfaceLogSourceTypes.ReferenceMeter);
+        _meterConstant = meterConstant;
+
+        /* Setup caches for shared request results. */
+        _actualValues = new(CreateActualValueRequest, 1000);
+    }
+
     /// <summary>
     /// Device connection to use.
     /// </summary>
-    private readonly ISerialPortConnectionExecutor _device = device.CreateExecutor(InterfaceLogSourceTypes.ReferenceMeter);
+    private readonly ISerialPortConnectionExecutor _device;
 
-    /// <summary>
-    /// Logging helper.
-    /// </summary>
-    private readonly ILogger<SerialPortFGRefMeter> _logger = logger;
+    private readonly IMeterConstantCalculator _meterConstant;
 
     /// <inheritdoc/>
     public bool Available => _referenceMeter.HasValue;
@@ -67,7 +72,7 @@ public partial class SerialPortFGRefMeter(ISerialPortConnection device, IMeterCo
         var current = double.Parse(biRequest.EndMatch!.Groups[1].Value);
         var frequency = double.Parse(fiRequest.EndMatch!.Groups[1].Value);
 
-        return meterConstant.GetMeterConstant(_referenceMeter!.Value, frequency, _measurementMode ?? MeasurementModes.FourWireActivePower, voltage, current);
+        return _meterConstant.GetMeterConstant(_referenceMeter!.Value, frequency, _measurementMode ?? MeasurementModes.FourWireActivePower, voltage, current);
     }
 
     /// <inheritdoc/>

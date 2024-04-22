@@ -47,7 +47,7 @@ public class QueueTests
     {
         var groups = new GroupMock();
 
-        using var cut = SerialPortConnection.FromPortInstance(groups, _logger);
+        using var cut = SerialPortConnection.FromMockedPortInstance(groups, _logger);
 
         await Task.WhenAll(cut.Execute(SerialPortRequest.Create("R1", "R1")));
 

@@ -18,5 +18,10 @@ public enum InterfaceLogProtocolTypes
     /// <summary>
     /// Network with UDP packet connection.
     /// </summary>
-    Udp = 2
+    Udp = 2,
+
+    /// <summary>
+    /// Internally mocked interface.
+    /// </summary>
+    Mock = 3,
 }

@@ -21,7 +21,7 @@ public class DosageTests
 
     private readonly DeviceLogger<SerialPortMTSource> _deviceLogger = new();
 
-    private ISource CreateDevice(params string[] replies) => new SerialPortMTSource(_deviceLogger, SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
+    private ISource CreateDevice(params string[] replies) => new SerialPortMTSource(_deviceLogger, SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
     [Test]
     public async Task Can_Turn_Off_DOS_Mode()
@@ -83,7 +83,7 @@ public class DosageTests
             "SOK3PS46"
         });
 
-        var device = new SerialPortMTSource(_deviceLogger, SerialPortConnection.FromPortInstance(mock, _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
+        var device = new SerialPortMTSource(_deviceLogger, SerialPortConnection.FromMockedPortInstance(mock, _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
         await device.SetDosageEnergy(energy, 600000000d);
 

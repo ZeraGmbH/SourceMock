@@ -69,7 +69,7 @@ public class ErrorMeasurementTests
     [SetUp]
     public void Setup()
     {
-        Device = SerialPortConnection.FromPortInstance(_port, new NullLogger<ISerialPortConnection>());
+        Device = SerialPortConnection.FromMockedPortInstance(_port, new NullLogger<ISerialPortConnection>());
     }
 
     [TearDown]

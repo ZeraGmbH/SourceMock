@@ -112,7 +112,15 @@ public class SerialPortConnection : ISerialPortConnection
     /// <param name="port">Implementation to use.</param>
     /// <param name="logger">Optional logging instance.</param>
     /// <returns>The new connection.</returns>
-    public static ISerialPortConnection FromPortInstance(ISerialPort port, ILogger<ISerialPortConnection> logger) => new SerialPortConnection(port, logger);
+    private static ISerialPortConnection FromPortInstance(ISerialPort port, ILogger<ISerialPortConnection> logger) => new SerialPortConnection(port, logger);
+
+    /// <summary>
+    /// Create a new mocked based connection.
+    /// </summary>
+    /// <param name="port">Implementation to use.</param>
+    /// <param name="logger">Optional logging instance.</param>
+    /// <returns>The new connection.</returns>
+    public static ISerialPortConnection FromMockedPortInstance(ISerialPort port, ILogger<ISerialPortConnection> logger) => FromPortInstance(port, logger);
 
     /// <summary>
     /// On dispose the serial connection and the ProcessFromQueue thread are terminated.
@@ -340,7 +348,7 @@ public class SerialPortConnection : ISerialPortConnection
             try
             {
                 /* Try to read the next line - may report some timeout. */
-                var line = _port.ReadLine();
+                var line = _port.ReadLine() ?? string.Empty;
 
                 /* Add to queue. */
                 lock (_incoming)

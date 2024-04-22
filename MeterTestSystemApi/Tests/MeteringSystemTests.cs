@@ -80,7 +80,7 @@ public class MeterTestSystemTests
     {
         _port = new();
 
-        Device = SerialPortConnection.FromPortInstance(_port, new NullLogger<ISerialPortConnection>());
+        Device = SerialPortConnection.FromMockedPortInstance(_port, new NullLogger<ISerialPortConnection>());
 
         Source = new SerialPortFGSource(_sourceLogger, Device, new CapabilitiesMap(), new SourceCapabilityValidator());
 

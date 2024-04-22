@@ -17,7 +17,7 @@ public class AMEParserTests
 
     private readonly DeviceLogger _deviceLogger = new();
 
-    private IRefMeter CreateDevice(params string[] replies) => new SerialPortMTRefMeter(SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), _deviceLogger);
+    private IRefMeter CreateDevice(params string[] replies) => new SerialPortMTRefMeter(SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(replies), _portLogger), _deviceLogger);
 
     [Test]
     public async Task Can_Parse_AME_Reply()
@@ -52,7 +52,7 @@ public class AMEParserTests
     {
         /* Use the regular logger. */
         var device = new SerialPortMTRefMeter(
-            SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] { "ATIACK", reply, "AMEACK" }), _portLogger),
+            SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(new[] { "ATIACK", reply, "AMEACK" }), _portLogger),
             new NullLogger<SerialPortMTRefMeter>()
         );
 

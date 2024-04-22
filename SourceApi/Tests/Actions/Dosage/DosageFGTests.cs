@@ -23,7 +23,7 @@ public class DosageFGTests
 
     private ISource CreateDevice(params string[] replies)
     {
-        var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
+        var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
         device.SetAmplifiers(Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
 
@@ -33,25 +33,25 @@ public class DosageFGTests
     [Test]
     public async Task Can_Turn_Off_DOS_Mode()
     {
-        await CreateDevice(new[] { "OK3CM4" }).SetDosageMode(false);
+        await CreateDevice(["OK3CM4"]).SetDosageMode(false);
     }
 
     [Test]
     public async Task Can_Turn_On_DOS_Mode()
     {
-        await CreateDevice(new[] { "OK3CM3" }).SetDosageMode(true);
+        await CreateDevice(["OK3CM3"]).SetDosageMode(true);
     }
 
     [Test]
     public async Task Can_Start_Dosage()
     {
-        await CreateDevice(new[] { "OK3CM1" }).StartDosage();
+        await CreateDevice(["OK3CM1"]).StartDosage();
     }
 
     [Test]
     public async Task Can_Abort_Dosage()
     {
-        await CreateDevice(new[] { "OK3CM2" }).CancelDosage();
+        await CreateDevice(["OK3CM2"]).CancelDosage();
     }
 
     [TestCase(2, "113834")]
@@ -63,11 +63,11 @@ public class DosageFGTests
     public async Task Can_Read_Dosage_Progress(int dosage, string remaining)
     {
         /* Warning: knows about internal sequence of requests. */
-        var progress = await CreateDevice(new[] {
+        var progress = await CreateDevice([
             $"OK3SA1;{dosage}",
             $"OK3MA1;{remaining}",
             "OK3PA45;918.375",
-        }).GetDosageProgress(1d);
+        ]).GetDosageProgress(1d);
 
         var rest = double.Parse(remaining) * 1000d;
 
@@ -87,9 +87,9 @@ public class DosageFGTests
     [TestCase(3)]
     public async Task Can_Set_Impules_From_Energy(double energy)
     {
-        var mock = new CommandPeekMock(new[] { "OK3PS45" });
+        var mock = new CommandPeekMock(["OK3PS45"]);
 
-        var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromPortInstance(mock, _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
+        var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromMockedPortInstance(mock, _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
         device.SetAmplifiers(Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
 

@@ -19,7 +19,7 @@ public class AMLParserTests
     public async Task Can_Process_Supported_Modes(string modeAsString, MeasurementModes mode)
     {
         var device = new SerialPortMTRefMeter(
-            SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] { $"01;{modeAsString};xxx", "AMLACK" }), _portLogger),
+            SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(new[] { $"01;{modeAsString};xxx", "AMLACK" }), _portLogger),
             new NullLogger<SerialPortMTRefMeter>()
         );
 
@@ -36,7 +36,7 @@ public class AMLParserTests
     public async Task Will_Discard_Bad_Input(string reply)
     {
         var device = new SerialPortMTRefMeter(
-            SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] {
+            SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(new[] {
                 "01;2WA;2WAde",
                 reply,
                 "03;3WA;3WAde",
@@ -56,7 +56,7 @@ public class AMLParserTests
     public async Task Can_Detect_Active_Mode(string modeAsString, MeasurementModes mode)
     {
         var device = new SerialPortMTRefMeter(
-            SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] { modeAsString, "ASTACK" }), _portLogger),
+            SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(new[] { modeAsString, "ASTACK" }), _portLogger),
             new NullLogger<SerialPortMTRefMeter>()
         );
 
@@ -71,7 +71,7 @@ public class AMLParserTests
     public async Task Will_Detect_Unsupported_Mode(string reply)
     {
         var device = new SerialPortMTRefMeter(
-            SerialPortConnection.FromPortInstance(new FixedReplyMock(new[] {
+            SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(new[] {
                 "A=1",
                 reply,
                 "B=2",

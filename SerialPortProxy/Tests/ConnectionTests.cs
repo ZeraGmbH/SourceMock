@@ -91,7 +91,7 @@ public class ConnectionTests
     {
         var port = new PortMock();
 
-        using var cut = SerialPortConnection.FromPortInstance(port, _logger);
+        using var cut = SerialPortConnection.FromMockedPortInstance(port, _logger);
 
         var oob = new List<string>();
 

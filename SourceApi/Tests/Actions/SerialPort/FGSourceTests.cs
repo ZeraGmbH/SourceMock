@@ -35,7 +35,7 @@ public class FGSourceTests
     public void SetUp()
     {
         _port = new();
-        _device = SerialPortConnection.FromPortInstance(_port, _connectionLogger);
+        _device = SerialPortConnection.FromMockedPortInstance(_port, _connectionLogger);
         _source = new(_portLogger, _device, new CapabilitiesMap(), new SourceCapabilityValidator());
 
         _source.SetAmplifiers(Model.VoltageAmplifiers.VU220, Model.CurrentAmplifiers.VI220, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);

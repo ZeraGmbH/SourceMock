@@ -1,12 +1,15 @@
 using Microsoft.OpenApi.Models;
 
-using System.Globalization;
-
 using SerialPortProxy;
+
 using SharedLibrary;
-using SourceApi;
+using SharedLibrary.Actions;
 using SharedLibrary.ExceptionHandling;
 using SharedLibrary.Models.Logging;
+
+using SourceApi;
+
+using System.Globalization;
 
 CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo(string.Empty);
 

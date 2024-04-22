@@ -1,5 +1,7 @@
 using SharedLibrary.Models.Logging;
 
+namespace SharedLibrary.Actions;
+
 /// <summary>
 /// 
 /// </summary>

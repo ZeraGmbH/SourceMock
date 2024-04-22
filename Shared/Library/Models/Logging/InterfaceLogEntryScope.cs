@@ -6,11 +6,6 @@ namespace SharedLibrary.Models.Logging;
 public class InterfaceLogEntryScope
 {
     /// <summary>
-    /// Combines a group of operations together.
-    /// </summary>
-    public string CorrelationId { get; set; } = null!;
-
-    /// <summary>
     /// Allows to identify all response for a single request.
     /// </summary>
     public string RequestId { get; set; } = null!;

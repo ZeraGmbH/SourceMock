@@ -17,6 +17,11 @@ public class InterfaceLogEntryInfo
     public required DateTime RunIdentifier { get; set; }
 
     /// <summary>
+    /// Combines a group of operations together.
+    /// </summary>
+    public required string CorrelationId { get; set; }
+
+    /// <summary>
     /// Relative number of the log entry - starting with zero
     /// when the logging server starts.
     /// </summary>

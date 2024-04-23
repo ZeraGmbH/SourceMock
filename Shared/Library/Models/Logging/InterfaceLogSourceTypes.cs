@@ -1,8 +1,12 @@
+using System.Text.Json.Serialization;
+
 namespace SharedLibrary.Models.Logging;
 
 /// <summary>
 /// Possible sources of a log entry.
 /// </summary>
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum InterfaceLogSourceTypes
 {
     /// <summary>

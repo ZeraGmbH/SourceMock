@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+
 namespace SharedLibrary.Models.Logging;
 
 /// <summary>
@@ -13,5 +16,6 @@ public class InterfaceLogEntryScope
     /// <summary>
     /// Set for sent data, unset for incoming.
     /// </summary>
+    [NotNull, Required]
     public required bool Outgoing { get; set; }
 }

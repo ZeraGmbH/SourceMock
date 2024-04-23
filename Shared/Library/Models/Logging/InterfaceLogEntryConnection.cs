@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+
 namespace SharedLibrary.Models.Logging;
 
 /// <summary>
@@ -8,11 +11,13 @@ public class InterfaceLogEntryTargetConnection
     /// <summary>
     /// Protcol used.
     /// </summary>
+    [NotNull, Required]
     public required InterfaceLogProtocolTypes Protocol { get; set; }
 
     /// <summary>
     /// Unique identifier of the endpoint relative to the protocol.
     /// </summary>
+    [NotNull, Required]
     public required string Endpoint { get; set; }
 }
 
@@ -24,6 +29,7 @@ public class InterfaceLogEntryConnection : InterfaceLogEntryTargetConnection
     /// <summary>
     /// The logical entity generating the entry.
     /// </summary>
+    [NotNull, Required]
     public required InterfaceLogSourceTypes WebSamType { get; set; }
 
     /// <summary>

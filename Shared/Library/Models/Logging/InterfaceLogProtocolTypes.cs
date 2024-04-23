@@ -1,8 +1,12 @@
+using System.Text.Json.Serialization;
+
 namespace SharedLibrary.Models.Logging;
 
 /// <summary>
 /// Physical type of the communication.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
+
 public enum InterfaceLogProtocolTypes
 {
     /// <summary>

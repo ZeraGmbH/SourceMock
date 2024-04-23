@@ -1,9 +1,12 @@
+using System.Text.Json.Serialization;
+
 namespace SharedLibrary.Models.Logging;
 
 /// <summary>
 /// How the payload string has to be interpreted to get
 /// the messages exchanged with the interface.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum InterfaceLogPayloadEncodings
 {
     /// <summary>

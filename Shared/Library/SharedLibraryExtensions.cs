@@ -5,6 +5,7 @@ using SharedLibrary.Actions.Database;
 using SharedLibrary.Actions.User;
 using SharedLibrary.ExceptionHandling;
 using SharedLibrary.Models;
+using SharedLibrary.Models.Logging;
 using SharedLibrary.Services;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -78,8 +79,9 @@ public static class SharedLibraryConfiguration
     public static void UseSharedLibrary(this SwaggerGenOptions options)
     {
         SwaggerModelExtender
-            .AddType<SamDetailExtensions>()
+            .AddType<InterfaceLogEntry>()
             .AddType<SamDatabaseError>()
+            .AddType<SamDetailExtensions>()
             .AddType<SamGlobalErrors>()
             .Register(options);
     }

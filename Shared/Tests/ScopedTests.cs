@@ -26,7 +26,7 @@ public abstract class ScopedTests : DatabaseTestCore
     {
         public string Id { get; private set; } = null!;
 
-        protected override Task OnInitialize(IObjectCollection<TheStoreItem> collection)
+        protected override Task OnInitialize(IBasicObjectCollection<TheStoreItem> collection)
         {
             Assert.That(Id, Is.Null);
 
@@ -40,7 +40,7 @@ public abstract class ScopedTests : DatabaseTestCore
     {
         public string Id => _collection.Common.Id;
 
-        private readonly IObjectCollection<TheStoreItem, TheStoreCommon> _collection = factory.Create("the-store-test", DatabaseCategories.Master);
+        private readonly IBasicObjectCollection<TheStoreItem, TheStoreCommon> _collection = factory.Create("the-store-test", DatabaseCategories.Master);
 
         public Task<TheStoreItem> Create() => _collection.AddItem(new() { Id = Guid.NewGuid().ToString() });
     }

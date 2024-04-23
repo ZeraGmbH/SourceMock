@@ -4,7 +4,7 @@ namespace SharedLibrary.Models;
 /// Base class for implementing historized collections.
 /// </summary>
 /// <typeparam name="T">Type of the item to use</typeparam>
-public interface IHistoryCollection<T> : IObjectCollection<T> where T : IDatabaseObject
+public interface IHistoryCollection<T> : IBasicObjectCollection<T> where T : IDatabaseObject
 {
     /// <summary>
     /// Get the history of a single entity.

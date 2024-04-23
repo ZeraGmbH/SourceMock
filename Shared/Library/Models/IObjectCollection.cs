@@ -6,7 +6,7 @@ namespace SharedLibrary.Models;
 /// <summary>
 /// 
 /// </summary>
-public interface IObjectCollection
+public interface ITestableObjectCollection
 {
     /// <summary>
     /// Remove all documents related with this collection.
@@ -19,7 +19,7 @@ public interface IObjectCollection
 /// Base class for implementing historized collections.
 /// </summary>
 /// <typeparam name="T">Type of the item to use</typeparam>
-public interface IObjectCollection<T> : IObjectCollection where T : IDatabaseObject
+public interface IBasicObjectCollection<T> : ITestableObjectCollection where T : IDatabaseObject
 {
     /// <summary>
     /// Add a brand new document to the collection.
@@ -46,13 +46,6 @@ public interface IObjectCollection<T> : IObjectCollection where T : IDatabaseObj
     Task<T> DeleteItem(string id, bool silent = false);
 
     /// <summary>
-    /// Delete a list of items preferrable with a single database operation.
-    /// </summary>
-    /// <param name="filter">Filter condition to detect the documents to delete.</param>
-    /// <returns>Number of deleted documents.</returns>
-    Task<long> DeleteItems(Expression<Func<T, bool>> filter);
-
-    /// <summary>
     /// Start a query on the collection.
     /// </summary>
     /// <returns>A new queryable.</returns>
@@ -74,11 +67,34 @@ public interface IObjectCollection<T> : IObjectCollection where T : IDatabaseObj
 /// Base class for implementing historized collections.
 /// </summary>
 /// <typeparam name="T">Type of the item to use</typeparam>
+public interface IObjectCollection<T> : IBasicObjectCollection<T> where T : IDatabaseObject
+{
+    /// <summary>
+    /// Delete a list of items preferrable with a single database operation.
+    /// </summary>
+    /// <param name="filter">Filter condition to detect the documents to delete.</param>
+    /// <returns>Number of deleted documents.</returns>
+    Task<long> DeleteItems(Expression<Func<T, bool>> filter);
+}
+
+/// <summary>
+/// Base class for implementing historized collections.
+/// </summary>
+/// <typeparam name="T">Type of the item to use</typeparam>
 /// <typeparam name="TCommon"></typeparam>
-public interface IObjectCollection<T, TCommon> : IObjectCollection<T> where T : IDatabaseObject where TCommon : ICollectionInitializer<T>
+public interface IBasicObjectCollection<T, TCommon> : IBasicObjectCollection<T> where T : IDatabaseObject where TCommon : ICollectionInitializer<T>
 {
     /// <summary>
     /// 
     /// </summary>
     TCommon Common { get; }
+}
+
+/// <summary>
+/// Base class for implementing historized collections.
+/// </summary>
+/// <typeparam name="T">Type of the item to use</typeparam>
+/// <typeparam name="TCommon"></typeparam>
+public interface IObjectCollection<T, TCommon> : IBasicObjectCollection<T, TCommon>, IObjectCollection<T> where T : IDatabaseObject where TCommon : ICollectionInitializer<T>
+{
 }

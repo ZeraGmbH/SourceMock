@@ -67,7 +67,7 @@ public sealed class InMemoryHistoryCollection<TItem, TInitializer>(InMemoryHisto
         /// </summary>
         /// <param name="collection"></param>
         /// <returns></returns>
-        protected override Task OnInitialize(IObjectCollection<TItem> collection) => OnetimeInitializer.Initialize(collection);
+        protected override Task OnInitialize(IBasicObjectCollection<TItem> collection) => OnetimeInitializer.Initialize(collection);
     }
 
     /// <summary>
@@ -177,26 +177,6 @@ public sealed class InMemoryHistoryCollection<TItem, TInitializer>(InMemoryHisto
 
             return Task.FromResult(clone[^1].Item);
         }
-    }
-
-    /// <inheritdoc/>
-    public Task<long> DeleteItems(Expression<Func<TItem, bool>> filter)
-    {
-        var compiled = filter.Compile();
-
-        long count = 0;
-
-        /* Remove all matching items from dictionary. */
-        lock (_onetimeInitializer.Data)
-            foreach (var item in _onetimeInitializer.Data.ToArray())
-                if (compiled(item.Value[^1].Item))
-                {
-                    count++;
-
-                    _onetimeInitializer.Data.Remove(item.Key);
-                }
-
-        return Task.FromResult(count);
     }
 
     /// <inheritdoc/>

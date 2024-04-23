@@ -63,7 +63,7 @@ public sealed class InMemoryCollection<TItem, TInitializer>(InMemoryCollection<T
         public bool? CheckIndex(TItem item) => IndexCheck?.Invoke(item);
 
         /// <inheritdoc/>
-        protected override Task OnInitialize(IObjectCollection<TItem> collection) => OnetimeInitializer.Initialize(collection);
+        protected override Task OnInitialize(IBasicObjectCollection<TItem> collection) => OnetimeInitializer.Initialize(collection);
     }
 
     /// <summary>

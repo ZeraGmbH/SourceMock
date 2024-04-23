@@ -126,18 +126,6 @@ sealed class MongoDbHistoryCollection<TItem, TInitializer>(
     }
 
     /// <inheritdoc/>
-    public Task<long> DeleteItems(Expression<Func<TItem, bool>> filter) => Task.Run(async () =>
-    {
-        long count = 0;
-
-        foreach (var id in CreateQueryable().Where(filter).Select(i => i.Id))
-            if (null != await DeleteItem(id, true))
-                count++;
-
-        return count;
-    });
-
-    /// <inheritdoc/>
     public async Task<TItem> DeleteItem(string id, bool silent = false)
     {
         var self = GetBsonCollection();

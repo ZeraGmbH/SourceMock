@@ -10,7 +10,7 @@ public interface ICollectionInitializer<T> where T : IDatabaseObject
     /// </summary>
     /// <param name="collection"></param>
     /// <returns></returns>
-    Task Initialize(IObjectCollection<T> collection);
+    Task Initialize(IBasicObjectCollection<T> collection);
 }
 
 /// <summary>
@@ -27,10 +27,10 @@ public abstract class CollectionInitializer<T> : ICollectionInitializer<T> where
     /// </summary>
     /// <param name="collection"></param>
     /// <returns></returns>
-    protected abstract Task OnInitialize(IObjectCollection<T> collection);
+    protected abstract Task OnInitialize(IBasicObjectCollection<T> collection);
 
     /// <inheritdoc/>
-    public Task Initialize(IObjectCollection<T> collection)
+    public Task Initialize(IBasicObjectCollection<T> collection)
     {
         lock (_sync)
             if (_initializer == null)
@@ -48,6 +48,6 @@ public abstract class CollectionInitializer<T> : ICollectionInitializer<T> where
 public class NoopCollectionInitializer<T> : CollectionInitializer<T> where T : IDatabaseObject
 {
     /// <inheritdoc/>
-    protected override Task OnInitialize(IObjectCollection<T> collection) => Task.CompletedTask;
+    protected override Task OnInitialize(IBasicObjectCollection<T> collection) => Task.CompletedTask;
 }
 

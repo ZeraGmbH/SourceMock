@@ -18,7 +18,13 @@ namespace SharedLibrary.Actions.Database;
 /// <param name="_onetimeInitializer"></param>
 /// <param name="_userContext"></param>
 /// <param name="_database">Database connection to use.</param>
-sealed class MongoDbHistoryCollection<TItem, TInitializer>(string _collectionName, string _category, TInitializer _onetimeInitializer, ICurrentUser _userContext, IMongoDbDatabaseService _database) : IHistoryCollection<TItem, TInitializer>
+sealed class MongoDbHistoryCollection<TItem, TInitializer>(
+    string _collectionName,
+    string _category,
+    TInitializer _onetimeInitializer,
+    ICurrentUser _userContext,
+    IMongoDbDatabaseService _database
+) : IHistoryCollection<TItem, TInitializer>
     where TItem : IDatabaseObject
     where TInitializer : ICollectionInitializer<TItem>
 {
@@ -118,6 +124,18 @@ sealed class MongoDbHistoryCollection<TItem, TInitializer>(string _collectionNam
             .FindAsync(Builders<TItem>.Filter.Eq(nameof(IDatabaseObject.Id), id))
             .ContinueWith(task => task.Result.SingleOrDefault(), TaskContinuationOptions.OnlyOnRanToCompletion);
     }
+
+    /// <inheritdoc/>
+    public Task<long> DeleteItems(Expression<Func<TItem, bool>> filter) => Task.Run(async () =>
+    {
+        long count = 0;
+
+        foreach (var id in CreateQueryable().Where(filter).Select(i => i.Id))
+            if (null != await DeleteItem(id, true))
+                count++;
+
+        return count;
+    });
 
     /// <inheritdoc/>
     public async Task<TItem> DeleteItem(string id, bool silent = false)

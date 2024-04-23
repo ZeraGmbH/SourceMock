@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using MongoDB.Driver;
 
 namespace SharedLibrary.Models;
 
@@ -43,6 +44,13 @@ public interface IObjectCollection<T> : IObjectCollection where T : IDatabaseObj
     /// <returns>The item which has been deleted.</returns>
     /// <exception cref="ArgumentException">There is no such item.</exception>
     Task<T> DeleteItem(string id, bool silent = false);
+
+    /// <summary>
+    /// Delete a list of items preferrable with a single database operation.
+    /// </summary>
+    /// <param name="filter">Filter condition to detect the documents to delete.</param>
+    /// <returns>Number of deleted documents.</returns>
+    Task<long> DeleteItems(Expression<Func<T, bool>> filter);
 
     /// <summary>
     /// Start a query on the collection.

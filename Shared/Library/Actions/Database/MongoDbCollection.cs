@@ -16,7 +16,12 @@ namespace SharedLibrary.Actions.Database;
 /// <param name="_category">Category of the database.</param>
 /// <param name="_onetimeInitializer"></param>
 /// <param name="_database">Database connection to use.</param>
-sealed class MongoDbCollection<TItem, TInitializer>(string _collectionName, string _category, TInitializer _onetimeInitializer, IMongoDbDatabaseService _database) : IObjectCollection<TItem, TInitializer>
+sealed class MongoDbCollection<TItem, TInitializer>(
+    string _collectionName,
+    string _category,
+    TInitializer _onetimeInitializer,
+    IMongoDbDatabaseService _database
+) : IObjectCollection<TItem, TInitializer>
     where TItem : IDatabaseObject
     where TInitializer : ICollectionInitializer<TItem>
 {
@@ -45,6 +50,11 @@ sealed class MongoDbCollection<TItem, TInitializer>(string _collectionName, stri
     public Task<TItem> DeleteItem(string id, bool silent = false) => GetCollection()
         .FindOneAndDeleteAsync(Builders<TItem>.Filter.Eq(nameof(IDatabaseObject.Id), id))
         .ContinueWith(t => t.Result ?? (silent ? default(TItem)! : throw new ArgumentException("item not found", nameof(id))), TaskContinuationOptions.OnlyOnRanToCompletion);
+
+    /// <inheritdoc/>
+    public Task<long> DeleteItems(Expression<Func<TItem, bool>> filter) => GetCollection()
+        .DeleteManyAsync(Builders<TItem>.Filter.Where(filter))
+        .ContinueWith(t => t.Result.DeletedCount);
 
     /// <summary>
     /// Remove all content.

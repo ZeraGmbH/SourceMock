@@ -180,6 +180,26 @@ public sealed class InMemoryHistoryCollection<TItem, TInitializer>(InMemoryHisto
     }
 
     /// <inheritdoc/>
+    public Task<long> DeleteItems(Expression<Func<TItem, bool>> filter)
+    {
+        var compiled = filter.Compile();
+
+        long count = 0;
+
+        /* Remove all matching items from dictionary. */
+        lock (_onetimeInitializer.Data)
+            foreach (var item in _onetimeInitializer.Data.ToArray())
+                if (compiled(item.Value[^1].Item))
+                {
+                    count++;
+
+                    _onetimeInitializer.Data.Remove(item.Key);
+                }
+
+        return Task.FromResult(count);
+    }
+
+    /// <inheritdoc/>
     public Task<long> RemoveAll()
     {
         lock (_onetimeInitializer.Data)

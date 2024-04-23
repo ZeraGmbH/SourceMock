@@ -17,4 +17,9 @@ public interface IInterfaceLogger
     /// </summary>
     /// <returns>Query builder.</returns>
     IQueryable<InterfaceLogEntry> Query();
+
+    /// <summary>
+    /// Will fire whenever a new log entry has been created.
+    /// </summary>
+    event Action<InterfaceLogEntry> EntryAdded;
 }

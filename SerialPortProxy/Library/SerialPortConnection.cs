@@ -271,13 +271,13 @@ public class SerialPortConnection : ISerialPortConnection
         /* Failed - we can stop now. */
         if (sendError != null) return false;
 
-        /* Prepare logging. */
-        IPreparedInterfaceLogEntry receiveEntry = null!;
-        Exception receiveError = null!;
-        StringBuilder received = new();
-
         /* Collect response strings until expected termination string is detected. */
         for (var answer = new List<string>(); ;)
+        {
+            IPreparedInterfaceLogEntry receiveEntry = null!;
+            Exception receiveError = null!;
+            var reply = "";
+
             try
             {
                 /* Read a single response line from the device. */
@@ -286,20 +286,16 @@ public class SerialPortConnection : ISerialPortConnection
                 /* Start logging. */
                 receiveEntry = connection.Prepare(new() { Outgoing = false, RequestId = requestId });
 
-                var reply = ReadInput();
+                reply = ReadInput();
 
                 _logger.LogDebug("Got reply {Reply} for command {Command}", reply, request.Command);
-
-                received.AppendLine(reply);
 
                 /* If a device response ends with NAK there are invalid arguments. */
                 if (reply.EndsWith("NAK"))
                 {
                     _logger.LogError("Command {Command} reported NAK", request.Command);
 
-                    receiveError = new ArgumentException(request.Command);
-
-                    break;
+                    throw new ArgumentException(request.Command);
                 }
 
                 /* Error handling for ERR commands. */
@@ -307,9 +303,7 @@ public class SerialPortConnection : ISerialPortConnection
                 {
                     _logger.LogError("Command {Command} reported ERROR {Reply}", request.Command, reply);
 
-                    receiveError = new ArgumentException(request.Command);
-
-                    break;
+                    throw new ArgumentException(request.Command); ;
                 }
 
                 /* Always remember the reply - even the terminating string. */
@@ -323,7 +317,7 @@ public class SerialPortConnection : ISerialPortConnection
                     /* Set the task result to all strings collected and therefore finish the task with success. */
                     request.Result.SetResult([.. answer]);
 
-                    break;
+                    return true;
                 }
             }
             catch (Exception e)
@@ -337,30 +331,30 @@ public class SerialPortConnection : ISerialPortConnection
                 */
                 receiveError = e;
 
-                break;
+                return false;
             }
-
-        /* Finish the task. */
-        if (receiveError != null) request.Result.SetException(receiveError);
-
-        /* Finish logging. */
-        if (receiveEntry != null)
-            try
+            finally
             {
-                receiveEntry.Finish(new()
-                {
-                    Encoding = InterfaceLogPayloadEncodings.Raw,
-                    Payload = received.ToString(),
-                    PayloadType = "",
-                    TransferExecption = receiveError?.Message
-                });
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Unable to create log entry: {Exception}", e.Message);
-            }
+                if (receiveError != null) request.Result.SetException(receiveError);
 
-        return receiveError == null;
+                /* Finish logging. */
+                if (receiveEntry != null)
+                    try
+                    {
+                        receiveEntry.Finish(new()
+                        {
+                            Encoding = InterfaceLogPayloadEncodings.Raw,
+                            Payload = reply,
+                            PayloadType = "",
+                            TransferExecption = receiveError?.Message
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError("Unable to create log entry: {Exception}", e.Message);
+                    }
+            }
+        }
     }
 
     /// <summary>

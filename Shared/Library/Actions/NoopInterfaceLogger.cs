@@ -23,8 +23,17 @@ public class NoopInterfaceLogger : IInterfaceLogger
     }
 
     /// <inheritdoc/>
+    public event Action<InterfaceLogEntry> EntryAdded = null!;
+
+    /// <inheritdoc/>
     public IInterfaceConnection CreateConnection(InterfaceLogEntryConnection connection) => new Connection();
 
     /// <inheritdoc/>
     public IQueryable<InterfaceLogEntry> Query() => Array.Empty<InterfaceLogEntry>().AsQueryable();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="entry"></param>
+    public void Fire(InterfaceLogEntry entry) => EntryAdded?.Invoke(entry);
 }

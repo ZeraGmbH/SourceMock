@@ -4,6 +4,7 @@ using SharedLibrary.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using MongoDB.Bson.Serialization.Attributes;
+using NUnit.Framework.Constraints;
 
 namespace SharedLibraryTests;
 
@@ -136,6 +137,28 @@ public abstract class CollectionTests : DatabaseTestCore
         var lookup = await Collection.GetItem(item.Id);
 
         Assert.That(lookup, Is.Null);
+    }
+
+    [Test]
+    public async Task Can_Delete_Multiple_Items()
+    {
+        await Collection.AddItem(new() { Name = "Delete 1", Data = "1" });
+        await Collection.AddItem(new() { Name = "Keep 1", Data = "2" });
+        await Collection.AddItem(new() { Name = "Keep 2", Data = "3" });
+        await Collection.AddItem(new() { Name = "Delete 2", Data = "4" });
+        await Collection.AddItem(new() { Name = "Delete 3", Data = "5" });
+        await Collection.AddItem(new() { Name = "Keep 3", Data = "6" });
+
+        Assert.That(Collection.CreateQueryable().Count(), Is.EqualTo(6));
+
+        Assert.That(await Collection.DeleteItems(i => i.Name.StartsWith("Delete")), Is.EqualTo(3));
+
+        var kept = Collection.CreateQueryable().ToArray();
+
+        Assert.That(kept, Has.Length.EqualTo(3));
+
+        foreach (var item in kept)
+            Assert.That(item.Name, Does.StartWith("Keep"));
     }
 
     [Test]

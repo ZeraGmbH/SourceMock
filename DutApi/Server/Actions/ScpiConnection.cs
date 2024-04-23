@@ -2,10 +2,8 @@ using System.Globalization;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using Amazon.Runtime.Internal.Util;
 using DutApi.Exceptions;
 using DutApi.Models;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 
 namespace DutApi.Actions;

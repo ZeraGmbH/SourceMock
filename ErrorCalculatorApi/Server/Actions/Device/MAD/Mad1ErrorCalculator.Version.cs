@@ -21,7 +21,7 @@ partial class Mad1ErrorCalculator
   public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger)
   {
     /* Execute the request. */
-    var res = await _connection.Execute(LoadXmlFromString(VersionRequestXml), "serverVerRes");
+    var res = await _connection.Execute(logger, LoadXmlFromString(VersionRequestXml), "serverVerRes");
 
     /* Analyse overall result. */
     var info = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/serverVerRes");

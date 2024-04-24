@@ -50,7 +50,7 @@ partial class Mad1ErrorCalculator
         source.InnerText = _supportedMeterConnections[connection ?? ErrorCalculatorMeterConnections.Intern1];
 
         /* Execute the request. */
-        var res = await _connection.Execute(req, "runErrorMeasureRes");
+        var res = await _connection.Execute(logger, req, "runErrorMeasureRes");
         var jobId = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/jobDetails/jobId")?.InnerText;
 
         if (string.IsNullOrEmpty(jobId)) throw new InvalidOperationException("got no job identifier");

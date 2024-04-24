@@ -58,6 +58,6 @@ partial class Mad1ErrorCalculator
     lineN.InnerText = data;
 
     /* Execute the request. */
-    return _connection.Execute(req, "runKodisAccessRes");
+    return _connection.Execute(logger, req, "runKodisAccessRes");
   }
 }

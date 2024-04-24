@@ -6,6 +6,7 @@ using System.Xml;
 using ErrorCalculatorApi.Exceptions;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging;
+using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;
 
@@ -174,7 +175,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
     }
 
     /// <inheritdoc/>
-    public Task<XmlDocument> Execute(XmlDocument request, string reply) => Task.Run(() =>
+    public Task<XmlDocument> Execute(IInterfaceLogger logger, XmlDocument request, string reply) => Task.Run(() =>
     {
         /* Wait for connect. */
         for (var i = 100; !client.Connected && i-- > 0; Thread.Sleep(100))
@@ -184,6 +185,13 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
         /* There can be at most one outstaning request at any time. */
         lock (_sync)
         {
+            /* Prepare logging. */
+            var requestId = Guid.NewGuid().ToString();
+
+            var connection = logger.CreateConnection(_connectionInfo!);
+            var sendEntry = connection.Prepare(new() { Outgoing = true, RequestId = requestId });
+            var sendInfo = new InterfaceLogPayload { Encoding = InterfaceLogPayloadEncodings.Xml, Payload = request.OuterXml, PayloadType = "" };
+
             /* Send request. */
             try
             {
@@ -191,17 +199,41 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
             }
             catch (Exception e)
             {
+                sendInfo.TransferExecption = e.Message;
+
                 throw new UnableToSendException(e);
             }
+            finally
+            {
+                sendEntry.Finish(sendInfo);
+            }
+
+            /* Prepare logging. */
+            var receiveEntry = connection.Prepare(new() { Outgoing = false, RequestId = requestId });
+            var receiveInfo = new InterfaceLogPayload { Encoding = InterfaceLogPayloadEncodings.Xml, Payload = "", PayloadType = "" };
 
             /* Wait for reply. */
             XmlDocument response;
-
-            lock (_collector)
+            try
             {
-                Monitor.Wait(_collector);
+                lock (_collector)
+                {
+                    Monitor.Wait(_collector);
 
-                response = _response!;
+                    response = _response!;
+                }
+
+                receiveInfo.Payload = response.OuterXml;
+            }
+            catch (Exception e)
+            {
+                receiveInfo.TransferExecption = e.Message;
+
+                throw;
+            }
+            finally
+            {
+                receiveEntry.Finish(receiveInfo);
             }
 
             /* Check job status. */
@@ -220,9 +252,20 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
         }
     });
 
+    private InterfaceLogEntryConnection? _connectionInfo;
+
     /// <inheritdoc/>
-    public Task Initialize(ErrorCalculatorConfiguration config)
+    public Task Initialize(string webSamId, ErrorCalculatorConfiguration config)
     {
+        /* Prepare logging. */
+        _connectionInfo = new()
+        {
+            Endpoint = config.Endpoint,
+            Protocol = InterfaceLogProtocolTypes.Tcp,
+            WebSamType = InterfaceLogSourceTypes.ErrorCalculator,
+            WebSamId = webSamId
+        };
+
         /* Test endpoint. */
         var match = parseEndpoint.Match(config.Endpoint ?? string.Empty);
 

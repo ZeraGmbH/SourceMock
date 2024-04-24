@@ -36,6 +36,6 @@ partial class Mad1ErrorCalculator
     id.InnerText = jobId;
 
     /* Execute the request. */
-    return _connection.Execute(req, "runErrorMeasureRes");
+    return _connection.Execute(logger, req, "runErrorMeasureRes");
   }
 }

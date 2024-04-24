@@ -1,5 +1,6 @@
 using System.Xml;
 using ErrorCalculatorApi.Models;
+using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;
 
@@ -16,14 +17,16 @@ public interface IMadConnection : IDisposable
     /// <summary>
     /// Configure the connection.
     /// </summary>
+    /// <param name="webSamId">Unique identifier inside WebSam.</param>
     /// <param name="config">Configuration to use.</param>
-    public Task Initialize(ErrorCalculatorConfiguration config);
+    public Task Initialize(string webSamId, ErrorCalculatorConfiguration config);
 
     /// <summary>
     /// Execute a single XML request.
     /// </summary>
+    /// <param name="logger">Protocol logger.</param>
     /// <param name="request">Request to send.</param>
     /// <param name="reply">Reply node to expect.</param>
     /// <returns>Response received.</returns>
-    public Task<XmlDocument> Execute(XmlDocument request, string reply);
+    public Task<XmlDocument> Execute(IInterfaceLogger logger, XmlDocument request, string reply);
 }

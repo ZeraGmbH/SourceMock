@@ -49,7 +49,7 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
         /* Create connection implementation. */
         _connection = services.GetRequiredKeyedService<IMadConnection>(ErrorCalculatorConnectionTypes.TCP);
 
-        return _connection.Initialize(configuration);
+        return _connection.Initialize($"{position}", configuration);
     }
 
     /// <inheritdoc/>
@@ -81,7 +81,7 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
         if (dut == null || meter == null) throw new InvalidOperationException("error measurement not configured");
 
         /* Configure the measurement. */
-        await ConfigureErrorMeasurement(connection);
+        await ConfigureErrorMeasurement(logger, connection);
 
         /* Start the measurement and remember context. */
         _jobId = await StartErrorMeasurement(logger, continuous, connection, (long)dut, (long)meter);

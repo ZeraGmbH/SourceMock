@@ -35,7 +35,7 @@ partial class Mad1ErrorCalculator
     id.InnerText = jobId;
 
     /* Execute the request. */
-    var res = await _connection.Execute(req, "runErrorMeasureRes");
+    var res = await _connection.Execute(logger, req, "runErrorMeasureRes");
     var jobInfo = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/jobDetails");
 
     var info = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureRes");
@@ -56,6 +56,7 @@ partial class Mad1ErrorCalculator
 
     if (!string.IsNullOrEmpty(error?.InnerText))
     {
+      /* [TODO] add support for 0x HEX response. */
       var rawValue = long.Parse(error.InnerText);
 
       reply.ErrorValue = rawValue / 10000d;
@@ -72,6 +73,7 @@ partial class Mad1ErrorCalculator
     {
       var seen = errorValues?.SelectSingleNode("actSeenCounts");
 
+      /* [TODO] add support for 0x HEX response. */
       var impulses =
         string.IsNullOrEmpty(seen?.InnerText)
         ? (long?)null

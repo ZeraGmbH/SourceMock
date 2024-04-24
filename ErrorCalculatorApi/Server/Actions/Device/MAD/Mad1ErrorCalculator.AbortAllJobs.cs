@@ -19,6 +19,6 @@ partial class Mad1ErrorCalculator
   /// <inheritdoc/>
   public Task AbortAllJobs(IInterfaceLogger logger)
   {
-    return _connection.Execute(LoadXmlFromString(AbortAllJobsXml), "resetRes");
+    return _connection.Execute(logger, LoadXmlFromString(AbortAllJobsXml), "resetRes");
   }
 }

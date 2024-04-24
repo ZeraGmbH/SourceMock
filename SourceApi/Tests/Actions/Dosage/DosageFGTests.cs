@@ -26,7 +26,7 @@ public class DosageFGTests
     {
         var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        device.SetAmplifiers(Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
+        device.SetAmplifiers(new NoopInterfaceLogger(), Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
 
         return device;
     }
@@ -92,7 +92,7 @@ public class DosageFGTests
 
         var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromMockedPortInstance(mock, _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        device.SetAmplifiers(Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
+        device.SetAmplifiers(new NoopInterfaceLogger(), Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
 
         await device.SetDosageEnergy(new NoopInterfaceLogger(), energy, 1d);
 

@@ -39,7 +39,7 @@ public class FGSourceTests
         _device = SerialPortConnection.FromMockedPortInstance(_port, _connectionLogger);
         _source = new(_portLogger, _device, new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        _source.SetAmplifiers(Model.VoltageAmplifiers.VU220, Model.CurrentAmplifiers.VI220, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
+        _source.SetAmplifiers(new NoopInterfaceLogger(), Model.VoltageAmplifiers.VU220, Model.CurrentAmplifiers.VI220, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
     }
 
     [TearDown]
@@ -52,7 +52,7 @@ public class FGSourceTests
     [TestCase(0.5, "IPAAR000.500000.00S001.000240.00T001.500120.00")]
     public async Task Can_Set_Valid_Loadpoint(double baseAngle, string current)
     {
-        Assert.That(_source.GetCurrentLoadpoint(), Is.Null);
+        Assert.That(_source.GetCurrentLoadpoint(new NoopInterfaceLogger()), Is.Null);
 
         var result = await _source.SetLoadpoint(new NoopInterfaceLogger(), new Model.TargetLoadpoint
         {
@@ -87,7 +87,7 @@ public class FGSourceTests
             "UIEAEPPAAAA"
         }));
 
-        var loadpoint = _source.GetCurrentLoadpoint();
+        var loadpoint = _source.GetCurrentLoadpoint(new NoopInterfaceLogger());
 
         Assert.That(loadpoint, Is.Not.Null);
         Assert.That(loadpoint.Frequency.Value, Is.EqualTo(50));
@@ -96,7 +96,7 @@ public class FGSourceTests
     [Test]
     public async Task Can_Set_IEC_Loadpoint()
     {
-        Assert.That(_source.GetCurrentLoadpoint(), Is.Null);
+        Assert.That(_source.GetCurrentLoadpoint(new NoopInterfaceLogger()), Is.Null);
 
         var result = await _source.SetLoadpoint(new NoopInterfaceLogger(), new Model.TargetLoadpoint
         {
@@ -131,7 +131,7 @@ public class FGSourceTests
             "UIEEEPPPAAA"
         }));
 
-        var loadpoint = _source.GetCurrentLoadpoint();
+        var loadpoint = _source.GetCurrentLoadpoint(new NoopInterfaceLogger());
 
         Assert.That(loadpoint, Is.Not.Null);
         Assert.That(loadpoint.Frequency.Value, Is.EqualTo(50));

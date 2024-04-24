@@ -3,6 +3,7 @@ using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SharedLibrary.Actions;
+using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 
@@ -38,7 +39,7 @@ public class ErrorCalculatorMockTest
             }
         };
 
-        sourceMock.Setup(s => s.GetCurrentLoadpoint()).Returns(loadpoint);
+        sourceMock.Setup(s => s.GetCurrentLoadpoint(It.IsAny<IInterfaceLogger>())).Returns(loadpoint);
 
         services.AddSingleton(sourceMock.Object);
 

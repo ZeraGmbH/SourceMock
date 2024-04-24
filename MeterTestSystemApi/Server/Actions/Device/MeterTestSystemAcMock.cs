@@ -29,7 +29,7 @@ public class MeterTestSystemAcMock(ISourceMock source, IMockRefMeter refMeter, I
     /// <summary>
     /// 
     /// </summary>
-    public AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter => throw new NotImplementedException();
+    public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
     /// <summary>
     /// 
@@ -53,7 +53,7 @@ public class MeterTestSystemAcMock(ISourceMock source, IMockRefMeter refMeter, I
     /// 
     /// </summary>
     /// <returns></returns>
-    public Task<MeterTestSystemCapabilities> GetCapabilities() => Task.FromResult<MeterTestSystemCapabilities>(null!);
+    public Task<MeterTestSystemCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) => Task.FromResult<MeterTestSystemCapabilities>(null!);
 
     /// <summary>
     /// 

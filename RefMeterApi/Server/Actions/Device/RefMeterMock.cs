@@ -17,7 +17,7 @@ public abstract class RefMeterMock : IMockRefMeter
     /// <summary>
     /// 
     /// </summary>
-    public bool Available => true;
+    public bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
 
     /// <summary>
     /// MeasurementMode

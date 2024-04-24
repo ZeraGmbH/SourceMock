@@ -119,7 +119,7 @@ public partial class ACRefMeterMock : RefMeterMock
 
         var source = _di.GetRequiredService<ISource>();
 
-        var loadpoint = source.GetCurrentLoadpoint() ?? new TargetLoadpoint()
+        var loadpoint = source.GetCurrentLoadpoint(logger) ?? new TargetLoadpoint()
         {
             Frequency = new Frequency() { Value = 0 },
             Phases = [
@@ -140,7 +140,7 @@ public partial class ACRefMeterMock : RefMeterMock
 
         loadpoint = SharedLibrary.Utils.DeepCopy(loadpoint);
 
-        var info = source.GetActiveLoadpointInfo();
+        var info = source.GetActiveLoadpointInfo(logger);
         var currentSwitchedOffForDosage = await source.CurrentSwitchedOffForDosage(logger);
 
         foreach (var phase in loadpoint.Phases)

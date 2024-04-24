@@ -174,7 +174,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [SwaggerOperation(OperationId = "ErrorCalculatorIsAvailable")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<bool> IsAvailable(int pos = 0) =>
-        Ok(devices[pos].Available);
+        Ok(devices[pos].GetAvailable(interfaceLogger));
 
     /// <summary>
     /// Report the number of error calculators.

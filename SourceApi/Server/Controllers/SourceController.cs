@@ -33,7 +33,7 @@ namespace SourceApi.Controllers
         [SwaggerOperation(OperationId = "GetCapabilities")]
         public async Task<ActionResult<SourceCapabilities>> GetCapablities()
         {
-            return Ok(await source.GetCapabilities());
+            return Ok(await source.GetCapabilities(interfaceLogger));
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace SourceApi.Controllers
         [HttpGet("Available")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "SourceIsAvailable")]
-        public ActionResult<bool> IsAvailable() => Ok(source.Available);
+        public ActionResult<bool> IsAvailable() => Ok(source.GetAvailable(interfaceLogger));
 
         /// <summary>
         /// Sets a loadpoint without turning on the source.
@@ -135,7 +135,7 @@ namespace SourceApi.Controllers
         [SwaggerOperation(OperationId = "GetLoadpoint")]
         public ActionResult<TargetLoadpoint> GetCurrentLoadpoint()
         {
-            var loadpoint = source.GetCurrentLoadpoint();
+            var loadpoint = source.GetCurrentLoadpoint(interfaceLogger);
 
             return loadpoint == null
                 ? NoContent()
@@ -150,6 +150,6 @@ namespace SourceApi.Controllers
         [HttpGet("LoadpointInfo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetLoadpointInfo")]
-        public ActionResult<LoadpointInfo> GetLoadpointInfo() => source.GetActiveLoadpointInfo();
+        public ActionResult<LoadpointInfo> GetLoadpointInfo() => source.GetActiveLoadpointInfo(interfaceLogger);
     }
 }

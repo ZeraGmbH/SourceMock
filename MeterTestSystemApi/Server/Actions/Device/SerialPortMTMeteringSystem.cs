@@ -47,7 +47,7 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     public IErrorCalculator[] ErrorCalculators => _errorCalculators.ToArray();
 
     /// <inheritdoc/>
-    public AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter => throw new NotImplementedException();
+    public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public event Action<ErrorConditions> ErrorConditionsChanged = null!;
@@ -98,7 +98,7 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemCapabilities> GetCapabilities()
+    public Task<MeterTestSystemCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger)
     {
         /* The MT line systems do not support amplifier configurations. */
         return Task.FromResult<MeterTestSystemCapabilities>(null!);

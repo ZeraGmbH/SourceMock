@@ -61,16 +61,16 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     }
 
     /// <inheritdoc/>
-    public abstract Task<SourceCapabilities> GetCapabilities();
+    public abstract Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger);
 
     /// <inheritdoc/>
-    public virtual TargetLoadpoint? GetCurrentLoadpoint() => Loadpoint;
+    public virtual TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger) => Loadpoint;
 
     /// <inheritdoc/>
     public virtual async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
         /* Always validate the loadpoint against the device capabilities. */
-        var isValid = _validator.IsValid(loadpoint, await GetCapabilities());
+        var isValid = _validator.IsValid(loadpoint, await GetCapabilities(logger));
 
         if (isValid != SourceApiErrorCodes.SUCCESS)
             return isValid;
@@ -103,7 +103,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     public abstract Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger);
 
     /// <inheritdoc/>
-    public virtual LoadpointInfo GetActiveLoadpointInfo() => Info;
+    public virtual LoadpointInfo GetActiveLoadpointInfo(IInterfaceLogger interfaceLogger) => Info;
 
     /// <inheritdoc/>
     public abstract Task SetDosageMode(IInterfaceLogger logger, bool on);
@@ -121,7 +121,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     public abstract Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant);
 
     /// <inheritdoc/>
-    public abstract bool Available { get; }
+    public abstract bool GetAvailable(IInterfaceLogger interfaceLogger);
 
     /// <inheritdoc/>
     public abstract Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger);

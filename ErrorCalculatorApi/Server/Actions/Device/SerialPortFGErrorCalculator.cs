@@ -38,7 +38,7 @@ public class SerialPortFGErrorCalculator(ISerialPortConnection device, ILogger<S
     private readonly ILogger<SerialPortFGErrorCalculator> _logger = logger;
 
     /// <inheritdoc/>
-    public bool Available => false;
+    public bool GetAvailable(IInterfaceLogger interfaceLogger) => false;
 
     /// <inheritdoc/>
     public Task AbortErrorMeasurement(IInterfaceLogger logger) => throw new NotImplementedException();

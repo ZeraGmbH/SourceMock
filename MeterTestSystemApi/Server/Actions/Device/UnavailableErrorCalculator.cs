@@ -10,7 +10,7 @@ namespace MeterTestSystemApi.Actions.Device;
 /// </summary>
 internal class UnavailableErrorCalculator : IErrorCalculator
 {
-    public bool Available => false;
+    public bool GetAvailable(IInterfaceLogger interfaceLogger) => false;
 
     public Task AbortErrorMeasurement(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
 

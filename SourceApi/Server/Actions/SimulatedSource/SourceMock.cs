@@ -53,9 +53,9 @@ public abstract class SourceMock : ISourceMock
     }
 
     /// <inheritdoc/>
-    public TargetLoadpoint? GetCurrentLoadpoint() => _loadpoint;
+    public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger) => _loadpoint;
 
-    public Task<SourceCapabilities> GetCapabilities() => Task.FromResult(_sourceCapabilities);
+    public Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) => Task.FromResult(_sourceCapabilities);
 
     public Task SetDosageMode(IInterfaceLogger logger, bool on)
     {
@@ -103,9 +103,9 @@ public abstract class SourceMock : ISourceMock
         return Task.FromResult(_dosageMode);
     }
 
-    public LoadpointInfo GetActiveLoadpointInfo() => _info;
+    public LoadpointInfo GetActiveLoadpointInfo(IInterfaceLogger interfaceLogger) => _info;
 
-    public bool Available => true;
+    public bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
 
     /// <summary>
     /// 

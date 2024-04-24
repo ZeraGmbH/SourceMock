@@ -15,7 +15,7 @@ public interface IErrorCalculatorMock : IErrorCalculator { }
 public class ErrorCalculatorMock : IErrorCalculatorMock
 {
     /// <inheritdoc/>
-    public bool Available => true;
+    public bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
 
     private bool _continuous = false;
 
@@ -121,7 +121,7 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
         /* Get the total power of all active phases of the current loadpoint (in W) */
         var totalPower = 0d;
 
-        var loadpoint = _di.GetRequiredService<ISource>().GetCurrentLoadpoint()!;
+        var loadpoint = _di.GetRequiredService<ISource>().GetCurrentLoadpoint(logger)!;
 
         foreach (var phase in loadpoint.Phases)
             if (phase.Voltage.On && phase.Current.On)

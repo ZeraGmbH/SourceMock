@@ -10,7 +10,7 @@ namespace MeterTestSystemApi.Actions.Device;
 /// </summary>
 internal class UnavailableReferenceMeter : IRefMeter
 {
-    public bool Available => false;
+    public bool GetAvailable(IInterfaceLogger interfaceLogger) => false;
 
     public Task<double> GetMeterConstant(IInterfaceLogger logger) => throw new NotImplementedException();
 

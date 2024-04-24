@@ -39,7 +39,7 @@ public partial class SerialPortMTErrorCalculator(ISerialPortConnection device, I
     private readonly ILogger<SerialPortMTErrorCalculator> _logger = logger;
 
     /// <inheritdoc/>
-    public bool Available => true;
+    public bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
 
     /// <inheritdoc/>
     public Task AbortAllJobs(IInterfaceLogger logger) => Task.CompletedTask;

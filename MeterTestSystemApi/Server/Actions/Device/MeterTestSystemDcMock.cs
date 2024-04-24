@@ -30,7 +30,7 @@ public class MeterTestSystemDcMock(IDCSourceMock source, IDCRefMeterMock refMete
     /// <summary>
     /// 
     /// </summary>
-    public AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter => throw new NotImplementedException();
+    public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
     /// <summary>
     /// 
@@ -54,7 +54,7 @@ public class MeterTestSystemDcMock(IDCSourceMock source, IDCRefMeterMock refMete
     /// 
     /// </summary>
     /// <returns></returns>
-    public Task<MeterTestSystemCapabilities> GetCapabilities() => Task.FromResult<MeterTestSystemCapabilities>(null!);
+    public Task<MeterTestSystemCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) => Task.FromResult<MeterTestSystemCapabilities>(null!);
 
     /// <summary>
     /// 

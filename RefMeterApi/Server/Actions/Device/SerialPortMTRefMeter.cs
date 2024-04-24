@@ -43,7 +43,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     }
 
     /// <inheritdoc/>
-    public bool Available => true;
+    public bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
 
     /// <inheritdoc/>
     public async Task<double> GetMeterConstant(IInterfaceLogger logger)

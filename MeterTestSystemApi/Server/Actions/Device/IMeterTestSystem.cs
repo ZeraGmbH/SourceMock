@@ -21,7 +21,7 @@ public interface IMeterTestSystem
     /// Request the capabilities of the meter test system.
     /// </summary>
     /// <returns>Capabilities if applicable.</returns>
-    Task<MeterTestSystemCapabilities> GetCapabilities();
+    Task<MeterTestSystemCapabilities> GetCapabilities(IInterfaceLogger logger);
 
     /// <summary>
     /// Report the physical configuration to the meter test system implementation.
@@ -39,7 +39,7 @@ public interface IMeterTestSystem
     /// <summary>
     /// Request the current physical configuration used.
     /// </summary>
-    AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter { get; }
+    AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger logger);
 
     /// <summary>
     /// The corresponding source.

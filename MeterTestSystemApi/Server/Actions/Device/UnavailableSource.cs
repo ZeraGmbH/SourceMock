@@ -10,17 +10,17 @@ namespace MeterTestSystemApi.Actions.Device;
 /// </summary>
 internal class UnavailableSource : ISource
 {
-    public bool Available => false;
+    public bool GetAvailable(IInterfaceLogger interfaceLogger) => false;
 
     public Task CancelDosage(IInterfaceLogger logger) => throw new SourceNotReadyException();
 
     public Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger) => throw new SourceNotReadyException();
 
-    public LoadpointInfo GetActiveLoadpointInfo() => throw new SourceNotReadyException();
+    public LoadpointInfo GetActiveLoadpointInfo(IInterfaceLogger interfaceLogger) => throw new SourceNotReadyException();
 
-    public Task<SourceCapabilities> GetCapabilities() => Task.FromResult<SourceCapabilities>(null!);
+    public Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) => Task.FromResult<SourceCapabilities>(null!);
 
-    public TargetLoadpoint? GetCurrentLoadpoint() => throw new SourceNotReadyException();
+    public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger) => throw new SourceNotReadyException();
 
     public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant) => throw new SourceNotReadyException();
 

@@ -11,7 +11,7 @@ public interface IRefMeter
     /// <summary>
     /// Set if the reference meter is fully configured and can be used.
     /// </summary>
-    bool Available { get; }
+    bool GetAvailable(IInterfaceLogger logger);
 
     /// <summary>
     /// Queries a device connected to the serial port for the current

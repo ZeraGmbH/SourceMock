@@ -107,7 +107,7 @@ public class MeterTestSystemTests
     [Test]
     public async Task Can_Get_Capabilities_For_FG()
     {
-        var caps = await Generator.GetCapabilities();
+        var caps = await Generator.GetCapabilities(new NoopInterfaceLogger());
 
         Assert.That(caps, Is.Not.Null);
     }
@@ -121,7 +121,7 @@ public class MeterTestSystemTests
             new NullLogger<SerialPortMTMeterTestSystem>(),
             new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), Device, new CapabilitiesMap(), new SourceCapabilityValidator()));
 
-        var caps = await generator.GetCapabilities();
+        var caps = await generator.GetCapabilities(new NoopInterfaceLogger());
 
         Assert.That(caps, Is.Null);
     }

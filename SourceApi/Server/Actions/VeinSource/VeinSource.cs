@@ -22,18 +22,18 @@ namespace SourceApi.Actions.VeinSource
             _veinClient = veinClient;
         }
 
-        public bool Available => true;
+        public bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
 
         public Task CancelDosage(IInterfaceLogger logger)
         {
             throw new NotImplementedException();
         }
 
-        public LoadpointInfo GetActiveLoadpointInfo() => _info;
+        public LoadpointInfo GetActiveLoadpointInfo(IInterfaceLogger interfaceLogger) => _info;
 
-        public Task<SourceCapabilities> GetCapabilities() => Task.FromException<SourceCapabilities>(new NotImplementedException());
+        public Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) => Task.FromException<SourceCapabilities>(new NotImplementedException());
 
-        public TargetLoadpoint? GetCurrentLoadpoint()
+        public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger)
         {
             TargetLoadpoint ret = new();
 

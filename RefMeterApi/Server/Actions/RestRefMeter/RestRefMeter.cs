@@ -21,31 +21,28 @@ public class RestRefMeter(HttpClient httpClient, ILogger<RestRefMeter> logger) :
     private Uri _baseUri = null!;
 
     /// <inheritdoc/>
-    public bool Available
+    public bool GetAvailable(IInterfaceLogger interfaceLogger)
     {
-        get
+        /* Not yet initialized. */
+        if (!_initialized) return false;
+
+        try
         {
-            /* Not yet initialized. */
-            if (!_initialized) return false;
+            var available = httpClient.GetAsync(new Uri(_baseUri, "Available")).GetJsonResponse<bool>();
 
-            try
-            {
-                var available = httpClient.GetAsync(new Uri(_baseUri, "Available")).GetJsonResponse<bool>();
+            available.Wait();
 
-                available.Wait();
+            return available.Result;
+        }
+        catch (Exception e)
+        {
+            /* Just report the error. */
+            logger.LogError("Unable to connect to remote source API: {Exception}",
+                e is AggregateException ae
+                ? ae.InnerExceptions[0].Message
+                : e.Message);
 
-                return available.Result;
-            }
-            catch (Exception e)
-            {
-                /* Just report the error. */
-                logger.LogError("Unable to connect to remote source API: {Exception}",
-                    e is AggregateException ae
-                    ? ae.InnerExceptions[0].Message
-                    : e.Message);
-
-                return false;
-            }
+            return false;
         }
     }
 

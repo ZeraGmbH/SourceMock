@@ -95,7 +95,7 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "ReferenceMeterIsAvailable")]
     public ActionResult<bool> IsAvailable() =>
-        Ok(_device.Available);
+        Ok(_device.GetAvailable(interfaceLogger));
 
     /// <summary>
     /// Get the current meter constant of the reference meter.

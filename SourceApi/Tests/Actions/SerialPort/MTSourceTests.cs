@@ -64,7 +64,7 @@ public class MTSourceTests
     {
         var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        var caps = await sut.GetCapabilities();
+        var caps = await sut.GetCapabilities(new NoopInterfaceLogger());
 
         Assert.That(caps.FrequencyRanges[0].Min, Is.EqualTo(45));
     }
@@ -75,7 +75,7 @@ public class MTSourceTests
     {
         var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        Assert.That(sut.GetCurrentLoadpoint(), Is.Null);
+        Assert.That(sut.GetCurrentLoadpoint(new NoopInterfaceLogger()), Is.Null);
 
         var result = await sut.SetLoadpoint(new NoopInterfaceLogger(), new Model.TargetLoadpoint
         {
@@ -106,7 +106,7 @@ public class MTSourceTests
             "SUIEAEPPAAAA"
         }));
 
-        var loadpoint = sut.GetCurrentLoadpoint();
+        var loadpoint = sut.GetCurrentLoadpoint(new NoopInterfaceLogger());
 
         Assert.That(loadpoint, Is.Not.Null);
         Assert.That(loadpoint.Frequency.Value, Is.EqualTo(50));
@@ -119,7 +119,7 @@ public class MTSourceTests
     {
         var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        Assert.That(sut.GetCurrentLoadpoint(), Is.Null);
+        Assert.That(sut.GetCurrentLoadpoint(new NoopInterfaceLogger()), Is.Null);
 
         var result = await sut.SetLoadpoint(new NoopInterfaceLogger(), new Model.TargetLoadpoint
         {
@@ -142,6 +142,6 @@ public class MTSourceTests
         });
 
         Assert.That(result, Is.EqualTo(expectedError));
-        Assert.That(sut.GetCurrentLoadpoint(), Is.Null);
+        Assert.That(sut.GetCurrentLoadpoint(new NoopInterfaceLogger()), Is.Null);
     }
 }

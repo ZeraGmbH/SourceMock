@@ -25,7 +25,7 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
     private Uri _baseUri = null!;
 
     /// <inheritdoc/>
-    public AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter => throw new NotImplementedException();
+    public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public ISource Source { get; private set; } = new UnavailableSource();
@@ -42,7 +42,7 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
     public event Action<ErrorConditions> ErrorConditionsChanged = null!;
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemCapabilities> GetCapabilities() =>
+    public Task<MeterTestSystemCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) =>
         Task.FromResult<MeterTestSystemCapabilities>(null!);
 
     /// <inheritdoc/>

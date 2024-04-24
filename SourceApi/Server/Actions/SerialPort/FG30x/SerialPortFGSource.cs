@@ -15,12 +15,13 @@ public interface ISerialPortFGSource : ISource
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="interfaceLogger"></param>
     /// <param name="voltage"></param>
     /// <param name="current"></param>
     /// <param name="voltageAux"></param>
     /// <param name="currentAux"></param>
     /// <returns></returns>
-    void SetAmplifiers(VoltageAmplifiers voltage, CurrentAmplifiers current, VoltageAuxiliaries voltageAux, CurrentAuxiliaries currentAux);
+    void SetAmplifiers(IInterfaceLogger interfaceLogger, VoltageAmplifiers voltage, CurrentAmplifiers current, VoltageAuxiliaries voltageAux, CurrentAuxiliaries currentAux);
 }
 
 /// <summary>
@@ -38,11 +39,8 @@ public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, I
 
 
     /// <inheritdoc/>
-    public override bool Available =>
-        VoltageAmplifier.HasValue &&
-        CurrentAmplifier.HasValue &&
-        VoltageAuxiliary.HasValue &&
-        CurrentAuxiliary.HasValue;
+    public override bool GetAvailable(IInterfaceLogger interfaceLogger) => VoltageAmplifier.HasValue && CurrentAmplifier.HasValue && VoltageAuxiliary.HasValue && CurrentAuxiliary.HasValue;
+
     /// <summary>
     /// 
     /// </summary>
@@ -54,30 +52,31 @@ public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, I
     {
     }
 
-    private void TestConfigured()
+    private void TestConfigured(IInterfaceLogger interfaceLogger)
     {
-        if (!Available) throw new SourceNotReadyException();
+        if (!GetAvailable(interfaceLogger)) throw new SourceNotReadyException();
     }
 
     /// <inheritdoc/>
-    public override Task<SourceCapabilities> GetCapabilities()
+    public override Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger)
     {
-        TestConfigured();
+        TestConfigured(interfaceLogger);
 
-        return Task.FromResult(Available ? Capabilities.GetCapabilitiesByAmplifiers(VoltageAmplifier!.Value, CurrentAmplifier!.Value) : null!);
+        return Task.FromResult(GetAvailable(interfaceLogger) ? Capabilities.GetCapabilitiesByAmplifiers(VoltageAmplifier!.Value, CurrentAmplifier!.Value) : null!);
     }
 
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="interfaceLogger"></param>
     /// <param name="voltage"></param>
     /// <param name="current"></param>
     /// <param name="voltageAux"></param>
     /// <param name="current8"></param>
     /// <exception cref="InvalidOperationException"></exception>
-    public void SetAmplifiers(VoltageAmplifiers voltage, CurrentAmplifiers current, VoltageAuxiliaries voltageAux, CurrentAuxiliaries current8)
+    public void SetAmplifiers(IInterfaceLogger interfaceLogger, VoltageAmplifiers voltage, CurrentAmplifiers current, VoltageAuxiliaries voltageAux, CurrentAuxiliaries current8)
     {
-        if (Available) throw new InvalidOperationException("Source already initialized");
+        if (GetAvailable(interfaceLogger)) throw new InvalidOperationException("Source already initialized");
 
         CurrentAmplifier = current;
         VoltageAmplifier = voltage;
@@ -88,7 +87,7 @@ public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, I
     /// <inheritdoc/>
     public override async Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger)
     {
-        TestConfigured();
+        TestConfigured(logger);
 
         Logger.LogTrace("Switching anything off.");
 

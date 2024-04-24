@@ -52,7 +52,7 @@ public class RefMeterMockTest
         double currentAngle = 7;
         double voltageAngle = 5;
 
-        SourceMock.Setup(s => s.GetCurrentLoadpoint()).Returns(
+        SourceMock.Setup(s => s.GetCurrentLoadpoint(It.IsAny<IInterfaceLogger>())).Returns(
             new TargetLoadpoint()
             {
                 Frequency = new() { Value = frequencyValue },
@@ -64,7 +64,7 @@ public class RefMeterMockTest
                 }
             });
 
-        SourceMock.Setup(s => s.GetActiveLoadpointInfo()).Returns(new LoadpointInfo { IsActive = true });
+        SourceMock.Setup(s => s.GetActiveLoadpointInfo(It.IsAny<IInterfaceLogger>())).Returns(new LoadpointInfo { IsActive = true });
         SourceMock.Setup(s => s.CurrentSwitchedOffForDosage(It.IsAny<IInterfaceLogger>())).ReturnsAsync(false);
 
         ACRefMeterMock refMeterMock = new(Services);

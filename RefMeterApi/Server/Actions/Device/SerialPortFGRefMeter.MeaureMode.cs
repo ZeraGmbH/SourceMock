@@ -31,7 +31,7 @@ partial class SerialPortFGRefMeter
     /// <inheritdoc/>
     public async Task<MeasurementModes[]> GetMeasurementModes(IInterfaceLogger logger)
     {
-        TestConfigured();
+        TestConfigured(logger);
 
         /* Request from device. */
         var replies = await _device.Execute(logger, SerialPortRequest.Create("MI", new Regex(@"^MI([^;]+;)*$")))[0];
@@ -49,7 +49,7 @@ partial class SerialPortFGRefMeter
     /// <inheritdoc/>
     public Task<MeasurementModes?> GetActualMeasurementMode(IInterfaceLogger logger)
     {
-        TestConfigured();
+        TestConfigured(logger);
 
         /* We can only report what was last set using the interface. */
         return Task.FromResult(_measurementMode);
@@ -58,7 +58,7 @@ partial class SerialPortFGRefMeter
     /// <inheritdoc/>
     public Task SetActualMeasurementMode(IInterfaceLogger logger, MeasurementModes mode)
     {
-        TestConfigured();
+        TestConfigured(logger);
 
         /* Reverse lookup the raw string for the mode - somewhat slow. */
         var supported = SupportedModes.Single(m => m.Value == mode);

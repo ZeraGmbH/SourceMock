@@ -52,7 +52,7 @@ public class DCRefMeterMockTest
         double current = 22222222;
         double voltage = 33333333;
 
-        SourceMock.Setup(s => s.GetCurrentLoadpoint()).Returns(
+        SourceMock.Setup(s => s.GetCurrentLoadpoint(It.IsAny<IInterfaceLogger>())).Returns(
             new TargetLoadpoint()
             {
                 Phases = new List<TargetLoadpointPhase>(){
@@ -63,7 +63,7 @@ public class DCRefMeterMockTest
                 }
             });
 
-        SourceMock.Setup(s => s.GetActiveLoadpointInfo()).Returns(new LoadpointInfo { IsActive = true });
+        SourceMock.Setup(s => s.GetActiveLoadpointInfo(It.IsAny<IInterfaceLogger>())).Returns(new LoadpointInfo { IsActive = true });
         SourceMock.Setup(s => s.CurrentSwitchedOffForDosage(It.IsAny<IInterfaceLogger>())).ReturnsAsync(false);
 
         DCRefMeterMock refMeterMock = new(Services);

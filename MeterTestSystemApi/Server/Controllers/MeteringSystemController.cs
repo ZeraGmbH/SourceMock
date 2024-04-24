@@ -39,7 +39,7 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<MeterTestSystemCapabilities>> GetCapabilities() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(_device.GetCapabilities);
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetCapabilities(interfaceLogger));
 
     /// <summary>
     /// Set the physical configuration of a meter test system.
@@ -68,7 +68,7 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<AmplifiersAndReferenceMeter>> GetAmplifiersAndReferenceMeter() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => Task.FromResult(_device.AmplifiersAndReferenceMeter));
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => Task.FromResult(_device.GetAmplifiersAndReferenceMeter(interfaceLogger)));
 
     /// <summary>
     /// Read the firmware from the metering system.

@@ -43,7 +43,10 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     private readonly IServiceProvider _services;
 
     /// <inheritdoc/>
-    public AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter { get; private set; } = null!;
+    private AmplifiersAndReferenceMeter _amplifiersAndReferenceMeter = null!;
+
+    /// <inheritdoc/>
+    public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => _amplifiersAndReferenceMeter;
 
     /// <inheritdoc/>
     public ISource Source { get; private set; } = new UnavailableSource();
@@ -76,7 +79,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemCapabilities> GetCapabilities() =>
+    public Task<MeterTestSystemCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) =>
         Task.FromResult(new MeterTestSystemCapabilities
         {
             SupportedCurrentAmplifiers = {
@@ -156,7 +159,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     public async Task SetAmplifiersAndReferenceMeter(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings)
     {
         /* Validate all input parameters against our own capabilities. */
-        var capabilities = await GetCapabilities();
+        var capabilities = await GetCapabilities(logger);
 
         if (!capabilities.SupportedVoltageAmplifiers.Contains(settings.VoltageAmplifier))
         {
@@ -200,7 +203,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
 
         /* Configure the sub devices if necessary. */
         refMeter.SetReferenceMeter(settings.ReferenceMeter);
-        source.SetAmplifiers(settings.VoltageAmplifier, settings.CurrentAmplifier, settings.VoltageAuxiliary, settings.CurrentAuxiliary);
+        source.SetAmplifiers(logger, settings.VoltageAmplifier, settings.CurrentAmplifier, settings.VoltageAuxiliary, settings.CurrentAuxiliary);
 
         try
         {
@@ -226,7 +229,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
             if (source != null)
             {
                 /* Update the implementation references if the frequency generator accepted the new configuration. */
-                AmplifiersAndReferenceMeter = settings;
+                _amplifiersAndReferenceMeter = settings;
                 RefMeter = refMeter;
                 Source = source;
             }

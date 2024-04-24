@@ -11,7 +11,7 @@ namespace ErrorCalculatorApi.Actions.Device.MAD;
 public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
 {
     /// <inheritdoc/>
-    public bool Available => _connection?.Available == true;
+    public bool GetAvailable(IInterfaceLogger interfaceLogger) => _connection?.Available == true;
 
     private IMadConnection _connection = null!;
 

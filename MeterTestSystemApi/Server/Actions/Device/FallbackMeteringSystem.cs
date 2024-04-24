@@ -12,7 +12,7 @@ namespace MeterTestSystemApi.Actions.Device;
 public class FallbackMeteringSystem : IMeterTestSystem
 {
     /// <inheritdoc/>
-    public AmplifiersAndReferenceMeter AmplifiersAndReferenceMeter => throw new NotImplementedException();
+    public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public ISource Source { get; } = new UnavailableSource();
@@ -31,7 +31,7 @@ public class FallbackMeteringSystem : IMeterTestSystem
 #pragma warning restore CS0414
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemCapabilities> GetCapabilities() =>
+    public Task<MeterTestSystemCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) =>
         Task.FromResult<MeterTestSystemCapabilities>(null!);
 
     /// <inheritdoc/>

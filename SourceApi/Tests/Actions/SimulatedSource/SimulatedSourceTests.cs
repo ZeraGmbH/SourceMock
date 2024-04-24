@@ -35,12 +35,12 @@ namespace SourceApi.Tests.Actions.Source
             var result = await source.SetLoadpoint(new NoopInterfaceLogger(), loadpoint);
 
             // Assert
-            var currentLoadpoint = source.GetCurrentLoadpoint();
+            var currentLoadpoint = source.GetCurrentLoadpoint(new NoopInterfaceLogger());
 
             Assert.That(result, Is.EqualTo(SourceApiErrorCodes.SUCCESS));
             Assert.That(loadpoint, Is.EqualTo(currentLoadpoint));
 
-            var info = source.GetActiveLoadpointInfo();
+            var info = source.GetActiveLoadpointInfo(new NoopInterfaceLogger());
             Assert.That(info.IsActive, Is.EqualTo(true));
         }
 
@@ -59,11 +59,11 @@ namespace SourceApi.Tests.Actions.Source
             var result = await source.TurnOff(new NoopInterfaceLogger());
 
             // Assert
-            var currentLoadpoint = source.GetCurrentLoadpoint();
+            var currentLoadpoint = source.GetCurrentLoadpoint(new NoopInterfaceLogger());
 
             Assert.That(result, Is.EqualTo(SourceApiErrorCodes.SUCCESS));
 
-            var info = source.GetActiveLoadpointInfo();
+            var info = source.GetActiveLoadpointInfo(new NoopInterfaceLogger());
             Assert.That(info.IsActive, Is.EqualTo(false));
         }
         #endregion
@@ -82,13 +82,13 @@ namespace SourceApi.Tests.Actions.Source
             var result = await source.SetLoadpoint(new NoopInterfaceLogger(), loadpoint);
 
             // Assert
-            var currentLoadpoint = source.GetCurrentLoadpoint();
+            var currentLoadpoint = source.GetCurrentLoadpoint(new NoopInterfaceLogger());
 
             Assert.That(result, Is.EqualTo(SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES));
             Assert.That(currentLoadpoint, Is.Null);
 
 
-            var info = source.GetActiveLoadpointInfo();
+            var info = source.GetActiveLoadpointInfo(new NoopInterfaceLogger());
             Assert.That(info.IsActive, Is.EqualTo(null));
         }
         #endregion
@@ -106,7 +106,7 @@ namespace SourceApi.Tests.Actions.Source
             var result = await source.SetLoadpoint(new NoopInterfaceLogger(), lp);
 
             // Assert
-            var currentLoadpoint = source.GetCurrentLoadpoint();
+            var currentLoadpoint = source.GetCurrentLoadpoint(new NoopInterfaceLogger());
 
             Assert.That(result, Is.EqualTo(SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID));
             Assert.That(currentLoadpoint, Is.Null);
@@ -124,7 +124,7 @@ namespace SourceApi.Tests.Actions.Source
             var result = await source.SetLoadpoint(new NoopInterfaceLogger(), lp);
 
             // Assert
-            var currentLoadpoint = source.GetCurrentLoadpoint();
+            var currentLoadpoint = source.GetCurrentLoadpoint(new NoopInterfaceLogger());
 
             Assert.That(result, Is.EqualTo(SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID));
             Assert.That(currentLoadpoint, Is.Null);
@@ -171,7 +171,7 @@ namespace SourceApi.Tests.Actions.Source
                 Assert.That(phase.Current.On, Is.EqualTo(true));
             }
 
-            var info = mock.GetActiveLoadpointInfo();
+            var info = mock.GetActiveLoadpointInfo(new NoopInterfaceLogger());
 
             Assert.That(info.IsActive, Is.EqualTo(false));
         }

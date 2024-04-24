@@ -27,31 +27,28 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     private Uri? _dosageUri = null;
 
     /// <inheritdoc/>
-    public bool Available
+    public bool GetAvailable(IInterfaceLogger interfaceLogger)
     {
-        get
+        /* Not yet initialized. */
+        if (!_initialized) return false;
+
+        try
         {
-            /* Not yet initialized. */
-            if (!_initialized) return false;
+            var available = httpSource.GetAsync(new Uri(_sourceUri, "Available")).GetJsonResponse<bool>();
 
-            try
-            {
-                var available = httpSource.GetAsync(new Uri(_sourceUri, "Available")).GetJsonResponse<bool>();
+            available.Wait();
 
-                available.Wait();
+            return available.Result;
+        }
+        catch (Exception e)
+        {
+            /* Just report the error. */
+            logger.LogError("Unable to connect to remote source API: {Exception}",
+                e is AggregateException ae
+                ? ae.InnerExceptions[0].Message
+                : e.Message);
 
-                return available.Result;
-            }
-            catch (Exception e)
-            {
-                /* Just report the error. */
-                logger.LogError("Unable to connect to remote source API: {Exception}",
-                    e is AggregateException ae
-                    ? ae.InnerExceptions[0].Message
-                    : e.Message);
-
-                return false;
-            }
+            return false;
         }
     }
 
@@ -72,7 +69,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
             : httpDosage.GetAsync(new Uri(_dosageUri, "IsDosageCurrentOff")).GetJsonResponse<bool>();
 
     /// <inheritdoc/>
-    public LoadpointInfo GetActiveLoadpointInfo()
+    public LoadpointInfo GetActiveLoadpointInfo(IInterfaceLogger interfaceLogger)
     {
         var req = httpSource.GetAsync(new Uri(_sourceUri, "LoadpointInfo")).GetJsonResponse<LoadpointInfo>();
 
@@ -82,11 +79,11 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     }
 
     /// <inheritdoc/>
-    public Task<SourceCapabilities> GetCapabilities() =>
+    public Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) =>
         httpSource.GetAsync(new Uri(_sourceUri, "Capabilities")).GetJsonResponse<SourceCapabilities>();
 
     /// <inheritdoc/>
-    public TargetLoadpoint? GetCurrentLoadpoint()
+    public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger)
     {
         var req = httpSource.GetAsync(new Uri(_sourceUri, "Loadpoint")).GetJsonResponse<TargetLoadpoint?>();
 

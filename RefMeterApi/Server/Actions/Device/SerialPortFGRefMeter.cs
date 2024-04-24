@@ -48,7 +48,7 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
     private readonly IMeterConstantCalculator _meterConstant;
 
     /// <inheritdoc/>
-    public bool Available => _referenceMeter.HasValue;
+    public bool GetAvailable(IInterfaceLogger interfaceLogger) => _referenceMeter.HasValue;
 
     /// <summary>
     /// The reference meter to use.
@@ -58,7 +58,7 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
     /// <inheritdoc/>
     public async Task<double> GetMeterConstant(IInterfaceLogger logger)
     {
-        TestConfigured();
+        TestConfigured(logger);
 
         /* Request raw data from device. */
         var biRequest = SerialPortRequest.Create("BI", new Regex(@"^BI(.+)$"));
@@ -87,8 +87,8 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
     /// See if the reference meter is configured.
     /// </summary>
     /// <exception cref="RefMeterNotReadyException">Reference meter is not configured properly.</exception>
-    private void TestConfigured()
+    private void TestConfigured(IInterfaceLogger interfaceLogger)
     {
-        if (!Available) throw new RefMeterNotReadyException();
+        if (!GetAvailable(interfaceLogger)) throw new RefMeterNotReadyException();
     }
 }

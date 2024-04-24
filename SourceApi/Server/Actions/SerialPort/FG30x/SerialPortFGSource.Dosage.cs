@@ -10,7 +10,7 @@ partial class SerialPortFGSource
     /// <inheritdoc/>
     public override Task CancelDosage(IInterfaceLogger logger)
     {
-        TestConfigured();
+        TestConfigured(logger);
 
         return Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("3CM2", "OK3CM2")));
     }
@@ -18,7 +18,7 @@ partial class SerialPortFGSource
     /// <inheritdoc/>
     public override async Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant)
     {
-        TestConfigured();
+        TestConfigured(logger);
 
         /* Get all actual values - unit is pulse interval. */
         var activeReq = SerialPortRequest.Create("3SA1", new Regex(@"^OK3SA1;([0123])$"));
@@ -44,7 +44,7 @@ partial class SerialPortFGSource
     /// <inheritdoc/>
     public override Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant)
     {
-        TestConfigured();
+        TestConfigured(logger);
 
         if (value < 0)
             throw new ArgumentOutOfRangeException(nameof(value));
@@ -55,7 +55,7 @@ partial class SerialPortFGSource
     /// <inheritdoc/>
     public override Task SetDosageMode(IInterfaceLogger logger, bool on)
     {
-        TestConfigured();
+        TestConfigured(logger);
 
         var onAsNumber = on ? 3 : 4;
 
@@ -65,7 +65,7 @@ partial class SerialPortFGSource
     /// <inheritdoc/>
     public override Task StartDosage(IInterfaceLogger logger)
     {
-        TestConfigured();
+        TestConfigured(logger);
 
         return Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("3CM1", "OK3CM1")));
     }

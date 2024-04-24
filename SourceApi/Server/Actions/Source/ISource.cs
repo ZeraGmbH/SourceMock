@@ -11,13 +11,13 @@ namespace SourceApi.Actions.Source
         /// <summary>
         /// Set if the source is fully configured and can be used.
         /// </summary>
-        bool Available { get; }
+        bool GetAvailable(IInterfaceLogger logger);
 
         /// <summary>
         /// Gets the capabilities of this source.
         /// </summary>
         /// <returns>The corresponding <see cref="SourceCapabilities"/>-Object for this source.</returns>
-        public Task<SourceCapabilities> GetCapabilities();
+        public Task<SourceCapabilities> GetCapabilities(IInterfaceLogger logger);
 
         /// <summary>
         /// Sets a specified loadpoint imediatly.
@@ -37,12 +37,12 @@ namespace SourceApi.Actions.Source
         /// Gets the currently set loadpoint.
         /// </summary>
         /// <returns>The loadpoint, null if none was set.</returns>
-        public TargetLoadpoint? GetCurrentLoadpoint();
+        public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger logger);
 
         /// <summary>
         /// Reports information on the active loadpoint.
         /// </summary>
-        public LoadpointInfo GetActiveLoadpointInfo();
+        public LoadpointInfo GetActiveLoadpointInfo(IInterfaceLogger logger);
 
         /// <summary>
         /// Set the DOS mode.

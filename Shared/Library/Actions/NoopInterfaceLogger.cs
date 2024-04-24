@@ -36,4 +36,7 @@ public class NoopInterfaceLogger : IInterfaceLogger
     /// </summary>
     /// <param name="entry"></param>
     public void Fire(InterfaceLogEntry entry) => EntryAdded?.Invoke(entry);
+
+    /// <inheritdoc/>
+    public Task Delete(string sessionId) => Task.CompletedTask;
 }

@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace SharedLibrary.Models.Logging;
 
 /// <summary>
@@ -22,4 +24,10 @@ public interface IInterfaceLogger
     /// Will fire whenever a new log entry has been created.
     /// </summary>
     event Action<InterfaceLogEntry> EntryAdded;
+
+    /// <summary>
+    /// Delete all entries related to a session.
+    /// </summary>
+    /// <param name="sessionId">The session to delete entries for.</param>
+    Task Delete(string sessionId);
 }

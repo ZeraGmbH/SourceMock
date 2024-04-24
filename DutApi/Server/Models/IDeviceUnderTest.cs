@@ -1,3 +1,5 @@
+using SharedLibrary.Models.Logging;
+
 namespace DutApi.Models;
 
 /// <summary>
@@ -8,7 +10,8 @@ public interface IDeviceUnderTest : IDisposable
     /// <summary>
     /// Read some status registers.
     /// </summary>
+    /// <param name="logger"></param>
     /// <param name="types">Registers to read.</param>
     /// <returns>Values read</returns>
-    Task<object[]> ReadStatusRegisters(DutStatusRegisterTypes[] types);
+    Task<object[]> ReadStatusRegisters(IInterfaceLogger logger, DutStatusRegisterTypes[] types);
 }

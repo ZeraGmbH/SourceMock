@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using DutApi.Exceptions;
 using DutApi.Models;
 using Microsoft.Extensions.Logging;
+using SharedLibrary.Models.Logging;
 
 namespace DutApi.Actions;
 
@@ -24,6 +25,8 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
 
     private Dictionary<DutStatusRegisterTypes, DutStatusRegisterInfo> _status = [];
 
+    private InterfaceLogEntryConnection? _logConnection;
+
     /// <inheritdoc/>
     public void Dispose()
     {
@@ -32,15 +35,22 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
     }
 
     /// <inheritdoc/>
-    public Task Initialize(DutConnection configuration, DutStatusRegisterInfo[] status)
+    public Task Initialize(string webSamId, DutConnection configuration, DutStatusRegisterInfo[] status)
     {
         /* Check for supported types. */
         if (configuration.Type != DutProtocolTypes.SCPIOverTCP) throw new NotImplementedException("only SCPI over TCP supported so far");
 
-        /* Test endpoint. */
-        var match = parseEndpoint.Match(configuration.Endpoint ?? string.Empty);
+        /* Prepare logging. */
+        _logConnection = new()
+        {
+            Endpoint = configuration.Endpoint,
+            Protocol = InterfaceLogProtocolTypes.Tcp,
+            WebSamType = InterfaceLogSourceTypes.DeviceUnderTest,
+            WebSamId = webSamId
+        };
 
-        if (match == null) throw new ArgumentException("invalid endpoint");
+        /* Test endpoint. */
+        var match = parseEndpoint.Match(configuration.Endpoint ?? string.Empty) ?? throw new ArgumentException("invalid endpoint");
 
         /* Load status registers. */
         _status = status
@@ -102,8 +112,11 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
     }
 
     /// <inheritdoc/>
-    public Task<object[]> ReadStatusRegisters(DutStatusRegisterTypes[] types) => Task.Run(() =>
+    public Task<object[]> ReadStatusRegisters(IInterfaceLogger interfaceLogger, DutStatusRegisterTypes[] types) => Task.Run(() =>
     {
+        /* Prepare logging. */
+        var connection = interfaceLogger.CreateConnection(_logConnection!);
+
         var result = new object[types.Length];
 
         for (var iRaw = 2; iRaw-- > 0;)
@@ -129,18 +142,34 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
                 /* Create a single command and send it to the device. */
                 var summary = string.Join("|", commands.Select(i => $"{i.Info!.Address}?"));
 
+                /* Prepare logging. */
+                var requestId = Guid.NewGuid().ToString();
+                var sendEntry = connection.Prepare(new() { Outgoing = true, RequestId = requestId });
+                var sendInfo = new InterfaceLogPayload() { Encoding = InterfaceLogPayloadEncodings.Sspi, Payload = summary, PayloadType = "" };
+
                 try
                 {
                     Flush();
 
                     _connection.GetStream().Write(Encoding.UTF8.GetBytes($"{summary}\n"));
+
                 }
                 catch (Exception e)
                 {
                     logger.LogError("Device under test at {Address} not available: {Exception}", _connection, e.Message);
 
+                    sendInfo.TransferExecption = e.Message;
+
                     throw new DutIoException($"Device under test at {_connection} not available: {e.Message}", e);
                 }
+                finally
+                {
+                    sendEntry.Finish(sendInfo);
+                }
+
+                /* Prepare logging. */
+                var receiveEntry = connection.Prepare(new() { Outgoing = false, RequestId = requestId });
+                var receiveInfo = new InterfaceLogPayload() { Encoding = InterfaceLogPayloadEncodings.Sspi, Payload = "", PayloadType = "" };
 
                 /* Read the raw values. */
                 List<string> rawValues;
@@ -148,12 +177,20 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
                 try
                 {
                     rawValues = commands.Select(c => ReadLine()).ToList();
+
+                    receiveInfo.Payload = string.Join("\n", rawValues);
                 }
                 catch (Exception e)
                 {
                     logger.LogError("Device under test did not respond to {Command} query: {Exception}", summary, e.Message);
 
+                    receiveInfo.TransferExecption = e.Message;
+
                     throw new DutIoException($"Device under test did not respond to {summary} query: {e.Message}", e);
+                }
+                finally
+                {
+                    receiveEntry.Finish(receiveInfo);
                 }
 
                 /* In raw mode just copy over. */

@@ -10,7 +10,7 @@ namespace DutApi.Actions;
 public class ConnectionFactory(IServiceProvider services) : IDeviceUnderTestFactory
 {
     /// <inheritdoc/>
-    public async Task<IDeviceUnderTest> Create(DutConnection connection, DutStatusRegisterInfo[] status)
+    public async Task<IDeviceUnderTest> Create(string webSamId, DutConnection connection, DutStatusRegisterInfo[] status)
     {
         /* Request from DI. */
         var dut = services.GetRequiredKeyedService<IDeviceUnderTestConnection>(DutProtocolTypes.SCPIOverTCP);
@@ -18,7 +18,7 @@ public class ConnectionFactory(IServiceProvider services) : IDeviceUnderTestFact
         try
         {
             /* Set it up and report configured instance. */
-            await dut.Initialize(connection, status);
+            await dut.Initialize(webSamId, connection, status);
 
             return dut;
         }

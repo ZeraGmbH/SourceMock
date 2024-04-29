@@ -38,9 +38,6 @@ public class ResponseShare<TResult, TContext>(Func<TContext, Task<TResult>> fact
         }
         finally
         {
-            /* Use debounce time. */
-            if (debounceMs > 0) await Task.Delay(debounceMs);
-
             /*
                 We have to process the reset of the active task
                 to avoid a possible race condition. In case the
@@ -52,8 +49,11 @@ public class ResponseShare<TResult, TContext>(Func<TContext, Task<TResult>> fact
                 active task to the already completed task which
                 will never be released in the future.
             */
-            ThreadPool.QueueUserWorkItem((state) =>
+            ThreadPool.QueueUserWorkItem(async (state) =>
             {
+                /* Use debounce time. */
+                if (debounceMs > 0) await Task.Delay(debounceMs);
+
                 lock (_lock)
                     _task = null;
             });

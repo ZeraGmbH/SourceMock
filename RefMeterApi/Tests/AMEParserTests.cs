@@ -53,7 +53,7 @@ public class AMEParserTests
     {
         /* Use the regular logger. */
         var device = new SerialPortMTRefMeter(
-            SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(new[] { "ATIACK", reply, "AMEACK" }), _portLogger),
+            SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(["ATIACK", reply, "AMEACK"]), _portLogger),
             new NullLogger<SerialPortMTRefMeter>()
         );
 
@@ -61,13 +61,13 @@ public class AMEParserTests
         await device.GetActualValues(new NoopInterfaceLogger());
 
         /* Each log entry will create an ArgumentException. */
-        Assert.ThrowsAsync<ArgumentException>(async () => await CreateDevice(new[] { "ATIACK", reply, "AMEACK" }).GetActualValues(new NoopInterfaceLogger()));
+        Assert.ThrowsAsync<ArgumentException>(async () => await CreateDevice(["ATIACK", reply, "AMEACK"]).GetActualValues(new NoopInterfaceLogger()));
     }
 
     [Test]
     public async Task Will_Overwrite_Index_Value()
     {
-        var data = await CreateDevice(new[] { "ATIACK", "28;1", "28;2", "AMEACK" }).GetActualValues(new NoopInterfaceLogger());
+        var data = await CreateDevice(["ATIACK", "28;1", "28;2", "AMEACK"]).GetActualValues(new NoopInterfaceLogger());
 
         Assert.That(data.Frequency, Is.EqualTo(2));
     }
@@ -75,7 +75,7 @@ public class AMEParserTests
     [Test]
     public async Task Can_Handle_Empty_Reply()
     {
-        await CreateDevice(new[] { "ATIACK", "AMEACK" }).GetActualValues(new NoopInterfaceLogger());
+        await CreateDevice(["ATIACK", "AMEACK"]).GetActualValues(new NoopInterfaceLogger());
 
         Assert.Pass();
     }
@@ -83,7 +83,7 @@ public class AMEParserTests
     [Test]
     public void Will_Detect_Missing_ACK()
     {
-        Assert.ThrowsAsync<TimeoutException>(async () => await CreateDevice(new[] { "ATIACK", "0;1" }).GetActualValues(new NoopInterfaceLogger()));
+        Assert.ThrowsAsync<TimeoutException>(async () => await CreateDevice(["ATIACK", "0;1"]).GetActualValues(new NoopInterfaceLogger()));
     }
 
     [Test]

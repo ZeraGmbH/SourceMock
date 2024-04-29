@@ -9,7 +9,7 @@ namespace RefMeterApi.Actions.Device;
 
 partial class SerialPortMTRefMeter
 {
-    private static readonly Regex ActualValueReg = new Regex(@"^(\d{1,3});(.+)$");
+    private static readonly Regex ActualValueReg = new(@"^(\d{1,3});(.+)$");
 
     /* Outstanding AME request - only works properly if the device instance is a singleton. */
     private readonly ResponseShare<MeasuredLoadpoint, IInterfaceLogger> _actualValues;

@@ -35,6 +35,7 @@ public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
     /// <param name="logger">Scoped logging service.</param>
     /// <param name="payload">Payload to log.</param>
     /// <param name="action">Request to execute.</param>
+    /// <param name="withLog">Unset to generate log entry by caller.</param>
     /// <returns>Information to log a matching response.</returns>
     private async Task<Tuple<HttpResponseMessage, IPreparedInterfaceLogEntry?, InterfaceLogPayload>> DoRequest(IInterfaceLogger logger, string payload, Func<Task<HttpResponseMessage>> action, bool withLog = true)
     {

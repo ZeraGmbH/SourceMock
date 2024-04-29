@@ -28,4 +28,9 @@ public enum InterfaceLogProtocolTypes
     /// Internally mocked interface.
     /// </summary>
     Mock = 3,
+
+    /// <summary>
+    /// HTTP connection.
+    /// </summary>
+    Http = 4,
 }

@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -18,7 +17,7 @@ namespace SourceApi.Actions.RestSource;
 /// <param name="httpSource">Source connection to use.</param>
 /// <param name="httpDosage">Dosage connection to use.</param>
 /// <param name="logger">Logging helper.</param>
-public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<RestSource> logger) : IRestSource
+public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDosage, ILogger<RestSource> logger) : IRestSource
 {
     private bool _initialized = false;
 
@@ -34,7 +33,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
 
         try
         {
-            var available = httpSource.GetAsync(new Uri(_sourceUri, "Available")).GetJsonResponse<bool>();
+            var available = httpSource.GetAsync<bool>(interfaceLogger, new Uri(_sourceUri, "Available"));
 
             available.Wait();
 
@@ -57,7 +56,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     {
         if (_dosageUri == null) throw new NotImplementedException("Dosage");
 
-        var res = await httpDosage.PostAsync(new Uri(_dosageUri, "Cancel"), null);
+        var res = await httpDosage.PostAsync(logger, new Uri(_dosageUri, "Cancel"));
 
         if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
     }
@@ -66,12 +65,12 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     public Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger) =>
         (_dosageUri == null)
             ? Task.FromResult(false)
-            : httpDosage.GetAsync(new Uri(_dosageUri, "IsDosageCurrentOff")).GetJsonResponse<bool>();
+            : httpDosage.GetAsync<bool>(logger, new Uri(_dosageUri, "IsDosageCurrentOff"));
 
     /// <inheritdoc/>
     public LoadpointInfo GetActiveLoadpointInfo(IInterfaceLogger interfaceLogger)
     {
-        var req = httpSource.GetAsync(new Uri(_sourceUri, "LoadpointInfo")).GetJsonResponse<LoadpointInfo>();
+        var req = httpSource.GetAsync<LoadpointInfo>(interfaceLogger, new Uri(_sourceUri, "LoadpointInfo"));
 
         req.Wait();
 
@@ -80,12 +79,12 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
 
     /// <inheritdoc/>
     public Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) =>
-        httpSource.GetAsync(new Uri(_sourceUri, "Capabilities")).GetJsonResponse<SourceCapabilities>();
+        httpSource.GetAsync<SourceCapabilities>(interfaceLogger, new Uri(_sourceUri, "Capabilities"));
 
     /// <inheritdoc/>
     public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger)
     {
-        var req = httpSource.GetAsync(new Uri(_sourceUri, "Loadpoint")).GetJsonResponse<TargetLoadpoint?>();
+        var req = httpSource.GetAsync<TargetLoadpoint?>(interfaceLogger, new Uri(_sourceUri, "Loadpoint"));
 
         req.Wait();
 
@@ -96,7 +95,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant) =>
         (_dosageUri == null)
             ? throw new NotImplementedException("Dosage")
-            : httpDosage.GetAsync(new Uri(_dosageUri, $"Progress?meterConstant={JsonConvert.SerializeObject(meterConstant)}")).GetJsonResponse<DosageProgress>();
+            : httpDosage.GetAsync<DosageProgress>(logger, new Uri(_dosageUri, $"Progress?meterConstant={JsonConvert.SerializeObject(meterConstant)}"));
 
     /// <inheritdoc/>
     public void Initialize(RestConfiguration? sourceEndpoint, RestConfiguration? dosageEndpoint)
@@ -111,6 +110,14 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
         /* Validate. */
         if (string.IsNullOrEmpty(sourceEndpoint?.Endpoint)) throw new InvalidOperationException("no source connection configured");
 
+        /* Configure connection for logging. */
+        httpSource.LogConnection = new()
+        {
+            Endpoint = sourceEndpoint.Endpoint,
+            Protocol = InterfaceLogProtocolTypes.Http,
+            WebSamType = InterfaceLogSourceTypes.Source,
+        };
+
         _sourceUri = new Uri(sourceEndpoint.Endpoint.TrimEnd('/') + "/");
 
         /* May have authorisation. */
@@ -121,6 +128,14 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
         /* Dosage is optional. */
         if (!string.IsNullOrEmpty(dosageEndpoint?.Endpoint))
         {
+            /* Configure connection for logging. */
+            httpDosage.LogConnection = new()
+            {
+                Endpoint = dosageEndpoint.Endpoint,
+                Protocol = InterfaceLogProtocolTypes.Http,
+                WebSamType = InterfaceLogSourceTypes.Source,
+            };
+
             _dosageUri = new Uri(dosageEndpoint.Endpoint.TrimEnd('/') + "/");
 
             if (!string.IsNullOrEmpty(_dosageUri.UserInfo))
@@ -137,7 +152,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     {
         if (_dosageUri == null) throw new NotImplementedException("Dosage");
 
-        var res = await httpDosage.PutAsync(new Uri(_dosageUri, $"Energy?energy={JsonConvert.SerializeObject(value)}&meterConstant={JsonConvert.SerializeObject(meterConstant)}"), null);
+        var res = await httpDosage.PutAsync(logger, new Uri(_dosageUri, $"Energy?energy={JsonConvert.SerializeObject(value)}&meterConstant={JsonConvert.SerializeObject(meterConstant)}"));
 
         if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
     }
@@ -147,7 +162,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     {
         if (_dosageUri == null) throw new NotImplementedException("Dosage");
 
-        var res = await httpDosage.PostAsync(new Uri(_dosageUri, $"DOSMode?on={JsonConvert.SerializeObject(on)}"), null);
+        var res = await httpDosage.PostAsync(logger, new Uri(_dosageUri, $"DOSMode?on={JsonConvert.SerializeObject(on)}"));
 
         if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
     }
@@ -155,7 +170,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     /// <inheritdoc/>
     public async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
-        var res = await httpSource.PutAsJsonAsync(new Uri(_sourceUri, "Loadpoint"), loadpoint);
+        var res = await httpSource.PutAsync(logger, new Uri(_sourceUri, "Loadpoint"), loadpoint);
 
         return res.StatusCode == HttpStatusCode.OK ? SourceApiErrorCodes.SUCCESS : SourceApiErrorCodes.LOADPOINT_NOT_SET;
     }
@@ -165,7 +180,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     {
         if (_dosageUri == null) throw new NotImplementedException("Dosage");
 
-        var res = await httpDosage.PostAsync(new Uri(_dosageUri, "Start"), null);
+        var res = await httpDosage.PostAsync(logger, new Uri(_dosageUri, "Start"));
 
         if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
     }
@@ -173,7 +188,7 @@ public class RestSource(HttpClient httpSource, HttpClient httpDosage, ILogger<Re
     /// <inheritdoc/>
     public async Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger)
     {
-        var res = await httpSource.PostAsync(new Uri(_sourceUri, "TurnOff"), null);
+        var res = await httpSource.PostAsync(logger, new Uri(_sourceUri, "TurnOff"));
 
         return res.StatusCode == HttpStatusCode.OK ? SourceApiErrorCodes.SUCCESS : SourceApiErrorCodes.LOADPOINT_NOT_SET;
     }

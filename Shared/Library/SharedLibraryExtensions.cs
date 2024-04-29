@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SharedLibrary.Actions;
 using SharedLibrary.Actions.Database;
 using SharedLibrary.Actions.User;
 using SharedLibrary.ExceptionHandling;
@@ -63,6 +64,7 @@ public static class SharedLibraryConfiguration
         ConfigureDatabase(services, configuration);
 
         services.AddScoped<ICurrentUser, CurrentUser>();
+        services.AddTransient<ILoggingHttpClient, LoggingHttpClient>();
     }
 
     /// <summary>

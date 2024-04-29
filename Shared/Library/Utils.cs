@@ -25,30 +25,4 @@ public static class Utils
     /// <returns>User identification.</returns>
     public static string? GetUserId(ClaimsPrincipal? user = null) =>
         user?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-
-    /// <summary>
-    /// Execute a single request.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    public static async Task<T> GetJsonResponse<T>(this Task<HttpResponseMessage> request)
-    {
-        /* Execute the request. */
-        var response = await request;
-
-        /* No result. */
-        if (response.StatusCode == HttpStatusCode.NoContent) return default(T)!;
-
-        /* Failed. */
-        if (response.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException(response.ReasonPhrase);
-
-        /* Get the response. */
-        var raw = await response.Content.ReadAsStringAsync();
-
-        /* Convert to json. */
-        return JsonConvert.DeserializeObject<T>(raw)!;
-    }
-
 }

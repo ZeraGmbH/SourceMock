@@ -14,7 +14,7 @@ namespace RefMeterApi.Actions.RestSource;
 /// </summary>
 /// <param name="httpClient">Reference meter connection to use.</param>
 /// <param name="logger">Logging helper.</param>
-public class RestRefMeter(HttpClient httpClient, ILogger<RestRefMeter> logger) : IRestRefMeter
+public class RestRefMeter(ILoggingHttpClient httpClient, ILogger<RestRefMeter> logger) : IRestRefMeter
 {
     private bool _initialized = false;
 
@@ -28,7 +28,7 @@ public class RestRefMeter(HttpClient httpClient, ILogger<RestRefMeter> logger) :
 
         try
         {
-            var available = httpClient.GetAsync(new Uri(_baseUri, "Available")).GetJsonResponse<bool>();
+            var available = httpClient.GetAsync<bool>(interfaceLogger, new Uri(_baseUri, "Available"));
 
             available.Wait();
 
@@ -48,19 +48,19 @@ public class RestRefMeter(HttpClient httpClient, ILogger<RestRefMeter> logger) :
 
     /// <inheritdoc/>
     public Task<MeasurementModes?> GetActualMeasurementMode(IInterfaceLogger logger) =>
-        httpClient.GetAsync(new Uri(_baseUri, "MeasurementMode")).GetJsonResponse<MeasurementModes?>();
+        httpClient.GetAsync<MeasurementModes?>(logger, new Uri(_baseUri, "MeasurementMode"));
 
     /// <inheritdoc/>
     public Task<double> GetMeterConstant(IInterfaceLogger logger) =>
-        httpClient.GetAsync(new Uri(_baseUri, "MeterConstant")).GetJsonResponse<double>();
+        httpClient.GetAsync<double>(logger, new Uri(_baseUri, "MeterConstant"));
 
     /// <inheritdoc/>
     public Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1) =>
-        httpClient.GetAsync($"{new Uri(_baseUri, "ActualValues")}?firstActiveCurrentPhase={JsonConvert.SerializeObject(firstActiveCurrentPhase)}").GetJsonResponse<MeasuredLoadpoint>();
+        httpClient.GetAsync<MeasuredLoadpoint>(logger, new Uri(_baseUri, $"ActualValues?firstActiveCurrentPhase={JsonConvert.SerializeObject(firstActiveCurrentPhase)}"));
 
     /// <inheritdoc/>
     public Task<MeasurementModes[]> GetMeasurementModes(IInterfaceLogger logger) =>
-        httpClient.GetAsync(new Uri(_baseUri, "MeasurementModes")).GetJsonResponse<MeasurementModes[]>();
+        httpClient.GetAsync<MeasurementModes[]>(logger, new Uri(_baseUri, "MeasurementModes"));
 
     /// <inheritdoc/>
     public void Initialize(RestConfiguration? endpoint)
@@ -73,6 +73,14 @@ public class RestRefMeter(HttpClient httpClient, ILogger<RestRefMeter> logger) :
 
         /* Validate. */
         if (string.IsNullOrEmpty(endpoint?.Endpoint)) throw new InvalidOperationException("no reference meter connection configured");
+
+        /* Configure connection for logging. */
+        httpClient.LogConnection = new()
+        {
+            Endpoint = endpoint.Endpoint,
+            Protocol = InterfaceLogProtocolTypes.Http,
+            WebSamType = InterfaceLogSourceTypes.ReferenceMeter,
+        };
 
         _baseUri = new Uri(endpoint.Endpoint.TrimEnd('/') + "/");
 
@@ -87,5 +95,5 @@ public class RestRefMeter(HttpClient httpClient, ILogger<RestRefMeter> logger) :
 
     /// <inheritdoc/>
     public Task SetActualMeasurementMode(IInterfaceLogger logger, MeasurementModes mode) =>
-        httpClient.PutAsync($"{new Uri(_baseUri, "MeasurementMode")}?mode={JsonConvert.SerializeObject(mode)}", null);
+        httpClient.PutAsync(logger, new Uri(_baseUri, $"MeasurementMode?mode={JsonConvert.SerializeObject(mode)}"));
 }

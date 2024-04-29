@@ -11,6 +11,7 @@ using SharedLibrary;
 using RefMeterApi.Actions.RestSource;
 using Microsoft.Extensions.Logging;
 using SharedLibrary.Models.Logging;
+using SharedLibrary.Models;
 
 namespace MeterTestSystemApi.Actions.Device;
 
@@ -20,7 +21,7 @@ namespace MeterTestSystemApi.Actions.Device;
 /// <param name="httpClient">Connection to a remote meter test system.</param>
 /// <param name="factory">Factory instance to create error calculators.</param>
 /// <param name="logger">Loggin helper.</param>
-public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory factory, ILogger<RestMeterTestSystem> logger) : IMeterTestSystem
+public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculatorFactory factory, ILogger<RestMeterTestSystem> logger) : IMeterTestSystem
 {
     private Uri _baseUri = null!;
 
@@ -36,7 +37,7 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
     private readonly List<IErrorCalculator> _errorCalculators = [new UnavailableErrorCalculator()];
 
     /// <inheritdoc/>
-    public IErrorCalculator[] ErrorCalculators => _errorCalculators.ToArray();
+    public IErrorCalculator[] ErrorCalculators => [.. _errorCalculators];
 
     /// <inheritdoc/>
     public event Action<ErrorConditions> ErrorConditionsChanged = null!;
@@ -48,7 +49,7 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
     /// <inheritdoc/>
     public async Task<ErrorConditions> GetErrorConditions(IInterfaceLogger logger)
     {
-        var errors = await httpClient.GetAsync(new Uri(_baseUri, "ErrorConditions")).GetJsonResponse<ErrorConditions>();
+        var errors = await httpClient.GetAsync<ErrorConditions>(logger, new Uri(_baseUri, "ErrorConditions"));
 
         ErrorConditionsChanged?.Invoke(errors);
 
@@ -57,7 +58,7 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
 
     /// <inheritdoc/>
     public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) =>
-        httpClient.GetAsync(new Uri(_baseUri, "FirmwareVersion")).GetJsonResponse<MeterTestSystemFirmwareVersion>();
+        httpClient.GetAsync<MeterTestSystemFirmwareVersion>(logger, new Uri(_baseUri, "FirmwareVersion"));
 
     /// <inheritdoc/>
     public Task SetAmplifiersAndReferenceMeter(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings)
@@ -81,6 +82,14 @@ public class RestMeterTestSystem(HttpClient httpClient, IErrorCalculatorFactory 
 
             return;
         }
+
+        /* Configure connection for logging. */
+        httpClient.LogConnection = new()
+        {
+            Endpoint = config.MeterTestSystem.Endpoint,
+            Protocol = InterfaceLogProtocolTypes.Http,
+            WebSamType = InterfaceLogSourceTypes.MeterTestSystem,
+        };
 
         _baseUri = new Uri(config.MeterTestSystem.Endpoint.TrimEnd('/') + "/");
 

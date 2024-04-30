@@ -3,7 +3,6 @@ using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using SharedLibrary;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;

@@ -3,7 +3,6 @@ using System.Text;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RefMeterApi.Models;
-using SharedLibrary;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Logging;
 
@@ -95,5 +94,5 @@ public class RestRefMeter(ILoggingHttpClient httpClient, ILogger<RestRefMeter> l
 
     /// <inheritdoc/>
     public Task SetActualMeasurementMode(IInterfaceLogger logger, MeasurementModes mode) =>
-        httpClient.PutAsync(logger, new Uri(_baseUri, $"MeasurementMode?mode={JsonConvert.SerializeObject(mode)}"));
+        httpClient.PutAsync(logger, new Uri(_baseUri, $"MeasurementMode?mode={mode}"));
 }

@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Actions.Device;
 using SourceApi.Actions.RestSource;
 using SourceApi.Actions.Source;
-using SharedLibrary;
 using RefMeterApi.Actions.RestSource;
 using Microsoft.Extensions.Logging;
 using SharedLibrary.Models.Logging;

@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions.MeterConstant;
 using RefMeterApi.Exceptions;
 using RefMeterApi.Models;

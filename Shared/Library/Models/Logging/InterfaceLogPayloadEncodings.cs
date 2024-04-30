@@ -27,9 +27,9 @@ public enum InterfaceLogPayloadEncodings
     Xml = 2,
 
     /// <summary>
-    /// SSPI request or response string.
+    /// SCPI request or response string.
     /// </summary>
-    Sspi = 3,
+    Scpi = 3,
 
     /// <summary>
     /// Binary data encoded using the Base64 algorithm.

@@ -145,7 +145,7 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
                 /* Prepare logging. */
                 var requestId = Guid.NewGuid().ToString();
                 var sendEntry = connection.Prepare(new() { Outgoing = true, RequestId = requestId });
-                var sendInfo = new InterfaceLogPayload() { Encoding = InterfaceLogPayloadEncodings.Sspi, Payload = summary, PayloadType = "" };
+                var sendInfo = new InterfaceLogPayload() { Encoding = InterfaceLogPayloadEncodings.Scpi, Payload = summary, PayloadType = "" };
 
                 try
                 {
@@ -169,7 +169,7 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
 
                 /* Prepare logging. */
                 var receiveEntry = connection.Prepare(new() { Outgoing = false, RequestId = requestId });
-                var receiveInfo = new InterfaceLogPayload() { Encoding = InterfaceLogPayloadEncodings.Sspi, Payload = "", PayloadType = "" };
+                var receiveInfo = new InterfaceLogPayload() { Encoding = InterfaceLogPayloadEncodings.Scpi, Payload = "", PayloadType = "" };
 
                 /* Read the raw values. */
                 List<string> rawValues;

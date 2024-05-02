@@ -113,6 +113,7 @@ public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
 
             /* Get the response. */
             receivePayload.Payload = await response.Content.ReadAsStringAsync();
+            receivePayload.Encoding = InterfaceLogPayloadEncodings.Json;
         }
         catch (Exception e)
         {

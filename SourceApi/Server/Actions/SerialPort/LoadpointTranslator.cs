@@ -171,7 +171,7 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
     protected static TargetLoadpoint ConvertFromIECtoDin(TargetLoadpoint loadpoint)
     {
         // Not manipulating the original loadpoint object
-        TargetLoadpoint result = DeepCopy(loadpoint);
+        TargetLoadpoint result = SharedLibrary.Utils.DeepCopy(loadpoint);
 
         var firstActiveVoltagePhase = loadpoint.Phases.FindIndex(p => p.Voltage.On);
 
@@ -203,12 +203,4 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
             phase.Current.AcComponent!.Angle = (phase.Current.AcComponent.Angle - angle + 360) % 360;
         }
     }
-
-    /// <summary>
-    /// Copys values of object, not its reference
-    /// </summary>
-    /// <typeparam name="T">Any type of objects</typeparam>
-    /// <param name="self">object to clone</param>
-    /// <returns>a clone of the object</returns>
-    private static T DeepCopy<T>(T self) => JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(self))!;
 }

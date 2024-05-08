@@ -11,11 +11,18 @@ public static class Utils
     /// <summary>
     /// Copys values of object, not its reference
     /// </summary>
-    /// <typeparam name="T">Any type of objects</typeparam>
+    /// <typeparam name="T">Any type of object</typeparam>
     /// <param name="self">object to clone</param>
     /// <returns>a clone of the object</returns>
-    public static T DeepCopy<T>(T self) => JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(self))!;
+    public static T DeepCopyAs<T>(object? self) => JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(self))!;
 
+    /// <summary>
+    /// Copys values of object, not its reference
+    /// </summary>
+    /// <typeparam name="T">Any type of object</typeparam>
+    /// <param name="self">object to clone</param>
+    /// <returns>a clone of the object</returns>
+    public static T DeepCopy<T>(T self) => DeepCopyAs<T>(self);
 
     /// <summary>
     /// Retrieve the unique identifier of a user.

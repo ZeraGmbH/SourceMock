@@ -17,20 +17,12 @@ public static class Utils
     public static MeasuredLoadpoint ConvertFromDINtoIEC(MeasuredLoadpoint measureOutput, int firstPhaseAngle)
     {
         // Not manipulating the original measureOutput object
-        MeasuredLoadpoint result = DeepCopy(measureOutput);
+        var result = SharedLibrary.Utils.DeepCopy(measureOutput);
 
         ConvertAngles(result, firstPhaseAngle);
 
         return result;
     }
-
-    /// <summary>
-    /// Copys values of object, not its reference
-    /// </summary>
-    /// <typeparam name="T">Any type of objects</typeparam>
-    /// <param name="self">object to clone</param>
-    /// <returns>a clone of the object</returns>
-    private static T DeepCopy<T>(T self) => JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(self))!;
 
     private static void ConvertAngles(MeasuredLoadpoint measureOutput, int firstPhaseAngle)
     {

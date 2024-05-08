@@ -1,9 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Logging;
 
@@ -17,10 +15,9 @@ public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
     /// <summary>
     /// Configure serializer to generate camel casing.
     /// </summary>
-    private static readonly JsonSerializerSettings JsonSettings = new()
+    private static readonly JsonSerializerOptions JsonSettings = new()
     {
-        ContractResolver = new DefaultContractResolver() { NamingStrategy = new CamelCaseNamingStrategy() },
-        Converters = { new StringEnumConverter() }
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     /// <inheritdoc/>
@@ -129,7 +126,7 @@ public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
         }
 
         /* Convert to json. */
-        return JsonConvert.DeserializeObject<T>(receivePayload.Payload)!;
+        return JsonSerializer.Deserialize<T>(receivePayload.Payload, JsonSettings)!;
     }
 
     /// <inheritdoc/>
@@ -147,7 +144,7 @@ public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
     /// <inheritdoc/>
     public async Task<HttpResponseMessage> PutAsync<TPayload>(IInterfaceLogger interfaceLogger, Uri uri, TPayload payload)
     {
-        var content = JsonConvert.SerializeObject(payload, JsonSettings);
+        var content = JsonSerializer.Serialize(payload, JsonSettings);
 
         return (await DoRequest(interfaceLogger, $"{uri}\n\n{content}", () =>
             client.PutAsync(uri, new StringContent(

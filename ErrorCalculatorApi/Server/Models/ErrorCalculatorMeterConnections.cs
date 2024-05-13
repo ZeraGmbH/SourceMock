@@ -127,4 +127,19 @@ public enum ErrorCalculatorMeterConnections
     /// COM server 2, Out (UART-4 input)
     /// </summary>
     COM2OutUART4 = 23,
+
+    /// <summary>
+    /// Front input, BNC, 1:10
+    /// </summary>
+    FrontBNC10 = 24,
+
+    /// <summary>
+    /// Front input, BNC, 1:100
+    /// </summary>
+    FrontBNC100 = 25,
+
+    /// <summary>
+    /// Front input, BNC, 1:1000
+    /// </summary>
+    FrontBNC1000 = 26,
 }

@@ -17,9 +17,16 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
 {
     private static readonly Regex parseEndpoint = new(@"^(.+):([0-9]+)$");
 
-    private static readonly Regex parseNumber = new(@"^.*:([^:]+);$");
+    /// <summary>
+    /// 
+    /// </summary>
+    public static readonly Regex ParseNumber = new(@"^([+-]?(\d+|(\d+\.\d*)|(\d*\.\d+))([Ee][+-]?\d+)?)$");
 
-    private static readonly HashSet<DutStatusRegisterTypes> _raw = [DutStatusRegisterTypes.Serial];
+    private static readonly Regex parseNamedNumber = new(@"^.*:([^:]+);$");
+
+    private static readonly HashSet<DutStatusRegisterTypes> _rawNumber = [DutStatusRegisterTypes.MeterConstant];
+
+    private static readonly HashSet<DutStatusRegisterTypes> _raw = [DutStatusRegisterTypes.Serial, .. _rawNumber];
 
     private TcpClient _connection = null!;
 
@@ -132,7 +139,12 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
                         if (!_status.TryGetValue(type, out var info)) info = null;
 
                         /* Create information structure. */
-                        return new { Info = _raw.Contains(type) == raw ? info : null, Index = index };
+                        return new
+                        {
+                            Info = _raw.Contains(type) == raw ? info : null,
+                            Index = index,
+                            RawNumber = _rawNumber.Contains(type)
+                        };
                     })
                     .Where(i => i.Info != null)
                     .ToList();
@@ -196,7 +208,28 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
                 /* In raw mode just copy over. */
                 if (raw)
                     for (var i = 0; i < rawValues.Count; i++)
-                        result[commands[i].Index] = rawValues[i];
+                    {
+                        /* Load value and test for semantic. */
+                        var rawValue = rawValues[i];
+                        var command = commands[i];
+
+                        if (command.RawNumber)
+                        {
+                            /* See if this is a number. */
+                            var match = ParseNumber.Match(rawValue);
+
+                            if (match?.Success != true) continue;
+
+                            var value = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+                            var info = command.Info!;
+
+                            if (info.Scale.GetValueOrDefault(0) != 0) value *= (double)info.Scale!;
+
+                            result[command.Index] = value;
+                        }
+                        else
+                            result[command.Index] = rawValue;
+                    }
                 else
                 {
                     /* Create lookup map. */
@@ -210,9 +243,9 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
                         if (rawValue == null) continue;
 
                         /* Check for number. */
-                        var match = parseNumber.Match(rawValue);
+                        var match = parseNamedNumber.Match(rawValue);
 
-                        if (match == null) continue;
+                        if (match?.Success != true) continue;
 
                         /* Get the value. */
                         var value = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);

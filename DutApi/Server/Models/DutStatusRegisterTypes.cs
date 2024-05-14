@@ -72,4 +72,9 @@ public enum DutStatusRegisterTypes
     /// DC voltage.
     /// </summary>
     VoltageDC = 3,
+
+    /// <summary>
+    /// Current meter constant.
+    /// </summary>
+    MeterConstant = 13,
 }

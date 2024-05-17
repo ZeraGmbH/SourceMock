@@ -192,34 +192,39 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
             var sendEntry = connection.Prepare(new() { Outgoing = true, RequestId = requestId });
             var sendInfo = new InterfaceLogPayload { Encoding = InterfaceLogPayloadEncodings.Xml, Payload = request.OuterXml, PayloadType = "" };
 
+            /* Send request. */
+            lock (_collector) _response = null;
+
+            try
+            {
+                client.GetStream().Write(Encoding.UTF8.GetBytes(request.OuterXml + "\n"));
+            }
+            catch (Exception e)
+            {
+                sendInfo.TransferExecption = e.Message;
+
+                throw new UnableToSendException(e);
+            }
+            finally
+            {
+                sendEntry.Finish(sendInfo);
+            }
+
+            /* Prepare logging. */
             var receiveEntry = connection.Prepare(new() { Outgoing = false, RequestId = requestId });
             var receiveInfo = new InterfaceLogPayload { Encoding = InterfaceLogPayloadEncodings.Xml, Payload = "", PayloadType = "" };
 
+            /* Wait for reply. */
             XmlDocument response;
             try
             {
                 lock (_collector)
                 {
-                    /* Send request. */
-                    try
-                    {
-                        client.GetStream().Write(Encoding.UTF8.GetBytes(request.OuterXml + "\n"));
-                    }
-                    catch (Exception e)
-                    {
-                        sendInfo.TransferExecption = e.Message;
+                    while (_response == null)
+                        if (!Monitor.Wait(_collector, TimeSpan.FromSeconds(30)))
+                            throw new TimeoutException("no reply from error calculator");
 
-                        throw new UnableToSendException(e);
-                    }
-                    finally
-                    {
-                        sendEntry.Finish(sendInfo);
-                    }
-
-                    /* Wait for reply. */
-                    Monitor.Wait(_collector);
-
-                    response = _response!;
+                    response = _response;
                 }
 
                 receiveInfo.Payload = response.OuterXml;

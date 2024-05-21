@@ -62,7 +62,7 @@ public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
         }
         catch (Exception e)
         {
-            sendPayload.TransferExecption = e.Message;
+            sendPayload.TransferException = e.Message;
 
             /* Caller will handle execption but logging will always be done. */
             throw;
@@ -114,7 +114,7 @@ public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
         }
         catch (Exception e)
         {
-            receivePayload.TransferExecption = e.Message;
+            receivePayload.TransferException = e.Message;
 
             /* Caller will handle execption but logging will always be done. */
             throw;

@@ -1,10 +1,8 @@
 ﻿using System.Collections.Concurrent;
-using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using SharedLibrary.Models.Logging;
-using ZstdSharp.Unsafe;
 
 namespace SerialPortProxy;
 
@@ -260,7 +258,7 @@ public class SerialPortConnection : ISerialPortConnection
                     Encoding = InterfaceLogPayloadEncodings.Raw,
                     Payload = request.Command,
                     PayloadType = "",
-                    TransferExecption = sendError?.Message
+                    TransferException = sendError?.Message
                 });
             }
             catch (Exception e)
@@ -346,7 +344,7 @@ public class SerialPortConnection : ISerialPortConnection
                             Encoding = InterfaceLogPayloadEncodings.Raw,
                             Payload = reply,
                             PayloadType = "",
-                            TransferExecption = receiveError?.Message
+                            TransferException = receiveError?.Message
                         });
                     }
                     catch (Exception e)

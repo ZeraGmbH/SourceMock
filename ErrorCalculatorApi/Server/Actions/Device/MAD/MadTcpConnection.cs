@@ -201,7 +201,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
             }
             catch (Exception e)
             {
-                sendInfo.TransferExecption = e.Message;
+                sendInfo.TransferException = e.Message;
 
                 throw new UnableToSendException(e);
             }
@@ -231,7 +231,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
             }
             catch (Exception e)
             {
-                receiveInfo.TransferExecption = e.Message;
+                receiveInfo.TransferException = e.Message;
 
                 throw;
             }

@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using SharedLibrary.Actions.Database;
 using SharedLibrary.Models;
-using SharedLibrary.Services;
 using System.Text;
 
 namespace SharedLibraryTests;

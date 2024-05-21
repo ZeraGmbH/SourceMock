@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 
 namespace SharedLibrary.Models.Logging;
 

@@ -170,7 +170,7 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
                 {
                     logger.LogError("Device under test at {Address} not available: {Exception}", _connection, e.Message);
 
-                    sendInfo.TransferExecption = e.Message;
+                    sendInfo.TransferException = e.Message;
 
                     throw new DutIoException($"Device under test at {_connection} not available: {e.Message}", e);
                 }
@@ -196,7 +196,7 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
                 {
                     logger.LogError("Device under test did not respond to {Command} query: {Exception}", summary, e.Message);
 
-                    receiveInfo.TransferExecption = e.Message;
+                    receiveInfo.TransferException = e.Message;
 
                     throw new DutIoException($"Device under test did not respond to {summary} query: {e.Message}", e);
                 }

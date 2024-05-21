@@ -33,6 +33,16 @@ public interface ILoggingHttpClient
     /// <summary>
     /// 
     /// </summary>
+    /// <typeparam name="TPayload"></typeparam>
+    /// <param name="interfaceLogger"></param>
+    /// <param name="uri"></param>
+    /// <param name="payload"></param>
+    /// <returns></returns>
+    Task<HttpResponseMessage> PostAsync<TPayload>(IInterfaceLogger interfaceLogger, Uri uri, TPayload payload);
+
+    /// <summary>
+    /// 
+    /// </summary>
     HttpRequestHeaders DefaultRequestHeaders { get; }
 
     /// <summary>

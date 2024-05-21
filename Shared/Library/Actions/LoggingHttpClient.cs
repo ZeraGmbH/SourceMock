@@ -142,6 +142,19 @@ public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
         => (await DoRequest(interfaceLogger, uri.ToString(), () => client.PutAsync(uri, null))).Item1;
 
     /// <inheritdoc/>
+    public async Task<HttpResponseMessage> PostAsync<TPayload>(IInterfaceLogger interfaceLogger, Uri uri, TPayload payload)
+    {
+        var content = JsonSerializer.Serialize(payload, JsonSettings);
+
+        return (await DoRequest(interfaceLogger, $"{uri}\n\n{content}", () =>
+            client.PostAsync(uri, new StringContent(
+                content,
+                Encoding.UTF8,
+                new MediaTypeHeaderValue("application/json")
+            )))).Item1;
+    }
+
+    /// <inheritdoc/>
     public async Task<HttpResponseMessage> PutAsync<TPayload>(IInterfaceLogger interfaceLogger, Uri uri, TPayload payload)
     {
         var content = JsonSerializer.Serialize(payload, JsonSettings);

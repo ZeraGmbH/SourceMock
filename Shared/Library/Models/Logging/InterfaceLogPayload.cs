@@ -31,6 +31,6 @@ public class InterfaceLogPayload
     /// <summary>
     /// Set if the there is no payload at all.
     /// </summary>
-    [JsonIgnore]
+    [JsonIgnore, Newtonsoft.Json.JsonIgnore]
     public bool IsEmpty => Encoding == InterfaceLogPayloadEncodings.Raw && Payload == null && PayloadType == null && TransferException == null;
 }

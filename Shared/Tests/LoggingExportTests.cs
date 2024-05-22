@@ -1,3 +1,4 @@
+using System.Xml;
 using SharedLibrary.Models.Logging;
 
 namespace SharedLibraryTests;
@@ -42,6 +43,8 @@ public class LoggingExportTests
 
         var exp = entry.ToExport();
         var impEntry = InterfaceLogEntry.FromExport(exp);
+
+        var doc = new XmlDocument();
 
         Assert.Multiple(() =>
         {

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using System.Xml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -53,7 +54,7 @@ public class InterfaceLogEntry : IDatabaseObject
     /// 
     /// </summary>
     /// <returns></returns>
-    public string ToExport()
+    private JObject ToJsonObject()
     {
         var asJson = JObject.FromObject(this, _serializer);
 
@@ -76,7 +77,28 @@ public class InterfaceLogEntry : IDatabaseObject
             foreach (var prop in message)
                 build[prop.Key] = prop.Value;
 
-        return JsonConvert.SerializeObject(build);
+        return build;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public string ToExport() => JsonConvert.SerializeObject(ToJsonObject());
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public XmlElement ToXmlExport(XmlDocument doc)
+    {
+        var entry = doc.CreateElement("InterfaceLogEntry");
+        var build = ToJsonObject();
+
+        foreach (var prop in build)
+            entry.AppendChild(doc.CreateElement(prop.Key))!.InnerText = prop.Value?.ToString() ?? "";
+
+        return entry;
     }
 
     /// <summary>

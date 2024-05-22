@@ -42,4 +42,7 @@ public class NoopInterfaceLogger : IInterfaceLogger
 
     /// <inheritdoc/>
     public Task<Stream> Export(string sessionId) => Task.FromResult<Stream>(new MemoryStream());
+
+    /// <inheritdoc/>
+    public Task<Stream> ExportXml(string sessionId) => Task.FromResult<Stream>(new MemoryStream());
 }

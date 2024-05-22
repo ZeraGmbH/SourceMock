@@ -35,4 +35,11 @@ public interface IInterfaceLogger
     /// <param name="sessionId">Session to use.</param>
     /// <returns>UTF-8 byte stream with JSON array contents.</returns>
     Task<Stream> Export(string sessionId);
+
+    /// <summary>
+    /// Export all log entries of a single session as a XML.
+    /// </summary>
+    /// <param name="sessionId">Session to use.</param>
+    /// <returns>UTF-8 byte stream with XML contents.</returns>
+    Task<Stream> ExportXml(string sessionId);
 }

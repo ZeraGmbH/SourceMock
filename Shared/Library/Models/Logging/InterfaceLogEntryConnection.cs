@@ -10,7 +10,7 @@ namespace SharedLibrary.Models.Logging;
 public class InterfaceLogEntryTargetConnection
 {
     /// <summary>
-    /// Protcol used.
+    /// Protocol used.
     /// </summary>
     [NotNull, Required]
     public required InterfaceLogProtocolTypes Protocol { get; set; }

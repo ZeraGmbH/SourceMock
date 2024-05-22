@@ -28,4 +28,11 @@ public interface IInterfaceLogger
     /// </summary>
     /// <param name="sessionId">The session to delete entries for.</param>
     Task Delete(string sessionId);
+
+    /// <summary>
+    /// Export all log entries of a single session as a JSON array.
+    /// </summary>
+    /// <param name="sessionId">Session to use.</param>
+    /// <returns>UTF-8 byte stream with JSON array contents.</returns>
+    Task<Stream> Export(string sessionId);
 }

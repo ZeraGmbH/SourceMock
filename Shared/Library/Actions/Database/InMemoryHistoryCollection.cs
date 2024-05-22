@@ -194,7 +194,7 @@ public sealed class InMemoryHistoryCollection<TItem, TInitializer>(InMemoryHisto
     }
 
     /// <inheritdoc/>
-    public IQueryable<TItem> CreateQueryable()
+    public IQueryable<TItem> CreateQueryable(int? batchSize = null)
     {
         lock (_onetimeInitializer.Data)
             return _onetimeInitializer.Data.Values.Select(list => CloneItem(list[^1].Item)).ToArray().AsQueryable();

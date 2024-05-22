@@ -47,8 +47,9 @@ public interface IBasicObjectCollection<T> : ITestableObjectCollection where T :
     /// <summary>
     /// Start a query on the collection.
     /// </summary>
+    /// <param name="batchSize">Number of items per batch operation.</param>
     /// <returns>A new queryable.</returns>
-    IQueryable<T> CreateQueryable();
+    IQueryable<T> CreateQueryable(int? batchSize = null);
 
     /// <summary>
     /// Create a new index.

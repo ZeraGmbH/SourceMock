@@ -65,7 +65,7 @@ sealed class MongoDbCollection<TItem, TInitializer>(
         .ContinueWith(t => t.Result.DeletedCount, TaskContinuationOptions.OnlyOnRanToCompletion);
 
     /// <inheritdoc/>
-    public IQueryable<TItem> CreateQueryable() => GetCollection().AsQueryable();
+    public IQueryable<TItem> CreateQueryable(int? batchSize = null) => GetCollection().AsQueryable(new() { BatchSize = batchSize, AllowDiskUse = true });
 
     private static readonly Collation _noCase = new("en", strength: CollationStrength.Secondary);
 

@@ -98,4 +98,24 @@ public class InterfaceLogEntry : IDatabaseObject
 
         return entry;
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="exported"></param>
+    /// <returns></returns>
+    public static InterfaceLogEntry FromExport(JObject exported)
+    {
+        /* Reconstruct objects from flat row. */
+        var entry = exported.ToObject<InterfaceLogEntry>(_serializer)!;
+
+        entry.Connection = exported.ToObject<InterfaceLogEntryConnection>(_serializer)!;
+        entry.Info = exported.ToObject<InterfaceLogEntryInfo>(_serializer)!;
+        entry.Message = exported.ToObject<InterfaceLogPayload>(_serializer)!;
+        entry.Scope = exported.ToObject<InterfaceLogEntryScope>(_serializer)!;
+
+        if (entry.Message.IsEmpty) entry.Message = null!;
+
+        return entry;
+    }
 }

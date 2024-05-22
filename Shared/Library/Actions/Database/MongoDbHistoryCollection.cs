@@ -173,7 +173,7 @@ sealed class MongoDbHistoryCollection<TItem, TInitializer>(
        ).ContinueWith(tasks => tasks.Result.Sum(r => r.DeletedCount), TaskContinuationOptions.OnlyOnRanToCompletion);
 
     /// <inheritdoc/>
-    public IQueryable<TItem> CreateQueryable() => GetCollection<TItem>().AsQueryable();
+    public IQueryable<TItem> CreateQueryable(int? batchSize = null) => GetCollection<TItem>().AsQueryable(new() { BatchSize = batchSize, AllowDiskUse = true });
 
     /// <inheritdoc/>
     public Task<IEnumerable<HistoryInfo>> GetHistory(string id)

@@ -179,7 +179,7 @@ public sealed class InMemoryCollection<TItem, TInitializer>(InMemoryCollection<T
     }
 
     /// <inheritdoc/>
-    public IQueryable<TItem> CreateQueryable()
+    public IQueryable<TItem> CreateQueryable(int? batchSize = null)
     {
         lock (_onetimeInitializer.Data)
             return _onetimeInitializer.Data.Values.Select(CloneItem).ToArray().AsQueryable();

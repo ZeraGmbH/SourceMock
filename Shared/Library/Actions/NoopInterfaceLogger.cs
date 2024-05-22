@@ -39,4 +39,7 @@ public class NoopInterfaceLogger : IInterfaceLogger
 
     /// <inheritdoc/>
     public Task Delete(string sessionId) => Task.CompletedTask;
+
+    /// <inheritdoc/>
+    public Task<Stream> Export(string sessionId) => Task.FromResult<Stream>(new MemoryStream());
 }

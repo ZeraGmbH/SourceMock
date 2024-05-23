@@ -45,46 +45,35 @@ public class InterfaceLogEntry : IDatabaseObject
     private static readonly JsonSerializerSettings _settings = new()
     {
         ContractResolver = new DefaultContractResolver() { NamingStrategy = new CamelCaseNamingStrategy() },
-        Converters = { new StringEnumConverter() }
+        Converters = { new StringEnumConverter() },
+        DateParseHandling = DateParseHandling.None,
     };
 
-    private static readonly JsonSerializer _serializer = new() { ContractResolver = _settings.ContractResolver, Converters = { _settings.Converters[0] } };
+    private static readonly JsonSerializer _serializer = new()
+    {
+        ContractResolver = _settings.ContractResolver,
+        Converters = { _settings.Converters[0] },
+        DateParseHandling = _settings.DateParseHandling,
+    };
 
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
-    private JObject ToJsonObject()
+    public string ToExport()
     {
         var asJson = JObject.FromObject(this, _serializer);
 
         /* Flatten object structure. */
         var build = new JObject { ["id"] = asJson["id"] };
 
-        if (asJson["connection"] is JObject connection)
-            foreach (var prop in connection)
-                build[prop.Key] = prop.Value;
+        foreach (var field in asJson)
+            if (asJson[field.Key] is JObject obj)
+                foreach (var prop in obj)
+                    build[prop.Key] = prop.Value;
 
-        if (asJson["info"] is JObject info)
-            foreach (var prop in info)
-                build[prop.Key] = prop.Value;
-
-        if (asJson["scope"] is JObject scope)
-            foreach (var prop in scope)
-                build[prop.Key] = prop.Value;
-
-        if (asJson["message"] is JObject message)
-            foreach (var prop in message)
-                build[prop.Key] = prop.Value;
-
-        return build;
+        return JsonConvert.SerializeObject(build);
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    public string ToExport() => JsonConvert.SerializeObject(ToJsonObject());
 
     /// <summary>
     /// 
@@ -92,8 +81,8 @@ public class InterfaceLogEntry : IDatabaseObject
     /// <returns></returns>
     public XmlElement ToXmlExport(XmlDocument doc)
     {
+        var build = JsonConvert.DeserializeObject<JObject>(ToExport(), _settings);
         var entry = doc.CreateElement("InterfaceLogEntry");
-        var build = ToJsonObject();
 
         foreach (var prop in build)
             entry.AppendChild(doc.CreateElement(prop.Key))!.InnerText = prop.Value?.ToString() ?? "";

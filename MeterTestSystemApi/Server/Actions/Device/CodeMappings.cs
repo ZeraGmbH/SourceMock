@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using RefMeterApi.Models;
 using SourceApi.Model;
 
@@ -133,4 +134,35 @@ public static class CodeMappings
         { ReferenceMeters.RMM303x6, 48 },
         { ReferenceMeters.RMM303x8, 49 },
     };
+
+    private static void Dump<T1, T2>(Dictionary<T1, int> mapping, Dictionary<T2, int> auxMapping, [CallerArgumentExpression("mapping")] string? name = null) where T1 : notnull where T2 : notnull
+    {
+        Console.WriteLine($"Mapping for {name}");
+
+        var all = mapping
+            .Select(e => new { Key = $"{e.Key.GetType().Name}:{e.Key}", e.Value })
+            .Concat(auxMapping.Select(e => new { Key = $"{e.Key.GetType().Name}:{e.Key}", e.Value }))
+            .GroupBy(e => e.Value, e => e.Key)
+            .OrderBy(g => g.Key);
+
+        foreach (var group in all)
+            Console.WriteLine($"{group.Key}: {string.Join(", ", group)}");
+
+        Console.WriteLine();
+    }
+
+    private static void Dump<T>(Dictionary<T, int> mapping, [CallerArgumentExpression(nameof(mapping))] string? name = null) where T : notnull
+    {
+        Dump(mapping, new Dictionary<T, int>(), name);
+    }
+
+    /// <summary>
+    /// Report the current mapping to the console - just for checkup.
+    /// </summary>
+    public static void Dump()
+    {
+        Dump(Voltage, AuxVoltage);
+        Dump(Current, AuxCurrent);
+        Dump(RefMeter);
+    }
 }

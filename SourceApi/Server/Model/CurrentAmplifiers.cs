@@ -31,11 +31,6 @@ public enum CurrentAmplifiers
     /// <summary>
     /// 
     /// </summary>
-    V200x1x2 = 4,
-
-    /// <summary>
-    /// 
-    /// </summary>
     V200x2 = 5,
 
     /// <summary>

@@ -20,7 +20,6 @@ public static class CodeMappings
             { CurrentAmplifiers.SCG1020, 42 },
             { CurrentAmplifiers.SCG750x00, 46 },
             { CurrentAmplifiers.V200, 21 },
-            { CurrentAmplifiers.V200x1x2, 13 },
             { CurrentAmplifiers.V200x2, 34 },
             { CurrentAmplifiers.V200x4, 40 },
             { CurrentAmplifiers.VI201x0, 35 },

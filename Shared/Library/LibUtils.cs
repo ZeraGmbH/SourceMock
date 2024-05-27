@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using System.Text.Json;
-using Newtonsoft.Json;
 
 namespace SharedLibrary;
 
@@ -23,7 +22,7 @@ public static class LibUtils
     /// <typeparam name="T">Any type of object</typeparam>
     /// <param name="self">object to clone</param>
     /// <returns>a clone of the object</returns>
-    public static T DeepCopyAs<T>(object? self) => JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(self))!;
+    public static T DeepCopyAs<T>(object? self) => JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(self, JsonSettings), JsonSettings)!;
 
     /// <summary>
     /// Copys values of object, not its reference

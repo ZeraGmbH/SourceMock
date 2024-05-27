@@ -40,4 +40,20 @@ public static class LibUtils
     /// <returns>User identification.</returns>
     public static string? GetUserId(ClaimsPrincipal? user = null) =>
         user?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+    /// <summary>
+    /// Extract a scalar value from a JsonElement.
+    /// </summary>
+    /// <param name="json">As parsed with the System.Text.Json library.</param>
+    /// <returns>The value.</returns>
+    public static object? ToJsonScalar(this JsonElement json)
+        => json.ValueKind switch
+        {
+            JsonValueKind.False => false,
+            JsonValueKind.Null => null,
+            JsonValueKind.Number => json.Deserialize<double>(),
+            JsonValueKind.String => json.Deserialize<string>(),
+            JsonValueKind.True => true,
+            _ => json,
+        };
 }

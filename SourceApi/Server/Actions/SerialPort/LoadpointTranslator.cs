@@ -1,6 +1,6 @@
 using System.Text;
 using SerialPortProxy;
-
+using SharedLibrary;
 using SourceApi.Model;
 
 namespace SourceApi.Actions.SerialPort;
@@ -170,7 +170,7 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
     protected static TargetLoadpoint ConvertFromIECtoDin(TargetLoadpoint loadpoint)
     {
         // Not manipulating the original loadpoint object
-        TargetLoadpoint result = SharedLibrary.Utils.DeepCopy(loadpoint);
+        var result = LibUtils.DeepCopy(loadpoint);
 
         var firstActiveVoltagePhase = loadpoint.Phases.FindIndex(p => p.Voltage.On);
 

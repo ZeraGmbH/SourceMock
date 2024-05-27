@@ -7,7 +7,7 @@ namespace SharedLibrary;
 /// <summary>
 /// 
 /// </summary>
-public static class Utils
+public static class LibUtils
 {
     /// <summary>
     /// Configure serializer to generate camel casing.

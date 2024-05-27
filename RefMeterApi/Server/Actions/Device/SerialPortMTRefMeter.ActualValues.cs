@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SharedLibrary;
 using SharedLibrary.Models.Logging;
 using SourceApi.Model;
 
@@ -16,7 +17,7 @@ partial class SerialPortMTRefMeter
 
     /// <inheritdoc/>
     public async Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1)
-        => Utils.ConvertFromDINtoIEC(SharedLibrary.Utils.DeepCopy(await _actualValues.Execute(logger)), firstActiveCurrentPhase);
+        => Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValues.Execute(logger)), firstActiveCurrentPhase);
 
     /// <summary>
     /// Begin reading the actual values - this may take some time.

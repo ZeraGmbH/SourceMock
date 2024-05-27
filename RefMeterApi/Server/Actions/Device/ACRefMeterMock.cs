@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Models;
+using SharedLibrary;
 using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
@@ -138,7 +139,7 @@ public partial class ACRefMeterMock : RefMeterMock
             ]
         };
 
-        loadpoint = SharedLibrary.Utils.DeepCopy(loadpoint);
+        loadpoint = LibUtils.DeepCopy(loadpoint);
 
         var info = source.GetActiveLoadpointInfo(logger);
         var currentSwitchedOffForDosage = await source.CurrentSwitchedOffForDosage(logger);

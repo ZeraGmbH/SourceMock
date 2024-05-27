@@ -1,4 +1,5 @@
 using RefMeterApi.Models;
+using SharedLibrary;
 
 namespace RefMeterApi.Actions.Device;
 
@@ -16,7 +17,7 @@ public static class Utils
     public static MeasuredLoadpoint ConvertFromDINtoIEC(MeasuredLoadpoint measureOutput, int firstPhaseAngle)
     {
         // Not manipulating the original measureOutput object
-        var result = SharedLibrary.Utils.DeepCopy(measureOutput);
+        var result = LibUtils.DeepCopy(measureOutput);
 
         ConvertAngles(result, firstPhaseAngle);
 

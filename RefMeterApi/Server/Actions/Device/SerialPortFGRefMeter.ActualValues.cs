@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SharedLibrary;
 using SharedLibrary.Models.Logging;
 
 namespace RefMeterApi.Actions.Device;
@@ -16,7 +17,7 @@ partial class SerialPortFGRefMeter
     {
         TestConfigured(logger);
 
-        return Utils.ConvertFromDINtoIEC(SharedLibrary.Utils.DeepCopy(await _actualValues.Execute(logger)), firstActiveCurrentPhase);
+        return Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValues.Execute(logger)), firstActiveCurrentPhase);
     }
 
     /// <summary>

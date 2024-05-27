@@ -53,7 +53,7 @@ public class InterfaceLogEntry : IDatabaseObject
 
         foreach (var prop in GetType().GetProperties())
         {
-            var value = JsonSerializer.Serialize(prop.GetValue(this), Utils.JsonSettings);
+            var value = JsonSerializer.Serialize(prop.GetValue(this), LibUtils.JsonSettings);
 
             if (value.StartsWith('{'))
                 build2.Add(value[1..^1]);
@@ -94,12 +94,12 @@ public class InterfaceLogEntry : IDatabaseObject
     public static InterfaceLogEntry FromExport(JsonNode exported)
     {
         /* Reconstruct objects from flat row. */
-        var entry = exported.Deserialize<InterfaceLogEntry>(Utils.JsonSettings)!;
+        var entry = exported.Deserialize<InterfaceLogEntry>(LibUtils.JsonSettings)!;
 
-        entry.Connection = exported.Deserialize<InterfaceLogEntryConnection>(Utils.JsonSettings)!;
-        entry.Info = exported.Deserialize<InterfaceLogEntryInfo>(Utils.JsonSettings)!;
-        entry.Message = exported.Deserialize<InterfaceLogPayload>(Utils.JsonSettings)!;
-        entry.Scope = exported.Deserialize<InterfaceLogEntryScope>(Utils.JsonSettings)!;
+        entry.Connection = exported.Deserialize<InterfaceLogEntryConnection>(LibUtils.JsonSettings)!;
+        entry.Info = exported.Deserialize<InterfaceLogEntryInfo>(LibUtils.JsonSettings)!;
+        entry.Message = exported.Deserialize<InterfaceLogPayload>(LibUtils.JsonSettings)!;
+        entry.Scope = exported.Deserialize<InterfaceLogEntryScope>(LibUtils.JsonSettings)!;
 
         if (entry.Message.IsEmpty) entry.Message = null!;
 

@@ -118,7 +118,7 @@ public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
         }
 
         /* Convert to json. */
-        return JsonSerializer.Deserialize<T>(receivePayload.Payload, Utils.JsonSettings)!;
+        return JsonSerializer.Deserialize<T>(receivePayload.Payload, LibUtils.JsonSettings)!;
     }
 
     /// <inheritdoc/>
@@ -136,7 +136,7 @@ public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
     /// <inheritdoc/>
     public async Task<HttpResponseMessage> PostAsync<TPayload>(IInterfaceLogger interfaceLogger, Uri uri, TPayload payload)
     {
-        var content = JsonSerializer.Serialize(payload, Utils.JsonSettings);
+        var content = JsonSerializer.Serialize(payload, LibUtils.JsonSettings);
 
         return (await DoRequest(interfaceLogger, $"{uri}\n\n{content}", () =>
             client.PostAsync(uri, new StringContent(
@@ -149,7 +149,7 @@ public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
     /// <inheritdoc/>
     public async Task<HttpResponseMessage> PutAsync<TPayload>(IInterfaceLogger interfaceLogger, Uri uri, TPayload payload)
     {
-        var content = JsonSerializer.Serialize(payload, Utils.JsonSettings);
+        var content = JsonSerializer.Serialize(payload, LibUtils.JsonSettings);
 
         return (await DoRequest(interfaceLogger, $"{uri}\n\n{content}", () =>
             client.PutAsync(uri, new StringContent(

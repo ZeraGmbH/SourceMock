@@ -29,5 +29,5 @@ public static class ICurrentUserExtensions
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
-    public static string GetUserId(this ICurrentUser user) => Utils.GetUserId(user?.User) ?? "anonymous";
+    public static string GetUserId(this ICurrentUser user) => LibUtils.GetUserId(user?.User) ?? "anonymous";
 }

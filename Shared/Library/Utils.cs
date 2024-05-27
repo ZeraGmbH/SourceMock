@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.Json;
 using Newtonsoft.Json;
 
 namespace SharedLibrary;
@@ -8,6 +9,14 @@ namespace SharedLibrary;
 /// </summary>
 public static class Utils
 {
+    /// <summary>
+    /// Configure serializer to generate camel casing.
+    /// </summary>
+    public static readonly JsonSerializerOptions JsonSettings = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+
     /// <summary>
     /// Copys values of object, not its reference
     /// </summary>

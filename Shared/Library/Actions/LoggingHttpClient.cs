@@ -12,14 +12,6 @@ namespace SharedLibrary.Actions;
 /// </summary>
 public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
 {
-    /// <summary>
-    /// Configure serializer to generate camel casing.
-    /// </summary>
-    private static readonly JsonSerializerOptions JsonSettings = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    };
-
     /// <inheritdoc/>
     public InterfaceLogEntryConnection LogConnection { get; set; } = null!;
 
@@ -126,7 +118,7 @@ public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
         }
 
         /* Convert to json. */
-        return JsonSerializer.Deserialize<T>(receivePayload.Payload, JsonSettings)!;
+        return JsonSerializer.Deserialize<T>(receivePayload.Payload, Utils.JsonSettings)!;
     }
 
     /// <inheritdoc/>
@@ -144,7 +136,7 @@ public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
     /// <inheritdoc/>
     public async Task<HttpResponseMessage> PostAsync<TPayload>(IInterfaceLogger interfaceLogger, Uri uri, TPayload payload)
     {
-        var content = JsonSerializer.Serialize(payload, JsonSettings);
+        var content = JsonSerializer.Serialize(payload, Utils.JsonSettings);
 
         return (await DoRequest(interfaceLogger, $"{uri}\n\n{content}", () =>
             client.PostAsync(uri, new StringContent(
@@ -157,7 +149,7 @@ public class LoggingHttpClient(HttpClient client) : ILoggingHttpClient
     /// <inheritdoc/>
     public async Task<HttpResponseMessage> PutAsync<TPayload>(IInterfaceLogger interfaceLogger, Uri uri, TPayload payload)
     {
-        var content = JsonSerializer.Serialize(payload, JsonSettings);
+        var content = JsonSerializer.Serialize(payload, Utils.JsonSettings);
 
         return (await DoRequest(interfaceLogger, $"{uri}\n\n{content}", () =>
             client.PutAsync(uri, new StringContent(

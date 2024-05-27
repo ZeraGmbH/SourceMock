@@ -22,8 +22,8 @@ public class LoggingExportTests
             Info = new()
             {
                 CorrelationId = "CORR",
-                CreatedAt = new DateTime(2024, 5, 21, 13, 44, 5, 123),
-                RunIdentifier = new DateTime(2024, 5, 20, 3, 4, 5, 6),
+                CreatedAt = new DateTime(2024, 5, 21, 13, 44, 5, 123, DateTimeKind.Utc),
+                RunIdentifier = new DateTime(2024, 5, 20, 3, 4, 5, 6, DateTimeKind.Utc),
                 SequenceCounter = 128,
                 SessionId = "SESS"
             },
@@ -43,8 +43,6 @@ public class LoggingExportTests
 
         var exp = entry.ToExport();
         var impEntry = InterfaceLogEntry.FromExport(exp);
-
-        var doc = new XmlDocument();
 
         Assert.Multiple(() =>
         {
@@ -74,5 +72,9 @@ public class LoggingExportTests
             Assert.That(impEntry.Message.PayloadType, Is.EqualTo(entry.Message.PayloadType));
             Assert.That(impEntry.Message.TransferException, Is.EqualTo(entry.Message.TransferException));
         });
+
+        var doc = new XmlDocument();
+
+        Assert.That(entry.ToXmlExport(doc).OuterXml, Is.EqualTo("<InterfaceLogEntry><id>ID1</id><webSamType>ReferenceMeter</webSamType><webSamId>SID</webSamId><protocol>Tcp</protocol><endpoint>EP</endpoint><requestId>RID</requestId><outgoing>True</outgoing><sessionId>SESS</sessionId><runIdentifier>2024-05-20T03:04:05.006Z</runIdentifier><correlationId>CORR</correlationId><sequenceCounter>128</sequenceCounter><createdAt>2024-05-21T13:44:05.123Z</createdAt><payload>PAYLOAD</payload><encoding>Raw</encoding><payloadType>test</payloadType><transferException>all good</transferException></InterfaceLogEntry>"));
     }
 }

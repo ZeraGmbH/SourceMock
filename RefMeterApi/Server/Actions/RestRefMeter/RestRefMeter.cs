@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using RefMeterApi.Models;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Logging;
@@ -55,7 +55,7 @@ public class RestRefMeter(ILoggingHttpClient httpClient, ILogger<RestRefMeter> l
 
     /// <inheritdoc/>
     public Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1) =>
-        httpClient.GetAsync<MeasuredLoadpoint>(logger, new Uri(_baseUri, $"ActualValues?firstActiveCurrentPhase={JsonConvert.SerializeObject(firstActiveCurrentPhase)}"));
+        httpClient.GetAsync<MeasuredLoadpoint>(logger, new Uri(_baseUri, $"ActualValues?firstActiveCurrentPhase={JsonSerializer.Serialize(firstActiveCurrentPhase)}"));
 
     /// <inheritdoc/>
     public Task<MeasurementModes[]> GetMeasurementModes(IInterfaceLogger logger) =>

@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
@@ -94,7 +94,7 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
     public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant) =>
         (_dosageUri == null)
             ? throw new NotImplementedException("Dosage")
-            : httpDosage.GetAsync<DosageProgress>(logger, new Uri(_dosageUri, $"Progress?meterConstant={JsonConvert.SerializeObject(meterConstant)}"));
+            : httpDosage.GetAsync<DosageProgress>(logger, new Uri(_dosageUri, $"Progress?meterConstant={JsonSerializer.Serialize(meterConstant)}"));
 
     /// <inheritdoc/>
     public void Initialize(RestConfiguration? sourceEndpoint, RestConfiguration? dosageEndpoint)
@@ -151,7 +151,7 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
     {
         if (_dosageUri == null) throw new NotImplementedException("Dosage");
 
-        var res = await httpDosage.PutAsync(logger, new Uri(_dosageUri, $"Energy?energy={JsonConvert.SerializeObject(value)}&meterConstant={JsonConvert.SerializeObject(meterConstant)}"));
+        var res = await httpDosage.PutAsync(logger, new Uri(_dosageUri, $"Energy?energy={JsonSerializer.Serialize(value)}&meterConstant={JsonSerializer.Serialize(meterConstant)}"));
 
         if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
     }
@@ -161,7 +161,7 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
     {
         if (_dosageUri == null) throw new NotImplementedException("Dosage");
 
-        var res = await httpDosage.PostAsync(logger, new Uri(_dosageUri, $"DOSMode?on={JsonConvert.SerializeObject(on)}"));
+        var res = await httpDosage.PostAsync(logger, new Uri(_dosageUri, $"DOSMode?on={JsonSerializer.Serialize(on)}"));
 
         if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
     }

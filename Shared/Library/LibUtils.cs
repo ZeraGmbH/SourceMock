@@ -33,14 +33,6 @@ public static class LibUtils
     public static T DeepCopy<T>(T self) => DeepCopyAs<T>(self);
 
     /// <summary>
-    /// Retrieve the unique identifier of a user.
-    /// </summary>
-    /// <param name="user">User Information as provided by the runtime.</param>
-    /// <returns>User identification.</returns>
-    public static string? GetUserId(ClaimsPrincipal? user = null) =>
-        user?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-    /// <summary>
     /// Extract a scalar value from a JsonElement.
     /// </summary>
     /// <param name="json">As parsed with the System.Text.Json library.</param>

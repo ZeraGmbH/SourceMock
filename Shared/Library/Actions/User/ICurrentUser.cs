@@ -25,9 +25,10 @@ public interface ICurrentUser
 public static class ICurrentUserExtensions
 {
     /// <summary>
-    /// 
+    /// Get the user identification of a user instance.
     /// </summary>
-    /// <param name="user"></param>
-    /// <returns></returns>
-    public static string GetUserId(this ICurrentUser user) => LibUtils.GetUserId(user?.User) ?? "anonymous";
+    /// <param name="user">Some user instance.</param>
+    /// <returns>Value of the name identifier claim.</returns>
+    public static string GetUserId(this ICurrentUser user)
+        => user?.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
 }

@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using RefMeterApi.Models;
 
 namespace RefMeterApi.Actions.Device;

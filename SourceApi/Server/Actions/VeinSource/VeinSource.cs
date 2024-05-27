@@ -1,4 +1,3 @@
-using System.Net;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using SharedLibrary.Models.Logging;
@@ -66,9 +65,6 @@ namespace SourceApi.Actions.VeinSource
             JObject veinRequest = VeinLoadpointMapper.ConvertToZeraJson(loadpoint);
 
             _logger.LogInformation(veinRequest.ToString());
-
-            HttpStatusCode veinStatusCode = _veinClient.SetLoadpoint(veinRequest.ToString());
-
 
             return Task.FromResult(SourceApiErrorCodes.SUCCESS);
         }

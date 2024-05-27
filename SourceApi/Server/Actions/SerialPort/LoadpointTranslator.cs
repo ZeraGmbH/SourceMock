@@ -1,5 +1,4 @@
 using System.Text;
-using Newtonsoft.Json;
 using SerialPortProxy;
 
 using SourceApi.Model;

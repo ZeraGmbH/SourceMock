@@ -98,8 +98,10 @@ public static class SourceApiConfiguration
                     throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
             }
 
-        services.AddSingleton<ISerialPortConnectionFactory>((ctx) =>
+        services.AddKeyedSingleton<ISerialPortConnectionFactory>("MeterTestSystem", (ctx, key) =>
         {
+            if (!"MeterTestSystem".Equals(key)) throw new ArgumentException("wrong service key", nameof(key));
+
             var factory = new SerialPortConnectionFactory(ctx, ctx.GetRequiredService<ILogger<SerialPortConnectionFactory>>());
 
             if (useDatabase) return factory;

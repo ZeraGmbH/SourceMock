@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions.Device;
 using SerialPortProxy;
@@ -60,7 +61,7 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     /// <param name="errorCalculator">The error calculator of this metering system.</param>
     /// <param name="logger">Logging service for this device type.</param>
     /// <param name="source">Source to use to access the metering system.</param>
-    public SerialPortMTMeterTestSystem(ISerialPortConnection device, ISerialPortMTRefMeter refMeter, ISerialPortMTErrorCalculator errorCalculator, ILogger<SerialPortMTMeterTestSystem> logger, ISerialPortMTSource source)
+    public SerialPortMTMeterTestSystem([FromKeyedServices("MeterTestSystem")] ISerialPortConnection device, ISerialPortMTRefMeter refMeter, ISerialPortMTErrorCalculator errorCalculator, ILogger<SerialPortMTMeterTestSystem> logger, ISerialPortMTSource source)
     {
         RefMeter = refMeter;
         Source = source;

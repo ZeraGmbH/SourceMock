@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Actions.MeterConstant;
 using RefMeterApi.Exceptions;
 using RefMeterApi.Models;
@@ -30,7 +31,7 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
     /// <param name="meterConstant">Algorithm to calculate the meter constant.</param>
-    public SerialPortFGRefMeter(ISerialPortConnection device, IMeterConstantCalculator meterConstant)
+    public SerialPortFGRefMeter([FromKeyedServices("MeterTestSystem")] ISerialPortConnection device, IMeterConstantCalculator meterConstant)
     {
         _device = device.CreateExecutor(InterfaceLogSourceTypes.ReferenceMeter);
         _meterConstant = meterConstant;

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using SharedLibrary.Models.Logging;
@@ -29,7 +30,7 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, I
     /// <param name="device">Access to the serial port.</param>
     /// <param name="capabilities">Static capabilities lookup table.</param>
     /// <param name="validator">Validate loadpoint against device capabilities.</param>
-    public SerialPortMTSource(ILogger<SerialPortMTSource> logger, ISerialPortConnection device, ICapabilitiesMap capabilities, ISourceCapabilityValidator validator) : base(logger, device, capabilities, validator)
+    public SerialPortMTSource(ILogger<SerialPortMTSource> logger, [FromKeyedServices("MeterTestSystem")] ISerialPortConnection device, ICapabilitiesMap capabilities, ISourceCapabilityValidator validator) : base(logger, device, capabilities, validator)
     {
     }
 

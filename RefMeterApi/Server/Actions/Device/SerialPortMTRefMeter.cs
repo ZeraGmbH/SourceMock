@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using SharedLibrary.Models.Logging;
@@ -32,7 +33,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     /// </summary>
     /// <param name="device">Service to access the current serial port.</param>
     /// <param name="logger">Logging service for this device type.</param>
-    public SerialPortMTRefMeter(ISerialPortConnection device, ILogger<SerialPortMTRefMeter> logger)
+    public SerialPortMTRefMeter([FromKeyedServices("MeterTestSystem")] ISerialPortConnection device, ILogger<SerialPortMTRefMeter> logger)
     {
         _logger = logger;
 

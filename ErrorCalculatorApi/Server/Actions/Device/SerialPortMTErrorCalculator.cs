@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using ErrorCalculatorApi.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using SharedLibrary.Models.Logging;
@@ -21,7 +22,7 @@ public interface ISerialPortMTErrorCalculator : IErrorCalculator
 /// </remarks>
 /// <param name="device">Service to access the current serial port.</param>
 /// <param name="logger">Logging service for this device type.</param>
-public partial class SerialPortMTErrorCalculator(ISerialPortConnection device, ILogger<SerialPortMTErrorCalculator> logger) : ISerialPortMTErrorCalculator
+public partial class SerialPortMTErrorCalculator([FromKeyedServices("MeterTestSystem")] ISerialPortConnection device, ILogger<SerialPortMTErrorCalculator> logger) : ISerialPortMTErrorCalculator
 {
     /// <summary>
     /// Detect model name and version number.

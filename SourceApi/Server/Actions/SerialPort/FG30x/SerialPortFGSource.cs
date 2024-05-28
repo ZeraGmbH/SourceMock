@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using SharedLibrary.Models.Logging;
@@ -48,7 +49,7 @@ public partial class SerialPortFGSource : CommonSource<FGLoadpointTranslator>, I
     /// <param name="device"></param>
     /// <param name="capabilities"></param>
     /// <param name="validator"></param>
-    public SerialPortFGSource(ILogger<SerialPortFGSource> logger, ISerialPortConnection device, ICapabilitiesMap capabilities, ISourceCapabilityValidator validator) : base(logger, device, capabilities, validator)
+    public SerialPortFGSource(ILogger<SerialPortFGSource> logger, [FromKeyedServices("MeterTestSystem")] ISerialPortConnection device, ICapabilitiesMap capabilities, ISourceCapabilityValidator validator) : base(logger, device, capabilities, validator)
     {
     }
 

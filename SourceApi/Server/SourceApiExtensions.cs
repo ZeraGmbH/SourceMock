@@ -129,6 +129,6 @@ public static class SourceApiConfiguration
             return factory;
         });
 
-        services.AddTransient(ctx => ctx.GetRequiredService<ISerialPortConnectionFactory>().Connection);
+        services.AddTransient(ctx => ctx.GetRequiredKeyedService<ISerialPortConnectionFactory>("MeterTestSystem").Connection);
     }
 }

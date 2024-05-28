@@ -99,7 +99,7 @@ public abstract class DatabaseTestCore
 
         Services = EnforceServiceScope
             ? services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true })
-            : services.BuildServiceProvider();
+            : services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true });
 
         await OnPostSetup();
     }

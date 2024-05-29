@@ -94,12 +94,12 @@ public class InterfaceLogEntry : IDatabaseObject
     public static InterfaceLogEntry FromExport(JsonNode exported)
     {
         /* Reconstruct objects from flat row. */
-        var entry = exported.Deserialize<InterfaceLogEntry>(LibUtils.JsonSettings)!;
+        var entry = exported.DefaultDeserialize<InterfaceLogEntry>()!;
 
-        entry.Connection = exported.Deserialize<InterfaceLogEntryConnection>(LibUtils.JsonSettings)!;
-        entry.Info = exported.Deserialize<InterfaceLogEntryInfo>(LibUtils.JsonSettings)!;
-        entry.Message = exported.Deserialize<InterfaceLogPayload>(LibUtils.JsonSettings)!;
-        entry.Scope = exported.Deserialize<InterfaceLogEntryScope>(LibUtils.JsonSettings)!;
+        entry.Connection = exported.DefaultDeserialize<InterfaceLogEntryConnection>()!;
+        entry.Info = exported.DefaultDeserialize<InterfaceLogEntryInfo>()!;
+        entry.Message = exported.DefaultDeserialize<InterfaceLogPayload>()!;
+        entry.Scope = exported.DefaultDeserialize<InterfaceLogEntryScope>()!;
 
         if (entry.Message.IsEmpty) entry.Message = null!;
 

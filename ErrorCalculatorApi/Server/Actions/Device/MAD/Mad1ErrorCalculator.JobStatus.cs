@@ -68,16 +68,20 @@ partial class Mad1ErrorCalculator
       _jobId = null;
 
       reply.Progress = 100d;
+      reply.CountsAreEnergy = false;
+
+      var refCounts = errorValues?.SelectSingleNode("lastSeenRefCounts")?.InnerText;
+      if (!string.IsNullOrEmpty(refCounts)) reply.ReferenceCountsOrEnergy = long.Parse(refCounts);
+
+      var meterCounts = errorValues?.SelectSingleNode("lastSeenMeterCounts")?.InnerText;
+      if (!string.IsNullOrEmpty(meterCounts)) reply.MeterCountsOrEnergy = long.Parse(meterCounts);
     }
     else
     {
-      var seen = errorValues?.SelectSingleNode("actSeenCounts");
+      var seen = errorValues?.SelectSingleNode("actSeenCounts")?.InnerText;
 
       /* [TODO] add support for 0x HEX response. */
-      var impulses =
-        string.IsNullOrEmpty(seen?.InnerText)
-        ? (long?)null
-        : long.Parse(seen.InnerText);
+      var impulses = string.IsNullOrEmpty(seen) ? (long?)null : long.Parse(seen);
 
       if (impulses != null && _dutImpules != null)
         reply.Progress = impulses * 100.0d / _dutImpules;

@@ -23,6 +23,11 @@ partial class SerialPortMTErrorCalculator
     /// </summary>
     private static readonly Regex MatchErrorStatus3 = new(@"^([^;]+);([^;]+)$");
 
+    /// <summary>
+    /// Total energy to be sent in the current operation.
+    /// </summary>
+    private double? _totalEnergy;
+
     /// <inheritdoc/>
     public Task AbortErrorMeasurement(IInterfaceLogger logger) => _device.Execute(logger, SerialPortRequest.Create("AEE", "AEEACK"))[0];
 
@@ -48,7 +53,7 @@ partial class SerialPortMTErrorCalculator
 
                 if (!match.Success)
                 {
-                    _logger.LogWarning($"Got unrecognized status line {reply} while waiting for status.");
+                    _logger.LogWarning("Got unrecognized status line {Reply} while waiting for status.", reply);
 
                     continue;
                 }
@@ -76,7 +81,7 @@ partial class SerialPortMTErrorCalculator
 
                 if (!match.Success)
                 {
-                    _logger.LogWarning($"Got unrecognized status line {reply} while waiting for result.");
+                    _logger.LogWarning("Got unrecognized status line {Reply} while waiting for result.", reply);
 
                     continue;
                 }
@@ -98,7 +103,7 @@ partial class SerialPortMTErrorCalculator
                 }
                 catch (Exception e)
                 {
-                    _logger.LogWarning($"Unable to parse error from {reply}: {e.Message}");
+                    _logger.LogWarning("Unable to parse error from {Reply}: {Exception}", reply, e.Message);
 
                     gotError = false;
                 }
@@ -110,7 +115,7 @@ partial class SerialPortMTErrorCalculator
 
                 if (!match.Success)
                 {
-                    _logger.LogWarning($"Got unrecognized status line {reply} while waiting for progress.");
+                    _logger.LogWarning("Got unrecognized status line {Reply} while waiting for progress.", reply);
 
                     continue;
                 }
@@ -127,15 +132,20 @@ partial class SerialPortMTErrorCalculator
                     if (double.IsNaN(energy) || double.IsInfinity(energy))
                         continue;
 
-
                     result.Progress = progress;
                     result.Energy = energy;
+
+                    result.CountsAreEnergy = true;
+                    result.ReferenceCountsOrEnergy = energy;
+
+                    var totalEnergy = _totalEnergy.GetValueOrDefault(-1);
+                    if (totalEnergy >= 0) result.MeterCountsOrEnergy = progress * totalEnergy / 100d;
 
                     return result;
                 }
                 catch (Exception e)
                 {
-                    _logger.LogWarning($"Unable to parse progress from {reply}: {e.Message}");
+                    _logger.LogWarning("Unable to parse progress from {Reply}: {Exception}", reply, e.Message);
 
                     continue;
                 }
@@ -152,7 +162,7 @@ partial class SerialPortMTErrorCalculator
 
         if (powMeter > 10)
         {
-            _logger.LogDebug($"Invalid meter constant {dutMeterConstant}");
+            _logger.LogDebug("Invalid meter constant {MeterConstant}", dutMeterConstant);
 
             throw new ArgumentOutOfRangeException(nameof(dutMeterConstant));
         }
@@ -162,10 +172,13 @@ partial class SerialPortMTErrorCalculator
 
         if (powImpulses > 5)
         {
-            _logger.LogDebug($"Invalid number of impluses {impulses}");
+            _logger.LogDebug("Invalid number of impluses {Impulses}", impulses);
 
             throw new ArgumentOutOfRangeException(nameof(impulses));
         }
+
+        /* Remember the total energy that we will sent. */
+        _totalEnergy = 1000d * impulses / dutMeterConstant;
 
         /* Now we can send the resulting texts and power factors to the device. */
         return _device.Execute(logger, SerialPortRequest.Create($"AEP{rawMeter};{powMeter:00};{rawImpulses};{powImpulses}", "AEPACK"))[0];
@@ -183,7 +196,7 @@ partial class SerialPortMTErrorCalculator
     {
         if (number <= 0)
         {
-            _logger.LogWarning($"Number {number} must be positive");
+            _logger.LogWarning("Number {Number} must be positive", number);
 
             throw new ArgumentOutOfRangeException(nameof(number));
         }
@@ -193,7 +206,7 @@ partial class SerialPortMTErrorCalculator
 
         if (asString.Length > limit)
         {
-            _logger.LogDebug($"Number {number} too large");
+            _logger.LogDebug("Number {Number} too large", number);
 
             throw new ArgumentOutOfRangeException(nameof(number));
         }
@@ -214,7 +227,7 @@ partial class SerialPortMTErrorCalculator
 
         if (asString.Length > limit)
         {
-            _logger.LogDebug($"Number {number} too large");
+            _logger.LogDebug("Number {Number} too large", number);
 
             throw new ArgumentOutOfRangeException(nameof(number));
         }

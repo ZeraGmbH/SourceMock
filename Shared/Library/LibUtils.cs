@@ -49,6 +49,22 @@ public static class LibUtils
         };
 
     /// <summary>
+    /// Extract a scalar value from a JsonElement.
+    /// </summary>
+    /// <param name="json">As parsed with the System.Text.Json library.</param>
+    /// <returns>The value.</returns>
+    public static object? ToJsonScalar(this JsonNode json)
+        => json.GetValueKind() switch
+        {
+            JsonValueKind.False => false,
+            JsonValueKind.Null => null,
+            JsonValueKind.Number => json.Deserialize<double>(),
+            JsonValueKind.String => json.Deserialize<string>(),
+            JsonValueKind.True => true,
+            _ => json,
+        };
+
+    /// <summary>
     /// Deserialize a JSON element to an instance.
     /// </summary>
     /// <typeparam name="T">Type of the instance.</typeparam>

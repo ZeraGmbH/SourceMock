@@ -64,7 +64,7 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
         /* Total energy consumed in kWh and store to status. */
         var energy = hoursElapsed * _totalPower;
 
-        _status.Energy = 1000d * energy;
+        _status.ReferenceCountsOrEnergy = 1000d * energy;
 
         /* Get the number of pulses and from this the progress. */
         var measuredImpulses = (long)(_meterConstant * energy);
@@ -74,7 +74,7 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
             /* In mock never report more than requested - even if time has run out. */
             measuredImpulses = _totalImpulses;
 
-            _status.Energy = 1000d * _totalImpulses / _meterConstant;
+            _status.ReferenceCountsOrEnergy = 1000d * _totalImpulses / _meterConstant;
         }
 
         _status.Progress = 100d * measuredImpulses / _totalImpulses;
@@ -96,9 +96,11 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
         /* Report copy - never give access to internal structures. */
         return Task.FromResult(new ErrorMeasurementStatus
         {
-            Energy = _status.Energy,
+            CountsAreEnergy = true,
             ErrorValue = _status.ErrorValue,
+            MeterCountsOrEnergy = _status.ReferenceCountsOrEnergy,
             Progress = _status.Progress,
+            ReferenceCountsOrEnergy = _status.ReferenceCountsOrEnergy,
             State = _status.State,
         });
     }

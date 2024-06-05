@@ -133,7 +133,6 @@ partial class SerialPortMTErrorCalculator
                         continue;
 
                     result.Progress = progress;
-                    result.Energy = energy;
 
                     result.CountsAreEnergy = true;
                     result.ReferenceCountsOrEnergy = energy;

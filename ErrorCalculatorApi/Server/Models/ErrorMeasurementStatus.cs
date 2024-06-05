@@ -25,24 +25,19 @@ public class ErrorMeasurementStatus
     public double? Progress { get; set; }
 
     /// <summary>
-    /// Current energy in W - if known.
-    /// </summary>
-    public double? Energy { get; set; }
-
-    /// <summary>
-    /// Energy from the reference meter - either as wnergy (Wh)
+    /// Energy from the reference meter - either as energy (Wh)
     /// or as a number of impulses.
     /// </summary>
     public double? ReferenceCountsOrEnergy { get; set; }
 
     /// <summary>
-    /// Energy seen by the device under test - either as wnergy (Wh)
+    /// Energy seen by the device under test - either as energy (Wh)
     /// or as a number of impulses.
     /// </summary>
     public double? MeterCountsOrEnergy { get; set; }
 
     /// <summary>
-    /// Set if the counts are in energy, unset for imulses.
+    /// Set if the counts are in energy, unset for impulses.
     /// </summary>
     public bool? CountsAreEnergy { get; set; }
 }

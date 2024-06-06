@@ -88,4 +88,7 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
 
         _dutImpules = dut;
     }
+
+    /* [TODO] add support for 0x HEX response. */
+    private static long ParseLong(string number) => long.Parse(number);
 }

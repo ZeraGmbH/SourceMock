@@ -108,7 +108,7 @@ public class ErrorMeasurementTests
         Assert.Multiple(() =>
         {
             Assert.That(status.State, Is.EqualTo(ErrorMeasurementStates.NotActive));
-            Assert.That(status.ReferenceCountsOrEnergy, Is.Null);
+            Assert.That(status.ReferenceCounts, Is.Null);
             Assert.That(status.Progress, Is.Null);
             Assert.That(status.ErrorValue, Is.Null);
         });
@@ -123,7 +123,7 @@ public class ErrorMeasurementTests
             Assert.That(status.State, Is.EqualTo(ErrorMeasurementStates.NotActive));
             Assert.That(status.ErrorValue, Is.Null);
             Assert.That(status.Progress, Is.EqualTo(0d));
-            Assert.That(status.ReferenceCountsOrEnergy, Is.EqualTo(0d));
+            Assert.That(status.ReferenceCounts, Is.Null);
         });
 
         _port.StatusResponse = ["11", "--.--", "0.000000;0.000000"];
@@ -136,7 +136,7 @@ public class ErrorMeasurementTests
             Assert.That(status.State, Is.EqualTo(ErrorMeasurementStates.Active));
             Assert.That(status.ErrorValue, Is.Null);
             Assert.That(status.Progress, Is.EqualTo(0d));
-            Assert.That(status.ReferenceCountsOrEnergy, Is.EqualTo(0d));
+            Assert.That(status.ReferenceCounts, Is.Null);
         });
 
         _port.StatusResponse = ["12", "--.--", "51.234112;912.38433"];
@@ -149,7 +149,7 @@ public class ErrorMeasurementTests
             Assert.That(status.State, Is.EqualTo(ErrorMeasurementStates.Running));
             Assert.That(status.ErrorValue, Is.Null);
             Assert.That(status.Progress, Is.EqualTo(51.234112d));
-            Assert.That(status.ReferenceCountsOrEnergy, Is.EqualTo(912.38433d));
+            Assert.That(status.ReferenceCounts, Is.Null);
         });
 
         _port.StatusResponse = ["13", "0.5", "51.234112;912.38433"];
@@ -162,7 +162,7 @@ public class ErrorMeasurementTests
             Assert.That(status.State, Is.EqualTo(ErrorMeasurementStates.Finished));
             Assert.That(status.ErrorValue, Is.EqualTo(0.5d));
             Assert.That(status.Progress, Is.EqualTo(51.234112d));
-            Assert.That(status.ReferenceCountsOrEnergy, Is.EqualTo(912.38433d));
+            Assert.That(status.ReferenceCounts, Is.Null);
         });
 
         _port.StatusResponse = ["13", "-0.2", "51.234112;912.38433"];
@@ -175,7 +175,7 @@ public class ErrorMeasurementTests
             Assert.That(status.State, Is.EqualTo(ErrorMeasurementStates.Finished));
             Assert.That(status.ErrorValue, Is.EqualTo(-0.2d));
             Assert.That(status.Progress, Is.EqualTo(51.234112d));
-            Assert.That(status.ReferenceCountsOrEnergy, Is.EqualTo(912.38433d));
+            Assert.That(status.ReferenceCounts, Is.Null);
         });
 
         _port.StatusResponse = ["03", "-.2", "51.234112;912.38433"];
@@ -188,7 +188,7 @@ public class ErrorMeasurementTests
             Assert.That(status.State, Is.EqualTo(ErrorMeasurementStates.Finished));
             Assert.That(status.ErrorValue, Is.EqualTo(-0.2d));
             Assert.That(status.Progress, Is.EqualTo(51.234112d));
-            Assert.That(status.ReferenceCountsOrEnergy, Is.EqualTo(912.38433d));
+            Assert.That(status.ReferenceCounts, Is.Null);
         });
     }
 

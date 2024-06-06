@@ -75,8 +75,6 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
         }
 
         _status.Progress = 100d * measuredImpulses / _totalImpulses;
-        _status.ReferenceCountsOrEnergy = 1000d * measuredImpulses / _meterConstant;
-        _status.MeterCountsOrEnergy = _status.ReferenceCountsOrEnergy;
 
         /* Check for end of measurement. */
         if (_status.Progress >= 100)
@@ -95,11 +93,8 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
         /* Report copy - never give access to internal structures. */
         return Task.FromResult(new ErrorMeasurementStatus
         {
-            CountsAreEnergy = true,
             ErrorValue = _status.ErrorValue,
-            MeterCountsOrEnergy = _status.MeterCountsOrEnergy,
             Progress = _status.Progress,
-            ReferenceCountsOrEnergy = _status.ReferenceCountsOrEnergy,
             State = _status.State,
         });
     }

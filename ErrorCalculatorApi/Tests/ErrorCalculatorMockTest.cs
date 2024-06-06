@@ -72,7 +72,7 @@ public class ErrorCalculatorMockTest
         {
             Assert.That(result.State, Is.EqualTo(ErrorMeasurementStates.Running));
             Assert.That(result.ErrorValue, Is.Null);
-            Assert.That(result.ReferenceCountsOrEnergy, Is.GreaterThan(0));
+            Assert.That(result.ReferenceCounts, Is.Null);
         });
 
         /* 1.5s delay generates 27.5W. */
@@ -84,7 +84,7 @@ public class ErrorCalculatorMockTest
         {
             Assert.That(result.State, Is.EqualTo(ErrorMeasurementStates.Finished));
             Assert.That(result.ErrorValue, Is.GreaterThanOrEqualTo(-5).And.LessThanOrEqualTo(+7));
-            Assert.That(result.ReferenceCountsOrEnergy, Is.EqualTo(20));
+            Assert.That(result.ReferenceCounts, Is.Null);
         });
     }
 
@@ -107,7 +107,7 @@ public class ErrorCalculatorMockTest
         {
             Assert.That(result.State, Is.EqualTo(ErrorMeasurementStates.Running));
             Assert.That(error, Is.GreaterThanOrEqualTo(-5).And.LessThanOrEqualTo(+7));
-            Assert.That(result.ReferenceCountsOrEnergy, Is.EqualTo(20));
+            Assert.That(result.ReferenceCounts, Is.Null);
         });
 
         Thread.Sleep(100);

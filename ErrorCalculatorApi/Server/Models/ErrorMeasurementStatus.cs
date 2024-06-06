@@ -25,19 +25,12 @@ public class ErrorMeasurementStatus
     public double? Progress { get; set; }
 
     /// <summary>
-    /// Energy from the reference meter - either as energy (Wh)
-    /// or as a number of impulses.
+    /// Number of reference impulses for the last error measurement.
     /// </summary>
-    public double? ReferenceCountsOrEnergy { get; set; }
+    public double? ReferenceCounts { get; set; }
 
     /// <summary>
-    /// Energy seen by the device under test - either as energy (Wh)
-    /// or as a number of impulses.
+    /// Number of meter impulses for the last error measurement.
     /// </summary>
-    public double? MeterCountsOrEnergy { get; set; }
-
-    /// <summary>
-    /// Set if the counts are in energy, unset for impulses.
-    /// </summary>
-    public bool? CountsAreEnergy { get; set; }
+    public double? MeterCounts { get; set; }
 }

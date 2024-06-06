@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging;
@@ -133,12 +134,6 @@ partial class SerialPortMTErrorCalculator
                         continue;
 
                     result.Progress = progress;
-
-                    result.CountsAreEnergy = true;
-                    result.ReferenceCountsOrEnergy = energy;
-
-                    var totalEnergy = _totalEnergy.GetValueOrDefault(-1);
-                    if (totalEnergy >= 0) result.MeterCountsOrEnergy = progress * totalEnergy / 100d;
 
                     return result;
                 }

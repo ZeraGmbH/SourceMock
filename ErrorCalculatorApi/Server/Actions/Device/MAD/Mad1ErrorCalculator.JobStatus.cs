@@ -55,12 +55,14 @@ partial class Mad1ErrorCalculator
     var error = errorValues?.SelectSingleNode("lastDeviationRaw");
 
     if (!string.IsNullOrEmpty(error?.InnerText))
-    {
-      /* [TODO] add support for 0x HEX response. */
-      var rawValue = long.Parse(error.InnerText);
+      reply.ErrorValue = ParseLong(error.InnerText) / 10000d;
 
-      reply.ErrorValue = rawValue / 10000d;
-    }
+    /* Report counters. */
+    var refCounts = errorValues?.SelectSingleNode("lastSeenRefCounts")?.InnerText;
+    if (!string.IsNullOrEmpty(refCounts)) reply.ReferenceCounts = ParseLong(refCounts);
+
+    var meterCounts = errorValues?.SelectSingleNode("lastSeenMeterCounts")?.InnerText;
+    if (!string.IsNullOrEmpty(meterCounts)) reply.MeterCounts = ParseLong(meterCounts);
 
     /* Set the progress. */
     if (status != "running")
@@ -68,20 +70,11 @@ partial class Mad1ErrorCalculator
       _jobId = null;
 
       reply.Progress = 100d;
-      reply.CountsAreEnergy = false;
-
-      var refCounts = errorValues?.SelectSingleNode("lastSeenRefCounts")?.InnerText;
-      if (!string.IsNullOrEmpty(refCounts)) reply.ReferenceCountsOrEnergy = long.Parse(refCounts);
-
-      var meterCounts = errorValues?.SelectSingleNode("lastSeenMeterCounts")?.InnerText;
-      if (!string.IsNullOrEmpty(meterCounts)) reply.MeterCountsOrEnergy = long.Parse(meterCounts);
     }
     else
     {
       var seen = errorValues?.SelectSingleNode("actSeenCounts")?.InnerText;
-
-      /* [TODO] add support for 0x HEX response. */
-      var impulses = string.IsNullOrEmpty(seen) ? (long?)null : long.Parse(seen);
+      var impulses = string.IsNullOrEmpty(seen) ? (long?)null : ParseLong(seen);
 
       if (impulses != null && _dutImpules != null)
         reply.Progress = impulses * 100.0d / _dutImpules;

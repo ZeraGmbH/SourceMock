@@ -74,7 +74,7 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
             /* In mock never report more than requested - even if time has run out. */
             measuredImpulses = _totalImpulses;
 
-            _status.ReferenceCountsOrEnergy = 1000d * _totalImpulses / _meterConstant;
+            _status.MeterCountsOrEnergy = 1000d * _totalImpulses / _meterConstant;
         }
 
         _status.Progress = 100d * measuredImpulses / _totalImpulses;
@@ -98,7 +98,7 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
         {
             CountsAreEnergy = true,
             ErrorValue = _status.ErrorValue,
-            MeterCountsOrEnergy = _status.ReferenceCountsOrEnergy,
+            MeterCountsOrEnergy = _status.MeterCountsOrEnergy,
             Progress = _status.Progress,
             ReferenceCountsOrEnergy = _status.ReferenceCountsOrEnergy,
             State = _status.State,

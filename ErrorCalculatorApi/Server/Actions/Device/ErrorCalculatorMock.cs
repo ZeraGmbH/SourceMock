@@ -64,7 +64,6 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
         /* Total energy consumed in kWh and store to status. */
         var energy = hoursElapsed * _totalPower;
 
-        _status.ReferenceCountsOrEnergy = 1000d * energy;
 
         /* Get the number of pulses and from this the progress. */
         var measuredImpulses = (long)(_meterConstant * energy);
@@ -76,7 +75,8 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
         }
 
         _status.Progress = 100d * measuredImpulses / _totalImpulses;
-        _status.MeterCountsOrEnergy = 1000d * measuredImpulses / _meterConstant;
+        _status.ReferenceCountsOrEnergy = 1000d * measuredImpulses / _meterConstant;
+        _status.MeterCountsOrEnergy = _status.ReferenceCountsOrEnergy;
 
         /* Check for end of measurement. */
         if (_status.Progress >= 100)

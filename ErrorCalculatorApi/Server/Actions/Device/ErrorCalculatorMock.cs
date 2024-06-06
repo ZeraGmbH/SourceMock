@@ -73,11 +73,10 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
         {
             /* In mock never report more than requested - even if time has run out. */
             measuredImpulses = _totalImpulses;
-
-            _status.MeterCountsOrEnergy = 1000d * _totalImpulses / _meterConstant;
         }
 
         _status.Progress = 100d * measuredImpulses / _totalImpulses;
+        _status.MeterCountsOrEnergy = 1000d * measuredImpulses / _meterConstant;
 
         /* Check for end of measurement. */
         if (_status.Progress >= 100)

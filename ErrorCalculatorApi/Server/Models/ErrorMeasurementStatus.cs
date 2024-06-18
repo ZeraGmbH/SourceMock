@@ -27,10 +27,10 @@ public class ErrorMeasurementStatus
     /// <summary>
     /// Number of reference impulses for the last error measurement.
     /// </summary>
-    public double? ReferenceCounts { get; set; }
+    public long? ReferenceCounts { get; set; }
 
     /// <summary>
     /// Number of meter impulses for the last error measurement.
     /// </summary>
-    public double? MeterCounts { get; set; }
+    public long? MeterCounts { get; set; }
 }

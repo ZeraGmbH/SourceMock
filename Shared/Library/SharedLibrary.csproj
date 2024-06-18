@@ -19,7 +19,7 @@
     <PackageReference Include="MongoDB.Driver" Version="2.26.0" />
     <PackageReference Include="MongoDB.Driver.GridFS" Version="2.26.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.6.2" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.6.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.6.0" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Models/Logging/interface-log-entry-export-schema.json" Link="interface-log-entry-export-schema.json" CopyToOutputDirectory="PreserveNewest" />

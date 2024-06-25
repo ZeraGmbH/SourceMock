@@ -41,7 +41,7 @@ namespace SourceApi.Model
                 /* Check first active phase - prefer the case wehere voltage and current are on..*/
                 var phase =
                     phases.FirstOrDefault(p => p.Voltage?.On == true && p.Current?.On == true) ??
-                    phases.FirstOrDefault(p => p.Current?.On == true);
+                    phases.FirstOrDefault(p => p.Voltage?.On == true || p.Current?.On == true);
 
                 if (phase == null) return null;
 

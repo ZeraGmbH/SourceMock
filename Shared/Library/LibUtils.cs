@@ -1,3 +1,4 @@
+using System.Dynamic;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using SharedLibrary.DomainSpecific;
@@ -81,4 +82,12 @@ public static class LibUtils
     /// <param name="element">Element to deserialize.</param>
     /// <returns>Instance - may be null if JSON element represents null.</returns>
     public static T? DefaultDeserialize<T>(this JsonElement element) => JsonSerializer.Deserialize<T>(element, JsonSettings);
+
+    /// <summary>
+    /// Deserialize a dynamic object to an instance.
+    /// </summary>
+    /// <typeparam name="T">Type of the instance.</typeparam>
+    /// <param name="obj">Element to deserialize.</param>
+    /// <returns>Instance - may be null if the object is null.</returns>
+    public static T? DefaultDeserialize<T>(this ExpandoObject obj) => JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(obj, JsonSettings), JsonSettings);
 }

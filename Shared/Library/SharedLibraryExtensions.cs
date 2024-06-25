@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SharedLibrary.Actions;
 using SharedLibrary.Actions.Database;
 using SharedLibrary.Actions.User;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.ExceptionHandling;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Logging;
@@ -78,8 +79,18 @@ public static class SharedLibraryConfiguration
     /// <summary>
     /// 
     /// </summary>
+    public static void UseSharedLibrary(this IMvcBuilder builder)
+    {
+        builder.AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new DomainSpecificNumber.Converter()));
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public static void UseSharedLibrary(this SwaggerGenOptions options)
     {
+        options.SchemaFilter<DomainSpecificNumber.Filter>();
+
         SwaggerModelExtender
             .AddType<InterfaceLogEntry>()
             .AddType<SamDatabaseError>()

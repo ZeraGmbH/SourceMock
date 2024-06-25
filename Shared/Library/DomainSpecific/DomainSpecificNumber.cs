@@ -1,6 +1,8 @@
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SharedLibrary.DomainSpecific;
 
@@ -13,6 +15,23 @@ public abstract class DomainSpecificNumber(double value)
     /// The real value is always represented as a double.
     /// </summary>
     protected readonly double Value = value;
+
+    /// <summary>
+    /// Configure API generator.
+    /// </summary>
+    public class Filter : ISchemaFilter
+    {
+        /// <summary>
+        /// All domain specific numbers will be pure JSON numbers inside the API.
+        /// </summary>
+        /// <param name="schema">Schema created so far.</param>
+        /// <param name="context">Information on the model processed.</param>
+        public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+        {
+            if (context.Type.IsAssignableTo(typeof(DomainSpecificNumber)))
+                schema.Type = "number";
+        }
+    }
 
     /// <summary>
     /// Support to convert domain specific numbers from and to JSON as pure numbers.

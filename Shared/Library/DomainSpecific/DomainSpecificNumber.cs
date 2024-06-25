@@ -64,7 +64,7 @@ public abstract class DomainSpecificNumber(double value)
         public override void Write(Utf8JsonWriter writer, DomainSpecificNumber data, JsonSerializerOptions options)
         {
             /* Read the hidden valiue. */
-            var value = (double)data.GetType().GetField("Value", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(data)!;
+            var value = (double)data.GetType().GetField(nameof(Value), BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(data)!;
 
             /* Disallow bad numbers - we ignore options here! */
             if (double.IsNaN(value) || double.IsInfinity(value)) throw new ArgumentException("no JSON representation for given number");

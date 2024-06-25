@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using SharedLibrary.DomainSpecific;
 
 namespace SharedLibrary;
 
@@ -13,7 +14,8 @@ public static class LibUtils
     /// </summary>
     public static readonly JsonSerializerOptions JsonSettings = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        Converters = { new DomainSpecificNumber.Converter() },
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
 
     /// <summary>

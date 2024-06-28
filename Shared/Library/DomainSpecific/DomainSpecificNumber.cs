@@ -17,6 +17,11 @@ public abstract class DomainSpecificNumber(double value)
     protected readonly double Value = value;
 
     /// <summary>
+    /// The natural unit of the number.
+    /// </summary>
+    public abstract string Unit { get; }
+
+    /// <summary>
     /// Configure API generator.
     /// </summary>
     public class Filter : ISchemaFilter
@@ -73,4 +78,7 @@ public abstract class DomainSpecificNumber(double value)
             writer.WriteNumberValue(value);
         }
     }
+
+    /// <inheritdoc/>
+    public override string ToString() => $"{Value}{Unit}";
 }

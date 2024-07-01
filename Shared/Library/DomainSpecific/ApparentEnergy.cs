@@ -1,31 +1,31 @@
 namespace SharedLibrary.DomainSpecific;
 
 /// <summary>
-/// Active energy (in Wh) as domain specific number.
+/// apparent energy (in VAh) as domain specific number.
 /// </summary>
-public class ActiveEnergy(double value) : DomainSpecificNumber(value)
+public class ApparentEnergy(double value) : DomainSpecificNumber(value)
 {
     /// <inheritdoc/>
-    public override string Unit => "Wh";
+    public override string Unit => "VAh";
 
     /// <summary>
     /// No energy at all.
     /// </summary>
-    public static readonly ActiveEnergy Zero = new(0);
+    public static readonly ApparentEnergy Zero = new(0);
 
     /// <summary>
     /// Only explicit casting out the pure number is allowed.
     /// </summary>
-    /// <param name="energy">Some active energy.</param>
-    public static explicit operator double(ActiveEnergy energy) => energy.Value;
+    /// <param name="energy">Some apparent energy.</param>
+    public static explicit operator double(ApparentEnergy energy) => energy.Value;
 
     /// <summary>
-    /// Add to active energies.
+    /// Add to apparent energies.
     /// </summary>
     /// <param name="left">One energy.</param>
     /// <param name="right">Another energy.</param>
-    /// <returns>New active energy instance representing the sum of the parameters.</returns>
-    public static ActiveEnergy operator +(ActiveEnergy left, ActiveEnergy right) => new(left.Value + right.Value);
+    /// <returns>New apparent energy instance representing the sum of the parameters.</returns>
+    public static ApparentEnergy operator +(ApparentEnergy left, ApparentEnergy right) => new(left.Value + right.Value);
 
     /// <summary>
     /// Scale energy by a factor.
@@ -33,7 +33,7 @@ public class ActiveEnergy(double value) : DomainSpecificNumber(value)
     /// <param name="energy">Some energy.</param>
     /// <param name="factor">Factor to apply to the energy.</param>
     /// <returns>New energy with scaled value.</returns>
-    public static ActiveEnergy operator *(ActiveEnergy energy, double factor) => new(energy.Value * factor);
+    public static ApparentEnergy operator *(ApparentEnergy energy, double factor) => new(energy.Value * factor);
 
     /// <summary>
     /// Scale energy by a factor.
@@ -41,5 +41,5 @@ public class ActiveEnergy(double value) : DomainSpecificNumber(value)
     /// <param name="energy">Some energy.</param>
     /// <param name="factor">Factor to apply to the energy.</param>
     /// <returns>New energy with scaled value.</returns>
-    public static ActiveEnergy operator *(double factor, ActiveEnergy energy) => new(factor * energy.Value);
+    public static ApparentEnergy operator *(double factor, ApparentEnergy energy) => new(factor * energy.Value);
 }

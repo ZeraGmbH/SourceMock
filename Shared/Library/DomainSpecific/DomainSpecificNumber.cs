@@ -4,23 +4,14 @@ using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
+
 namespace SharedLibrary.DomainSpecific;
 
 /// <summary>
 /// Base class for all domain specific numbers.
 /// </summary>
-public abstract class DomainSpecificNumber(double value)
+public static class DomainSpecificNumber
 {
-    /// <summary>
-    /// The real value is always represented as a double.
-    /// </summary>
-    protected readonly double Value = value;
-
-    /// <summary>
-    /// The natural unit of the number.
-    /// </summary>
-    public abstract string Unit { get; }
-
     /// <summary>
     /// Configure API generator.
     /// </summary>
@@ -33,7 +24,7 @@ public abstract class DomainSpecificNumber(double value)
         /// <param name="context">Information on the model processed.</param>
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            if (context.Type.IsAssignableTo(typeof(DomainSpecificNumber)))
+            if (context.Type.IsAssignableTo(typeof(IDomainSpecificNumber)))
                 schema.Type = "number";
         }
     }
@@ -41,14 +32,14 @@ public abstract class DomainSpecificNumber(double value)
     /// <summary>
     /// Support to convert domain specific numbers from and to JSON as pure numbers.
     /// </summary>
-    public class Converter : JsonConverter<DomainSpecificNumber>
+    public class Converter : JsonConverter<IDomainSpecificNumber>
     {
         /// <summary>
         /// Test if a specific data type represents a domain specific number.
         /// </summary>
         /// <param name="typeToConvert">Type to test.</param>
         /// <returns>Set if the type is a domain specific number.</returns>
-        public override bool CanConvert(Type typeToConvert) => typeToConvert.IsAssignableTo(typeof(DomainSpecificNumber));
+        public override bool CanConvert(Type typeToConvert) => typeToConvert.IsAssignableTo(typeof(IDomainSpecificNumber));
 
         /// <summary>
         /// Read a JSON number and make it a domain specific number.
@@ -57,8 +48,8 @@ public abstract class DomainSpecificNumber(double value)
         /// <param name="typeToConvert">Type of the number to use.</param>
         /// <param name="options">Serialisation options.</param>
         /// <returns>The reconstructed number.</returns>
-        public override DomainSpecificNumber? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            => reader.TokenType == JsonTokenType.Null ? null : (DomainSpecificNumber)Activator.CreateInstance(typeToConvert, reader.GetDouble())!;
+        public override IDomainSpecificNumber? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            => reader.TokenType == JsonTokenType.Null ? null : (IDomainSpecificNumber)Activator.CreateInstance(typeToConvert, reader.GetDouble())!;
 
         /// <summary>
         /// Serialize a domain specific number to a pure JSON number.
@@ -66,10 +57,10 @@ public abstract class DomainSpecificNumber(double value)
         /// <param name="writer">Output JSON stream.</param>
         /// <param name="data">The number to serialize.</param>
         /// <param name="options">Serialization options.</param>
-        public override void Write(Utf8JsonWriter writer, DomainSpecificNumber data, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, IDomainSpecificNumber data, JsonSerializerOptions options)
         {
             /* Read the hidden valiue. */
-            var value = (double)data.GetType().GetField(nameof(Value), BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(data)!;
+            var value = (double)data.GetType().GetField("_Value", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(data)!;
 
             /* Disallow bad numbers - we ignore options here! */
             if (double.IsNaN(value) || double.IsInfinity(value)) throw new ArgumentException("no JSON representation for given number");
@@ -78,7 +69,4 @@ public abstract class DomainSpecificNumber(double value)
             writer.WriteNumberValue(value);
         }
     }
-
-    /// <inheritdoc/>
-    public override string ToString() => $"{Value}{Unit}";
 }

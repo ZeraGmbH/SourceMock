@@ -1,12 +1,21 @@
+using System.Text.Json.Serialization;
+
+
 namespace SharedLibrary.DomainSpecific;
 
 /// <summary>
 /// Rective power (in VAr) as domain specific number.
 /// </summary>
-public class ReactivePower(double value) : DomainSpecificNumber(value)
+public readonly struct ReactivePower(double value) : IDomainSpecificNumber
 {
+    /// <summary>
+    /// The real value is always represented as a double.
+    /// </summary>
+    private readonly double _Value = value;
+
     /// <inheritdoc/>
-    public override string Unit => "VAr";
+    [JsonIgnore]
+    public readonly string Unit => "VAr";
 
     /// <summary>
     /// No power at all.
@@ -17,7 +26,7 @@ public class ReactivePower(double value) : DomainSpecificNumber(value)
     /// Only explicit casting out the pure number is allowed.
     /// </summary>
     /// <param name="power">Some active power.</param>
-    public static explicit operator double(ReactivePower power) => power.Value;
+    public static explicit operator double(ReactivePower power) => power._Value;
 
     /// <summary>
     /// Add to reactive power.
@@ -25,7 +34,7 @@ public class ReactivePower(double value) : DomainSpecificNumber(value)
     /// <param name="left">One power.</param>
     /// <param name="right">Another power.</param>
     /// <returns>New reactive power instance representing the sum of the parameters.</returns>
-    public static ReactivePower operator +(ReactivePower left, ReactivePower right) => new(left.Value + right.Value);
+    public static ReactivePower operator +(ReactivePower left, ReactivePower right) => new(left._Value + right._Value);
 
     /// <summary>
     /// Scale power by a factor.
@@ -33,7 +42,7 @@ public class ReactivePower(double value) : DomainSpecificNumber(value)
     /// <param name="power">Some power.</param>
     /// <param name="factor">Factor to apply to the power.</param>
     /// <returns>New power with scaled value.</returns>
-    public static ReactivePower operator *(ReactivePower power, double factor) => new(power.Value * factor);
+    public static ReactivePower operator *(ReactivePower power, double factor) => new(power._Value * factor);
 
     /// <summary>
     /// Scale power by a factor.
@@ -41,5 +50,5 @@ public class ReactivePower(double value) : DomainSpecificNumber(value)
     /// <param name="power">Some power.</param>
     /// <param name="factor">Factor to apply to the power.</param>
     /// <returns>New power with scaled value.</returns>
-    public static ReactivePower operator *(double factor, ReactivePower power) => new(factor * power.Value);
+    public static ReactivePower operator *(double factor, ReactivePower power) => new(factor * power._Value);
 }

@@ -1,12 +1,21 @@
+using System.Text.Json.Serialization;
+
+
 namespace SharedLibrary.DomainSpecific;
 
 /// <summary>
 /// Current (A) as domain specific number.
 /// </summary>
-public class Current(double value) : DomainSpecificNumber(value)
+public readonly struct Current(double value) : IDomainSpecificNumber
 {
+    /// <summary>
+    /// The real value is always represented as a double.
+    /// </summary>
+    private readonly double _Value = value;
+
     /// <inheritdoc/>
-    public override string Unit => "A";
+    [JsonIgnore]
+    public readonly string Unit => "A";
 
     /// <summary>
     /// No Current at all.
@@ -17,7 +26,7 @@ public class Current(double value) : DomainSpecificNumber(value)
     /// Only explicit casting out the pure number is allowed.
     /// </summary>
     /// <param name="Current">Some Current.</param>
-    public static explicit operator double(Current Current) => Current.Value;
+    public static explicit operator double(Current Current) => Current._Value;
 
     /// <summary>
     /// Add to Current.
@@ -25,7 +34,7 @@ public class Current(double value) : DomainSpecificNumber(value)
     /// <param name="left">One Current.</param>
     /// <param name="right">Another Current.</param>
     /// <returns>New Current instance representing the sum of the parameters.</returns>
-    public static Current operator +(Current left, Current right) => new(left.Value + right.Value);
+    public static Current operator +(Current left, Current right) => new(left._Value + right._Value);
 
     /// <summary>
     /// Scale Current by a factor.
@@ -33,7 +42,7 @@ public class Current(double value) : DomainSpecificNumber(value)
     /// <param name="Current">Some Current.</param>
     /// <param name="factor">Factor to apply to the Current.</param>
     /// <returns>New Current with scaled value.</returns>
-    public static Current operator *(Current Current, double factor) => new(Current.Value * factor);
+    public static Current operator *(Current Current, double factor) => new(Current._Value * factor);
 
     /// <summary>
     /// Scale Current by a factor.
@@ -41,5 +50,5 @@ public class Current(double value) : DomainSpecificNumber(value)
     /// <param name="Current">Some Current.</param>
     /// <param name="factor">Factor to apply to the Current.</param>
     /// <returns>New Current with scaled value.</returns>
-    public static Current operator *(double factor, Current Current) => new(factor * Current.Value);
+    public static Current operator *(double factor, Current Current) => new(factor * Current._Value);
 }

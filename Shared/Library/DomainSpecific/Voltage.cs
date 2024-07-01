@@ -1,12 +1,20 @@
+using System.Text.Json.Serialization;
+
 namespace SharedLibrary.DomainSpecific;
 
 /// <summary>
 /// Voltage (V) as domain specific number.
 /// </summary>
-public class Voltage(double value) : DomainSpecificNumber(value)
+public readonly struct Voltage(double value) : IDomainSpecificNumber
 {
+    /// <summary>
+    /// The real value is always represented as a double.
+    /// </summary>
+    private readonly double _Value = value;
+
     /// <inheritdoc/>
-    public override string Unit => "V";
+    [JsonIgnore]
+    public readonly string Unit => "V";
 
     /// <summary>
     /// No Voltage at all.
@@ -17,7 +25,7 @@ public class Voltage(double value) : DomainSpecificNumber(value)
     /// Only explicit casting out the pure number is allowed.
     /// </summary>
     /// <param name="Voltage">Some Voltage.</param>
-    public static explicit operator double(Voltage Voltage) => Voltage.Value;
+    public static explicit operator double(Voltage Voltage) => Voltage._Value;
 
     /// <summary>
     /// Add to Voltage.
@@ -25,7 +33,7 @@ public class Voltage(double value) : DomainSpecificNumber(value)
     /// <param name="left">One Voltage.</param>
     /// <param name="right">Another Voltage.</param>
     /// <returns>New Voltage instance representing the sum of the parameters.</returns>
-    public static Voltage operator +(Voltage left, Voltage right) => new(left.Value + right.Value);
+    public static Voltage operator +(Voltage left, Voltage right) => new(left._Value + right._Value);
 
     /// <summary>
     /// Scale Voltage by a factor.
@@ -33,7 +41,7 @@ public class Voltage(double value) : DomainSpecificNumber(value)
     /// <param name="Voltage">Some Voltage.</param>
     /// <param name="factor">Factor to apply to the Voltage.</param>
     /// <returns>New Voltage with scaled value.</returns>
-    public static Voltage operator *(Voltage Voltage, double factor) => new(Voltage.Value * factor);
+    public static Voltage operator *(Voltage Voltage, double factor) => new(Voltage._Value * factor);
 
     /// <summary>
     /// Scale Voltage by a factor.
@@ -41,5 +49,5 @@ public class Voltage(double value) : DomainSpecificNumber(value)
     /// <param name="Voltage">Some Voltage.</param>
     /// <param name="factor">Factor to apply to the Voltage.</param>
     /// <returns>New Voltage with scaled value.</returns>
-    public static Voltage operator *(double factor, Voltage Voltage) => new(factor * Voltage.Value);
+    public static Voltage operator *(double factor, Voltage Voltage) => new(factor * Voltage._Value);
 }

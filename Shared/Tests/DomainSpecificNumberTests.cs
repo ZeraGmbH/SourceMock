@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using SharedLibrary;
 using SharedLibrary.DomainSpecific;
@@ -9,9 +10,15 @@ public class DomainSpecificNumberTests
 {
     public class Combined
     {
-        public ActiveEnergy Energy1 { get; set; } = null!;
+        public ActiveEnergy Energy1 { get; set; }
 
         public ActiveEnergy? Energy2 { get; set; }
+    }
+
+    [Test]
+    public void Size_Of_Domain_Specific_Number_Is_Equal_To_Double()
+    {
+        Assert.That(Unsafe.SizeOf<ActiveEnergy>(), Is.EqualTo(sizeof(double)));
     }
 
     [TestCase(33.12, "33.12")]
@@ -41,13 +48,5 @@ public class DomainSpecificNumberTests
         Assert.That(back, Is.TypeOf<Combined>());
         Assert.That((double)back.Energy1, Is.EqualTo(-12.12));
         Assert.That(back.Energy2, Is.Null);
-    }
-
-    [Test]
-    public void Can_Deserialize_Null()
-    {
-        var back = JsonSerializer.Deserialize<ActiveEnergy>("null", LibUtils.JsonSettings);
-
-        Assert.That(back, Is.Null);
     }
 }

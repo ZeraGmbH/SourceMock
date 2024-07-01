@@ -1,12 +1,21 @@
+using System.Text.Json.Serialization;
+
+
 namespace SharedLibrary.DomainSpecific;
 
 /// <summary>
 /// Time (in s) as domain specific number.
 /// </summary>
-public class Time(double value) : DomainSpecificNumber(value)
+public readonly struct Time(double value) : IDomainSpecificNumber
 {
+    /// <summary>
+    /// The real value is always represented as a double.
+    /// </summary>
+    private readonly double _Value = value;
+
     /// <inheritdoc/>
-    public override string Unit => "s";
+    [JsonIgnore]
+    public readonly string Unit => "s";
 
     /// <summary>
     /// No time at all.
@@ -17,7 +26,7 @@ public class Time(double value) : DomainSpecificNumber(value)
     /// Only explicit casting out the pure number is allowed.
     /// </summary>
     /// <param name="time">Some active time.</param>
-    public static explicit operator double(Time time) => time.Value;
+    public static explicit operator double(Time time) => time._Value;
 
     /// <summary>
     /// Add to time.
@@ -25,7 +34,7 @@ public class Time(double value) : DomainSpecificNumber(value)
     /// <param name="left">One time.</param>
     /// <param name="right">Another time.</param>
     /// <returns>New time instance representing the sum of the parameters.</returns>
-    public static Time operator +(Time left, Time right) => new(left.Value + right.Value);
+    public static Time operator +(Time left, Time right) => new(left._Value + right._Value);
 
     /// <summary>
     /// Scale time by a factor.
@@ -33,7 +42,7 @@ public class Time(double value) : DomainSpecificNumber(value)
     /// <param name="time">Some time.</param>
     /// <param name="factor">Factor to apply to the time.</param>
     /// <returns>New time with scaled value.</returns>
-    public static Time operator *(Time time, double factor) => new(time.Value * factor);
+    public static Time operator *(Time time, double factor) => new(time._Value * factor);
 
     /// <summary>
     /// Scale time by a factor.
@@ -41,5 +50,5 @@ public class Time(double value) : DomainSpecificNumber(value)
     /// <param name="time">Some time.</param>
     /// <param name="factor">Factor to apply to the time.</param>
     /// <returns>New time with scaled value.</returns>
-    public static Time operator *(double factor, Time time) => new(factor * time.Value);
+    public static Time operator *(double factor, Time time) => new(factor * time._Value);
 }

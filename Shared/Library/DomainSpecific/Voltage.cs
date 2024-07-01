@@ -46,8 +46,17 @@ public readonly struct Voltage(double value) : IDomainSpecificNumber
     /// <summary>
     /// Scale Voltage by a factor.
     /// </summary>
-    /// <param name="Voltage">Some Voltage.</param>
+    /// <param name="voltage">Some Voltage.</param>
     /// <param name="factor">Factor to apply to the Voltage.</param>
     /// <returns>New Voltage with scaled value.</returns>
-    public static Voltage operator *(double factor, Voltage Voltage) => new(factor * Voltage._Value);
+    public static Voltage operator *(double factor, Voltage voltage) => new(factor * voltage._Value);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="current"></param>
+    /// <param name="voltage"></param>
+    /// <returns></returns>
+    public static ActivePower operator *(Voltage voltage, Current current) => new(voltage._Value * (double)current);
+
 }

@@ -47,8 +47,16 @@ public readonly struct Current(double value) : IDomainSpecificNumber
     /// <summary>
     /// Scale Current by a factor.
     /// </summary>
-    /// <param name="Current">Some Current.</param>
+    /// <param name="current">Some Current.</param>
     /// <param name="factor">Factor to apply to the Current.</param>
     /// <returns>New Current with scaled value.</returns>
-    public static Current operator *(double factor, Current Current) => new(factor * Current._Value);
+    public static Current operator *(double factor, Current current) => new(factor * current._Value);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="current"></param>
+    /// <param name="voltage"></param>
+    /// <returns></returns>
+    public static ActivePower operator *(Current current, Voltage voltage) => new(current._Value * (double)voltage);
 }

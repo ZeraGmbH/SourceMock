@@ -1,3 +1,5 @@
+using SharedLibrary.DomainSpecific;
+
 namespace SourceApi.Model;
 
 public abstract class AbstractLoadpointPhase<T> where T : ElectricalQuantity, new()
@@ -8,8 +10,8 @@ public abstract class AbstractLoadpointPhase<T> where T : ElectricalQuantity, ne
 }
 
 public abstract class AbstractLoadpointPhase<TVoltage, TCurrent>
-    where TVoltage : ElectricalVoltageQuantity, new()
-    where TCurrent : ElectricalCurrentQuantity, new()
+    where TVoltage : ElectricalQuantity<Voltage>, new()
+    where TCurrent : ElectricalQuantity<Current>, new()
 {
     public TVoltage Voltage { get; set; } = new();
 

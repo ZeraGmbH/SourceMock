@@ -1,3 +1,5 @@
+using SharedLibrary.DomainSpecific;
+
 namespace SourceApi.Model;
 
 /// <remarks>
@@ -24,8 +26,8 @@ public abstract class AbstractLoadpoint<TPhase, TQuantity>
 [Serializable]
 public abstract class AbstractLoadpoint<TPhase, TVoltage, TCurrent>
     where TPhase : AbstractLoadpointPhase<TVoltage, TCurrent>
-    where TVoltage : ElectricalVoltageQuantity, new()
-    where TCurrent : ElectricalCurrentQuantity, new()
+    where TVoltage : ElectricalQuantity<Voltage>, new()
+    where TCurrent : ElectricalQuantity<Current>, new()
 {
     /// <summary>
     /// The phases of this loadpoint.

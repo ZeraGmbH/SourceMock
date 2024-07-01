@@ -19,7 +19,7 @@ public class ActivatableElectricalQuantity : ElectricalQuantity
 ///     [1] AcComponent
 ///     [2] On
 /// </remarks>
-public class ActivatableElectricalQuantity<T> : ElectricalQuantity<T>
+public class ActivatableElectricalQuantity<T> : ElectricalQuantity<T> where T : struct
 {
     public bool On { get; set; }
 }

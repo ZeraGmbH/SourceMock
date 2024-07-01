@@ -6,6 +6,6 @@ public class TargetLoadpointPhase : AbstractLoadpointPhase<ActivatableElectrical
 {
 }
 
-public class TargetLoadpointPhaseNG : AbstractLoadpointPhase<ActivatableElectricalQuantity<Voltage>, ActivatableElectricalQuantity<Current>>
+public class TargetLoadpointPhaseNGX : AbstractLoadpointPhase<ActivatableElectricalQuantity<Voltage>, ActivatableElectricalQuantity<Current>>
 {
 }

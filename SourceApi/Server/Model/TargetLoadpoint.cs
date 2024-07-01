@@ -90,7 +90,7 @@ public class TargetLoadpoint : AbstractLoadpoint<TargetLoadpointPhase, Activatab
 ///     [2] Frequency
 /// </remarks>
 [Serializable]
-public class TargetLoadpointNG : AbstractLoadpoint<TargetLoadpointPhaseNG, ActivatableElectricalQuantity<Voltage>, ActivatableElectricalQuantity<Current>>
+public class TargetLoadpointNGX : AbstractLoadpoint<TargetLoadpointPhaseNGX, ActivatableElectricalQuantity<Voltage>, ActivatableElectricalQuantity<Current>>
 {
     /// <summary>
     /// Determines whether or not the voltages neutral conductor is to be connected.

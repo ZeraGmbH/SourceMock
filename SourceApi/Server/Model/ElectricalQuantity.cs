@@ -21,9 +21,15 @@ public class ElectricalQuantity
 ///     [0] DcComponent
 ///     [1] AcComponent
 /// </remarks>
-public class ElectricalQuantity<T>
+public class ElectricalQuantity<T> where T : struct
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public T? DcComponent { get; set; }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public ElectricalVectorQuantity<T>? AcComponent { get; set; }
 }

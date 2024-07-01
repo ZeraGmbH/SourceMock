@@ -44,7 +44,7 @@ public class ElectricalVectorQuantity
 ///     [1] Angle
 /// </remarks>
 [Serializable]
-public class ElectricalVectorQuantity<T>
+public class ElectricalVectorQuantity<T> where T : struct
 {
     private const double MINIMUM_ANGLE = 0;
     private const double MAXIMUM_ANGLE = 360;

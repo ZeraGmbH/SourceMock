@@ -5,8 +5,13 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Voltage (V) as domain specific number.
 /// </summary>
-public readonly struct Voltage(double value) : IDomainSpecificNumber
+public readonly struct Voltage(double value) : IDomainSpecificNumber, ICurrentOrVoltage
 {
+    /// <summary>
+    /// Create voltage 0.
+    /// </summary>
+    public Voltage() : this(0) { }
+
     /// <summary>
     /// The real value is always represented as a double.
     /// </summary>
@@ -15,11 +20,6 @@ public readonly struct Voltage(double value) : IDomainSpecificNumber
     /// <inheritdoc/>
     [JsonIgnore]
     public readonly string Unit => "V";
-
-    /// <summary>
-    /// No Voltage at all.
-    /// </summary>
-    public static readonly Voltage Zero = new(0);
 
     /// <summary>
     /// Only explicit casting out the pure number is allowed.

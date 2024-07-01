@@ -4,10 +4,22 @@ using System.Text.Json.Serialization;
 namespace SharedLibrary.DomainSpecific;
 
 /// <summary>
+/// 
+/// </summary>
+public interface ICurrentOrVoltage
+{
+}
+
+/// <summary>
 /// Current (A) as domain specific number.
 /// </summary>
-public readonly struct Current(double value) : IDomainSpecificNumber
+public readonly struct Current(double value) : IDomainSpecificNumber, ICurrentOrVoltage
 {
+    /// <summary>
+    /// Create current 0.
+    /// </summary>
+    public Current() : this(0) { }
+
     /// <summary>
     /// The real value is always represented as a double.
     /// </summary>
@@ -16,11 +28,6 @@ public readonly struct Current(double value) : IDomainSpecificNumber
     /// <inheritdoc/>
     [JsonIgnore]
     public readonly string Unit => "A";
-
-    /// <summary>
-    /// No Current at all.
-    /// </summary>
-    public static readonly Current Zero = new(0);
 
     /// <summary>
     /// Only explicit casting out the pure number is allowed.

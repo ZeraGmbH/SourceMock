@@ -28,6 +28,14 @@ namespace SourceApi.Actions.Source
         public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint);
 
         /// <summary>
+        /// Sets a specified loadpoint imediatly.
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="loadpoint">The loadpoint to be set.</param>
+        /// <returns>The corresponding value of <see cref="SourceApiErrorCodes"/> with regard to the success of the operation.</returns>
+        public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint);
+
+        /// <summary>
         /// Turns off the source.
         /// </summary>
         /// <returns>The corresponding value of <see cref="SourceApiErrorCodes"/> with regard to the success of the operation.</returns>

@@ -167,6 +167,12 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
     }
 
     /// <inheritdoc/>
+    public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
     public async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
         var res = await httpSource.PutAsync(logger, new Uri(_sourceUri, "Loadpoint"), loadpoint);

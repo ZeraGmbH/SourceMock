@@ -60,5 +60,5 @@ public class ElectricalVectorQuantity<T> where T : struct
     /// </summary>
     [Required]
     [Range(MINIMUM_ANGLE, MAXIMUM_ANGLE)]
-    public double Angle { get; set; }
+    public Angle Angle { get; set; }
 }

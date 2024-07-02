@@ -140,7 +140,7 @@ public class TargetLoadpointNGX : AbstractLoadpoint<TargetLoadpointPhaseNGX, Act
                 if (cComponent?.On == true && cComponent.AcComponent != null)
                 {
                     /* Use arcsin to differentiate between inductive and capacitive. */
-                    var pfRaw = Math.Sin((vComponent.AcComponent.Angle - cComponent.AcComponent.Angle) * Math.PI / 180d);
+                    var pfRaw = (vComponent.AcComponent.Angle - cComponent.AcComponent.Angle).Sin();
                     var ind = pfRaw >= 0 ? "ind" : "cap";
 
                     /* Calculate cos using Pythagoras. */

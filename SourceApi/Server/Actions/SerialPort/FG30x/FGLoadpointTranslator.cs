@@ -29,4 +29,26 @@ public class FGLoadpointTranslator : LoadpointTranslator
 
         return requests.ToArray();
     }
+
+
+    /// <summary>
+    /// Create a sequence of related serial port request from any loadpoint.
+    /// </summary>
+    /// <param name="loadpoint">Some already validated loadpoint in IEC form.</param>
+    /// <returns>Sequence of requests to send as a single transaction.</returns>
+    public override SerialPortRequest[] ToSerialPortRequestsNGX(TargetLoadpointNGX loadpoint)
+    {
+        var DINloadpoint = ConvertFromIECtoDinNGX(loadpoint);
+        var requests = new List<SerialPortRequest>();
+
+        CreateFrequencyRequestsNGX("FR", "OKFR", DINloadpoint, requests);
+
+        CreateVoltageRequestsNGX("UP", "OKUP", DINloadpoint, requests);
+
+        CreateCurrentRequestsNGX("IP", "OKIP", DINloadpoint, requests);
+
+        CreatePhaseRequestsNGX("UI", "OKUI", DINloadpoint, requests);
+
+        return requests.ToArray();
+    }
 }

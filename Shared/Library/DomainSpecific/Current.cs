@@ -66,4 +66,11 @@ public readonly struct Current(double value) : IDomainSpecificNumber, ICurrentOr
     /// <param name="voltage"></param>
     /// <returns></returns>
     public static ActivePower operator *(Current current, Voltage voltage) => new(current._Value * (double)voltage);
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public string? ToString(string format) => _Value.ToString(format);
 }

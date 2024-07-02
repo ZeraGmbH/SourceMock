@@ -60,6 +60,12 @@ namespace SourceApi.Actions.VeinSource
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
+        public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
         {
             JObject veinRequest = VeinLoadpointMapper.ConvertToZeraJson(loadpoint);

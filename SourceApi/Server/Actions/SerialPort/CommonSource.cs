@@ -67,6 +67,12 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     public virtual TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger) => Loadpoint;
 
     /// <inheritdoc/>
+    public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
     public virtual async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
         /* Always validate the loadpoint against the device capabilities. */

@@ -24,6 +24,12 @@ public abstract class SourceMock : ISourceMock
     }
 
     /// <inheritdoc/>
+    public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
     public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
         var isValid = _validator.IsValid(loadpoint, _sourceCapabilities);

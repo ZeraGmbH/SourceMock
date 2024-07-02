@@ -50,4 +50,12 @@ public readonly struct ActiveEnergy(double value) : IDomainSpecificNumber
     /// <param name="factor">Factor to apply to the energy.</param>
     /// <returns>New energy with scaled value.</returns>
     public static ActiveEnergy operator *(double factor, ActiveEnergy energy) => energy * factor;
+
+    /// <summary>
+    /// Get time from power and energy
+    /// </summary>
+    /// <param name="power">Some energy.</param>
+    /// <param name="energy">Some power.</param>
+    /// <returns>time in seconds.</returns>
+    public static Time operator /(ActiveEnergy energy, ActivePower power) => (double)power == 0 ? new() : new(energy._Value / (double)power);
 }

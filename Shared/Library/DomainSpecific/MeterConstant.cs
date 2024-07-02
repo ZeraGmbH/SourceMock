@@ -51,4 +51,21 @@ public readonly struct MeterConstant(double value) : IDomainSpecificNumber
     /// <param name="factor">Factor to apply to the MeterConstant.</param>
     /// <returns>New MeterConstant with scaled value.</returns>
     public static MeterConstant operator *(double factor, MeterConstant MeterConstant) => new(factor * MeterConstant._Value);
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="meterConstant"></param>
+    /// <param name="value"></param>
+    /// <returns>true if value is smaller, false otherwise</returns>
+    public static bool operator <=(MeterConstant meterConstant, int value) => meterConstant._Value <= value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="meterConstant"></param>
+    /// <param name="value"></param>
+    /// <returns>true if value is bigger, false otherwise</returns>
+    public static bool operator >=(MeterConstant meterConstant, int value) => meterConstant._Value >= value;
 }

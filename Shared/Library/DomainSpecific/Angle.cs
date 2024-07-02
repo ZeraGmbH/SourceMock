@@ -90,5 +90,11 @@ public readonly struct Angle(double value) : IDomainSpecificNumber
     /// 
     /// </summary>
     /// <returns></returns>
+    public double Cos() => Math.Cos(_Value) * Math.PI / 180d;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public string? ToString(string format) => _Value.ToString(format);
 }

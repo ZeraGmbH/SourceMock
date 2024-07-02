@@ -51,4 +51,12 @@ public readonly struct ActivePower(double value) : IDomainSpecificNumber
     /// <param name="factor">Factor to apply to the power.</param>
     /// <returns>New power with scaled value.</returns>
     public static ActivePower operator *(double factor, ActivePower power) => new(factor * power._Value);
+
+    /// <summary>
+    /// Divide by a factor.
+    /// </summary>
+    /// <param name="power">Some power.</param>
+    /// <param name="factor">Factor to apply to the power.</param>
+    /// <returns>New power with scaled value.</returns>
+    public static ActivePower operator /(ActivePower power, double factor) => new(power._Value / factor);
 }

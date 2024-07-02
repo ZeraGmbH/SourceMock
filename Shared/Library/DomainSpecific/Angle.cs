@@ -1,16 +1,17 @@
 using System.Text.Json.Serialization;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 
 namespace SharedLibrary.DomainSpecific;
-
-
 
 /// <summary>
 /// Angle (°) as domain specific number.
 /// </summary>
 public readonly struct Angle(double value) : IInternalDomainSpecificNumber
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    private static readonly double DegToRad = Math.PI / 180d;
+
     /// <summary>
     /// Create Angle 0.
     /// </summary>
@@ -87,13 +88,26 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber
     /// 
     /// </summary>
     /// <returns></returns>
-    public double Sin() => Math.Sin(_Value * Math.PI / 180);
+    public double Sin() => Math.Sin(ToRad());
 
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
-    public double Cos() => Math.Cos(_Value * Math.PI / 180);
+    public double Cos() => Math.Cos(ToRad());
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public double ToRad() => _Value * DegToRad;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="num"></param>
+    /// <returns></returns>
+    public static Angle Acos(double num) => new(Math.Acos(num) / DegToRad);
 
     /// <summary>
     /// 

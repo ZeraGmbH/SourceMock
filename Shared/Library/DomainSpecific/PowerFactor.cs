@@ -53,5 +53,5 @@ public readonly struct PowerFactor : IInternalDomainSpecificNumber
     /// Convert a power factor to the corresponding angle between voltage and current.
     /// </summary>
     /// <param name="powerFactor">The power factor.</param>
-    public static explicit operator Angle(PowerFactor powerFactor) => new(Math.Acos(powerFactor._Value) * 180d / Math.PI);
+    public static explicit operator Angle(PowerFactor powerFactor) => Angle.Acos(powerFactor._Value);
 }

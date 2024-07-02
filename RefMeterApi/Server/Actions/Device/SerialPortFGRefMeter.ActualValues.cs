@@ -12,12 +12,23 @@ partial class SerialPortFGRefMeter
     /* Outstanding AME request - only works properly if the device instance is a singleton. */
     private readonly ResponseShare<MeasuredLoadpoint, IInterfaceLogger> _actualValues;
 
+    /* Outstanding AME request - only works properly if the device instance is a singleton. */
+    private readonly ResponseShare<MeasuredLoadpointNGX, IInterfaceLogger> _actualValuesNGX;
+
     /// <inheritdoc/>
     public async Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1)
     {
         TestConfigured(logger);
 
         return Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValues.Execute(logger)), firstActiveCurrentPhase);
+    }
+
+    /// <inheritdoc/>
+    public async Task<MeasuredLoadpointNGX> GetActualValuesNGX(IInterfaceLogger logger, int firstActiveCurrentPhase = -1)
+    {
+        TestConfigured(logger);
+
+        return Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValuesNGX.Execute(logger)), firstActiveCurrentPhase);
     }
 
     /// <summary>
@@ -132,6 +143,125 @@ partial class SerialPortFGRefMeter
                     ApparentPower = apparent3,
                     PowerFactor = apparent3 == 0 ? null : active3/apparent3,
                     ReactivePower = reactive3,
+                }
+            }
+        };
+
+        return result;
+    }
+
+    /// <summary>
+    /// Begin reading the actual values - this may take some time.
+    /// </summary>
+    /// <returns>Task reading the actual values.</returns>
+    /// <exception cref="ArgumentException">Reply from the device was not recognized.</exception>
+    private async Task<MeasuredLoadpointNGX> CreateActualValueRequestNGX(IInterfaceLogger logger)
+    {
+        /* Request raw data from device. */
+        var afRequest = SerialPortRequest.Create("AF", new Regex(@"^AF(.+)$"));
+        var aiRequest = SerialPortRequest.Create("AI", new Regex(@"^AIR(.{5})S(.{5})T(.{5})$"));
+        var auRequest = SerialPortRequest.Create("AU", new Regex(@"^AUR(.{5})S(.{5})T(.{5})$"));
+        var awRequest = SerialPortRequest.Create("AW", new Regex(@"^AWR(.{5})(.{5})S(.{5})(.{5})T(.{5})(.{5})$"));
+        var biRequest = SerialPortRequest.Create("BI", new Regex(@"^BI(.+)$"));
+        var buRequest = SerialPortRequest.Create("BU", new Regex(@"^BU(.+)$"));
+        var mpRequest = SerialPortRequest.Create("MP", new Regex(@"^MPR([^;]+);S([^;]+);T([^;]+);$"));
+        var mqRequest = SerialPortRequest.Create("MQ", new Regex(@"^MQR([^;]+);S([^;]+);T([^;]+);$"));
+        var msRequest = SerialPortRequest.Create("MS", new Regex(@"^MSR([^;]+);S([^;]+);T([^;]+);$"));
+
+        await Task.WhenAll(_device.Execute(logger, afRequest, aiRequest, auRequest, awRequest, biRequest, buRequest, mpRequest, mqRequest, msRequest));
+
+        /* Convert text representations to numbers. */
+        var voltageRange = double.Parse(buRequest.EndMatch!.Groups[1].Value);
+        var currentRange = double.Parse(biRequest.EndMatch!.Groups[1].Value);
+
+        var voltage1 = int.Parse(auRequest.EndMatch!.Groups[1].Value) * voltageRange / 20000.0;
+        var voltage2 = int.Parse(auRequest.EndMatch!.Groups[2].Value) * voltageRange / 20000.0;
+        var voltage3 = int.Parse(auRequest.EndMatch!.Groups[3].Value) * voltageRange / 20000.0;
+
+        var current1 = int.Parse(aiRequest.EndMatch!.Groups[1].Value) * currentRange / 20000.0;
+        var current2 = int.Parse(aiRequest.EndMatch!.Groups[2].Value) * currentRange / 20000.0;
+        var current3 = int.Parse(aiRequest.EndMatch!.Groups[3].Value) * currentRange / 20000.0;
+
+        var active1 = double.Parse(mpRequest.EndMatch!.Groups[1].Value);
+        var active2 = double.Parse(mpRequest.EndMatch!.Groups[2].Value);
+        var active3 = double.Parse(mpRequest.EndMatch!.Groups[3].Value);
+
+        var reactive1 = double.Parse(mqRequest.EndMatch!.Groups[1].Value);
+        var reactive2 = double.Parse(mqRequest.EndMatch!.Groups[2].Value);
+        var reactive3 = double.Parse(mqRequest.EndMatch!.Groups[3].Value);
+
+        var apparent1 = double.Parse(msRequest.EndMatch!.Groups[1].Value);
+        var apparent2 = double.Parse(msRequest.EndMatch!.Groups[2].Value);
+        var apparent3 = double.Parse(msRequest.EndMatch!.Groups[3].Value);
+
+        var frequency = double.Parse(afRequest.EndMatch!.Groups[1].Value);
+
+        var voltage1Angle = double.Parse(awRequest.EndMatch!.Groups[1].Value);
+        var current1Angle = double.Parse(awRequest.EndMatch!.Groups[2].Value);
+        var voltage2Angle = double.Parse(awRequest.EndMatch!.Groups[3].Value);
+        var current2Angle = double.Parse(awRequest.EndMatch!.Groups[4].Value);
+        var voltage3Angle = double.Parse(awRequest.EndMatch!.Groups[5].Value);
+        var current3Angle = double.Parse(awRequest.EndMatch!.Groups[6].Value);
+
+        var result = new MeasuredLoadpointNGX
+        {
+            ActivePower = new(active1 + active2 + active3),
+            ApparentPower = new(apparent1 + apparent2 + apparent3),
+            ReactivePower = new(reactive1 + reactive2 + reactive3),
+            Frequency = frequency,
+            PhaseOrder = voltage2Angle < voltage3Angle ? "123" : "132",
+            Phases = {
+                new() {
+                    Current = new() {
+                      AcComponent = new() {
+                        Rms = new(current1),
+                        Angle = new(current1Angle),
+                      },
+                    },
+                    Voltage = new() {
+                        AcComponent = new() {
+                            Rms = new(voltage1),
+                            Angle = new(voltage1Angle),
+                        },
+                    },
+                    ActivePower = new(active1),
+                    ApparentPower = new(apparent1),
+                    PowerFactor = apparent1 == 0 ? null : active1/apparent1,
+                    ReactivePower = new(reactive1),
+                }, new() {
+                    Current = new() {
+                      AcComponent = new() {
+                        Rms = new(current2),
+                        Angle = new(current2Angle),
+                      },
+                    },
+                    Voltage = new() {
+                        AcComponent = new() {
+                            Rms = new(voltage2),
+                            Angle = new(voltage2Angle),
+                        },
+                    },
+                    ActivePower = new(active2),
+                    ApparentPower = new(apparent2),
+                    PowerFactor = apparent2 == 0 ? null : active2/apparent2,
+                    ReactivePower = new(reactive2),
+                }, new() {
+                    Current = new() {
+                      AcComponent = new() {
+                        Rms = new(current3),
+                        Angle = new(current3Angle),
+                      },
+                    },
+                    Voltage = new() {
+                        AcComponent = new() {
+                            Rms = new(voltage3),
+                            Angle = new(voltage3Angle),
+                        },
+                    },
+                    ActivePower = new(active3),
+                    ApparentPower = new(apparent3),
+                    PowerFactor = apparent3 == 0 ? null : active3/apparent3,
+                    ReactivePower = new(reactive3),
                 }
             }
         };

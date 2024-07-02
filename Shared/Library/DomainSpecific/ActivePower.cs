@@ -6,12 +6,15 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Active power (in W) as domain specific number.
 /// </summary>
-public readonly struct ActivePower(double value) : IDomainSpecificNumber
+public readonly struct ActivePower(double value) : IInternalDomainSpecificNumber
 {
     /// <summary>
     /// The real value is always represented as a double.
     /// </summary>
     private readonly double _Value = value;
+
+    /// <inheritdoc/>
+    public double GetValue() => _Value;
 
     /// <inheritdoc/>
     [JsonIgnore]
@@ -59,4 +62,12 @@ public readonly struct ActivePower(double value) : IDomainSpecificNumber
     /// <param name="factor">Factor to apply to the power.</param>
     /// <returns>New power with scaled value.</returns>
     public static ActivePower operator /(ActivePower power, double factor) => new(power._Value / factor);
+
+    /// <summary>
+    /// Calulate the power factor.
+    /// </summary>
+    /// <param name="power">Active power.</param>
+    /// <param name="apparent">Apparent power.</param>
+    /// <returns>Ratio of active to apparent power or null if apparent power is zero.</returns>
+    public static PowerFactor? operator /(ActivePower power, ApparentPower apparent) => (double)apparent == 0 ? null : new(power._Value / (double)apparent);
 }

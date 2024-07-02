@@ -1,4 +1,5 @@
 using System.Globalization;
+using SharedLibrary.DomainSpecific;
 
 namespace SharedLibrary.Translations;
 
@@ -66,6 +67,18 @@ public static class ITranslationProviderExtensions
 
         return string.IsNullOrEmpty(asString) || string.IsNullOrEmpty(unit) ? asString : $"{asString}{unit}";
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="translations"></param>
+    /// <param name="number"></param>
+    /// <param name="format"></param>
+    /// <param name="withUnit"></param>
+    /// <param name="spaceUnit"></param>
+    /// <returns></returns>
+    public static string? ToString(this ITranslationProvider translations, IDomainSpecificNumber? number, string? format = null, bool withUnit = false, bool spaceUnit = false)
+        => number?.Format(format, translations.CultureInfo, withUnit, spaceUnit);
 
     /// <summary>
     /// 

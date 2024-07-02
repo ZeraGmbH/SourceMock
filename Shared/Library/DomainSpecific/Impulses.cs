@@ -6,12 +6,15 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Impulses (a constant number) as domain specific number.
 /// </summary>
-public readonly struct Impulses(long value) : IDomainSpecificNumber
+public readonly struct Impulses(long value) : IInternalDomainSpecificNumber
 {
     /// <summary>
     /// The real value is always represented as a long.
     /// </summary>
     private readonly long _Value = value;
+
+    /// <inheritdoc/>
+    public double GetValue() => _Value;
 
     /// <inheritdoc/>
     [JsonIgnore]
@@ -42,7 +45,7 @@ public readonly struct Impulses(long value) : IDomainSpecificNumber
     /// <param name="impulses">One Impulses.</param>
     /// <param name="value">Another Impulses.</param>
     /// <returns>New Impulses instance representing the sum of the parameters.</returns>
-    public static Impulses operator +(Impulses impulses, int value) => new(impulses._Value + value);
+    public static Impulses operator +(Impulses impulses, long value) => new(impulses._Value + value);
 
     /// <summary>
     /// Scale Impulses by a factor.
@@ -58,5 +61,5 @@ public readonly struct Impulses(long value) : IDomainSpecificNumber
     /// <param name="impulses">Some Impulses.</param>
     /// <param name="meterConstant">MeterConstant.</param>
     /// <returns>New ActiveEnergy.</returns>
-    public static ActiveEnergy operator /(Impulses impulses, MeterConstant meterConstant) => new(impulses._Value / (double)meterConstant);
+    public static ActiveEnergy operator /(Impulses impulses, MeterConstant meterConstant) => new(impulses._Value / (double)meterConstant * 1000);
 }

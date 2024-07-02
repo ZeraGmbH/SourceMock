@@ -5,12 +5,15 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Active energy (in Wh) as domain specific number.
 /// </summary>
-public readonly struct ActiveEnergy(double value) : IDomainSpecificNumber
+public readonly struct ActiveEnergy(double value) : IInternalDomainSpecificNumber
 {
     /// <summary>
     /// The real value is always represented as a double.
     /// </summary>
     private readonly double _Value = value;
+
+    /// <inheritdoc/>
+    public double GetValue() => _Value;
 
     /// <inheritdoc/>
     [JsonIgnore]
@@ -57,5 +60,5 @@ public readonly struct ActiveEnergy(double value) : IDomainSpecificNumber
     /// <param name="power">Some energy.</param>
     /// <param name="energy">Some power.</param>
     /// <returns>time in seconds.</returns>
-    public static Time operator /(ActiveEnergy energy, ActivePower power) => (double)power == 0 ? new() : new(energy._Value / (double)power);
+    public static Time? operator /(ActiveEnergy energy, ActivePower power) => (double)power == 0 ? null : new(energy._Value / (double)power * 3600);
 }

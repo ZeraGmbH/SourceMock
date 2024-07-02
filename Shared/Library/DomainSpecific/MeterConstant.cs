@@ -6,12 +6,15 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// MeterConstant (Impulses/kWh) as domain specific number.
 /// </summary>
-public readonly struct MeterConstant(double value) : IDomainSpecificNumber
+public readonly struct MeterConstant(double value) : IInternalDomainSpecificNumber
 {
     /// <summary>
     /// The real value is always represented as a double.
     /// </summary>
     private readonly double _Value = value;
+
+    /// <inheritdoc/>
+    public double GetValue() => _Value;
 
     /// <inheritdoc/>
     [JsonIgnore]

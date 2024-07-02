@@ -9,12 +9,15 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Angle (°) as domain specific number.
 /// </summary>
-public readonly struct Angle(double value) : IDomainSpecificNumber
+public readonly struct Angle(double value) : IInternalDomainSpecificNumber
 {
     /// <summary>
     /// Create Angle 0.
     /// </summary>
     public Angle() : this(0) { }
+
+    /// <inheritdoc/>
+    public double GetValue() => _Value;
 
     /// <summary>
     /// The real value is always represented as a double.
@@ -90,7 +93,7 @@ public readonly struct Angle(double value) : IDomainSpecificNumber
     /// 
     /// </summary>
     /// <returns></returns>
-    public double Cos() => Math.Cos(_Value) * Math.PI / 180d;
+    public double Cos() => Math.Cos(_Value * Math.PI / 180);
 
     /// <summary>
     /// 

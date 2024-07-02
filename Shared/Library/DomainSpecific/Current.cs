@@ -4,16 +4,9 @@ using System.Text.Json.Serialization;
 namespace SharedLibrary.DomainSpecific;
 
 /// <summary>
-/// 
-/// </summary>
-public interface ICurrentOrVoltage
-{
-}
-
-/// <summary>
 /// Current (A) as domain specific number.
 /// </summary>
-public readonly struct Current(double value) : IDomainSpecificNumber, ICurrentOrVoltage
+public readonly struct Current(double value) : IInternalDomainSpecificNumber
 {
     /// <summary>
     /// Create current 0.
@@ -24,6 +17,9 @@ public readonly struct Current(double value) : IDomainSpecificNumber, ICurrentOr
     /// The real value is always represented as a double.
     /// </summary>
     private readonly double _Value = value;
+
+    /// <inheritdoc/>
+    public double GetValue() => _Value;
 
     /// <inheritdoc/>
     [JsonIgnore]

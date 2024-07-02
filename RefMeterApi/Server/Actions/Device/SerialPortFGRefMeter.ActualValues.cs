@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using RefMeterApi.Models;
 using SerialPortProxy;
 using SharedLibrary;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 
 namespace RefMeterApi.Actions.Device;
@@ -182,17 +183,17 @@ partial class SerialPortFGRefMeter
         var current2 = int.Parse(aiRequest.EndMatch!.Groups[2].Value) * currentRange / 20000.0;
         var current3 = int.Parse(aiRequest.EndMatch!.Groups[3].Value) * currentRange / 20000.0;
 
-        var active1 = double.Parse(mpRequest.EndMatch!.Groups[1].Value);
-        var active2 = double.Parse(mpRequest.EndMatch!.Groups[2].Value);
-        var active3 = double.Parse(mpRequest.EndMatch!.Groups[3].Value);
+        var active1 = new ActivePower(double.Parse(mpRequest.EndMatch!.Groups[1].Value));
+        var active2 = new ActivePower(double.Parse(mpRequest.EndMatch!.Groups[2].Value));
+        var active3 = new ActivePower(double.Parse(mpRequest.EndMatch!.Groups[3].Value));
 
-        var reactive1 = double.Parse(mqRequest.EndMatch!.Groups[1].Value);
-        var reactive2 = double.Parse(mqRequest.EndMatch!.Groups[2].Value);
-        var reactive3 = double.Parse(mqRequest.EndMatch!.Groups[3].Value);
+        var reactive1 = new ReactivePower(double.Parse(mqRequest.EndMatch!.Groups[1].Value));
+        var reactive2 = new ReactivePower(double.Parse(mqRequest.EndMatch!.Groups[2].Value));
+        var reactive3 = new ReactivePower(double.Parse(mqRequest.EndMatch!.Groups[3].Value));
 
-        var apparent1 = double.Parse(msRequest.EndMatch!.Groups[1].Value);
-        var apparent2 = double.Parse(msRequest.EndMatch!.Groups[2].Value);
-        var apparent3 = double.Parse(msRequest.EndMatch!.Groups[3].Value);
+        var apparent1 = new ApparentPower(double.Parse(msRequest.EndMatch!.Groups[1].Value));
+        var apparent2 = new ApparentPower(double.Parse(msRequest.EndMatch!.Groups[2].Value));
+        var apparent3 = new ApparentPower(double.Parse(msRequest.EndMatch!.Groups[3].Value));
 
         var frequency = double.Parse(afRequest.EndMatch!.Groups[1].Value);
 
@@ -205,9 +206,9 @@ partial class SerialPortFGRefMeter
 
         var result = new MeasuredLoadpointNGX
         {
-            ActivePower = new(active1 + active2 + active3),
-            ApparentPower = new(apparent1 + apparent2 + apparent3),
-            ReactivePower = new(reactive1 + reactive2 + reactive3),
+            ActivePower = active1 + active2 + active3,
+            ApparentPower = apparent1 + apparent2 + apparent3,
+            ReactivePower = reactive1 + reactive2 + reactive3,
             Frequency = frequency,
             PhaseOrder = voltage2Angle < voltage3Angle ? "123" : "132",
             Phases = {
@@ -224,10 +225,10 @@ partial class SerialPortFGRefMeter
                             Angle = new(voltage1Angle),
                         },
                     },
-                    ActivePower = new(active1),
-                    ApparentPower = new(apparent1),
-                    PowerFactor = apparent1 == 0 ? null : active1/apparent1,
-                    ReactivePower = new(reactive1),
+                    ActivePower = active1,
+                    ApparentPower = apparent1,
+                    PowerFactor = active1/apparent1,
+                    ReactivePower = reactive1,
                 }, new() {
                     Current = new() {
                       AcComponent = new() {
@@ -241,10 +242,10 @@ partial class SerialPortFGRefMeter
                             Angle = new(voltage2Angle),
                         },
                     },
-                    ActivePower = new(active2),
-                    ApparentPower = new(apparent2),
-                    PowerFactor = apparent2 == 0 ? null : active2/apparent2,
-                    ReactivePower = new(reactive2),
+                    ActivePower = active2,
+                    ApparentPower = apparent2,
+                    PowerFactor = active2/apparent2,
+                    ReactivePower = reactive2,
                 }, new() {
                     Current = new() {
                       AcComponent = new() {
@@ -258,10 +259,10 @@ partial class SerialPortFGRefMeter
                             Angle = new(voltage3Angle),
                         },
                     },
-                    ActivePower = new(active3),
-                    ApparentPower = new(apparent3),
-                    PowerFactor = apparent3 == 0 ? null : active3/apparent3,
-                    ReactivePower = new(reactive3),
+                    ActivePower = active3,
+                    ApparentPower = apparent3,
+                    PowerFactor = active3/apparent3,
+                    ReactivePower = reactive3,
                 }
             }
         };

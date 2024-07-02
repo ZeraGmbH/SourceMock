@@ -39,7 +39,7 @@ public class MeasuredLoadpointPhase<TVoltage, TCurrent> : AbstractLoadpointPhase
     /// <summary>
     /// [tbd]
     /// </summary>
-    public double? PowerFactor { get; set; }
+    public PowerFactor? PowerFactor { get; set; }
 
     /// <summary>
     /// Active power (W).

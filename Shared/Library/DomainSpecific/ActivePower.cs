@@ -54,4 +54,12 @@ public readonly struct ActivePower(double value) : IInternalDomainSpecificNumber
     /// <param name="factor">Factor to apply to the power.</param>
     /// <returns>New power with scaled value.</returns>
     public static ActivePower operator *(double factor, ActivePower power) => new(factor * power._Value);
+
+    /// <summary>
+    /// Calulate the power factor.
+    /// </summary>
+    /// <param name="power">Active power.</param>
+    /// <param name="apparent">Apparent power.</param>
+    /// <returns>Ratio of active to apparent power or null if apparent power is zero.</returns>
+    public static PowerFactor? operator /(ActivePower power, ApparentPower apparent) => (double)apparent == 0 ? null : new(power._Value / (double)apparent);
 }

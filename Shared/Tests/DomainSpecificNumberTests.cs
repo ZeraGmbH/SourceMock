@@ -58,7 +58,6 @@ public class DomainSpecificNumberTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(((IDomainSpecificNumber?)null).Format(), Is.Null);
             Assert.That(num.Format(), Is.EqualTo("12.3Wh"));
             Assert.That(num.Format(CultureInfo.GetCultureInfo("en")), Is.EqualTo("12.3Wh"));
             Assert.That(num.Format(CultureInfo.GetCultureInfo("de")), Is.EqualTo("12,3Wh"));

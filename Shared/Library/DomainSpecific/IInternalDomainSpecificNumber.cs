@@ -24,7 +24,7 @@ public static class IDomainSpecificNumberExtensions
     /// <param name="withUnit">Add the unit to the number.</param>
     /// <param name="spaceUnit">Separate unit from number by a single space.</param>
     /// <returns>String as requested.</returns>
-    public static string? Format(this IDomainSpecificNumber? number, IFormatProvider? provider, bool withUnit = true, bool spaceUnit = false)
+    public static string? Format(this IDomainSpecificNumber number, IFormatProvider? provider, bool withUnit = true, bool spaceUnit = false)
         => number.Format(null, provider, withUnit, spaceUnit);
 
     /// <summary>
@@ -36,10 +36,8 @@ public static class IDomainSpecificNumberExtensions
     /// <param name="withUnit">Add the unit to the number.</param>
     /// <param name="spaceUnit">Separate unit from number by a single space.</param>
     /// <returns>String as requested.</returns>
-    public static string? Format(this IDomainSpecificNumber? number, string? format = null, IFormatProvider? provider = null, bool withUnit = true, bool spaceUnit = false)
+    public static string? Format(this IDomainSpecificNumber number, string? format = null, IFormatProvider? provider = null, bool withUnit = true, bool spaceUnit = false)
     {
-        if (number == null) return null;
-
         var formatted = ((IInternalDomainSpecificNumber)number).GetValue().ToString(format, provider);
 
         return withUnit ? $"{formatted}{(spaceUnit ? " " : "")}{number.Unit}" : formatted;

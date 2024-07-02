@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using SharedLibrary;
@@ -48,5 +49,24 @@ public class DomainSpecificNumberTests
         Assert.That(back, Is.TypeOf<Combined>());
         Assert.That((double)back.Energy1, Is.EqualTo(-12.12));
         Assert.That(back.Energy2, Is.Null);
+    }
+
+    [Test]
+    public void Can_Format_Domain_Sepcific_Numbers()
+    {
+        var num = new ActiveEnergy(12.3);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(((IDomainSpecificNumber?)null).Format(), Is.Null);
+            Assert.That(num.Format(), Is.EqualTo("12.3Wh"));
+            Assert.That(num.Format(CultureInfo.GetCultureInfo("en")), Is.EqualTo("12.3Wh"));
+            Assert.That(num.Format(CultureInfo.GetCultureInfo("de")), Is.EqualTo("12,3Wh"));
+            Assert.That(num.Format("0.000"), Is.EqualTo("12.300Wh"));
+            Assert.That(num.Format("G2"), Is.EqualTo("12Wh"));
+            Assert.That(num.Format("G12", CultureInfo.GetCultureInfo("de")), Is.EqualTo("12,3Wh"));
+            Assert.That(num.Format(withUnit: false), Is.EqualTo("12.3"));
+            Assert.That(num.Format(spaceUnit: true), Is.EqualTo("12.3 Wh"));
+        });
     }
 }

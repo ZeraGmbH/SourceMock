@@ -5,12 +5,15 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Voltage (V) as domain specific number.
 /// </summary>
-public readonly struct Voltage(double value) : IDomainSpecificNumber, ICurrentOrVoltage
+public readonly struct Voltage(double value) : IInternalDomainSpecificNumber
 {
     /// <summary>
     /// Create voltage 0.
     /// </summary>
     public Voltage() : this(0) { }
+
+    /// <inheritdoc/>
+    public double GetValue() => _Value;
 
     /// <summary>
     /// The real value is always represented as a double.

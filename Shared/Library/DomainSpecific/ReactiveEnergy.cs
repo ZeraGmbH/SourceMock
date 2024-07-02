@@ -6,12 +6,15 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Rective energy (in VArh) as domain specific number.
 /// </summary>
-public readonly struct ReactiveEnergy(double value) : IDomainSpecificNumber
+public readonly struct ReactiveEnergy(double value) : IInternalDomainSpecificNumber
 {
     /// <summary>
     /// The real value is always represented as a double.
     /// </summary>
     private readonly double _Value = value;
+
+    /// <inheritdoc/>
+    public double GetValue() => _Value;
 
     /// <inheritdoc/>
     [JsonIgnore]

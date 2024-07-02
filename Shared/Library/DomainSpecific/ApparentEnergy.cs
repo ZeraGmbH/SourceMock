@@ -6,12 +6,15 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// apparent energy (in VAh) as domain specific number.
 /// </summary>
-public readonly struct ApparentEnergy(double value) : IDomainSpecificNumber
+public readonly struct ApparentEnergy(double value) : IInternalDomainSpecificNumber
 {
     /// <summary>
     /// The real value is always represented as a double.
     /// </summary>
     private readonly double _Value = value;
+
+    /// <inheritdoc/>
+    public double GetValue() => _Value;
 
     /// <inheritdoc/>
     [JsonIgnore]

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson.Serialization;
 using SharedLibrary.Actions;
 using SharedLibrary.Actions.Database;
 using SharedLibrary.Actions.User;
@@ -55,6 +56,8 @@ public static class SharedLibraryConfiguration
 
             services.AddTransient<ICounterCollectionFactory, InMemoryCountersFactory>();
         }
+
+        BsonSerializer.RegisterSerializationProvider(new DomainSpecificNumber.BsonProvider());
     }
 
     /// <summary>

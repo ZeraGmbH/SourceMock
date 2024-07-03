@@ -48,6 +48,12 @@ namespace SourceApi.Actions.Source
         public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger logger);
 
         /// <summary>
+        /// Gets the currently set loadpoint.
+        /// </summary>
+        /// <returns>The loadpoint, null if none was set.</returns>
+        public TargetLoadpointNGX? GetCurrentLoadpointNGX(IInterfaceLogger logger);
+
+        /// <summary>
         /// Reports information on the active loadpoint.
         /// </summary>
         public LoadpointInfo GetActiveLoadpointInfo(IInterfaceLogger logger);

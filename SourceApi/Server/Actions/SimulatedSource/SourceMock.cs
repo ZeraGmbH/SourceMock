@@ -125,5 +125,10 @@ public abstract class SourceMock : ISourceMock
 
         return _dosageEnergy;
     }
+
+    public TargetLoadpointNGX? GetCurrentLoadpointNGX(IInterfaceLogger logger)
+    {
+        throw new NotImplementedException();
+    }
 }
 

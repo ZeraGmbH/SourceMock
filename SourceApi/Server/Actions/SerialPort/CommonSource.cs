@@ -131,4 +131,9 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
 
     /// <inheritdoc/>
     public abstract Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger);
+
+    public TargetLoadpointNGX? GetCurrentLoadpointNGX(IInterfaceLogger logger)
+    {
+        throw new NotImplementedException();
+    }
 }

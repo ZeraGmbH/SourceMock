@@ -61,10 +61,50 @@ public readonly struct Impulses(double value) : IInternalDomainSpecificNumber
     public static Impulses operator *(Impulses impulses, long factor) => new(impulses._Value * factor);
 
     /// <summary>
+    /// Scale Impulses by a factor.
+    /// </summary>
+    /// <param name="impulses">Some Impulses.</param>
+    /// <param name="factor">Factor to apply to the Impulses.</param>
+    /// <returns>New Impulses with scaled value.</returns>
+    public static Impulses operator *(Impulses impulses, double factor) => new(impulses._Value * factor);
+
+    /// <summary>
+    /// Scale Impulses by a factor.
+    /// </summary>
+    /// <param name="impulses">Some Impulses.</param>
+    /// <param name="factor">Factor to apply to the Impulses.</param>
+    /// <returns>New Impulses with scaled value.</returns>
+    public static Impulses operator *(double factor, Impulses impulses) => impulses * factor;
+
+    /// <summary>
     /// Devide impulses with meterConstant to get ActiveEnergy
     /// </summary>
     /// <param name="impulses">Some Impulses.</param>
     /// <param name="meterConstant">MeterConstant.</param>
     /// <returns>New ActiveEnergy.</returns>
     public static ActiveEnergy operator /(Impulses impulses, MeterConstant meterConstant) => new(impulses._Value / (double)meterConstant * 1000);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value1"></param>
+    /// <param name="value2"></param>
+    /// <returns></returns>
+    public static bool operator >(Impulses value1, Impulses value2) => value1 > value2;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value1"></param>
+    /// <param name="value2"></param>
+    /// <returns></returns>
+    public static bool operator <(Impulses value1, Impulses value2) => value1 < value2;
+
+    /// <summary>
+    /// Get relation of impulses
+    /// </summary>
+    /// <param name="value1"></param>
+    /// <param name="value2"></param>
+    /// <returns></returns>
+    public static double operator /(Impulses value1, Impulses value2) => (double)value1 / (double)value2;
 }

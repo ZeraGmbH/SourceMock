@@ -1,5 +1,6 @@
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 
@@ -26,13 +27,20 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     private DateTime _startTime;
 
     private double _meterConstant;
+    private MeterConstant _meterConstantNGX;
 
     private long _totalImpulses;
+    private Impulses _totalImpulsesNGX;
 
     /// <summary>
     /// Total power of the loadpoint in kW.
     /// </summary>
     private double _totalPower;
+
+    /// <summary>
+    /// Total power of the loadpoint in W.
+    /// </summary>
+    private ActivePower _totalPowerNGX;
 
     /// <summary>
     /// Need SimulatedSource to mock the energy
@@ -63,7 +71,6 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
 
         /* Total energy consumed in kWh and store to status. */
         var energy = hoursElapsed * _totalPower;
-
 
         /* Get the number of pulses and from this the progress. */
         var measuredImpulses = (long)(_meterConstant * energy);
@@ -109,6 +116,15 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
+    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, double refMeterMeterConstant)
+    {
+        _meterConstantNGX = dutMeterConstant;
+        _totalImpulsesNGX = impulses;
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc/>
     public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections() => Task.FromResult<ErrorCalculatorMeterConnections[]>([]);
 
     /// <inheritdoc/>
@@ -128,6 +144,75 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
 
         /* Use total power in kW to ease calculations with meter constant. */
         _totalPower = totalPower / 1000d;
+        _continuous = continuous;
+
+        _startTime = DateTime.UtcNow;
+
+        _status = new() { State = ErrorMeasurementStates.Running, Progress = 0, ErrorValue = null };
+
+        return Task.CompletedTask;
+    }
+
+
+    /// <inheritdoc/>
+    public Task<ErrorMeasurementStatus> GetErrorStatusNGX(IInterfaceLogger logger)
+    {
+        /* Time elapses in the current measurement - the mock does not use it's own thred for timing so calling this methode periodically is vital. */
+        Time hoursElapsed = new((DateTime.UtcNow - _startTime).TotalHours);
+
+        /* Total energy consumed in kWh and store to status. */
+        ActiveEnergy energy = _totalPowerNGX * hoursElapsed;
+
+        /* Get the number of pulses and from this the progress. */
+        Impulses measuredImpulses = _meterConstantNGX * energy;
+
+        if (measuredImpulses > _totalImpulsesNGX)
+        {
+            /* In mock never report more than requested - even if time has run out. */
+            measuredImpulses = _totalImpulsesNGX;
+        }
+
+        _status.Progress = 100d * measuredImpulses / _totalImpulsesNGX;
+
+        /* Check for end of measurement. */
+        if (_status.Progress >= 100)
+        {
+            /* Keep this in continuous mode. */
+            _status.ErrorValue = Random.Shared.Next(9500, 10700) / 100d - 100d;
+            _status.Progress = 0d;
+
+            /* Restart counting or end measurement. */
+            if (_continuous)
+                _startTime = DateTime.UtcNow;
+            else
+                _status.State = ErrorMeasurementStates.Finished;
+        }
+
+        /* Report copy - never give access to internal structures. */
+        return Task.FromResult(new ErrorMeasurementStatus
+        {
+            ErrorValue = _status.ErrorValue,
+            Progress = _status.Progress,
+            State = _status.State,
+        });
+    }
+
+    /// <inheritdoc/>
+    public Task StartErrorMeasurementNGX(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
+    {
+        /* Get the total power of all active phases of the current loadpoint (in W) */
+        ActivePower totalPower = new();
+
+        var loadpoint = _di.GetRequiredService<ISource>().GetCurrentLoadpointNGX(logger)!;
+
+        foreach (var phase in loadpoint.Phases)
+            if (phase.Voltage.On && phase.Current.On)
+            {
+                totalPower = CurrentCalculation.CalculateAcPower(totalPower, phase);
+                totalPower = CurrentCalculation.CalculateDcPower(totalPower, phase);
+            }
+
+        _totalPowerNGX = totalPower;
         _continuous = continuous;
 
         _startTime = DateTime.UtcNow;

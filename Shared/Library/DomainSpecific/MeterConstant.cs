@@ -71,4 +71,13 @@ public readonly struct MeterConstant(double value) : IInternalDomainSpecificNumb
     /// <param name="value"></param>
     /// <returns>true if value is bigger, false otherwise</returns>
     public static bool operator >=(MeterConstant meterConstant, int value) => meterConstant._Value >= value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="meterConstant">Imp/kWh</param>
+    /// <param name="energy">W</param>
+    /// <returns>Imp -> Constant</returns>
+    public static Impulses operator *(MeterConstant meterConstant, ActiveEnergy energy) => new((double)meterConstant * (double)energy / 1000);
+
 }

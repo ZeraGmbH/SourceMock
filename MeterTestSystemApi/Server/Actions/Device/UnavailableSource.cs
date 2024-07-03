@@ -39,4 +39,10 @@ internal class UnavailableSource : ISource
     {
         throw new NotImplementedException();
     }
+
+    /// <inheritdoc/>
+    public TargetLoadpointNGX? GetCurrentLoadpointNGX(IInterfaceLogger logger)
+    {
+        throw new NotImplementedException();
+    }
 }

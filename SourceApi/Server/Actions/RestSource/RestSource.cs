@@ -197,4 +197,9 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
 
         return res.StatusCode == HttpStatusCode.OK ? SourceApiErrorCodes.SUCCESS : SourceApiErrorCodes.LOADPOINT_NOT_SET;
     }
+
+    public TargetLoadpointNGX? GetCurrentLoadpointNGX(IInterfaceLogger logger)
+    {
+        throw new NotImplementedException();
+    }
 }

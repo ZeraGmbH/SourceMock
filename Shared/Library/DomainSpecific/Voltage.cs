@@ -60,7 +60,7 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber
     /// <param name="current"></param>
     /// <param name="voltage"></param>
     /// <returns></returns>
-    public static ActivePower operator *(Voltage voltage, Current current) => new(voltage._Value * (double)current);
+    public static ApparentPower operator *(Voltage voltage, Current current) => new(voltage._Value * (double)current);
 
     /// <summary>
     /// 

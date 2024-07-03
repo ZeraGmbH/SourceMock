@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.JsonPatch.Helpers;
 
 
 namespace SharedLibrary.DomainSpecific;
@@ -54,4 +55,19 @@ public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumb
     /// <param name="factor">Factor to apply to the power.</param>
     /// <returns>New power with scaled value.</returns>
     public static ApparentPower operator *(double factor, ApparentPower power) => new(factor * power._Value);
+
+    /// <summary>
+    /// Divide power by a factor.
+    /// </summary>
+    /// <param name="power">Some power.</param>
+    /// <param name="factor">Factor to apply to the power.</param>
+    /// <returns>New power with scaled value.</returns>
+    public static ApparentPower operator /(ApparentPower power, double factor) => new(power._Value * factor);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="phaseAngle"></param>
+    /// <returns></returns>
+    public ActivePower GetActivePower(Angle phaseAngle) => new(_Value * phaseAngle.Cos());
 }

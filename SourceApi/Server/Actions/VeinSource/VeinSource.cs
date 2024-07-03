@@ -86,5 +86,10 @@ namespace SourceApi.Actions.VeinSource
         }
 
         public Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger) => Task.FromException<SourceApiErrorCodes>(new NotImplementedException());
+
+        public TargetLoadpointNGX? GetCurrentLoadpointNGX(IInterfaceLogger logger)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

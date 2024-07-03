@@ -1,6 +1,7 @@
 using System.Xml;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;
@@ -91,4 +92,17 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
 
     /* [TODO] add support for 0x HEX response. */
     private static long ParseLong(string number) => long.Parse(number);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="continuous"></param>
+    /// <param name="connection"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public Task StartErrorMeasurementNGX(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
+    {
+        throw new NotImplementedException();
+    }
 }

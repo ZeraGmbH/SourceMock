@@ -25,6 +25,8 @@ public abstract class DomainSpecificNumberDbTests : DatabaseTestCore
         public List<NumberHolder> Numbers { get; set; } = [];
 
         public Current? Number { get; set; }
+
+        public Impulses Impulses { get; set; }
     }
 
     public interface IEntityStore
@@ -64,6 +66,7 @@ public abstract class DomainSpecificNumberDbTests : DatabaseTestCore
         var entity = new Entity
         {
             Id = "PeterPan1",
+            Impulses = new(36000000),
             Numbers = { new() { Number = new(220) }, new() { Number = new(230) }, new() { Number = new(240) } }
         };
 
@@ -77,6 +80,7 @@ public abstract class DomainSpecificNumberDbTests : DatabaseTestCore
             Assert.That(get, Is.Not.SameAs(entity));
             Assert.That(get!.Id, Is.EqualTo(entity.Id));
             Assert.That(get.Number, Is.Null);
+            Assert.That((long)get.Impulses, Is.EqualTo(36000000));
             Assert.That(get.Numbers, Has.Count.EqualTo(3));
             Assert.That((double)get.Numbers[0].Number, Is.EqualTo((double)entity.Numbers[0].Number));
             Assert.That((double)get.Numbers[1].Number, Is.EqualTo((double)entity.Numbers[1].Number));

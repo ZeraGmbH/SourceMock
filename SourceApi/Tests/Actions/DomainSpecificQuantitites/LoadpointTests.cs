@@ -14,14 +14,19 @@ public class LoadpointTests
                 new(){
                     Current=new(){
                         DcComponent = new(12.4),
-                        AcComponent=new(){ Angle=113.4, Rms=new(12.1)},
+                        AcComponent=new(){ Angle=new(113.4), Rms=new(12.1)},
                     }
                 }
             ]
         };
 
-        lp.Phases[0].Current.DcComponent *= 3;
 
+#pragma warning disable CS8620
+        lp.Phases[0].Current.DcComponent *= 3;
+#pragma warning restore CS8620
+
+#pragma warning disable CS8629
         Assert.That((double)lp.Phases[0].Current.DcComponent, Is.EqualTo(37.2));
+#pragma warning restore CS8629
     }
 }

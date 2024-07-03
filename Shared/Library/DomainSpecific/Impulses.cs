@@ -1,17 +1,16 @@
 using System.Text.Json.Serialization;
 
-
 namespace SharedLibrary.DomainSpecific;
 
 /// <summary>
 /// Impulses (a constant number) as domain specific number.
 /// </summary>
-public readonly struct Impulses(long value) : IInternalDomainSpecificNumber
+public readonly struct Impulses(double value) : IInternalDomainSpecificNumber
 {
     /// <summary>
     /// The real value is always represented as a long.
     /// </summary>
-    private readonly long _Value = value;
+    private readonly double _Value = value;
 
     /// <inheritdoc/>
     public double GetValue() => _Value;
@@ -19,6 +18,12 @@ public readonly struct Impulses(long value) : IInternalDomainSpecificNumber
     /// <inheritdoc/>
     [JsonIgnore]
     public readonly string Unit => "";
+
+    /// <summary>
+    /// Create from integral value.
+    /// </summary>
+    /// <param name="value">Number of impulses.</param>
+    public Impulses(long value) : this((double)value) { }
 
     /// <summary>
     /// No Impulses at all.
@@ -29,7 +34,7 @@ public readonly struct Impulses(long value) : IInternalDomainSpecificNumber
     /// Only explicit casting out the pure number is allowed.
     /// </summary>
     /// <param name="Impulses">Some active Impulses.</param>
-    public static explicit operator long(Impulses Impulses) => Impulses._Value;
+    public static explicit operator long(Impulses Impulses) => (long)Impulses._Value;
 
     /// <summary>
     /// Add to Impulses.

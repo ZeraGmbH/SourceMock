@@ -1,7 +1,10 @@
+using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 
@@ -12,6 +15,17 @@ namespace SharedLibrary.DomainSpecific;
 /// </summary>
 public static class DomainSpecificNumber
 {
+    /// <summary>
+    /// All supported domain specific numbers.
+    /// </summary>
+    public static readonly ReadOnlyCollection<Type> All =
+        typeof(DomainSpecificNumber)
+            .Assembly
+            .GetExportedTypes()
+            .Where(t => t.IsAssignableTo(typeof(IDomainSpecificNumber)))
+            .ToArray()
+            .AsReadOnly();
+
     /// <summary>
     /// Configure API generator.
     /// </summary>
@@ -58,15 +72,48 @@ public static class DomainSpecificNumber
         /// <param name="data">The number to serialize.</param>
         /// <param name="options">Serialization options.</param>
         public override void Write(Utf8JsonWriter writer, IDomainSpecificNumber data, JsonSerializerOptions options)
+            => writer.WriteNumberValue(GetValue(data));
+    }
+
+    /// <summary>
+    /// Helper to serialize a domain specific number.
+    /// </summary>
+    public class BsonProvider : IBsonSerializationProvider
+    {
+        /// <summary>
+        /// Serialize a domain spcific number as a double.
+        /// </summary>
+        private class BsonSerializer<T> : SerializerBase<T> where T : struct, IDomainSpecificNumber
         {
-            /* Read the hidden valiue. */
-            var value = (double)data.GetType().GetField("_Value", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(data)!;
+            /// <inheritdoc/>
+            public override T Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+                => (T)Activator.CreateInstance(typeof(T), context.Reader.ReadDouble())!;
 
-            /* Disallow bad numbers - we ignore options here! */
-            if (double.IsNaN(value) || double.IsInfinity(value)) throw new ArgumentException("no JSON representation for given number");
-
-            /* Add to JSON stream. */
-            writer.WriteNumberValue(value);
+            /// <inheritdoc/>
+            public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, T data)
+                => context.Writer.WriteDouble(GetValue(data));
         }
+
+        /// <inheritdoc/>
+        public IBsonSerializer? GetSerializer(Type type)
+            => type.IsAssignableTo(typeof(IDomainSpecificNumber))
+                ? (IBsonSerializer?)Activator.CreateInstance(typeof(BsonSerializer<>).MakeGenericType(type))
+                : null;
+    }
+
+    /// <summary>
+    /// Get the current value from a domain specific number.
+    /// </summary>
+    /// <param name="data">Some domain specific number.</param>
+    /// <returns>The value as a double.</returns>
+    private static double GetValue(IDomainSpecificNumber data)
+    {
+        /* Read the hidden valiue. */
+        var value = (double)data.GetType().GetField("_Value", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(data)!;
+
+        /* Disallow bad numbers - we ignore options here! */
+        if (double.IsNaN(value) || double.IsInfinity(value)) throw new ArgumentException("no JSON representation for given number");
+
+        return value;
     }
 }

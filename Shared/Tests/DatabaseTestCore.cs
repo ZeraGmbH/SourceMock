@@ -3,9 +3,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using MongoDB.Bson.Serialization;
 using Moq;
 using SharedLibrary.Actions.Database;
 using SharedLibrary.Actions.User;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models;
 using SharedLibrary.Services;
 
@@ -85,6 +87,8 @@ public abstract class DatabaseTestCore
 
             services.AddTransient<ICounterCollectionFactory, InMemoryCountersFactory>();
         }
+
+        BsonSerializer.RegisterSerializationProvider(new DomainSpecificNumber.BsonProvider());
 
         UserId = "autotest";
 

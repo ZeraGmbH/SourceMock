@@ -22,7 +22,7 @@ public static class DomainSpecificNumber
         typeof(DomainSpecificNumber)
             .Assembly
             .GetExportedTypes()
-            .Where(t => t.IsAssignableTo(typeof(IInternalDomainSpecificNumber)))
+            .Where(t => t.IsValueType && t.IsAssignableTo(typeof(IInternalDomainSpecificNumber)))
             .ToArray()
             .AsReadOnly();
 

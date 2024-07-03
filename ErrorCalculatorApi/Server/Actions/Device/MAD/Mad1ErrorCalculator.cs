@@ -64,6 +64,16 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
+    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant)
+    {
+        /* Remember */
+        _refMeterImpulsesNext = (long)(impulses / dutMeterConstant * refMeterMeterConstant);
+        _dutImpulesNext = (long)impulses;
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc/>
     public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections() => Task.FromResult(_supportedMeterConnections.Keys.ToArray());
 
     /// <inheritdoc/>

@@ -55,7 +55,6 @@ public readonly struct MeterConstant(double value) : IInternalDomainSpecificNumb
     /// <returns>New MeterConstant with scaled value.</returns>
     public static MeterConstant operator *(double factor, MeterConstant MeterConstant) => new(factor * MeterConstant._Value);
 
-
     /// <summary>
     /// 
     /// </summary>
@@ -79,5 +78,4 @@ public readonly struct MeterConstant(double value) : IInternalDomainSpecificNumb
     /// <param name="energy">W</param>
     /// <returns>Imp -> Constant</returns>
     public static Impulses operator *(MeterConstant meterConstant, ActiveEnergy energy) => new((double)meterConstant * (double)energy / 1000);
-
 }

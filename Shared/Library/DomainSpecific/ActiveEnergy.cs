@@ -55,6 +55,14 @@ public readonly struct ActiveEnergy(double value) : IInternalDomainSpecificNumbe
     public static ActiveEnergy operator *(double factor, ActiveEnergy energy) => energy * factor;
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="energy"></param>
+    /// <param name="meterConstant"></param>
+    /// <returns></returns>
+    public static Impulses operator *(ActiveEnergy energy, MeterConstant meterConstant) => meterConstant * energy;
+
+    /// <summary>
     /// Get time from power and energy
     /// </summary>
     /// <param name="power">Some energy.</param>

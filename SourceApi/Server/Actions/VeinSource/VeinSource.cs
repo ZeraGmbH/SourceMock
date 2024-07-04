@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
@@ -32,7 +33,7 @@ namespace SourceApi.Actions.VeinSource
 
         public Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) => Task.FromException<SourceCapabilities>(new NotImplementedException());
 
-        public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant)
+        public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
         {
             throw new NotImplementedException();
         }

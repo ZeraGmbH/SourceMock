@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
@@ -91,7 +92,7 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
     }
 
     /// <inheritdoc/>
-    public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant) =>
+    public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant) =>
         (_dosageUri == null)
             ? throw new NotImplementedException("Dosage")
             : httpDosage.GetAsync<DosageProgress>(logger, new Uri(_dosageUri, $"Progress?meterConstant={JsonSerializer.Serialize(meterConstant)}"));

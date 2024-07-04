@@ -1,6 +1,7 @@
 
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
@@ -118,7 +119,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     public abstract Task CancelDosage(IInterfaceLogger logger);
 
     /// <inheritdoc/>
-    public abstract Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant);
+    public abstract Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant);
 
     /// <inheritdoc/>
     public abstract bool GetAvailable(IInterfaceLogger interfaceLogger);

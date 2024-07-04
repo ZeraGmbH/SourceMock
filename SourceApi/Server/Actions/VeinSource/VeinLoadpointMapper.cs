@@ -1,5 +1,5 @@
 using Newtonsoft.Json.Linq;
-
+using SharedLibrary.DomainSpecific;
 using SourceApi.Model;
 
 namespace SourceApi.Actions.VeinSource
@@ -63,7 +63,7 @@ namespace SourceApi.Actions.VeinSource
             return ret;
         }
 
-        private static JObject MapElectricalVectorQuantityToJObject(ElectricalVectorQuantity evq)
+        private static JObject MapElectricalVectorQuantityToJObject(ElectricalVectorQuantity<Voltage> evq)
         {
             JObject ret = new();
             ret["rms"] = evq.Rms;

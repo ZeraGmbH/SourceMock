@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using SerialPortProxy;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 using SourceApi.Model;
 
@@ -16,7 +17,7 @@ partial class SerialPortFGSource
     }
 
     /// <inheritdoc/>
-    public override async Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant)
+    public override async Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
     {
         TestConfigured(logger);
 

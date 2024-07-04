@@ -1,3 +1,4 @@
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 using SourceApi.Model;
 
@@ -75,7 +76,7 @@ namespace SourceApi.Actions.Source
         /// <param name="logger"></param>
         /// <param name="meterConstant">The meter constant used in the reference meter.</param>
         /// <returns>Information on the current progress of the dosage measurement.</returns>
-        Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant);
+        Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant);
 
         /// <summary>
         /// If set the dosage mode has been activated but current is switch off.

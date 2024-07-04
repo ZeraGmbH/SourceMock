@@ -78,34 +78,6 @@ namespace SourceApi.Actions.Source
             return SourceApiErrorCodes.SUCCESS;
         }
 
-        private static SourceApiErrorCodes CheckCurrents(TargetLoadpoint loadpoint, SourceCapabilities capabilities)
-        {
-            for (int i = 0; i < loadpoint.Phases.Count; ++i)
-            {
-                if (loadpoint.Phases[i].Current.On != true) continue;
-
-                var acCurrent = loadpoint.Phases[i].Current.AcComponent;
-
-                if (acCurrent != null)
-                {
-                    if (capabilities.Phases[i].AcCurrent == null)
-                        return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_AC;
-                    return CheckAcCurrents(loadpoint, capabilities, i, acCurrent);
-                }
-
-                var dcCurrent = loadpoint.Phases[i].Current.DcComponent;
-
-                if (dcCurrent != null)
-                {
-                    if (capabilities.Phases[i].DcCurrent == null)
-                        return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_DC;
-                    return CheckDcCurrents(capabilities, i, dcCurrent.Value);
-                }
-            }
-
-            return SourceApiErrorCodes.SUCCESS;
-        }
-
         private static SourceApiErrorCodes CheckAcCurrents(TargetLoadpoint loadpoint, SourceCapabilities capabilities, int i, ElectricalVectorQuantity<Current> current)
         {
             var actualRms = current.Rms;

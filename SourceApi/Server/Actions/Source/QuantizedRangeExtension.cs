@@ -5,19 +5,7 @@ namespace SourceApi.Actions.Source
 {
     public static partial class QuantizedRangeExtension
     {
-        public static bool IsIncluded(this QuantizedRange range, double value)
-        {
-            var mod = value % range.PrecisionStepSize;
-            var mod2 = Math.Abs(mod - range.PrecisionStepSize);
-
-            const double epsilon = 1E-12;
-
-            return
-                !(value < range.Min || value > range.Max) &&
-                (mod <= epsilon || mod2 <= epsilon);
-        }
-
-        public static bool IsIncluded(this QuantizedCurrentRange range, Current value)
+        public static bool IsIncluded(this QuantizedRange<Current> range, Current value)
         {
             var mod = value % range.PrecisionStepSize;
             var mod2 = (mod - range.PrecisionStepSize).Abs();
@@ -29,7 +17,7 @@ namespace SourceApi.Actions.Source
                 (mod <= epsilon || mod2 <= epsilon);
         }
 
-        public static bool IsIncluded(this QuantizedVoltageRange range, Voltage value)
+        public static bool IsIncluded(this QuantizedRange<Voltage> range, Voltage value)
         {
             var mod = value % range.PrecisionStepSize;
             var mod2 = (mod - range.PrecisionStepSize).Abs();
@@ -41,7 +29,7 @@ namespace SourceApi.Actions.Source
                 (mod <= epsilon || mod2 <= epsilon);
         }
 
-        public static bool IsIncluded(this List<QuantizedVoltageRange> ranges, Voltage value)
+        public static bool IsIncluded(this List<QuantizedRange<Voltage>> ranges, Voltage value)
         {
             foreach (var range in ranges)
             {

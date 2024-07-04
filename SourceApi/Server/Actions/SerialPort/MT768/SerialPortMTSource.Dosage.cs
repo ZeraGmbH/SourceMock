@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 
 using SerialPortProxy;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 using SourceApi.Model;
 
@@ -13,7 +14,7 @@ partial class SerialPortMTSource
         Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("S3CM2", "SOK3CM2")));
 
     /// <inheritdoc/>
-    public override async Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant)
+    public override async Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
     {
         /* Request the current meter constant. */
         meterConstant /= 1000d;

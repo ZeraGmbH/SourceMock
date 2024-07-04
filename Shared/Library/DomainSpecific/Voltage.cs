@@ -39,6 +39,54 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber
     public static Voltage operator +(Voltage left, Voltage right) => new(left._Value + right._Value);
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left">One Voltage.</param>
+    /// <param name="right">Another Voltage.</param>
+    /// <returns>New Voltage instance representing the substraction of the parameters.</returns>
+    public static Voltage operator -(Voltage left, Voltage right) => new(left._Value - right._Value);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left">One Voltage.</param>
+    /// <param name="right">Another Voltage.</param>
+    /// <returns>New Voltage instance representing the modulo operation of the parameters.</returns>
+    public static Voltage operator %(Voltage left, Voltage right) => new(left._Value % right._Value);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left">One Voltage.</param>
+    /// <param name="right">Another Voltage.</param>
+    /// <returns></returns>
+    public static bool operator <(Voltage left, Voltage right) => left._Value < right._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left">One Voltage.</param>
+    /// <param name="right">Another Voltage.</param>
+    /// <returns></returns>
+    public static bool operator >(Voltage left, Voltage right) => left._Value > right._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left">One Voltage.</param>
+    /// <param name="right">Another Voltage.</param>
+    /// <returns></returns>
+    public static bool operator <=(Voltage left, Voltage right) => left._Value <= right._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left">One Voltage.</param>
+    /// <param name="right">Another Voltage.</param>
+    /// <returns></returns>
+    public static bool operator >=(Voltage left, Voltage right) => left._Value >= right._Value;
+
+    /// <summary>
     /// Scale Voltage by a factor.
     /// </summary>
     /// <param name="Voltage">Some Voltage.</param>

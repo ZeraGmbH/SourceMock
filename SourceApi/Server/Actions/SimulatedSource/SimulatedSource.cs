@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 using SourceApi.Model;
 
@@ -87,4 +88,32 @@ public class SimulatedSource : SourceMock, ISimulatedSource
 
     /// <inheritdoc/>
     public SimulatedSourceState? GetSimulatedSourceState() => _simulatedSourceState;
+
+    public override Task<DosageProgress> GetDosageProgressNGX(IInterfaceLogger logger, MeterConstant meterConstant)
+    {
+        var power = 0d;
+
+        foreach (var phase in _loadpoint!.Phases)
+            if (phase.Voltage.On && phase.Current.On)
+                power += phase.Voltage.AcComponent!.Rms * phase.Current.AcComponent!.Rms *
+                    Math.Cos((phase.Voltage.AcComponent!.Angle - phase.Current.AcComponent!.Angle) *
+                    Math.PI / 180d);
+
+        var elapsedHours = (DateTime.Now - _startTime).TotalHours;
+        var energy = power * elapsedHours;
+
+        if (energy > _dosageEnergy) energy = DosageDone();
+
+        _status.Progress = energy;
+        _status.Remaining = _dosageEnergy - energy;
+        _status.Total = _dosageEnergy;
+
+        return Task.FromResult(new DosageProgress
+        {
+            Active = _status.Active,
+            Progress = _status.Progress,
+            Remaining = _status.Remaining,
+            Total = _status.Total
+        });
+    }
 }

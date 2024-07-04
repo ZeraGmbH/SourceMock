@@ -1,6 +1,7 @@
 using RefMeterApi.Models;
+using SharedLibrary.DomainSpecific;
 
-namespace RefMeterApi.Actions.MeterConstant;
+namespace RefMeterApi.Actions.MeterConstantCalculator;
 
 /// <summary>
 /// Interface to calculate meter constants for various reference 
@@ -17,5 +18,5 @@ public interface IMeterConstantCalculator
     /// <param name="voltageRange">Voltage range in V.</param>
     /// <param name="currentRange">Current range in C.</param>
     /// <returns>The meter constant.</returns>
-    double GetMeterConstant(ReferenceMeters meter, double frequency, MeasurementModes mode, double voltageRange, double currentRange);
+    MeterConstant GetMeterConstant(ReferenceMeters meter, double frequency, MeasurementModes mode, double voltageRange, double currentRange);
 }

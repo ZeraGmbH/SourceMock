@@ -37,16 +37,16 @@ partial class SerialPortMTRefMeter
         {
             Phases = {
                 new MeasuredLoadpointPhase {
-                    Current = new ElectricalQuantity { AcComponent = new() } ,
-                    Voltage = new ElectricalQuantity { AcComponent = new() }
+                    Current = new () { AcComponent = new() } ,
+                    Voltage = new () { AcComponent = new() }
                 },
                 new MeasuredLoadpointPhase {
-                    Current = new ElectricalQuantity { AcComponent = new() } ,
-                    Voltage = new ElectricalQuantity { AcComponent = new() }
+                    Current = new () { AcComponent = new() } ,
+                    Voltage = new () { AcComponent = new() }
                 },
                 new MeasuredLoadpointPhase {
-                    Current = new ElectricalQuantity { AcComponent = new() } ,
-                    Voltage = new ElectricalQuantity { AcComponent = new() }
+                    Current = new () { AcComponent = new() } ,
+                    Voltage = new () { AcComponent = new() }
                 },
             }
         };
@@ -96,91 +96,91 @@ partial class SerialPortMTRefMeter
             switch (index)
             {
                 case 0:
-                    response.Phases[0].Voltage.AcComponent!.Rms = value;
+                    response.Phases[0].Voltage.AcComponent!.Rms = new(value);
                     break;
                 case 1:
-                    response.Phases[1].Voltage.AcComponent!.Rms = value;
+                    response.Phases[1].Voltage.AcComponent!.Rms = new(value);
                     break;
                 case 2:
-                    response.Phases[2].Voltage.AcComponent!.Rms = value;
+                    response.Phases[2].Voltage.AcComponent!.Rms = new(value);
                     break;
                 case 3:
-                    response.Phases[0].Current.AcComponent!.Rms = value;
+                    response.Phases[0].Current.AcComponent!.Rms = new(value);
                     break;
                 case 4:
-                    response.Phases[1].Current.AcComponent!.Rms = value;
+                    response.Phases[1].Current.AcComponent!.Rms = new(value);
                     break;
                 case 5:
-                    response.Phases[2].Current.AcComponent!.Rms = value;
+                    response.Phases[2].Current.AcComponent!.Rms = new(value);
                     break;
                 case 6:
-                    response.Phases[0].Voltage.AcComponent!.Angle = value;
+                    response.Phases[0].Voltage.AcComponent!.Angle = new(value);
                     break;
                 case 7:
-                    response.Phases[1].Voltage.AcComponent!.Angle = value;
+                    response.Phases[1].Voltage.AcComponent!.Angle = new(value);
                     break;
                 case 8:
-                    response.Phases[2].Voltage.AcComponent!.Angle = value;
+                    response.Phases[2].Voltage.AcComponent!.Angle = new(value);
                     break;
                 case 9:
-                    response.Phases[0].Current.AcComponent!.Angle = value;
+                    response.Phases[0].Current.AcComponent!.Angle = new(value);
                     break;
                 case 10:
-                    response.Phases[1].Current.AcComponent!.Angle = value;
+                    response.Phases[1].Current.AcComponent!.Angle = new(value);
                     break;
                 case 11:
-                    response.Phases[2].Current.AcComponent!.Angle = value;
+                    response.Phases[2].Current.AcComponent!.Angle = new(value);
                     break;
                 case 12:
-                    response.Phases[0].PowerFactor = value;
+                    response.Phases[0].PowerFactor = new(value);
                     break;
                 case 13:
-                    response.Phases[1].PowerFactor = value;
+                    response.Phases[1].PowerFactor = new(value);
                     break;
                 case 14:
-                    response.Phases[2].PowerFactor = value;
+                    response.Phases[2].PowerFactor = new(value);
                     break;
                 case 15:
-                    response.Phases[0].ActivePower = value;
+                    response.Phases[0].ActivePower = new(value);
                     break;
                 case 16:
-                    response.Phases[1].ActivePower = value;
+                    response.Phases[1].ActivePower = new(value);
                     break;
                 case 17:
-                    response.Phases[2].ActivePower = value;
+                    response.Phases[2].ActivePower = new(value);
                     break;
                 case 18:
-                    response.Phases[0].ReactivePower = value;
+                    response.Phases[0].ReactivePower = new(value);
                     break;
                 case 19:
-                    response.Phases[1].ReactivePower = value;
+                    response.Phases[1].ReactivePower = new(value);
                     break;
                 case 20:
-                    response.Phases[2].ReactivePower = value;
+                    response.Phases[2].ReactivePower = new(value);
                     break;
                 case 21:
-                    response.Phases[0].ApparentPower = value;
+                    response.Phases[0].ApparentPower = new(value);
                     break;
                 case 22:
-                    response.Phases[1].ApparentPower = value;
+                    response.Phases[1].ApparentPower = new(value);
                     break;
                 case 23:
-                    response.Phases[2].ApparentPower = value;
+                    response.Phases[2].ApparentPower = new(value);
                     break;
                 case 24:
-                    response.ActivePower = value;
+                    response.ActivePower = new(value);
                     break;
                 case 25:
-                    response.ReactivePower = value;
+                    response.ReactivePower = new(value);
                     break;
                 case 26:
-                    response.ApparentPower = value;
+                    response.ApparentPower = new(value);
                     break;
                 case 27:
                     response.PhaseOrder = match.Groups[2].Value;
                     break;
                 case 28:
-                    response.Frequency = value;
+                    response.Frequency = new(value);
                     break;
             }
         }

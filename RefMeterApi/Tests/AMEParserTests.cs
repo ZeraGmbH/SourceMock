@@ -32,12 +32,12 @@ public class AMEParserTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(parsed.Frequency, Is.EqualTo(50).Within(0.5));
-            Assert.That(parsed.Phases[0].Voltage.AcComponent!.Rms, Is.EqualTo(20).Within(0.5));
-            Assert.That(parsed.Phases[1].Current.AcComponent!.Rms, Is.EqualTo(0.1).Within(0.05));
-            Assert.That(parsed.Phases[1].Voltage.AcComponent!.Angle, Is.EqualTo(240).Within(0.5));
-            Assert.That(parsed.Phases[2].Current.AcComponent!.Angle, Is.EqualTo(120).Within(0.5));
-            Assert.That(parsed.Phases[0].PowerFactor, Is.EqualTo(0.99965084));
+            Assert.That((double?)parsed.Frequency, Is.EqualTo(50).Within(0.5));
+            Assert.That((double)parsed.Phases[0].Voltage.AcComponent!.Rms, Is.EqualTo(20).Within(0.5));
+            Assert.That((double)parsed.Phases[1].Current.AcComponent!.Rms, Is.EqualTo(0.1).Within(0.05));
+            Assert.That((double)parsed.Phases[1].Voltage.AcComponent!.Angle, Is.EqualTo(240).Within(0.5));
+            Assert.That((double)parsed.Phases[2].Current.AcComponent!.Angle, Is.EqualTo(120).Within(0.5));
+            Assert.That((double?)parsed.Phases[0].PowerFactor, Is.EqualTo(0.99965084));
 
             Assert.That(parsed.PhaseOrder, Is.EqualTo("123"));
         });
@@ -69,7 +69,7 @@ public class AMEParserTests
     {
         var data = await CreateDevice(["ATIACK", "28;1", "28;2", "AMEACK"]).GetActualValues(new NoopInterfaceLogger());
 
-        Assert.That(data.Frequency, Is.EqualTo(2));
+        Assert.That((double?)data.Frequency, Is.EqualTo(2));
     }
 
     [Test]
@@ -94,13 +94,13 @@ public class AMEParserTests
         /* Since all task execute at the same time they all should get the same result. */
         var first = await Task.WhenAll(Enumerable.Range(0, 10).Select(_ => device.GetActualValues(new NoopInterfaceLogger())));
 
-        Array.ForEach(first, r => Assert.That(r.Frequency, Is.EqualTo(50)));
+        Array.ForEach(first, r => Assert.That((double?)r.Frequency, Is.EqualTo(50)));
 
         await Task.Delay(2000);
 
         /* After all tasks complete a new request is necessary. */
         var second = await Task.WhenAll(Enumerable.Range(0, 10).Select(_ => device.GetActualValues(new NoopInterfaceLogger())));
 
-        Array.ForEach(second, r => Assert.That(r.Frequency, Is.EqualTo(51)));
+        Array.ForEach(second, r => Assert.That((double?)r.Frequency, Is.EqualTo(51)));
     }
 }

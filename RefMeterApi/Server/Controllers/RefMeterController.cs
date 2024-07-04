@@ -110,5 +110,8 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<double>> GetMeterConstant() =>
-         ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetMeterConstant(interfaceLogger));
+         ActionResultMapper.SafeExecuteSerialPortCommand(() =>
+            _device
+                .GetMeterConstant(interfaceLogger)
+                .ContinueWith(t => (double)t.Result, TaskContinuationOptions.OnlyOnRanToCompletion));
 }

@@ -42,7 +42,7 @@ public class DCRefMeterMockTest
 
         MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues(new NoopInterfaceLogger()).Result;
 
-        Assert.That(measureOutput.Phases[0].Current.DcComponent, Is.InRange(0, 0.01));
+        Assert.That((double?)measureOutput.Phases[0].Current.DcComponent, Is.InRange(0, 0.01));
     }
 
 
@@ -57,8 +57,8 @@ public class DCRefMeterMockTest
             {
                 Phases = new List<TargetLoadpointPhase>(){
                     new TargetLoadpointPhase(){
-                        Current = new(){DcComponent = current, On=true},
-                        Voltage = new(){DcComponent = voltage, On=true}
+                        Current = new(){DcComponent = new(current), On=true},
+                        Voltage = new(){DcComponent = new(voltage), On=true}
                     }
                 }
             });
@@ -69,8 +69,8 @@ public class DCRefMeterMockTest
         DCRefMeterMock refMeterMock = new(Services);
         MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues(new NoopInterfaceLogger()).Result;
 
-        Assert.That(measureOutput.Phases[0].Current.DcComponent, Is.InRange(GetMinValue(current, 0.01), GetMaxValue(current, 0.01)));
-        Assert.That(measureOutput.Phases[0].Voltage.DcComponent, Is.InRange(GetMinValue(voltage, 0.01), GetMaxValue(voltage, 0.01)));
+        Assert.That((double?)measureOutput.Phases[0].Current.DcComponent, Is.InRange(GetMinValue(current, 0.01), GetMaxValue(current, 0.01)));
+        Assert.That((double?)measureOutput.Phases[0].Voltage.DcComponent, Is.InRange(GetMinValue(voltage, 0.01), GetMaxValue(voltage, 0.01)));
     }
 
     [Test]
@@ -85,8 +85,8 @@ public class DCRefMeterMockTest
         {
             Phases = new List<TargetLoadpointPhase>(){
                     new TargetLoadpointPhase(){
-                        Current = new(){DcComponent = current, On=true},
-                        Voltage = new(){DcComponent = voltage, On=true}
+                        Current = new(){DcComponent = new(current), On=true},
+                        Voltage = new(){DcComponent = new(voltage), On=true}
                     }
                 }
         };
@@ -97,9 +97,9 @@ public class DCRefMeterMockTest
         var mo = refMeterMock.CalcMeasureOutput(lp);
 
         // Assert
-        Assert.That(mo.Phases[0].Voltage.DcComponent, Is.InRange(GetMinValue(voltage, 0.01), GetMaxValue(voltage, 0.01)));
-        Assert.That(mo.Phases[0].Current.DcComponent, Is.InRange(GetMinValue(current, 0.01), GetMaxValue(current, 0.01)));
-        Assert.That(mo.Phases[0].ActivePower, Is.InRange(GetMinValue(current, 0.01), GetMaxValue(apparentPower, 0.02)));
+        Assert.That((double?)mo.Phases[0].Voltage.DcComponent, Is.InRange(GetMinValue(voltage, 0.01), GetMaxValue(voltage, 0.01)));
+        Assert.That((double?)mo.Phases[0].Current.DcComponent, Is.InRange(GetMinValue(current, 0.01), GetMaxValue(current, 0.01)));
+        Assert.That((double?)mo.Phases[0].ActivePower, Is.InRange(GetMinValue(current, 0.01), GetMaxValue(apparentPower, 0.02)));
     }
 
 

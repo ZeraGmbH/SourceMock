@@ -5,21 +5,9 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Power factor as domain specific number.
 /// </summary>
-public readonly struct PowerFactor : IInternalDomainSpecificNumber
+/// <param name="value">Factor to use.</param>
+public readonly struct PowerFactor(double value) : IInternalDomainSpecificNumber
 {
-    /// <summary>
-    /// Create a power factor.
-    /// </summary>
-    /// <param name="value">Factor to use.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Value must be between 0 and 1.</exception>
-    public PowerFactor(double value)
-    {
-        if (value < 0d || value > 1d)
-            throw new ArgumentOutOfRangeException(nameof(value), "Power Factor must be between 0 and 1 - both inclusiv.");
-
-        _Value = value;
-    }
-
     /// <summary>
     /// Create power factor 1.
     /// </summary>
@@ -34,7 +22,7 @@ public readonly struct PowerFactor : IInternalDomainSpecificNumber
     /// <summary>
     /// The real value is always represented as a double.
     /// </summary>
-    private readonly double _Value;
+    private readonly double _Value = value;
 
     /// <inheritdoc/>
     public double GetValue() => _Value;

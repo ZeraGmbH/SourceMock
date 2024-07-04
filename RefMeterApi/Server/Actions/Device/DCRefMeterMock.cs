@@ -84,23 +84,6 @@ public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
         return mo;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="firstActiveVoltagePhase">Not relevant in dc</param>
-    /// <returns></returns>
-    public async Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveVoltagePhase = -1)
-    {
-        var loadpoint = await GetLoadpoint(logger);
-
-        var mo = CalcMeasureOutput(loadpoint);
-
-        CalculateDeviations(mo);
-
-        return mo;
-    }
-
     private async Task<TargetLoadpoint> GetLoadpoint(IInterfaceLogger logger)
     {
         var r = Random.Shared;
@@ -137,12 +120,13 @@ public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
 
 
         if (voltage != null)
-            mo.Phases[0].Voltage.DcComponent = voltage.Value.GetRandomNumberWithAbsoluteDeviation(0.01).Abs();
+            mo.Phases[0].Voltage.DcComponent = GetRandomNumberWithAbsoluteDeviation(voltage.Value, new(0.01)).Abs();
         if (current != null)
-            mo.Phases[0].Current.DcComponent = current.Value.GetRandomNumberWithAbsoluteDeviation(0.01).Abs();
+            mo.Phases[0].Current.DcComponent = GetRandomNumberWithAbsoluteDeviation(current.Value, new(0.01)).Abs();
+
         if ((double)activePower != 0)
         {
-            mo.Phases[0].ActivePower = activePower.GetRandomNumberWithAbsoluteDeviation(0.01);
+            mo.Phases[0].ActivePower = GetRandomNumberWithAbsoluteDeviation(activePower, new(0.01));
             mo.ActivePower = mo.Phases[0].ActivePower;
         }
     }

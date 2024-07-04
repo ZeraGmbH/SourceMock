@@ -151,37 +151,37 @@ public class RefMeterTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(values.Frequency, Is.EqualTo(50.01));
-            Assert.That(values.ActivePower, Is.EqualTo(1529.5));
-            Assert.That(values.ReactivePower, Is.EqualTo(41.7));
-            Assert.That(values.ApparentPower, Is.EqualTo(1550));
+            Assert.That((double?)values.Frequency, Is.EqualTo(50.01));
+            Assert.That((double?)values.ActivePower, Is.EqualTo(1529.5));
+            Assert.That((double?)values.ReactivePower, Is.EqualTo(41.7));
+            Assert.That((double?)values.ApparentPower, Is.EqualTo(1550));
 
-            Assert.That(values.Phases[0].ActivePower, Is.EqualTo(398));
-            Assert.That(values.Phases[0].ReactivePower, Is.EqualTo(34.8));
-            Assert.That(values.Phases[0].ApparentPower, Is.EqualTo(400));
-            Assert.That(values.Phases[0].Voltage.AcComponent!.Rms, Is.EqualTo(199.9875));
-            Assert.That(values.Phases[0].Voltage.AcComponent!.Angle, Is.EqualTo(5));
-            Assert.That(values.Phases[0].Current.AcComponent!.Rms, Is.EqualTo(2));
-            Assert.That(values.Phases[0].Current.AcComponent!.Angle, Is.EqualTo(0));
-            Assert.That(values.Phases[0].PowerFactor, Is.EqualTo(398.0 / 400.0).Within(0.001));
+            Assert.That((double?)values.Phases[0].ActivePower, Is.EqualTo(398));
+            Assert.That((double?)values.Phases[0].ReactivePower, Is.EqualTo(34.8));
+            Assert.That((double?)values.Phases[0].ApparentPower, Is.EqualTo(400));
+            Assert.That((double)values.Phases[0].Voltage.AcComponent!.Rms, Is.EqualTo(199.9875));
+            Assert.That((double)values.Phases[0].Voltage.AcComponent!.Angle, Is.EqualTo(5));
+            Assert.That((double)values.Phases[0].Current.AcComponent!.Rms, Is.EqualTo(2));
+            Assert.That((double)values.Phases[0].Current.AcComponent!.Angle, Is.EqualTo(0));
+            Assert.That((double?)values.Phases[0].PowerFactor, Is.EqualTo(398.0 / 400.0).Within(0.001));
 
-            Assert.That(values.Phases[1].ActivePower, Is.EqualTo(234.9));
-            Assert.That(values.Phases[1].ReactivePower, Is.EqualTo(85.5));
-            Assert.That(values.Phases[1].ApparentPower, Is.EqualTo(250));
-            Assert.That(values.Phases[1].Voltage.AcComponent!.Rms, Is.EqualTo(250));
-            Assert.That(values.Phases[1].Voltage.AcComponent!.Angle, Is.EqualTo(255));
-            Assert.That(values.Phases[1].Current.AcComponent!.Rms, Is.EqualTo(1));
-            Assert.That(values.Phases[1].Current.AcComponent!.Angle, Is.EqualTo(235));
-            Assert.That(values.Phases[1].PowerFactor, Is.EqualTo(234.9 / 250.0).Within(0.001));
+            Assert.That((double?)values.Phases[1].ActivePower, Is.EqualTo(234.9));
+            Assert.That((double?)values.Phases[1].ReactivePower, Is.EqualTo(85.5));
+            Assert.That((double?)values.Phases[1].ApparentPower, Is.EqualTo(250));
+            Assert.That((double)values.Phases[1].Voltage.AcComponent!.Rms, Is.EqualTo(250));
+            Assert.That((double)values.Phases[1].Voltage.AcComponent!.Angle, Is.EqualTo(255));
+            Assert.That((double)values.Phases[1].Current.AcComponent!.Rms, Is.EqualTo(1));
+            Assert.That((double)values.Phases[1].Current.AcComponent!.Angle, Is.EqualTo(235));
+            Assert.That((double?)values.Phases[1].PowerFactor, Is.EqualTo(234.9 / 250.0).Within(0.001));
 
-            Assert.That(values.Phases[2].ActivePower, Is.EqualTo(896.6));
-            Assert.That(values.Phases[2].ReactivePower, Is.EqualTo(-78.6));
-            Assert.That(values.Phases[2].ApparentPower, Is.EqualTo(900));
-            Assert.That(values.Phases[2].Voltage.AcComponent!.Rms, Is.EqualTo(299.9875));
-            Assert.That(values.Phases[2].Voltage.AcComponent!.Angle, Is.EqualTo(120));
-            Assert.That(values.Phases[2].Current.AcComponent!.Rms, Is.EqualTo(3));
-            Assert.That(values.Phases[2].Current.AcComponent!.Angle, Is.EqualTo(134));
-            Assert.That(values.Phases[2].PowerFactor, Is.EqualTo(896.6 / 900.0).Within(0.001));
+            Assert.That((double?)values.Phases[2].ActivePower, Is.EqualTo(896.6));
+            Assert.That((double?)values.Phases[2].ReactivePower, Is.EqualTo(-78.6));
+            Assert.That((double?)values.Phases[2].ApparentPower, Is.EqualTo(900));
+            Assert.That((double)values.Phases[2].Voltage.AcComponent!.Rms, Is.EqualTo(299.9875));
+            Assert.That((double)values.Phases[2].Voltage.AcComponent!.Angle, Is.EqualTo(120));
+            Assert.That((double)values.Phases[2].Current.AcComponent!.Rms, Is.EqualTo(3));
+            Assert.That((double)values.Phases[2].Current.AcComponent!.Angle, Is.EqualTo(134));
+            Assert.That((double?)values.Phases[2].PowerFactor, Is.EqualTo(896.6 / 900.0).Within(0.001));
 
             Assert.That(values.PhaseOrder, Is.EqualTo("123"));
         });

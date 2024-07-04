@@ -1,9 +1,10 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
-using RefMeterApi.Actions.MeterConstant;
+using RefMeterApi.Actions.MeterConstantCalculator;
 using RefMeterApi.Exceptions;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 
 namespace RefMeterApi.Actions.Device;
@@ -56,7 +57,7 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
     private ReferenceMeters? _referenceMeter;
 
     /// <inheritdoc/>
-    public async Task<double> GetMeterConstant(IInterfaceLogger logger)
+    public async Task<MeterConstant> GetMeterConstant(IInterfaceLogger logger)
     {
         TestConfigured(logger);
 

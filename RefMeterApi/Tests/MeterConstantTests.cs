@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using RefMeterApi.Actions.MeterConstant;
+using RefMeterApi.Actions.MeterConstantCalculator;
 using RefMeterApi.Models;
 
 namespace RefMeterApiTests;
@@ -16,6 +16,6 @@ public class MeterConstantCalculatorTests
     {
         var cut = new MeterConstantCalculator(new NullLogger<MeterConstantCalculator>());
 
-        Assert.That(cut.GetMeterConstant(meter, frequency, mode, voltage, current), Is.EqualTo(expected).Within(0.001));
+        Assert.That((double)cut.GetMeterConstant(meter, frequency, mode, voltage, current), Is.EqualTo(expected).Within(0.001));
     }
 }

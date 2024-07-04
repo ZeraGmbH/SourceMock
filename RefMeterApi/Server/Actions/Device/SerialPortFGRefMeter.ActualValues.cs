@@ -20,6 +20,7 @@ partial class SerialPortFGRefMeter
 
         return Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValues.Execute(logger)), firstActiveCurrentPhase);
     }
+
     /// <summary>
     /// Begin reading the actual values - this may take some time.
     /// </summary>
@@ -78,7 +79,7 @@ partial class SerialPortFGRefMeter
             ActivePower = active1 + active2 + active3,
             ApparentPower = apparent1 + apparent2 + apparent3,
             ReactivePower = reactive1 + reactive2 + reactive3,
-            Frequency = frequency,
+            Frequency = new(frequency),
             PhaseOrder = voltage2Angle < voltage3Angle ? "123" : "132",
             Phases = {
                 new() {

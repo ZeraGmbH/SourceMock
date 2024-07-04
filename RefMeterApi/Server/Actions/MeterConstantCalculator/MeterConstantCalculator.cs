@@ -1,7 +1,8 @@
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
+using SharedLibrary.DomainSpecific;
 
-namespace RefMeterApi.Actions.MeterConstant;
+namespace RefMeterApi.Actions.MeterConstantCalculator;
 
 /// <summary>
 /// Calculate meter constants.
@@ -26,9 +27,9 @@ public class MeterConstantCalculator(ILogger<MeterConstantCalculator> logger) : 
     private static readonly double _sqrt3 = Math.Sqrt(3d);
 
     /// <inheritdoc/>
-    public double GetMeterConstant(ReferenceMeters meter, double frequency, MeasurementModes mode, double voltageRange, double currentRange)
+    public MeterConstant GetMeterConstant(ReferenceMeters meter, double frequency, MeasurementModes mode, double voltageRange, double currentRange)
     {
-        if (_calculators.TryGetValue(meter, out var algorithm)) return algorithm(frequency, mode, voltageRange, currentRange);
+        if (_calculators.TryGetValue(meter, out var algorithm)) return new(algorithm(frequency, mode, voltageRange, currentRange));
 
         logger.LogError("No meter constant algorithm for {Meter}", meter);
 

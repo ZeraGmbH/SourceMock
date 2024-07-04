@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Logging;
 
@@ -50,8 +51,8 @@ public class RestRefMeter(ILoggingHttpClient httpClient, ILogger<RestRefMeter> l
         httpClient.GetAsync<MeasurementModes?>(logger, new Uri(_baseUri, "MeasurementMode"));
 
     /// <inheritdoc/>
-    public Task<double> GetMeterConstant(IInterfaceLogger logger) =>
-        httpClient.GetAsync<double>(logger, new Uri(_baseUri, "MeterConstant"));
+    public async Task<MeterConstant> GetMeterConstant(IInterfaceLogger logger) =>
+        new(await httpClient.GetAsync<double>(logger, new Uri(_baseUri, "MeterConstant")));
 
     /// <inheritdoc/>
     public Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1) =>

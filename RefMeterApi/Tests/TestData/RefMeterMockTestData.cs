@@ -2,23 +2,28 @@ using SourceApi.Model;
 
 namespace RefMeterApiTests;
 
-public static class RefMeterMockTestData {
+public static class RefMeterMockTestData
+{
 
-    public static TargetLoadpoint Loadpoint_OnlyActivePower { get {
-        return new() {
-            Phases = new() {
+    public static TargetLoadpoint Loadpoint_OnlyActivePower
+    {
+        get
+        {
+            return new()
+            {
+                Phases = new() {
                 new() {
                     Voltage = new() {
                         AcComponent = new() {
-                            Angle = 0,
-                            Rms = 230
+                            Angle = new(0),
+                            Rms = new(230)
                         },
                         On = true,
                     },
                     Current = new() {
                         AcComponent = new() {
-                            Angle = 0,
-                            Rms = 100
+                            Angle = new(0),
+                            Rms = new(100)
                         },
                         On = true,
                     }
@@ -26,15 +31,15 @@ public static class RefMeterMockTestData {
                 new() {
                     Voltage = new() {
                         AcComponent = new() {
-                            Angle = 120,
-                            Rms = 235
+                            Angle = new(120),
+                            Rms = new(235)
                         },
                         On = true,
                     },
                     Current = new() {
                         AcComponent = new() {
-                            Angle = 120,
-                            Rms = 80
+                            Angle = new(120),
+                            Rms = new(80)
                         },
                         On = true,
                     }
@@ -42,44 +47,50 @@ public static class RefMeterMockTestData {
                 new() {
                     Voltage = new() {
                         AcComponent = new() {
-                            Angle = 240,
-                            Rms = 240
+                            Angle = new(240),
+                            Rms = new(240)
                         },
                         On = true,
 
                     },
                     Current = new() {
                         AcComponent = new() {
-                            Angle = 240,
-                            Rms = 60
+                            Angle = new(240),
+                            Rms = new(60)
                         },
                         On = true,
                     }
                 }
             },
-            VoltageNeutralConnected = false,
-            Frequency = new() {
-                Mode = FrequencyMode.SYNTHETIC,
-                Value = 50d
-            }
-        };
-    }}
+                VoltageNeutralConnected = false,
+                Frequency = new()
+                {
+                    Mode = FrequencyMode.SYNTHETIC,
+                    Value = new(50d)
+                }
+            };
+        }
+    }
 
-    public static TargetLoadpoint Loadpoint_OnlyReactivePower { get {
-        return new() {
-            Phases = new() {
+    public static TargetLoadpoint Loadpoint_OnlyReactivePower
+    {
+        get
+        {
+            return new()
+            {
+                Phases = new() {
                 new() {
                     Voltage = new() {
                         AcComponent = new() {
-                            Angle = 0,
-                            Rms = 230
+                            Angle = new(0),
+                            Rms = new(230)
                         },
                         On = true
                     },
                     Current = new() {
                         AcComponent = new() {
-                            Angle = 90,
-                            Rms = 100
+                            Angle = new(90),
+                            Rms = new(100)
                         },
                         On = true
                     }
@@ -87,15 +98,15 @@ public static class RefMeterMockTestData {
                 new() {
                     Voltage = new() {
                         AcComponent = new() {
-                            Angle = 120,
-                            Rms = 235
+                            Angle = new(120),
+                            Rms = new(235)
                         },
                         On = true
                     },
                     Current = new() {
                         AcComponent = new() {
-                            Angle = 210,
-                            Rms = 80
+                            Angle = new(210),
+                            Rms = new(80)
                         },
                         On = true
                     }
@@ -103,43 +114,49 @@ public static class RefMeterMockTestData {
                 new() {
                     Voltage = new() {
                         AcComponent = new() {
-                            Angle = 240,
-                            Rms = 240
+                            Angle = new(240),
+                            Rms = new(240)
                         },
                         On = true
                     },
                     Current = new() {
                         AcComponent = new() {
-                            Angle = 330,
-                            Rms = 60
+                            Angle = new(330),
+                            Rms = new(60)
                         },
                         On = true
                     }
                 }
             },
-            VoltageNeutralConnected = false,
-            Frequency = new() {
-                Mode = FrequencyMode.SYNTHETIC,
-                Value = 50d
-            }
-        };
-    }}
+                VoltageNeutralConnected = false,
+                Frequency = new()
+                {
+                    Mode = FrequencyMode.SYNTHETIC,
+                    Value = new(50d)
+                }
+            };
+        }
+    }
 
-    public static TargetLoadpoint Loadpoint_CosPhi0_5{ get {
-        return new() {
-            Phases = new() {
+    public static TargetLoadpoint Loadpoint_CosPhi0_5
+    {
+        get
+        {
+            return new()
+            {
+                Phases = new() {
                 new() {
                     Voltage = new() {
                         AcComponent = new() {
-                            Angle = 0,
-                            Rms = 230
+                            Angle = new(0),
+                            Rms = new(230)
                         },
                         On = true
                     },
                     Current = new() {
                         AcComponent = new() {
-                            Angle = 60,
-                            Rms = 100
+                            Angle = new(60),
+                            Rms = new(100)
                         },
                         On = true
                     }
@@ -147,15 +164,15 @@ public static class RefMeterMockTestData {
                 new() {
                     Voltage = new() {
                         AcComponent = new() {
-                            Angle = 120,
-                            Rms = 235
+                            Angle = new(120),
+                            Rms = new(235)
                         },
                         On = true
                     },
                     Current = new() {
                         AcComponent = new() {
-                            Angle = 180,
-                            Rms = 80
+                            Angle = new(180),
+                            Rms = new(80)
                         },
                         On = true
                     }
@@ -163,26 +180,28 @@ public static class RefMeterMockTestData {
                 new() {
                     Voltage = new() {
                         AcComponent = new() {
-                            Angle = 240,
-                            Rms = 240
+                            Angle = new(240),
+                            Rms = new(240)
                         },
                         On = true
                     },
                     Current = new() {
                         AcComponent = new() {
-                            Angle = 300,
-                            Rms = 60
+                            Angle = new(300),
+                            Rms = new(60)
                         },
                         On = true
                     }
                 }
             },
-            VoltageNeutralConnected = false,
-            Frequency = new() {
-                Mode = FrequencyMode.SYNTHETIC,
-                Value = 50d
-            }
-        };
-    }}
+                VoltageNeutralConnected = false,
+                Frequency = new()
+                {
+                    Mode = FrequencyMode.SYNTHETIC,
+                    Value = new(50d)
+                }
+            };
+        }
+    }
 
 }

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 
 namespace RefMeterApi.Actions.Device;
@@ -47,7 +48,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     public bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
 
     /// <inheritdoc/>
-    public async Task<double> GetMeterConstant(IInterfaceLogger logger)
+    public async Task<MeterConstant> GetMeterConstant(IInterfaceLogger logger)
     {
         var reply = await _device.Execute(logger, SerialPortRequest.Create("AST", "ASTACK"))[0];
 
@@ -73,6 +74,6 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
             throw new ArgumentException($"unsupported measurement mode {mode}");
 
         /* Calculate according to formula - see MT78x_MAN_EXT_GB.pdf section 5.6.*/
-        return 1000d * 3600d * 60000d / (phases * (double)voltage * (double)current);
+        return new(1000d * 3600d * 60000d / (phases * (double)voltage * (double)current));
     }
 }

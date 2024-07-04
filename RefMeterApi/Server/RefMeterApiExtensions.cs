@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Actions.Device;
-using RefMeterApi.Actions.MeterConstant;
+using RefMeterApi.Actions.MeterConstantCalculator;
 using RefMeterApi.Actions.RestSource;
 using RefMeterApi.Exceptions;
 using RefMeterApi.Models;

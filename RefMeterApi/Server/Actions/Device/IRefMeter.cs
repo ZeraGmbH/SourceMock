@@ -1,4 +1,5 @@
 using RefMeterApi.Models;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 
 namespace RefMeterApi.Actions.Device;
@@ -44,5 +45,5 @@ public interface IRefMeter
     /// <summary>
     /// Report the current megter constant of the reference meter (impulses per kWh).
     /// </summary>
-    Task<SharedLibrary.DomainSpecific.MeterConstant> GetMeterConstant(IInterfaceLogger logger);
+    Task<MeterConstant> GetMeterConstant(IInterfaceLogger logger);
 }

@@ -5,7 +5,7 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Angle (°) as domain specific number.
 /// </summary>
-public readonly struct Angle(double value) : IInternalDomainSpecificNumber<Angle>
+public readonly struct Angle(double value) : IInternalDomainSpecificNumber<Angle>, IComparable<Angle>
 {
     /// <summary>
     /// 
@@ -26,6 +26,11 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber<Angle
     /// Full circle.
     /// </summary>
     public static readonly Angle Full = new(360);
+
+    /// <summary>
+    /// Set if the angle is zero.
+    /// </summary>
+    public static bool operator !(Angle angle) => angle._Value == 0;
 
     /// <inheritdoc/>
     public double GetValue() => _Value;
@@ -192,4 +197,11 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber<Angle
     /// </summary>
     /// <returns></returns>+
     public override int GetHashCode() => _Value.GetHashCode();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    public int CompareTo(Angle other) => _Value.CompareTo(other._Value);
 }

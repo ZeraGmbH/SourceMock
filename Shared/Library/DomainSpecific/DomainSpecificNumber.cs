@@ -62,7 +62,15 @@ public static class DomainSpecificNumber
         /// <param name="options">Serialisation options.</param>
         /// <returns>The reconstructed number.</returns>
         public override IInternalDomainSpecificNumber? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            => reader.TokenType == JsonTokenType.Null ? null : (IInternalDomainSpecificNumber)Activator.CreateInstance(typeToConvert, reader.GetDouble())!;
+        {
+            if (reader.TokenType == JsonTokenType.Null) return null;
+
+            var dataType = (typeToConvert.IsGenericType && typeToConvert.GetGenericTypeDefinition() == typeof(Nullable<>))
+                ? typeToConvert.GetGenericArguments()[0]
+                : typeToConvert;
+
+            return (IInternalDomainSpecificNumber)Activator.CreateInstance(dataType, reader.GetDouble())!;
+        }
 
         /// <summary>
         /// Serialize a domain specific number to a pure JSON number.

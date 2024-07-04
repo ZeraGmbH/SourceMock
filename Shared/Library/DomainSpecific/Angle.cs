@@ -183,26 +183,13 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber<Angle
     /// <summary>
     /// 
     /// </summary>
-    /// <returns></returns>
-    public string? ToString(string format) => _Value.ToString(format);
-    /// <summary>
-    /// 
-    /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public override bool Equals(object? obj)
-    {
-        throw new NotImplementedException();
-    }
+    public override bool Equals(object? obj) => obj is Angle angle && _Value == angle._Value;
 
     /// <summary>
     /// 
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public override int GetHashCode()
-    {
-        throw new NotImplementedException();
-    }
+    /// <returns></returns>+
+    public override int GetHashCode() => _Value.GetHashCode();
 }

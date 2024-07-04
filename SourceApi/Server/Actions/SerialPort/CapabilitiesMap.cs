@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+using SharedLibrary.DomainSpecific;
 using SourceApi.Model;
 
 namespace SourceApi.Actions.SerialPort;
@@ -161,10 +163,10 @@ public class CapabilitiesMap : ICapabilitiesMap
 
         capabilties.FrequencyRanges.Add(new()
         {
-            Min = Math.Max(current.FrequencyRanges[0].Min, voltage.FrequencyRanges[0].Min),
-            Max = Math.Min(current.FrequencyRanges[0].Max, voltage.FrequencyRanges[0].Max),
+            Min = Frequency.Max(current.FrequencyRanges[0].Min, voltage.FrequencyRanges[0].Min),
+            Max = Frequency.Min(current.FrequencyRanges[0].Max, voltage.FrequencyRanges[0].Max),
             Mode = current.FrequencyRanges[0].Mode,
-            PrecisionStepSize = Math.Max(current.FrequencyRanges[0].Min, voltage.FrequencyRanges[0].Max),
+            PrecisionStepSize = Frequency.Max(current.FrequencyRanges[0].Min, voltage.FrequencyRanges[0].Max),
         });
 
         return capabilties;
@@ -195,7 +197,7 @@ public class CapabilitiesMap : ICapabilitiesMap
     private static readonly Dictionary<string, Tuple<SourceCapabilities, double[]>> VoltageByAmplifier = new() {
     { "MT786",  Tuple.Create<SourceCapabilities,double[]>(new () {
         FrequencyRanges = [new(new(45), new(65), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcVoltage = new(20, 500, 0.001) }],
+        Phases = [new() { AcVoltage = new(new(20), new(500), new(0.001)) }],
     }, [ 60d, 125d, 250d, 420d ] )},
     { "VU211", Tuple.Create<SourceCapabilities,double[]>(new () {
         FrequencyRanges = [new(new(40), new(70), new(0.01), FrequencyMode.SYNTHETIC)],

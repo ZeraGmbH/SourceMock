@@ -167,12 +167,14 @@ namespace SourceApi.Actions.Source
             if (loadpoint.Frequency.Mode != FrequencyMode.SYNTHETIC)
                 return SourceApiErrorCodes.SUCCESS;
 
-            var frequency = loadpoint.Frequency;
+            var generatedFrequency = loadpoint.Frequency;
+
             if (capabilities.FrequencyRanges == null)
                 return SourceApiErrorCodes.SUCCESS;
+
             foreach (var range in capabilities.FrequencyRanges)
                 if (range.Mode == FrequencyMode.SYNTHETIC)
-                    if (frequency >= range.Min && frequency <= range.Max)
+                    if (generatedFrequency.Value >= range.Min && generatedFrequency.Value <= range.Max)
                         return SourceApiErrorCodes.SUCCESS;
 
             return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_FREQUENCY_INVALID;

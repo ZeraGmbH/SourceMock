@@ -79,7 +79,7 @@ public class MTSourceTests
 
         var result = await sut.SetLoadpoint(new NoopInterfaceLogger(), new Model.TargetLoadpoint
         {
-            Frequency = new Model.Frequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = 50 },
+            Frequency = new Model.GeneratedFrequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = 50 },
             Phases = new List<Model.TargetLoadpointPhase>() {
                 new Model.TargetLoadpointPhase {
                     Current = new() { AcComponent = new () { Rms=1 * baseAngle, Angle=0}, On=true},
@@ -123,7 +123,7 @@ public class MTSourceTests
 
         var result = await sut.SetLoadpoint(new NoopInterfaceLogger(), new Model.TargetLoadpoint
         {
-            Frequency = new Model.Frequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = 50 },
+            Frequency = new Model.GeneratedFrequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = 50 },
             Phases = new List<Model.TargetLoadpointPhase>() {
                 new Model.TargetLoadpointPhase {
                     Current = new() { AcComponent = new () { Rms=current, Angle=angle}, On=true},

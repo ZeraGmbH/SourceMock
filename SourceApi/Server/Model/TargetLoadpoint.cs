@@ -24,7 +24,7 @@ public class TargetLoadpoint : AbstractLoadpoint<TargetLoadpointPhase, Activatab
     /// <summary>
     /// The frequency.
     /// </summary>
-    public Frequency Frequency { get; set; } = new();
+    public GeneratedFrequency Frequency { get; set; } = new();
 
     /// <summary>
     /// Report the report name of this loadpoint.

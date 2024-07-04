@@ -6,7 +6,7 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Rective power (in VAr) as domain specific number.
 /// </summary>
-public readonly struct ReactivePower(double value) : IInternalDomainSpecificNumber
+public readonly struct ReactivePower(double value) : IInternalDomainSpecificNumber<ReactivePower>
 {
     /// <summary>
     /// The real value is always represented as a double.
@@ -54,4 +54,12 @@ public readonly struct ReactivePower(double value) : IInternalDomainSpecificNumb
     /// <param name="factor">Factor to apply to the power.</param>
     /// <returns>New power with scaled value.</returns>
     public static ReactivePower operator *(double factor, ReactivePower power) => new(factor * power._Value);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static ReactivePower operator -(ReactivePower left, ReactivePower right) => new(left._Value - right._Value);
 }

@@ -7,7 +7,7 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// apparent power (in VA) as domain specific number.
 /// </summary>
-public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumber
+public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumber<ApparentPower>
 {
     /// <summary>
     /// The real value is always represented as a double.
@@ -63,6 +63,14 @@ public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumb
     /// <param name="factor">Factor to apply to the power.</param>
     /// <returns>New power with scaled value.</returns>
     public static ApparentPower operator /(ApparentPower power, double factor) => new(power._Value * factor);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static ApparentPower operator -(ApparentPower left, ApparentPower right) => new(left._Value - right._Value);
 
     /// <summary>
     /// 

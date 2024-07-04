@@ -130,34 +130,6 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Vol
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="deviation"></param>
-    /// <returns></returns>
-    public Voltage GetRandomNumberWithAbsoluteDeviation(double deviation)
-    {
-        var maximum = _Value + deviation;
-        var minimum = _Value - deviation;
-        var random = Random.Shared;
-
-        return new(random.NextDouble() * (maximum - minimum) + minimum);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="deviation"></param>
-    /// <returns></returns>
-    public Voltage GetRandomNumberWithPercentageDeviation(double deviation)
-    {
-        var maximum = _Value + _Value * deviation / 100;
-        var minimum = _Value - _Value * deviation / 100;
-        var random = Random.Shared;
-
-        return new(random.NextDouble() * (maximum - minimum) + minimum);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
     public Voltage Abs() => new(Math.Abs(_Value));
 
     /// <summary>

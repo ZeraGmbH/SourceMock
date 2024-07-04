@@ -47,4 +47,11 @@ public interface IDomainSpecificNumber<T> : IDomainSpecificNumber where T : IDom
     /// <param name="factor"></param>
     /// <returns></returns>
     static abstract T operator *(double factor, T left);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <returns></returns>
+    static abstract explicit operator double(T left);
 }

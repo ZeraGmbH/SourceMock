@@ -263,9 +263,9 @@ public partial class ACRefMeterMock : RefMeterMock
         MeasureOutputNullCheck(mo);
 
         mo.Frequency = GetRandomNumberWithPercentageDeviation(mo.Frequency!.Value, 0.02);
-        mo.ActivePower = GetRandomNumberWithAbsoluteDeviation(mo.ActivePower!.Value, 0.02);
-        mo.ApparentPower = GetRandomNumberWithAbsoluteDeviation(mo.ApparentPower!.Value, 0.02);
-        mo.ReactivePower = GetRandomNumberWithAbsoluteDeviation(mo.ReactivePower!.Value, 0.02);
+        mo.ActivePower = GetRandomNumberWithAbsoluteDeviation(mo.ActivePower!.Value, new(0.02));
+        mo.ApparentPower = GetRandomNumberWithAbsoluteDeviation(mo.ApparentPower!.Value, new(0.02));
+        mo.ReactivePower = GetRandomNumberWithAbsoluteDeviation(mo.ReactivePower!.Value, new(0.02));
     }
 
     private static void MeasureOutputNullCheck(MeasuredLoadpoint mo)

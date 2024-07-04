@@ -36,7 +36,7 @@ public class MeasuredLoadpoint<TPhase, TVoltage, TCurrent> : AbstractLoadpoint<T
     /// <summary>
     /// Frequency.
     /// </summary>
-    public double? Frequency { get; set; }
+    public Frequency? Frequency { get; set; }
 }
 
 /// <summary>

@@ -6,7 +6,7 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Active power (in W) as domain specific number.
 /// </summary>
-public readonly struct ActivePower(double value) : IInternalDomainSpecificNumber
+public readonly struct ActivePower(double value) : IInternalDomainSpecificNumber<ActivePower>
 {
     /// <summary>
     /// The real value is always represented as a double.
@@ -38,6 +38,14 @@ public readonly struct ActivePower(double value) : IInternalDomainSpecificNumber
     /// <param name="right">Another power.</param>
     /// <returns>New active power instance representing the sum of the parameters.</returns>
     public static ActivePower operator +(ActivePower left, ActivePower right) => new(left._Value + right._Value);
+
+    /// <summary>
+    /// Subtract from active power.
+    /// </summary>
+    /// <param name="left">One power.</param>
+    /// <param name="right">Another power.</param>
+    /// <returns>New active power instance representing the sum of the parameters.</returns>
+    public static ActivePower operator -(ActivePower left, ActivePower right) => new(left._Value - right._Value);
 
     /// <summary>
     /// Scale power by a factor.
@@ -78,34 +86,6 @@ public readonly struct ActivePower(double value) : IInternalDomainSpecificNumber
     /// <param name="time"></param>
     /// <returns></returns>
     public static ActiveEnergy operator *(ActivePower power, Time time) => new(power._Value / (double)time);
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="deviation"></param>
-    /// <returns></returns>
-    public ActivePower GetRandomNumberWithAbsoluteDeviation(double deviation)
-    {
-        var maximum = _Value + deviation;
-        var minimum = _Value - deviation;
-        var random = Random.Shared;
-
-        return new(random.NextDouble() * (maximum - minimum) + minimum);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="deviation"></param>
-    /// <returns></returns>
-    public ActivePower GetRandomNumberWithPercentageDeviation(double deviation)
-    {
-        var maximum = _Value + _Value * deviation / 100;
-        var minimum = _Value - _Value * deviation / 100;
-        var random = Random.Shared;
-
-        return new(random.NextDouble() * (maximum - minimum) + minimum);
-    }
 
     /// <summary>
     /// 

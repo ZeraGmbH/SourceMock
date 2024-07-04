@@ -124,7 +124,7 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber
     /// <param name="angle1">Some Angle.</param>
     /// <param name="angle2">Other angle.</param>
     /// <returns>New Angle with scaled value.</returns>
-    public static bool operator >(Angle angle1, Angle angle2) => angle1._Value > angle2._Value;
+    public static bool operator <=(Angle angle1, Angle angle2) => angle1._Value <= angle2._Value;
 
     /// <summary>
     /// 
@@ -132,7 +132,7 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber
     /// <param name="angle1">Some Angle.</param>
     /// <param name="angle2">Other angle.</param>
     /// <returns>New Angle with scaled value.</returns>
-    public static bool operator <=(Angle angle1, Angle angle2) => angle1._Value <= angle2._Value;
+    public static bool operator >(Angle angle1, Angle angle2) => angle1._Value > angle2._Value;
 
     /// <summary>
     /// 

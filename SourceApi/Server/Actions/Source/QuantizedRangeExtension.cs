@@ -1,3 +1,4 @@
+using SharedLibrary.DomainSpecific;
 using SourceApi.Model;
 
 namespace SourceApi.Actions.Source
@@ -16,7 +17,31 @@ namespace SourceApi.Actions.Source
                 (mod <= epsilon || mod2 <= epsilon);
         }
 
-        public static bool IsIncluded(this List<QuantizedRange> ranges, double value)
+        public static bool IsIncluded(this QuantizedCurrentRange range, Current value)
+        {
+            var mod = value % range.PrecisionStepSize;
+            var mod2 = (mod - range.PrecisionStepSize).Abs();
+
+            Current epsilon = new(1E-12);
+
+            return
+                !(value < range.Min || value > range.Max) &&
+                (mod <= epsilon || mod2 <= epsilon);
+        }
+
+        public static bool IsIncluded(this QuantizedVoltageRange range, Voltage value)
+        {
+            var mod = value % range.PrecisionStepSize;
+            var mod2 = (mod - range.PrecisionStepSize).Abs();
+
+            Voltage epsilon = new(1E-12);
+
+            return
+                !(value < range.Min || value > range.Max) &&
+                (mod <= epsilon || mod2 <= epsilon);
+        }
+
+        public static bool IsIncluded(this List<QuantizedVoltageRange> ranges, Voltage value)
         {
             foreach (var range in ranges)
             {

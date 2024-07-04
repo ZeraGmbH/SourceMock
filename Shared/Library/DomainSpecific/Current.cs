@@ -58,6 +58,54 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber
     public static Current operator *(Current Current, double factor) => new(Current._Value * factor);
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="Current">Some Current.</param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static Current operator %(Current Current, Current value) => new(Current._Value % value._Value);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="Current">Some Current.</param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static Current operator -(Current Current, Current value) => new(Current._Value - value._Value);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="Current">Some Current.</param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static bool operator <(Current Current, Current value) => Current._Value < value._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="Current">Some Current.</param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static bool operator >(Current Current, Current value) => Current._Value > value._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="Current">Some Current.</param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static bool operator <=(Current Current, Current value) => Current._Value <= value._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="Current">Some Current.</param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static bool operator >=(Current Current, Current value) => Current._Value >= value._Value;
+
+    /// <summary>
     /// Scale Current by a factor.
     /// </summary>
     /// <param name="current">Some Current.</param>

@@ -1,3 +1,4 @@
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Exceptions;
@@ -22,9 +23,9 @@ internal class UnavailableSource : ISource
 
     public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger) => throw new SourceNotReadyException();
 
-    public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant) => throw new SourceNotReadyException();
+    public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant) => throw new SourceNotReadyException();
 
-    public Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant) => throw new SourceNotReadyException();
+    public Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant) => throw new SourceNotReadyException();
 
     public Task SetDosageMode(IInterfaceLogger logger, bool on) => throw new SourceNotReadyException();
 

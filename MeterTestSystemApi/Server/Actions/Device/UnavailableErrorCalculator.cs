@@ -1,6 +1,7 @@
 using ErrorCalculatorApi.Actions.Device;
 using ErrorCalculatorApi.Exceptions;
 using ErrorCalculatorApi.Models;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 
 namespace MeterTestSystemApi.Actions.Device;
@@ -22,7 +23,7 @@ internal class UnavailableErrorCalculator : IErrorCalculator
 
     public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
 
-    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, double dutMeterConstant, long impulses, double refMeterMeterConstant) => throw new ErrorCalculatorNotReadyException();
+    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant) => throw new ErrorCalculatorNotReadyException();
 
     public Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection) => throw new ErrorCalculatorNotReadyException();
 

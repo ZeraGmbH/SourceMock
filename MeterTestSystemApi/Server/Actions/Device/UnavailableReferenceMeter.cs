@@ -1,6 +1,7 @@
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Exceptions;
 using RefMeterApi.Models;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 
 namespace MeterTestSystemApi.Actions.Device;
@@ -12,7 +13,7 @@ internal class UnavailableReferenceMeter : IRefMeter
 {
     public bool GetAvailable(IInterfaceLogger interfaceLogger) => false;
 
-    public Task<double> GetMeterConstant(IInterfaceLogger logger) => throw new NotImplementedException();
+    public Task<MeterConstant> GetMeterConstant(IInterfaceLogger logger) => throw new NotImplementedException();
 
     public Task<MeasurementModes?> GetActualMeasurementMode(IInterfaceLogger logger) => throw new RefMeterNotReadyException();
 

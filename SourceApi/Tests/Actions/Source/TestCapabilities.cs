@@ -11,8 +11,8 @@ namespace SourceApi.Tests.Actions.Source
             {
                 Phases = new() {
                         new() {
-                            DcVoltage = new(10, 300, 0.01),
-                            DcCurrent = new(0, 60, 0.01)
+                            DcVoltage = new(new(10), new(300), new(0.01)),
+                            DcCurrent = new(new(0), new(60), new(0.01))
                         },
                     },
             };
@@ -23,8 +23,8 @@ namespace SourceApi.Tests.Actions.Source
             {
                 Phases = new() {
                         new() {
-                            AcCurrent = new(10, 300, 0.01),
-                            AcVoltage = new(0, 60, 0.01)
+                            AcCurrent = new(new(10), new(300), new(0.01)),
+                            AcVoltage = new(new(0), new(60), new(0.01))
                         },
                     },
             };

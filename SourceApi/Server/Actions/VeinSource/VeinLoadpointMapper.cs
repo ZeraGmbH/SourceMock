@@ -14,7 +14,7 @@ namespace SourceApi.Actions.VeinSource
             JObject ret = new();
             JObject frequency = new();
             frequency["type"] = MapFrequencyModeToType(inLoadpoint.Frequency.Mode);
-            frequency["val"] = inLoadpoint.Frequency.Value;
+            frequency["val"] = (double)inLoadpoint.Frequency.Value;
 
             ret["Frequency"] = frequency;
 
@@ -39,14 +39,14 @@ namespace SourceApi.Actions.VeinSource
             JObject json = JObject.Parse(zeraJson);
 
             ret.Frequency.Mode = MapFrequencyTypeToMode(json["Frequency"]?["type"]?.ToString() ?? "");
-            ret.Frequency.Value = json["Frequency"]?["val"]?.ToObject<double>() ?? 0;
+            ret.Frequency.Value = new(json["Frequency"]?["val"]?.ToObject<double>() ?? 0);
 
             int counter = 0;
             while (json.ContainsKey($"I{counter + 1}"))
             {
                 if (ret.Phases.Count <= counter) ret.Phases.Add(new TargetLoadpointPhase());
-                ret.Phases[counter].Current.AcComponent!.Rms = json[$"I{counter + 1}"]?["rms"]?.ToObject<double>() ?? 0;
-                ret.Phases[counter].Current.AcComponent!.Angle = json[$"I{counter + 1}"]?["angle"]?.ToObject<double>() ?? 0;
+                ret.Phases[counter].Current.AcComponent!.Rms = new(json[$"I{counter + 1}"]?["rms"]?.ToObject<double>() ?? 0);
+                ret.Phases[counter].Current.AcComponent!.Angle = new(json[$"I{counter + 1}"]?["angle"]?.ToObject<double>() ?? 0);
                 ret.Phases[counter].Current.On = json[$"I{counter + 1}"]?["on"]?.ToObject<bool>() ?? false;
                 counter += 1;
             }
@@ -55,19 +55,19 @@ namespace SourceApi.Actions.VeinSource
             while (json.ContainsKey($"U{counter + 1}"))
             {
                 if (ret.Phases.Count <= counter) ret.Phases.Add(new TargetLoadpointPhase());
-                ret.Phases[counter].Voltage.AcComponent!.Rms = json[$"U{counter + 1}"]?["rms"]?.ToObject<double>() ?? 0;
-                ret.Phases[counter].Voltage.AcComponent!.Angle = json[$"U{counter + 1}"]?["angle"]?.ToObject<double>() ?? 0;
+                ret.Phases[counter].Voltage.AcComponent!.Rms = new(json[$"U{counter + 1}"]?["rms"]?.ToObject<double>() ?? 0);
+                ret.Phases[counter].Voltage.AcComponent!.Angle = new(json[$"U{counter + 1}"]?["angle"]?.ToObject<double>() ?? 0);
                 ret.Phases[counter].Voltage.On = json[$"U{counter + 1}"]?["on"]?.ToObject<bool>() ?? false;
                 counter += 1;
             }
             return ret;
         }
 
-        private static JObject MapElectricalVectorQuantityToJObject(ElectricalVectorQuantity<Voltage> evq)
+        private static JObject MapElectricalVectorQuantityToJObject<T>(ElectricalVectorQuantity<T> evq) where T : struct, IDomainSpecificNumber<T>
         {
             JObject ret = new();
-            ret["rms"] = evq.Rms;
-            ret["angle"] = evq.Angle;
+            ret["rms"] = (double)evq.Rms;
+            ret["angle"] = (double)evq.Angle;
             return ret;
         }
         private static string MapFrequencyModeToType(FrequencyMode mode)

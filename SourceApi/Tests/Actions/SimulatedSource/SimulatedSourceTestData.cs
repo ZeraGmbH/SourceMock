@@ -36,20 +36,20 @@ namespace SourceApi.Tests.Actions.Source
                 {
                     Phases = new() {
                         new() {
-                            AcVoltage = new(10, 300, 0.01),
-                            AcCurrent = new(0, 60, 0.01)
+                            AcVoltage = new(new(10), new(300), new(0.01)),
+                            AcCurrent = new(new(0), new(60), new(0.01))
                         },
                         new() {
-                            AcVoltage = new(10, 300, 0.01),
-                            AcCurrent = new(0, 60, 0.01)
+                            AcVoltage = new(new(10), new(300), new(0.01)),
+                            AcCurrent = new(new(0), new(60), new(0.01))
                         },
                         new() {
-                            AcVoltage = new(10, 300, 0.01),
-                            AcCurrent = new(0, 60, 0.01)
+                            AcVoltage = new(new(10), new(300), new(0.01)),
+                            AcCurrent = new(new(0), new(60), new(0.01))
                         }
                     },
                     FrequencyRanges = new() {
-                        new(40, 60, 0.1, FrequencyMode.SYNTHETIC)
+                        new(new(40), new(60), new(0.1), FrequencyMode.SYNTHETIC)
                     }
                 };
             }
@@ -63,16 +63,16 @@ namespace SourceApi.Tests.Actions.Source
                 {
                     Phases = new() {
                         new() {
-                            AcVoltage = new(10, 300, 0.01),
-                            AcCurrent = new(0, 60, 0.01)
+                            AcVoltage = new(new(10), new(300), new(0.01)),
+                            AcCurrent = new(new(0), new(60), new(0.01))
                         },
                         new() {
-                            AcVoltage = new(10, 300, 0.01),
-                            AcCurrent = new(0, 60, 0.01)
+                            AcVoltage = new(new(10), new(300), new(0.01)),
+                            AcCurrent = new(new(0), new(60), new(0.01))
                         }
                     },
                     FrequencyRanges = new() {
-                        new(40, 60, 0.1, FrequencyMode.SYNTHETIC)
+                        new(new(40), new(60), new(0.1), FrequencyMode.SYNTHETIC)
                     }
                 };
             }
@@ -86,12 +86,12 @@ namespace SourceApi.Tests.Actions.Source
                 {
                     Phases = new() {
                         new() {
-                            AcVoltage = new(10, 300, 0.01),
-                            AcCurrent = new(0, 60, 0.01)
+                            AcVoltage = new(new(10), new(300), new(0.01)),
+                            AcCurrent = new(new(0), new(60), new(0.01))
                         }
                     },
                     FrequencyRanges = new() {
-                        new(40, 60, 0.1, FrequencyMode.SYNTHETIC)
+                        new(new(40), new(60), new(0.1), FrequencyMode.SYNTHETIC)
                     }
                 };
             }

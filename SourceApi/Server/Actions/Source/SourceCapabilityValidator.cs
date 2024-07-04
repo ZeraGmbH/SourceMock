@@ -71,7 +71,7 @@ namespace SourceApi.Actions.Source
                 {
                     if (capabilities.Phases[i].DcCurrent == null)
                         return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_DC;
-                    return CheckDcCurrents(capabilities, i, (double)dcCurrent);
+                    return CheckDcCurrents(capabilities, i, dcCurrent.Value);
                 }
             }
 

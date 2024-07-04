@@ -68,16 +68,16 @@ public class DosageFGTests
             $"OK3SA1;{dosage}",
             $"OK3MA1;{remaining}",
             "OK3PA45;918.375",
-        ]).GetDosageProgress(new NoopInterfaceLogger(), 1d);
+        ]).GetDosageProgress(new NoopInterfaceLogger(), new(1d));
 
         var rest = double.Parse(remaining) * 1000d;
 
         Assert.Multiple(() =>
         {
             Assert.That(progress.Active, Is.EqualTo(dosage == 2));
-            Assert.That(progress.Remaining, Is.EqualTo(rest));
-            Assert.That(progress.Progress, Is.EqualTo(918375 - rest));
-            Assert.That(progress.Total, Is.EqualTo(918375));
+            Assert.That((double)progress.Remaining, Is.EqualTo(rest));
+            Assert.That((double)progress.Progress, Is.EqualTo(918375 - rest));
+            Assert.That((double)progress.Total, Is.EqualTo(918375));
         });
     }
 
@@ -94,7 +94,7 @@ public class DosageFGTests
 
         device.SetAmplifiers(new NoopInterfaceLogger(), Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
 
-        await device.SetDosageEnergy(new NoopInterfaceLogger(), energy, 1d);
+        await device.SetDosageEnergy(new NoopInterfaceLogger(), new(energy), new(1d));
 
         Assert.That(mock.Commands[0], Is.EqualTo($"3PS45;{energy / 1000d}"));
     }

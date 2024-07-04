@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using SharedLibrary.DomainSpecific;
 
 namespace SourceApi.Model;
 
@@ -18,17 +19,17 @@ public class DosageProgress
     /// Remaining energy for the current measurment in Wh.
     /// </summary>
     [Required, NotNull]
-    public double Remaining { get; set; }
+    public ActiveEnergy Remaining { get; set; }
 
     /// <summary>
     /// Energy provided so far in the current measurement in Wh.
     /// </summary>
     [Required, NotNull]
-    public double Progress { get; set; }
+    public ActiveEnergy Progress { get; set; }
 
     /// <summary>
     /// Total number of requested energy in Wh.
     /// </summary>
     [Required, NotNull]
-    public double Total { get; set; }
+    public ActiveEnergy Total { get; set; }
 }

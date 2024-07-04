@@ -131,11 +131,4 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Vol
     /// 
     /// </summary>
     public Voltage Abs() => new(Math.Abs(_Value));
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    public string? ToString(string format) => _Value.ToString(format);
-
 }

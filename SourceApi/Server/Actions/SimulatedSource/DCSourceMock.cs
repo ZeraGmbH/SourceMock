@@ -28,8 +28,8 @@ public class DCSourceMock : SourceMock, IDCSourceMock
     {
         Phases = new() {
                     new() {
-                        DcVoltage = new(10, 300, 0.01),
-                        DcCurrent = new(0, 60, 0.01)
+                        DcVoltage = new(new(10), new(300), new(0.01)),
+                        DcCurrent = new(new(0), new(60), new(0.01))
                     }
                 }
     }, validator)
@@ -37,9 +37,9 @@ public class DCSourceMock : SourceMock, IDCSourceMock
 
     public override Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
     {
-        var power = (_loadpoint!.Phases[0].Voltage.DcComponent ?? 0) * (_loadpoint!.Phases[0].Current.DcComponent ?? 0);
-        var elapsedHours = (DateTime.Now - _startTime).TotalHours;
-        var energy = power * elapsedHours;
+        var power = (_loadpoint!.Phases[0].Voltage.DcComponent ?? Voltage.Zero) * (_loadpoint!.Phases[0].Current.DcComponent ?? Current.Zero);
+        var elapsed = new Time((DateTime.Now - _startTime).TotalSeconds);
+        var energy = power.GetActivePower(Angle.Zero) * elapsed;
 
         if (energy > _dosageEnergy) energy = DosageDone();
 

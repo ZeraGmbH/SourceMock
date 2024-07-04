@@ -26,20 +26,20 @@ public class SimulatedSource : SourceMock, ISimulatedSource
     {
         Phases = new() {
                     new() {
-                        AcVoltage = new(10, 300, 0.01),
-                        AcCurrent = new(0, 60, 0.01)
+                        AcVoltage = new(new(10), new(300), new(0.01)),
+                        AcCurrent = new(new(0), new(60), new(0.01))
                     },
                     new() {
-                        AcVoltage = new(10, 300, 0.01),
-                        AcCurrent = new(0, 60, 0.01)
+                        AcVoltage = new(new(10), new(300), new(0.01)),
+                        AcCurrent = new(new(0), new(60), new(0.01))
                     },
                     new() {
-                        AcVoltage = new(10, 300, 0.01),
-                        AcCurrent = new(0, 60, 0.01)
+                        AcVoltage = new(new(10), new(300), new(0.01)),
+                        AcCurrent = new(new(0), new(60), new(0.01))
                     }
                 },
         FrequencyRanges = new() {
-                    new(40, 60, 0.1, FrequencyMode.SYNTHETIC)
+                    new(new(40), new(60), new(0.1), FrequencyMode.SYNTHETIC)
                 }
     }, validator)
     { }
@@ -63,16 +63,14 @@ public class SimulatedSource : SourceMock, ISimulatedSource
 
     public override Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
     {
-        var power = 0d;
+        var power = ActivePower.Zero;
 
         foreach (var phase in _loadpoint!.Phases)
             if (phase.Voltage.On && phase.Current.On)
-                power += phase.Voltage.AcComponent!.Rms * phase.Current.AcComponent!.Rms *
-                    Math.Cos((phase.Voltage.AcComponent!.Angle - phase.Current.AcComponent!.Angle) *
-                    Math.PI / 180d);
+                power += (phase.Voltage.AcComponent!.Rms * phase.Current.AcComponent!.Rms).GetActivePower(phase.Voltage.AcComponent!.Angle - phase.Current.AcComponent!.Angle);
 
-        var elapsedHours = (DateTime.Now - _startTime).TotalHours;
-        var energy = power * elapsedHours;
+        var elapsed = new Time((DateTime.Now - _startTime).TotalSeconds);
+        var energy = power * elapsed;
 
         if (energy > _dosageEnergy) energy = DosageDone();
 

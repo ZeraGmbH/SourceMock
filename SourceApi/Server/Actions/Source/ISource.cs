@@ -58,7 +58,7 @@ namespace SourceApi.Actions.Source
         /// <param name="logger"></param>
         /// <param name="value">Value in Wh.</param>
         /// <param name="meterConstant">The meter constant used in the reference meter.</param>
-        Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant);
+        Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant);
 
         /// <summary>
         /// Start a dosage measurement.

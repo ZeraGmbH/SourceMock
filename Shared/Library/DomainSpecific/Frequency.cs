@@ -70,6 +70,22 @@ public readonly struct Frequency(double value) : IInternalDomainSpecificNumber<F
     /// <param name="left"></param>
     /// <param name="right"></param>
     /// <returns></returns>
+    public static bool operator <=(Frequency left, Frequency right) => left._Value <= right._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static bool operator >=(Frequency left, Frequency right) => left._Value <= right._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
     public static Frequency Max(Frequency left, Frequency right) => left._Value >= right._Value ? left : right;
 
     /// <summary>

@@ -148,7 +148,7 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
     }
 
     /// <inheritdoc/>
-    public async Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant)
+    public async Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
     {
         if (_dosageUri == null) throw new NotImplementedException("Dosage");
 

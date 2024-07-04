@@ -133,10 +133,4 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber<Cur
     /// </summary>
     /// <returns></returns>
     public Current Abs() => new(Math.Abs(_Value));
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    public string? ToString(string format) => _Value.ToString(format);
 }

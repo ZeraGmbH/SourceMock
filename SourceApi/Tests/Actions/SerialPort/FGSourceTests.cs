@@ -59,20 +59,20 @@ public class FGSourceTests
             Frequency = new()
             {
                 Mode = Model.FrequencyMode.SYNTHETIC,
-                Value = 50
+                Value = new(50)
             },
             Phases = new() {
                 new()  {
-                    Current = new() { AcComponent = new () {Rms=1 * baseAngle, Angle=0}, On=true},
-                    Voltage = new() { AcComponent = new () {Rms=220, Angle=0}, On=true},
+                    Current = new() { AcComponent = new () {Rms=new(1 * baseAngle), Angle=new(0)}, On=true},
+                    Voltage = new() { AcComponent = new () {Rms=new(220), Angle=new(0)}, On=true},
                 },
                 new() {
-                    Current = new() { AcComponent = new () {Rms=2 * baseAngle, Angle=120}, On=true},
-                    Voltage = new() { AcComponent = new () {Rms=221, Angle=120}, On=false},
+                    Current = new() { AcComponent = new () {Rms=new(2 * baseAngle), Angle=new(120)}, On=true},
+                    Voltage = new() { AcComponent = new () {Rms=new(221), Angle=new(120)}, On=false},
                 },
                 new() {
-                    Current = new() { AcComponent = new () {Rms=3 * baseAngle, Angle=240}, On=false},
-                    Voltage = new() { AcComponent = new () {Rms=222, Angle=240}, On=true},
+                    Current = new() { AcComponent = new () {Rms=new(3 * baseAngle), Angle=new(240)}, On=false},
+                    Voltage = new() { AcComponent = new () {Rms=new(222), Angle=new(240)}, On=true},
                 },
             },
             VoltageNeutralConnected = true,
@@ -90,7 +90,7 @@ public class FGSourceTests
         var loadpoint = _source.GetCurrentLoadpoint(new NoopInterfaceLogger());
 
         Assert.That(loadpoint, Is.Not.Null);
-        Assert.That(loadpoint.Frequency.Value, Is.EqualTo(50));
+        Assert.That((double)loadpoint.Frequency.Value, Is.EqualTo(50));
     }
 
     [Test]
@@ -103,20 +103,20 @@ public class FGSourceTests
             Frequency = new()
             {
                 Mode = Model.FrequencyMode.SYNTHETIC,
-                Value = 50
+                Value = new(50)
             },
             Phases = new() {
                 new()  {
-                    Current = new() { AcComponent = new () { Rms=10, Angle=0}, On=true},
-                    Voltage = new() { AcComponent = new () { Rms=120, Angle=330}, On=true},
+                    Current = new() { AcComponent = new () { Rms=new(10), Angle=new(0)}, On=true},
+                    Voltage = new() { AcComponent = new () { Rms=new(120), Angle=new(330)}, On=true},
                 },
                 new() {
-                    Current = new() { AcComponent = new () { Rms=10, Angle=240}, On=true},
-                    Voltage = new() { AcComponent = new () { Rms=120, Angle=210}, On=true},
+                    Current = new() { AcComponent = new () { Rms=new(10), Angle=new(240)}, On=true},
+                    Voltage = new() { AcComponent = new () { Rms=new(120), Angle=new(210)}, On=true},
                 },
                 new() {
-                    Current = new() { AcComponent = new () { Rms=10, Angle=120}, On=true},
-                    Voltage = new() { AcComponent = new () { Rms=120, Angle=90}, On=true},
+                    Current = new() { AcComponent = new () { Rms=new(10), Angle=new(120)}, On=true},
+                    Voltage = new() { AcComponent = new () { Rms=new(120), Angle=new(90)}, On=true},
                 },
             },
             VoltageNeutralConnected = true,
@@ -134,6 +134,6 @@ public class FGSourceTests
         var loadpoint = _source.GetCurrentLoadpoint(new NoopInterfaceLogger());
 
         Assert.That(loadpoint, Is.Not.Null);
-        Assert.That(loadpoint.Frequency.Value, Is.EqualTo(50));
+        Assert.That((double)loadpoint.Frequency.Value, Is.EqualTo(50));
     }
 }

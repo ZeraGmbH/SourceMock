@@ -100,7 +100,7 @@ namespace SourceApi.Tests.Actions.Source
             // Arrange 
             ISource source = GenerateSimulatedSource();
             TargetLoadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
-            lp.Phases[0].Voltage.AcComponent!.Rms = 500;
+            lp.Phases[0].Voltage.AcComponent!.Rms = new(500);
 
             // Act
             var result = await source.SetLoadpoint(new NoopInterfaceLogger(), lp);
@@ -118,7 +118,7 @@ namespace SourceApi.Tests.Actions.Source
             // Arrange 
             ISource source = GenerateSimulatedSource();
             TargetLoadpoint lp = LoadpointValidatorTestData.Loadpoint001_3AC_valid;
-            lp.Phases[0].Current.AcComponent!.Rms = 100;
+            lp.Phases[0].Current.AcComponent!.Rms = new(100);
 
             // Act
             var result = await source.SetLoadpoint(new NoopInterfaceLogger(), lp);
@@ -147,14 +147,14 @@ namespace SourceApi.Tests.Actions.Source
         public async Task Returns_Correct_Dosage_Progress()
         {
             await mock.SetLoadpoint(new NoopInterfaceLogger(), GetLoadpoint());
-            await mock.SetDosageEnergy(new NoopInterfaceLogger(), 20, 1);
+            await mock.SetDosageEnergy(new NoopInterfaceLogger(), new(20), new(1));
             await mock.StartDosage(new NoopInterfaceLogger());
 
-            DosageProgress result = await mock.GetDosageProgress(new NoopInterfaceLogger(), 1);
+            DosageProgress result = await mock.GetDosageProgress(new NoopInterfaceLogger(), new(1));
 
             Assert.That(result.Active, Is.EqualTo(true));
-            Assert.That(result.Remaining, Is.LessThan(20));
-            Assert.That(result.Progress, Is.GreaterThan(0));
+            Assert.That((double)result.Remaining, Is.LessThan(20));
+            Assert.That((double)result.Progress, Is.GreaterThan(0));
         }
 
         [Test]
@@ -180,19 +180,19 @@ namespace SourceApi.Tests.Actions.Source
         {
             return new()
             {
-                Frequency = new() { Value = 50 },
+                Frequency = new() { Value = new(50) },
                 Phases = new List<TargetLoadpointPhase>(){
                     new TargetLoadpointPhase(){
-                        Current = new(){AcComponent = new() {Angle=0, Rms=10}, On=true},
-                        Voltage = new(){AcComponent = new() {Angle=0, Rms=220}, On=true}
+                        Current = new(){AcComponent = new() {Angle=new(0), Rms=new(10)}, On=true},
+                        Voltage = new(){AcComponent = new() {Angle=new(0), Rms=new(220)}, On=true}
                     },
                     new TargetLoadpointPhase(){
-                        Current = new(){AcComponent = new() {Angle=120, Rms=10}, On=true},
-                        Voltage = new(){AcComponent = new() {Angle=120, Rms=220}, On=true}
+                        Current = new(){AcComponent = new() {Angle=new(120), Rms=new(10)}, On=true},
+                        Voltage = new(){AcComponent = new() {Angle=new(120), Rms=new(220)}, On=true}
                     },
                     new TargetLoadpointPhase(){
-                        Current = new(){AcComponent = new() {Angle=240, Rms=10}, On=true},
-                        Voltage = new(){AcComponent = new() {Angle=240, Rms=220}, On=true}
+                        Current = new(){AcComponent = new() {Angle=new(240), Rms=new(10)}, On=true},
+                        Voltage = new(){AcComponent = new() {Angle=new(240), Rms=new(220)}, On=true}
                     }
                 }
             };

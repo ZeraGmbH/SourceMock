@@ -1,4 +1,6 @@
+using SharedLibrary.DomainSpecific;
 using SourceApi.Actions.Source;
+using SourceApi.Model;
 
 namespace SourceApi.Tests.Actions.Source
 {
@@ -9,10 +11,10 @@ namespace SourceApi.Tests.Actions.Source
         public void TestLowerViolation()
         {
             // Arrange
-            QuantizedRange range = new(1, 3, 0.1);
+            QuantizedRange<Voltage> range = new(new(1), new(3), new(0.1));
 
             // Act
-            var result = range.IsIncluded(0);
+            var result = range.IsIncluded(new(0));
 
             // Assert
             Assert.That(result, Is.False);
@@ -22,10 +24,10 @@ namespace SourceApi.Tests.Actions.Source
         public void TestUpperViolation()
         {
             // Arrange
-            QuantizedRange range = new(1, 3, 0.1);
+            QuantizedRange<Voltage> range = new(new(1), new(3), new(0.1));
 
             // Act
-            var result = range.IsIncluded(4);
+            var result = range.IsIncluded(new(4));
 
             // Assert
             Assert.That(result, Is.False);
@@ -35,10 +37,10 @@ namespace SourceApi.Tests.Actions.Source
         public void TestBarelyValidUpperLimit()
         {
             // Arrange
-            QuantizedRange range = new(1, 3, 0.1);
+            QuantizedRange<Voltage> range = new(new(1), new(3), new(0.1));
 
             // Act
-            var result = range.IsIncluded(3);
+            var result = range.IsIncluded(new(3));
 
             // Assert
             Assert.That(result, Is.True);
@@ -49,10 +51,10 @@ namespace SourceApi.Tests.Actions.Source
         public void TestBarelyValidLowerLimit()
         {
             // Arrange
-            QuantizedRange range = new(1, 3, 0.1);
+            QuantizedRange<Voltage> range = new(new(1), new(3), new(0.1));
 
             // Act
-            var result = range.IsIncluded(1);
+            var result = range.IsIncluded(new(1));
 
             // Assert
             Assert.That(result, Is.True);
@@ -62,10 +64,10 @@ namespace SourceApi.Tests.Actions.Source
         public void TestInvalidQuantisation()
         {
             // Arrange
-            QuantizedRange range = new QuantizedRange(0, 10, 0.1);
+            var range = new QuantizedRange<Voltage>(new(0), new(10), new(0.1));
 
             // Act
-            var result = range.IsIncluded(1.05);
+            var result = range.IsIncluded(new(1.05));
 
             // Assert
             Assert.That(result, Is.False);
@@ -75,10 +77,10 @@ namespace SourceApi.Tests.Actions.Source
         public void TestValid()
         {
             // Arrange
-            QuantizedRange range = new(1, 3, 0.1);
+            QuantizedRange<Voltage> range = new(new(1), new(3), new(0.1));
 
             // Act
-            var result = range.IsIncluded(2.2);
+            var result = range.IsIncluded(new(2.2));
 
             // Assert
             Assert.That(result, Is.True);
@@ -88,13 +90,13 @@ namespace SourceApi.Tests.Actions.Source
         public void TestListInvalid()
         {
             // Arrange
-            List<QuantizedRange> ranges = new() {
-                new(1, 3, 0.1),
-                new(5, 7, 0.1)
+            List<QuantizedRange<Voltage>> ranges = new() {
+                new(new(1), new(3), new(0.1)),
+                new(new(5), new(7), new(0.1))
             };
 
             // Act
-            var result = ranges.IsIncluded(4);
+            var result = ranges.IsIncluded(new(4));
 
             // Assert
             Assert.That(result, Is.False);
@@ -104,14 +106,14 @@ namespace SourceApi.Tests.Actions.Source
         public void TestListValid()
         {
             // Arrange
-            List<QuantizedRange> ranges = new() {
-                new(1, 3, 0.1),
-                new(5, 7, 0.1)
+            List<QuantizedRange<Voltage>> ranges = new() {
+                new(new(1), new(3), new(0.1)),
+                new(new(5), new(7), new(0.1))
             };
 
             // Act
-            var result1 = ranges.IsIncluded(2);
-            var result2 = ranges.IsIncluded(6);
+            var result1 = ranges.IsIncluded(new(2));
+            var result2 = ranges.IsIncluded(new(6));
 
             // Assert
             Assert.That(result1, Is.True);

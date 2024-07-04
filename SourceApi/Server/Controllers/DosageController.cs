@@ -84,7 +84,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<DosageProgress>> GetProgress(double meterConstant) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetDosageProgress(interfaceLogger, meterConstant));
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetDosageProgress(interfaceLogger, new(meterConstant)));
 
     /// <summary>
     /// Set the dosage energy.
@@ -100,7 +100,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SetEnergy(double energy, double meterConstant) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.SetDosageEnergy(interfaceLogger, energy, meterConstant));
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.SetDosageEnergy(interfaceLogger, new(energy), new(meterConstant)));
 
     /// <summary>
     /// Ask the server if the dosage is activated but the current is off.

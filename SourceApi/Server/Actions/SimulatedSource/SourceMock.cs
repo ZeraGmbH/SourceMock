@@ -12,7 +12,7 @@ public abstract class SourceMock : ISourceMock
     protected LoadpointInfo _info = new();
     protected DosageProgress _status = new();
     protected DateTime _startTime;
-    protected double _dosageEnergy;
+    protected ActiveEnergy _dosageEnergy;
     protected bool _dosageMode = false;
     protected TargetLoadpoint? _loadpoint;
     protected ISourceCapabilityValidator _validator;
@@ -62,7 +62,7 @@ public abstract class SourceMock : ISourceMock
         return Task.CompletedTask;
     }
 
-    public Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant)
+    public Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
     {
         _dosageEnergy = value;
 
@@ -81,7 +81,7 @@ public abstract class SourceMock : ISourceMock
     public Task CancelDosage(IInterfaceLogger logger)
     {
         _status.Active = false;
-        _status.Remaining = 0;
+        _status.Remaining = ActiveEnergy.Zero;
 
         return Task.CompletedTask;
     }
@@ -109,7 +109,7 @@ public abstract class SourceMock : ISourceMock
     /// 
     /// </summary>
     /// <returns></returns>
-    protected double DosageDone()
+    protected ActiveEnergy DosageDone()
     {
         _status.Active = false;
 

@@ -16,9 +16,6 @@ partial class SerialPortMTSource
     /// <inheritdoc/>
     public override async Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
     {
-        /* Request the current meter constant. */
-        meterConstant /= 1000d;
-
         /* Get all actual values - unit is pulse interval. */
         var active = SerialPortRequest.Create("S3SA1", new Regex(@"^SOK3SA1;([0123])$"));
         var countdown = SerialPortRequest.Create("S3MA4", new Regex(@"^SOK3MA4;(.+)$"));
@@ -31,22 +28,22 @@ partial class SerialPortMTSource
         return new()
         {
             Active = active.EndMatch!.Groups[1].Value == "2",
-            Progress = double.Parse(progress.EndMatch!.Groups[1].Value) / meterConstant,
-            Remaining = double.Parse(countdown.EndMatch!.Groups[1].Value) / meterConstant,
-            Total = double.Parse(total.EndMatch!.Groups[1].Value) / meterConstant,
+            Progress = new Impulses(double.Parse(progress.EndMatch!.Groups[1].Value)) / meterConstant,
+            Remaining = new Impulses(double.Parse(countdown.EndMatch!.Groups[1].Value)) / meterConstant,
+            Total = new Impulses(double.Parse(total.EndMatch!.Groups[1].Value)) / meterConstant,
         };
     }
 
     /// <inheritdoc/>
-    public override async Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant)
+    public override async Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
     {
-        if (value < 0)
+        if (value < ActiveEnergy.Zero)
             throw new ArgumentOutOfRangeException(nameof(value));
 
         /* Calculate the number of impulses from the energy (in Wh) and the meter constant. */
-        var impulses = (long)Math.Round(meterConstant * value / 1000d);
+        var impulses = meterConstant * value;
 
-        await Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create($"S3PS46;{impulses:0000000000}", "SOK3PS46")));
+        await Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create($"S3PS46;{impulses.Format("0000000000")}", "SOK3PS46")));
     }
 
     /// <inheritdoc/>

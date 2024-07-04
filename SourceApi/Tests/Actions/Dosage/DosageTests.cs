@@ -62,14 +62,14 @@ public class DosageTests
             $"SOK3MA4;{remaining}",
             "SOK3MA5;303541",
             "SOK3SA5;218375",
-        }).GetDosageProgress(new NoopInterfaceLogger(), 600000000d);
+        }).GetDosageProgress(new NoopInterfaceLogger(), new(600000000d));
 
         Assert.Multiple(() =>
         {
             Assert.That(progress.Active, Is.EqualTo(dosage == 2));
-            Assert.That(progress.Remaining, Is.EqualTo(double.Parse(remaining) / 600000d));
-            Assert.That(progress.Progress, Is.EqualTo(303541 / 600000d));
-            Assert.That(progress.Total, Is.EqualTo(218375 / 600000d));
+            Assert.That((double)progress.Remaining, Is.EqualTo(double.Parse(remaining) / 600000d));
+            Assert.That((double)progress.Progress, Is.EqualTo(303541 / 600000d));
+            Assert.That((double)progress.Total, Is.EqualTo(218375 / 600000d));
         });
     }
 
@@ -86,7 +86,7 @@ public class DosageTests
 
         var device = new SerialPortMTSource(_deviceLogger, SerialPortConnection.FromMockedPortInstance(mock, _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        await device.SetDosageEnergy(new NoopInterfaceLogger(), energy, 600000000d);
+        await device.SetDosageEnergy(new NoopInterfaceLogger(), new(energy), new(600000000d));
 
         Assert.That(mock.Commands[0], Is.EqualTo($"S3PS46;{(long)(6000E5 * energy / 1000d):0000000000}"));
     }

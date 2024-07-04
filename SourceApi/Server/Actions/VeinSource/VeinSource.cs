@@ -38,7 +38,7 @@ namespace SourceApi.Actions.VeinSource
             throw new NotImplementedException();
         }
 
-        public Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant)
+        public Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
         {
             throw new NotImplementedException();
         }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using SharedLibrary.DomainSpecific;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 
@@ -31,13 +32,13 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
             // Act
             var error = validator.IsValid(loadpoint, new()
             {
-                FrequencyRanges = new() { new() { Max = 100, Min = 0, PrecisionStepSize = 1 } },
+                FrequencyRanges = new() { new() { Max = new(100), Min = new(0), PrecisionStepSize = new(1) } },
                 Phases = loadpoint.Phases
                     .Select(
                         p => new PhaseCapability
                         {
-                            AcCurrent = new() { Min = 0, Max = 100, PrecisionStepSize = 1 },
-                            AcVoltage = new() { Min = 0, Max = 1000, PrecisionStepSize = 1 }
+                            AcCurrent = new() { Min = new(0), Max = new(100), PrecisionStepSize = new(1) },
+                            AcVoltage = new() { Min = new(0), Max = new(1000), PrecisionStepSize = new(1) }
                         }
                     ).ToList()
             });
@@ -52,10 +53,10 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
         public void TestValidPhaseAngle()
         {
             // Arrange       
-            ElectricalVectorQuantity electricalVectorQuantity = new()
+            ElectricalVectorQuantity<Voltage> electricalVectorQuantity = new()
             {
-                Rms = 0d,
-                Angle = 180d,
+                Rms = new(0d),
+                Angle = new(180d),
             };
 
             // Act
@@ -69,10 +70,10 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
         public void TestInvalidPhaseAngleTooLow()
         {
             // Arrange       
-            ElectricalVectorQuantity electricalVectorQuantity = new()
+            ElectricalVectorQuantity<Voltage> electricalVectorQuantity = new()
             {
-                Rms = 0d,
-                Angle = -0.1d,
+                Rms = new(0d),
+                Angle = new(-0.1d),
             };
 
             // Act
@@ -86,10 +87,10 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
         public void TestInvalidPhaseAngleTooHigh()
         {
             // Arrange       
-            ElectricalVectorQuantity electricalVectorQuantity = new()
+            ElectricalVectorQuantity<Voltage> electricalVectorQuantity = new()
             {
-                Rms = 0d,
-                Angle = 360.1d,
+                Rms = new(0d),
+                Angle = new(360.1d),
             };
 
             // Act

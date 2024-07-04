@@ -11,8 +11,8 @@ namespace SourceApi.Tests.Actions.Source
             {
                 Phases = new List<TargetLoadpointPhase>(){
                     new TargetLoadpointPhase(){
-                        Current = new () { On = true, DcComponent = 10 },
-                        Voltage = new () { On = true, DcComponent = 210 }
+                        Current = new () { On = true, DcComponent = new(10) },
+                        Voltage = new () { On = true, DcComponent = new(210) }
                     },
                 }
             };
@@ -24,8 +24,8 @@ namespace SourceApi.Tests.Actions.Source
             {
                 Phases = new List<TargetLoadpointPhase>(){
                     new TargetLoadpointPhase(){
-                        Current = new () { On = true, DcComponent = 10 },
-                        Voltage = new () { On = true, DcComponent = 310 }
+                        Current = new () { On = true, DcComponent = new(10) },
+                        Voltage = new () { On = true, DcComponent = new(310) }
                     },
                 }
             };
@@ -37,8 +37,8 @@ namespace SourceApi.Tests.Actions.Source
             {
                 Phases = new List<TargetLoadpointPhase>(){
                     new TargetLoadpointPhase(){
-                        Current = new () { On = true, DcComponent = 70 },
-                        Voltage = new () { On = true, DcComponent = 210 }
+                        Current = new () { On = true, DcComponent = new(70 )},
+                        Voltage = new () { On = true, DcComponent = new(210) }
                     },
                 }
             };
@@ -49,8 +49,8 @@ namespace SourceApi.Tests.Actions.Source
             {
                 Phases = new List<TargetLoadpointPhase>(){
                     new TargetLoadpointPhase(){
-                        Current = new () { On = true, AcComponent = new() {Angle = 0, Rms = 10,} },
-                        Voltage = new () { On = true, AcComponent = new() {Angle = 0, Rms = 210} }
+                        Current = new () { On = true, AcComponent = new() {Angle = new(0), Rms = new(10),} },
+                        Voltage = new () { On = true, AcComponent = new() {Angle = new(0), Rms = new(210)} }
                     },
                 }
             };

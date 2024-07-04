@@ -25,15 +25,15 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 AcComponent = new () {
-                                Rms = 230d,
-                                Angle = 5d,
+                                Rms = new(230d),
+                                Angle = new(5d),
                                 },
                                 On = true
                             },
                             Current = new() {
                                 AcComponent = new () {
-                                Rms = 60d,
-                                Angle = 0d,
+                                Rms = new(60d),
+                                Angle = new(0d),
                                 },
                                 On = true
                             }
@@ -41,15 +41,15 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 AcComponent = new () {
-                                Rms = 230d,
-                                Angle = 120d,
+                                Rms = new(230d),
+                                Angle = new(120d),
                                 },
                                 On = true
                             },
                             Current = new() {
                                 AcComponent = new () {
-                                Rms = 60d,
-                                Angle = 125d,
+                                Rms = new(60d),
+                                Angle = new(125d),
                                 },
                                 On = true
                             }
@@ -57,15 +57,15 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 AcComponent = new () {
-                                Rms = 230d,
-                                Angle = 240d,
+                                Rms = new(230d),
+                                Angle = new(240d),
                                 },
                                 On = true
                             },
                             Current = new() {
                                 AcComponent = new () {
-                                Rms = 60d,
-                                Angle = 245d,
+                                Rms = new(60d),
+                                Angle = new(245d),
                                 },
                                 On = true
                             }
@@ -75,7 +75,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                     Frequency = new()
                     {
                         Mode = FrequencyMode.SYNTHETIC,
-                        Value = 50d
+                        Value = new(50d)
                     }
                 };
             }
@@ -91,15 +91,15 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 AcComponent = new () {
-                                Rms = 230d,
-                                Angle = 5d,
+                                Rms = new(230d),
+                                Angle = new(5d),
                                 },
                                 On = true
                             },
                             Current = new() {
                                 AcComponent = new () {
-                                Rms = 60d,
-                                Angle = 0d,
+                                Rms = new(60d),
+                                Angle = new(0d),
                                 },
                                 On = true
                             }
@@ -107,15 +107,15 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 AcComponent = new () {
-                                Rms = 230d,
-                                Angle = 180d,
+                                Rms = new(230d),
+                                Angle = new(180d),
                                 },
                                 On = true
                             },
                             Current = new() {
                                 AcComponent = new () {
-                                Rms = 60d,
-                                Angle = 185d,
+                                Rms = new(60d),
+                                Angle = new(185d),
                                 },
                                 On = true
                             }
@@ -125,7 +125,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                     Frequency = new()
                     {
                         Mode = FrequencyMode.SYNTHETIC,
-                        Value = 50d
+                        Value = new(50d)
                     }
                 };
             }
@@ -141,15 +141,15 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 AcComponent = new () {
-                                Rms = 230d,
-                                Angle = 5d,
+                                Rms = new(230d),
+                                Angle = new(5d),
                                 },
                                 On = true
                             },
                             Current = new() {
                                 AcComponent = new () {
-                                Rms = 60d,
-                                Angle = 0d,
+                                Rms = new(60d),
+                                Angle = new(0d),
                                 },
                                 On = true
                             }
@@ -159,7 +159,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                     Frequency = new()
                     {
                         Mode = FrequencyMode.SYNTHETIC,
-                        Value = 50d
+                        Value = new(50d)
                     }
                 };
             }
@@ -187,15 +187,15 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 AcComponent = new () {
-                                Rms = 230d,
-                                Angle = 5d,
+                                Rms = new(230d),
+                                Angle = new(5d),
                                 },
                                 On = false
                             },
                             Current = new() {
                                 AcComponent = new () {
-                                Rms = 60d,
-                                Angle = 5d,
+                                Rms = new(60d),
+                                Angle = new(5d),
                                 },
                                 On = false
                             }
@@ -203,15 +203,15 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 AcComponent = new () {
-                                Rms = 230d,
-                                Angle = 120d,
+                                Rms = new(230d),
+                                Angle = new(120d),
                                 },
                                 On = true
                             },
                             Current = new() {
                                 AcComponent = new () {
-                                Rms = 60d,
-                                Angle = 125d,
+                                Rms = new(60d),
+                                Angle = new(125d),
                                 },
                                 On = true
                             }
@@ -219,15 +219,15 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 AcComponent = new () {
-                                Rms = 230d,
-                                Angle = 240d,
+                                Rms = new(230d),
+                                Angle = new(240d),
                                 },
                                 On = true
                             },
                             Current = new() {
                                 AcComponent = new () {
-                                Rms = 60d,
-                                Angle = 245d,
+                                Rms = new(60d),
+                                Angle = new(245d),
                                 },
                                 On = true
                             }
@@ -237,7 +237,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                     Frequency = new()
                     {
                         Mode = FrequencyMode.SYNTHETIC,
-                        Value = 50d
+                        Value = new(50d)
                     }
                 };
             }
@@ -253,15 +253,15 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 AcComponent = new () {
-                                Rms = 230d,
-                                Angle = 0d,
+                                Rms = new(230d),
+                                Angle = new(0d),
                                 },
                                 On = false
                             },
                             Current = new() {
                                 AcComponent = new () {
-                                Rms = 60d,
-                                Angle = 5d,
+                                Rms = new(60d),
+                                Angle = new(5d),
                                 },
                                 On = false
                             }
@@ -269,15 +269,15 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 AcComponent = new () {
-                                Rms = 230d,
-                                Angle = 180d,
+                                Rms = new(230d),
+                                Angle = new(180d),
                                 },
                                 On = true
                             },
                             Current = new() {
                                 AcComponent = new () {
-                                Rms = 60d,
-                                Angle = 185d,
+                                Rms = new(60d),
+                                Angle = new(185d),
                                 },
                                 On = true
                             }
@@ -287,7 +287,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                     Frequency = new()
                     {
                         Mode = FrequencyMode.SYNTHETIC,
-                        Value = 50d
+                        Value = new(50d)
                     }
                 };
             }
@@ -303,15 +303,15 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                         new() {
                             Voltage = new() {
                                 AcComponent = new () {
-                                Rms = 230d,
-                                Angle = 1d,
+                                Rms = new(230d),
+                                Angle = new(1d),
                                 },
                                 On = true
                             },
                             Current = new() {
                                 AcComponent = new () {
-                                Rms = 60d,
-                                Angle = 5d,
+                                Rms = new(60d),
+                                Angle = new(5d),
                                 },
                                 On = true
                             }
@@ -321,7 +321,7 @@ namespace SourceApi.Tests.Actions.LoadpointValidator
                     Frequency = new()
                     {
                         Mode = FrequencyMode.SYNTHETIC,
-                        Value = 50d
+                        Value = new(50d)
                     }
                 };
             }

@@ -29,9 +29,8 @@ partial class SerialPortFGSource
         await Task.WhenAll(Device.Execute(logger, activeReq, countdownReq, totalReq));
 
         /* Scale actual values to energy - in Wh. */
-
-        double remaining = double.Parse(countdownReq.EndMatch!.Groups[1].Value) * 1000d;
-        double total = double.Parse(totalReq.EndMatch!.Groups[1].Value) * 1000d;
+        var remaining = new ActiveEnergy(double.Parse(countdownReq.EndMatch!.Groups[1].Value) * 1000d);
+        var total = new ActiveEnergy(double.Parse(totalReq.EndMatch!.Groups[1].Value) * 1000d);
 
         return new()
         {
@@ -43,14 +42,14 @@ partial class SerialPortFGSource
     }
 
     /// <inheritdoc/>
-    public override Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant)
+    public override Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
     {
         TestConfigured(logger);
 
-        if (value < 0)
+        if (value < ActiveEnergy.Zero)
             throw new ArgumentOutOfRangeException(nameof(value));
 
-        return Device.Execute(logger, SerialPortRequest.Create($"3PS45;{value / 1000d}", "OK3PS45"))[0];
+        return Device.Execute(logger, SerialPortRequest.Create($"3PS45;{(double)value / 1000d}", "OK3PS45"))[0];
     }
 
     /// <inheritdoc/>

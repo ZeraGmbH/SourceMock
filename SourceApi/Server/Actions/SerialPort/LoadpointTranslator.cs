@@ -29,7 +29,7 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
 
         /* Only set the frequency if syncthetic mode is requested - else use 00.00. */
         if (frequency.Mode == FrequencyMode.SYNTHETIC)
-            request.Append(frequency.Value.ToString("00.00"));
+            request.Append(frequency.Value.Format("00.00"));
         else
             request.Append("00.00");
 
@@ -68,8 +68,8 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
                 if (voltage != null && voltage.AcComponent != null)
                 {
                     /* Convert voltage and angle to API protocol format. */
-                    request.Append(voltage.AcComponent.Rms.ToString("000.000"));
-                    request.Append(voltage.AcComponent.Angle.ToString("000.00"));
+                    request.Append(voltage.AcComponent.Rms.Format("000.000"));
+                    request.Append(voltage.AcComponent.Angle.Format("000.00"));
 
                     continue;
                 }
@@ -115,8 +115,8 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
                 if (current != null && current.AcComponent != null)
                 {
                     /* Convert voltage and angle to API protocol format. */
-                    request.Append(current.AcComponent.Rms.ToString("000.000"));
-                    request.Append(current.AcComponent.Angle.ToString("000.00"));
+                    request.Append(current.AcComponent.Rms.Format("000.000"));
+                    request.Append(current.AcComponent.Angle.Format("000.00"));
 
                     continue;
                 }

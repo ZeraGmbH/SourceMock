@@ -110,7 +110,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     public abstract Task SetDosageMode(IInterfaceLogger logger, bool on);
 
     /// <inheritdoc/>
-    public abstract Task SetDosageEnergy(IInterfaceLogger logger, double value, double meterConstant);
+    public abstract Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant);
 
     /// <inheritdoc/>
     public abstract Task StartDosage(IInterfaceLogger logger);

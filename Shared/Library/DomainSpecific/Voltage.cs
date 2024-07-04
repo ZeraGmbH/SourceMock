@@ -47,6 +47,13 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber
     public static Voltage operator -(Voltage left, Voltage right) => new(left._Value - right._Value);
 
     /// <summary>
+    /// Negation operator
+    /// </summary>
+    /// <param name="value">One Voltage.</param>
+    /// <returns>New Voltage instance representing the substraction of the parameters.</returns>
+    public static Voltage operator -(Voltage value) => new(-value._Value);
+
+    /// <summary>
     /// 
     /// </summary>
     /// <param name="left">One Voltage.</param>

@@ -104,6 +104,13 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber
     public static Current operator *(double factor, Current current) => new(factor * current._Value);
 
     /// <summary>
+    /// Negation operator
+    /// </summary>
+    /// <param name="value">One Voltage.</param>
+    /// <returns>New Voltage instance representing the substraction of the parameters.</returns>
+    public static Current operator -(Current value) => new(-value._Value);
+
+    /// <summary>
     /// 
     /// </summary>
     /// <param name="current"></param>

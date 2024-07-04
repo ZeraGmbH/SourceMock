@@ -7,40 +7,21 @@ namespace SourceApi.Model
         /// <summary>
         /// The AC voltage range and quantisation this source is able to provide.
         /// </summary>
-        public QuantizedRange? AcVoltage { get; set; }
+        public QuantizedRange<Voltage>? AcVoltageNGX { get; set; }
 
         /// <summary>
         /// The AC current range and quantisation this source is able to provide.
         /// </summary>
-        public QuantizedRange? AcCurrent { get; set; }
+        public QuantizedRange<Current>? AcCurrentNGX { get; set; }
 
         /// <summary>
         /// The DC voltage range and quantisation this source is able to provide.
         /// </summary>
-        public QuantizedRange? DcVoltage { get; set; }
+        public QuantizedRange<Voltage>? DcVoltageNGX { get; set; }
 
         /// <summary>
         /// The DC current range and quantisation this source is able to provide.
         /// </summary>
-        public QuantizedRange? DcCurrent { get; set; }
-        /// <summary>
-        /// The AC voltage range and quantisation this source is able to provide.
-        /// </summary>
-        public QuantizedVoltageRange? AcVoltageNGX { get; set; }
-
-        /// <summary>
-        /// The AC current range and quantisation this source is able to provide.
-        /// </summary>
-        public QuantizedCurrentRange? AcCurrentNGX { get; set; }
-
-        /// <summary>
-        /// The DC voltage range and quantisation this source is able to provide.
-        /// </summary>
-        public QuantizedVoltageRange? DcVoltageNGX { get; set; }
-
-        /// <summary>
-        /// The DC current range and quantisation this source is able to provide.
-        /// </summary>
-        public QuantizedCurrentRange? DcCurrentNGX { get; set; }
+        public QuantizedRange<Current>? DcCurrentNGX { get; set; }
     }
 }

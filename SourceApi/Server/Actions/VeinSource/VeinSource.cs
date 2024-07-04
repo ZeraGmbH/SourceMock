@@ -32,19 +32,6 @@ namespace SourceApi.Actions.VeinSource
 
         public Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) => Task.FromException<SourceCapabilities>(new NotImplementedException());
 
-        public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger)
-        {
-            TargetLoadpoint ret = new();
-
-            var veinResponse = _veinClient.GetLoadpoint();
-            // how to act on http statuscode and pass through to api endpoint?
-            string zeraJson = veinResponse.Value;
-
-            ret = VeinLoadpointMapper.ConvertToLoadpoint(zeraJson);
-
-            return ret;
-        }
-
         public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, double meterConstant)
         {
             throw new NotImplementedException();
@@ -62,11 +49,6 @@ namespace SourceApi.Actions.VeinSource
 
         /// <inheritdoc/>
         public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
         {
             JObject veinRequest = VeinLoadpointMapper.ConvertToZeraJson(loadpoint);
 
@@ -89,7 +71,15 @@ namespace SourceApi.Actions.VeinSource
 
         public TargetLoadpointNGX? GetCurrentLoadpointNGX(IInterfaceLogger logger)
         {
-            throw new NotImplementedException();
+            TargetLoadpointNGX ret = new();
+
+            var veinResponse = _veinClient.GetLoadpoint();
+            // how to act on http statuscode and pass through to api endpoint?
+            string zeraJson = veinResponse.Value;
+
+            ret = VeinLoadpointMapper.ConvertToLoadpoint(zeraJson);
+
+            return ret;
         }
     }
 }

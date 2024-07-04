@@ -31,7 +31,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     /// <summary>
     /// 
     /// </summary>
-    protected TargetLoadpoint? Loadpoint { get; private set; }
+    protected TargetLoadpointNGX? Loadpoint { get; private set; }
 
     /// <summary>
     /// 
@@ -64,16 +64,10 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     public abstract Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger);
 
     /// <inheritdoc/>
-    public virtual TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger) => Loadpoint;
+    public virtual TargetLoadpointNGX? GetCurrentLoadpointNGX(IInterfaceLogger interfaceLogger) => Loadpoint;
 
     /// <inheritdoc/>
-    public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public virtual async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
+    public virtual async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint)
     {
         /* Always validate the loadpoint against the device capabilities. */
         var isValid = _validator.IsValid(loadpoint, await GetCapabilities(logger));
@@ -89,7 +83,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
 
         try
         {
-            await Task.WhenAll(Device.Execute(logger, Translator.ToSerialPortRequests(loadpoint)));
+            await Task.WhenAll(Device.Execute(logger, Translator.ToSerialPortRequestsNGX(loadpoint)));
 
             Info.ActivatedAt = DateTime.Now;
             Info.IsActive = true;
@@ -131,9 +125,4 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
 
     /// <inheritdoc/>
     public abstract Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger);
-
-    public TargetLoadpointNGX? GetCurrentLoadpointNGX(IInterfaceLogger logger)
-    {
-        throw new NotImplementedException();
-    }
 }

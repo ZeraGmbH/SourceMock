@@ -1,18 +1,18 @@
-namespace SourceApi.Model
+namespace SourceApi.Model;
+
+using FrequencyDSN = SharedLibrary.DomainSpecific.Frequency;
+
+public class FrequencyRange : QuantizedRange<FrequencyDSN>
 {
-    public class FrequencyRange : QuantizedRange
+    public FrequencyMode Mode { get; set; }
+
+    public FrequencyRange(FrequencyDSN lowerEndpoint, FrequencyDSN upperEndpoint, FrequencyDSN quantisationDistance, FrequencyMode mode) :
+        base(lowerEndpoint, upperEndpoint, quantisationDistance)
     {
-        public FrequencyMode Mode { get; set; }
+        Mode = mode;
+    }
 
-        public FrequencyRange(double lowerEndpoint, double upperEndpoint, double quantisationDistance, FrequencyMode mode) :
-            base(lowerEndpoint, upperEndpoint, quantisationDistance)
-        {
-            Mode = mode;
-        }
-
-        public FrequencyRange()
-        {
-
-        }
+    public FrequencyRange()
+    {
     }
 }

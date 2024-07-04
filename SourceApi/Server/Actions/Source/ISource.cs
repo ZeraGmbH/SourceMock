@@ -25,14 +25,6 @@ namespace SourceApi.Actions.Source
         /// <param name="logger"></param>
         /// <param name="loadpoint">The loadpoint to be set.</param>
         /// <returns>The corresponding value of <see cref="SourceApiErrorCodes"/> with regard to the success of the operation.</returns>
-        public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint);
-
-        /// <summary>
-        /// Sets a specified loadpoint imediatly.
-        /// </summary>
-        /// <param name="logger"></param>
-        /// <param name="loadpoint">The loadpoint to be set.</param>
-        /// <returns>The corresponding value of <see cref="SourceApiErrorCodes"/> with regard to the success of the operation.</returns>
         public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint);
 
         /// <summary>
@@ -40,12 +32,6 @@ namespace SourceApi.Actions.Source
         /// </summary>
         /// <returns>The corresponding value of <see cref="SourceApiErrorCodes"/> with regard to the success of the operation.</returns>
         public Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger);
-
-        /// <summary>
-        /// Gets the currently set loadpoint.
-        /// </summary>
-        /// <returns>The loadpoint, null if none was set.</returns>
-        public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger logger);
 
         /// <summary>
         /// Gets the currently set loadpoint.

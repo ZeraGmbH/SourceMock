@@ -81,9 +81,9 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
         httpSource.GetAsync<SourceCapabilities>(interfaceLogger, new Uri(_sourceUri, "Capabilities"));
 
     /// <inheritdoc/>
-    public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger)
+    public TargetLoadpointNGX? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger)
     {
-        var req = httpSource.GetAsync<TargetLoadpoint?>(interfaceLogger, new Uri(_sourceUri, "Loadpoint"));
+        var req = httpSource.GetAsync<TargetLoadpointNGX?>(interfaceLogger, new Uri(_sourceUri, "Loadpoint"));
 
         req.Wait();
 
@@ -167,13 +167,7 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
     }
 
     /// <inheritdoc/>
-    public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
+    public async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint)
     {
         var res = await httpSource.PutAsync(logger, new Uri(_sourceUri, "Loadpoint"), loadpoint);
 
@@ -196,10 +190,5 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
         var res = await httpSource.PostAsync(logger, new Uri(_sourceUri, "TurnOff"));
 
         return res.StatusCode == HttpStatusCode.OK ? SourceApiErrorCodes.SUCCESS : SourceApiErrorCodes.LOADPOINT_NOT_SET;
-    }
-
-    public TargetLoadpointNGX? GetCurrentLoadpointNGX(IInterfaceLogger logger)
-    {
-        throw new NotImplementedException();
     }
 }

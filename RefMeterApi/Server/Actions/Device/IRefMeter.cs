@@ -20,7 +20,7 @@ public interface IRefMeter
     /// <param name="logger"></param>
     /// <param name="firstActiveCurrentPhase">Index of the first active voltage phase if known.</param>
     /// <returns>All measurement data.</returns>
-    Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1);
+    Task<MeasuredLoadpointNGX> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1);
 
     /// <summary>
     /// Read all supported measurment modes.

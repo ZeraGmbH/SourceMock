@@ -37,8 +37,7 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
         _meterConstant = meterConstant;
 
         /* Setup caches for shared request results. */
-        _actualValues = new(CreateActualValueRequest, 1000);
-        _actualValuesNGX = new(CreateActualValueRequestNGX, 1000);
+        _actualValuesNGX = new(CreateActualValueRequest, 1000);
     }
 
     /// <summary>

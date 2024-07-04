@@ -6,7 +6,7 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Current (A) as domain specific number.
 /// </summary>
-public readonly struct Current(double value) : IInternalDomainSpecificNumber
+public readonly struct Current(double value) : IInternalDomainSpecificNumber<Current>
 {
     /// <summary>
     /// Create current 0.

@@ -5,7 +5,7 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Voltage (V) as domain specific number.
 /// </summary>
-public readonly struct Voltage(double value) : IInternalDomainSpecificNumber
+public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Voltage>
 {
     /// <summary>
     /// Create voltage 0.

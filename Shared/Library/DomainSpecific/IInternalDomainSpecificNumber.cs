@@ -12,6 +12,13 @@ internal interface IInternalDomainSpecificNumber : IDomainSpecificNumber
 }
 
 /// <summary>
+/// Operations only available inside the shared library
+/// </summary>
+internal interface IInternalDomainSpecificNumber<T> : IDomainSpecificNumber<T> where T : IInternalDomainSpecificNumber<T>
+{
+}
+
+/// <summary>
 /// Helper methods on domain specific numbers.
 /// </summary>
 public static class IDomainSpecificNumberExtensions

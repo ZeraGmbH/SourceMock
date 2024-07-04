@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using RefMeterApi.Models;
 using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
@@ -69,13 +70,12 @@ public abstract class RefMeterMock : IMockRefMeter
     /// <param name="value"></param>
     /// <param name="deviation"></param>
     /// <returns></returns>
-    protected static double GetRandomNumberWithAbsoluteDeviation(double value, double deviation)
+    protected static T GetRandomNumberWithAbsoluteDeviation<T>(T value, T deviation) where T : struct, IDomainSpecificNumber<T>
     {
         var maximum = value + deviation;
         var minimum = value - deviation;
-        var random = Random.Shared;
 
-        return random.NextDouble() * (maximum - minimum) + minimum;
+        return (Random.Shared.NextDouble() * (maximum - minimum)) + minimum;
     }
 
     /// <summary>
@@ -84,12 +84,12 @@ public abstract class RefMeterMock : IMockRefMeter
     /// <param name="value"></param>
     /// <param name="deviation"></param>
     /// <returns></returns>
-    protected static double GetRandomNumberWithPercentageDeviation(double value, double deviation)
+    protected static T GetRandomNumberWithPercentageDeviation<T>(T value, double deviation) where T : struct, IDomainSpecificNumber<T>
     {
-        var maximum = value + value * deviation / 100;
-        var minimum = value - value * deviation / 100;
-        var random = Random.Shared;
+        var delta = value * (deviation / 100d);
+        var maximum = value + delta;
+        var minimum = value - delta;
 
-        return random.NextDouble() * (maximum - minimum) + minimum;
+        return (Random.Shared.NextDouble() * (maximum - minimum)) + minimum;
     }
 }

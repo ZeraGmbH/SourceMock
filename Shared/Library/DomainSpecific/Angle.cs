@@ -5,7 +5,7 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Angle (°) as domain specific number.
 /// </summary>
-public readonly struct Angle(double value) : IInternalDomainSpecificNumber
+public readonly struct Angle(double value) : IInternalDomainSpecificNumber<Angle>
 {
     /// <summary>
     /// 

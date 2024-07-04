@@ -10,3 +10,41 @@ public interface IDomainSpecificNumber
     /// </summary>
     string Unit { get; }
 }
+
+/// <summary>
+/// Base class for all domain specific numbers.
+/// </summary>
+public interface IDomainSpecificNumber<T> : IDomainSpecificNumber where T : IDomainSpecificNumber<T>
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    static abstract T operator +(T left, T right);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    static abstract T operator -(T left, T right);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="factor"></param>
+    /// <returns></returns>
+    static abstract T operator *(T left, double factor);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="factor"></param>
+    /// <returns></returns>
+    static abstract T operator *(double factor, T left);
+}

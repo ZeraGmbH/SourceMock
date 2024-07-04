@@ -37,7 +37,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SetParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant, int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].SetErrorMeasurementParameters(interfaceLogger, dutMeterConstant, impulses, refMeterMeterConstant));
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].SetErrorMeasurementParameters(interfaceLogger, new(dutMeterConstant), new(impulses), new(refMeterMeterConstant)));
 
     /// <summary>
     /// Retrieve the current firmware of the error calculator.

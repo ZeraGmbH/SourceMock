@@ -207,7 +207,7 @@ public class ErrorMeasurementTests
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
-        await cut.SetErrorMeasurementParameters(new NoopInterfaceLogger(), meterConstant, impluses, 6000d);
+        await cut.SetErrorMeasurementParameters(new NoopInterfaceLogger(), new(meterConstant), new(impluses), new(6000d));
 
         Assert.That(_port.ActiveParameters, Is.EqualTo(expected));
     }

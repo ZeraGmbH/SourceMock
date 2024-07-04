@@ -25,16 +25,16 @@ public class ErrorCalculatorMockTest
         {
             Phases = {
                 new(){
-                    Current = new(){AcComponent = new() {Angle=0, Rms=100}, On=true},
-                    Voltage = new(){AcComponent = new() {Angle=0, Rms=220}, On=true}
+                    Current = new(){AcComponent = new() {Angle=new(0), Rms=new(100)}, On=true},
+                    Voltage = new(){AcComponent = new() {Angle=new(0), Rms=new(220)}, On=true}
                 },
                 new(){
-                    Current = new(){AcComponent = new() {Angle=120, Rms=100}, On=true},
-                    Voltage = new(){AcComponent = new() {Angle=120, Rms=220}, On=true}
+                    Current = new(){AcComponent = new() {Angle=new(120), Rms=new(100)}, On=true},
+                    Voltage = new(){AcComponent = new() {Angle=new(120), Rms=new(220)}, On=true}
                 },
                 new(){
-                    Current = new(){AcComponent = new() {Angle=240, Rms=100}, On=true},
-                    Voltage = new(){AcComponent = new() {Angle=240, Rms=220}, On=true}
+                    Current = new(){AcComponent = new() {Angle=new(240), Rms=new(100)}, On=true},
+                    Voltage = new(){AcComponent = new() {Angle=new(240), Rms=new(220)}, On=true}
                 }
             }
         };
@@ -60,7 +60,7 @@ public class ErrorCalculatorMockTest
         var cut = Services.GetRequiredService<IErrorCalculatorMock>();
 
         /* 200 impulses at 10000/kWh is equivalent to 20. */
-        await cut.SetErrorMeasurementParameters(new NoopInterfaceLogger(), 10000, 200, 6000d);
+        await cut.SetErrorMeasurementParameters(new NoopInterfaceLogger(), new(10000), new(200), new(6000d));
         await cut.StartErrorMeasurement(new NoopInterfaceLogger(), false, null);
 
         /* 100ms delay generates ~1.8W. */
@@ -94,7 +94,7 @@ public class ErrorCalculatorMockTest
         var cut = Services.GetRequiredService<IErrorCalculatorMock>();
 
         /* 200 impulses at 10000/kWh is equivalent to 20W. */
-        await cut.SetErrorMeasurementParameters(new NoopInterfaceLogger(), 10000, 200, 6000d);
+        await cut.SetErrorMeasurementParameters(new NoopInterfaceLogger(), new(10000), new(200), new(6000d));
         await cut.StartErrorMeasurement(new NoopInterfaceLogger(), true, null);
 
         /* 1.5s delay generates 27.5W. */

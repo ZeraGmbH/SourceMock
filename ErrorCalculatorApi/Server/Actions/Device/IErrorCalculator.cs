@@ -1,4 +1,5 @@
 using ErrorCalculatorApi.Models;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device;
@@ -20,7 +21,7 @@ public interface IErrorCalculator
     /// <param name="dutMeterConstant">The meter constant of the device under test - impulses per kWh.</param>
     /// <param name="impulses">Number of impluses to sent.</param>
     /// <param name="refMeterMeterConstant">The meter constant of the reference meter - impulses per kWh.</param>
-    Task SetErrorMeasurementParameters(IInterfaceLogger logger, double dutMeterConstant, long impulses, double refMeterMeterConstant);
+    Task SetErrorMeasurementParameters(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant);
 
     /// <summary>
     /// Start the error measurement.

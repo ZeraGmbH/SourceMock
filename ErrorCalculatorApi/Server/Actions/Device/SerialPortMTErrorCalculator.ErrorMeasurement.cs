@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device;
@@ -22,11 +23,6 @@ partial class SerialPortMTErrorCalculator
     /// Pattern for the third status line - progress and energy.
     /// </summary>
     private static readonly Regex MatchErrorStatus3 = new(@"^([^;]+);([^;]+)$");
-
-    /// <summary>
-    /// Total energy to be sent in the current operation.
-    /// </summary>
-    private double? _totalEnergy;
 
     /// <inheritdoc/>
     public Task AbortErrorMeasurement(IInterfaceLogger logger) => _device.Execute(logger, SerialPortRequest.Create("AEE", "AEEACK"))[0];
@@ -148,10 +144,10 @@ partial class SerialPortMTErrorCalculator
     }
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, double dutMeterConstant, long impulses, double refMeterMeterConstant)
+    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant)
     {
         /* Create the text representation of the meter constant and see if it fits the protocol requirements. */
-        var (rawMeter, powMeter) = ClipNumberToProtocol((long)Math.Round(dutMeterConstant * 1E5), 16);
+        var (rawMeter, powMeter) = ClipNumberToProtocol((long)Math.Round((double)dutMeterConstant * 1E5), 16);
 
         if (powMeter > 10)
         {
@@ -161,7 +157,7 @@ partial class SerialPortMTErrorCalculator
         }
 
         /* Create the text representation of the number of impulses and see if it fits the protocol requirements. */
-        var (rawImpulses, powImpulses) = ClipNumberToProtocol(impulses, 11);
+        var (rawImpulses, powImpulses) = ClipNumberToProtocol((long)impulses, 11);
 
         if (powImpulses > 5)
         {
@@ -169,9 +165,6 @@ partial class SerialPortMTErrorCalculator
 
             throw new ArgumentOutOfRangeException(nameof(impulses));
         }
-
-        /* Remember the total energy that we will sent. */
-        _totalEnergy = 1000d * impulses / dutMeterConstant;
 
         /* Now we can send the resulting texts and power factors to the device. */
         return _device.Execute(logger, SerialPortRequest.Create($"AEP{rawMeter};{powMeter:00};{rawImpulses};{powImpulses}", "AEPACK"))[0];

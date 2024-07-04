@@ -2,6 +2,7 @@ using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device;
@@ -57,7 +58,7 @@ public class SerialPortFGErrorCalculator([FromKeyedServices("MeterTestSystem")] 
     public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, double dutMeterConstant, long impulses, double refMeterMeterConstant) => throw new NotImplementedException();
+    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant) => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections() => throw new NotImplementedException();

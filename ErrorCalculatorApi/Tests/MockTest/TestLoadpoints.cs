@@ -8,8 +8,8 @@ public static class TestLoadpoints
     {
         return new()
         {
-            Current = new() { On = true, DcComponent = 10 },
-            Voltage = new() { On = true, DcComponent = 210 }
+            Current = new() { On = true, DcComponent = new(10) },
+            Voltage = new() { On = true, DcComponent = new(210) }
         };
     }
 
@@ -17,8 +17,8 @@ public static class TestLoadpoints
     {
         return new()
         {
-            Current = new() { On = true, AcComponent = new() { Angle = 0, Rms = 10, } },
-            Voltage = new() { On = true, AcComponent = new() { Angle = 0, Rms = 210 } }
+            Current = new() { On = true, AcComponent = new() { Angle = new(0), Rms = new(10), } },
+            Voltage = new() { On = true, AcComponent = new() { Angle = new(0), Rms = new(210) } }
         };
     }
 

@@ -90,7 +90,7 @@ public readonly struct Impulses(double value) : IInternalDomainSpecificNumber
     /// <param name="value1"></param>
     /// <param name="value2"></param>
     /// <returns></returns>
-    public static bool operator >(Impulses value1, Impulses value2) => value1 > value2;
+    public static bool operator >(Impulses value1, Impulses value2) => value1._Value > value2._Value;
 
     /// <summary>
     /// 
@@ -98,7 +98,7 @@ public readonly struct Impulses(double value) : IInternalDomainSpecificNumber
     /// <param name="value1"></param>
     /// <param name="value2"></param>
     /// <returns></returns>
-    public static bool operator <(Impulses value1, Impulses value2) => value1 < value2;
+    public static bool operator <(Impulses value1, Impulses value2) => value1._Value < value2._Value;
 
     /// <summary>
     /// Get relation of impulses

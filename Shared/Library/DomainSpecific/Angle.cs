@@ -17,6 +17,16 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber
     /// </summary>
     public Angle() : this(0) { }
 
+    /// <summary>
+    /// No angle at all.
+    /// </summary>
+    public static readonly Angle Zero = new();
+
+    /// <summary>
+    /// Full circle.
+    /// </summary>
+    public static readonly Angle Full = new(360);
+
     /// <inheritdoc/>
     public double GetValue() => _Value;
 
@@ -159,9 +169,16 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="angle"></param>
+    /// <returns></returns>
+    public static Angle FromRad(double angle) => new(angle / DegToRad);
+
+    /// <summary>
+    /// 
+    /// </summary>
     /// <param name="num"></param>
     /// <returns></returns>
-    public static Angle Acos(double num) => new(Math.Acos(num) / DegToRad);
+    public static Angle Acos(double num) => FromRad(Math.Acos(num));
 
     /// <summary>
     /// 

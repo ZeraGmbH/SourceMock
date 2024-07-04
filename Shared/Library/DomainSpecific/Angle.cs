@@ -84,6 +84,14 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber<Angle
     public static Angle operator /(Angle left, double number) => new(left._Value / number);
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static double operator /(Angle left, Angle right) => left._Value / right._Value;
+
+    /// <summary>
     /// Scale Angle by a factor.
     /// </summary>
     /// <param name="angle">Some Angle.</param>

@@ -131,6 +131,14 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber<Cur
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static double operator /(Current left, Current right) => left._Value / right._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
     /// <returns></returns>
     public Current Abs() => new(Math.Abs(_Value));
 }

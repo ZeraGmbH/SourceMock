@@ -17,9 +17,7 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Vol
     /// </summary>
     public static readonly Voltage Zero = new();
 
-    /// <summary>
-    /// Set if the voltage is zero.
-    /// </summary>
+    /// <inheritdoc/>
     public static bool operator !(Voltage voltage) => voltage._Value == 0;
 
     /// <inheritdoc/>
@@ -126,6 +124,14 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Vol
     /// <param name="voltage"></param>
     /// <returns></returns>
     public static ApparentPower operator *(Voltage voltage, Current current) => new(voltage._Value * (double)current);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static double operator /(Voltage left, Voltage right) => left._Value / right._Value;
 
     /// <summary>
     /// 

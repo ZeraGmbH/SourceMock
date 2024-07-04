@@ -25,6 +25,9 @@ public readonly struct ReactivePower(double value) : IInternalDomainSpecificNumb
     /// </summary>
     public static readonly ReactivePower Zero = new(0);
 
+    /// <inheritdoc/>
+    public static bool operator !(ReactivePower power) => power._Value == 0;
+
     /// <summary>
     /// Only explicit casting out the pure number is allowed.
     /// </summary>
@@ -54,6 +57,14 @@ public readonly struct ReactivePower(double value) : IInternalDomainSpecificNumb
     /// <param name="factor">Factor to apply to the power.</param>
     /// <returns>New power with scaled value.</returns>
     public static ReactivePower operator *(double factor, ReactivePower power) => new(factor * power._Value);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static double operator /(ReactivePower left, ReactivePower right) => left._Value / right._Value;
 
     /// <summary>
     /// 

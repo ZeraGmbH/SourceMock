@@ -26,6 +26,9 @@ public readonly struct Frequency(double value) : IInternalDomainSpecificNumber<F
     [JsonIgnore]
     public readonly string Unit => "Hz";
 
+    /// <inheritdoc/>
+    public static bool operator !(Frequency frequency) => frequency._Value == 0;
+
     /// <summary>
     /// Only explicit casting out the pure number is allowed.
     /// </summary>
@@ -95,4 +98,12 @@ public readonly struct Frequency(double value) : IInternalDomainSpecificNumber<F
     /// <param name="right"></param>
     /// <returns></returns>
     public static Frequency Min(Frequency left, Frequency right) => left._Value <= right._Value ? left : right;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static double operator /(Frequency left, Frequency right) => left._Value / right._Value;
 }

@@ -24,6 +24,9 @@ public readonly struct ActiveEnergy(double value) : IInternalDomainSpecificNumbe
     /// </summary>
     public static readonly ActiveEnergy Zero = new(0);
 
+    /// <inheritdoc/>
+    public static bool operator !(ActiveEnergy energy) => energy._Value == 0;
+
     /// <summary>
     /// Only explicit casting out the pure number is allowed.
     /// </summary>
@@ -77,6 +80,14 @@ public readonly struct ActiveEnergy(double value) : IInternalDomainSpecificNumbe
     /// <param name="energy">Some power.</param>
     /// <returns>time in seconds.</returns>
     public static Time? operator /(ActiveEnergy energy, ActivePower power) => (double)power == 0 ? null : new(energy._Value / (double)power * 3600);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static double operator /(ActiveEnergy left, ActiveEnergy right) => left._Value / right._Value;
 
     /// <summary>
     /// 

@@ -35,6 +35,13 @@ public interface IDomainSpecificNumber<T> : IDomainSpecificNumber where T : IDom
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="voltage"></param>
+    /// <returns></returns>
+    static abstract bool operator !(T voltage);
+
+    /// <summary>
+    /// 
+    /// </summary>
     /// <param name="left"></param>
     /// <param name="factor"></param>
     /// <returns></returns>
@@ -47,6 +54,14 @@ public interface IDomainSpecificNumber<T> : IDomainSpecificNumber where T : IDom
     /// <param name="factor"></param>
     /// <returns></returns>
     static abstract T operator *(double factor, T left);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    static abstract double operator /(T left, T right);
 
     /// <summary>
     /// 

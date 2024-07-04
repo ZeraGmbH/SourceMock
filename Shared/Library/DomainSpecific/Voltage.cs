@@ -12,6 +12,16 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber
     /// </summary>
     public Voltage() : this(0) { }
 
+    /// <summary>
+    /// Helper holding 0 volts.
+    /// </summary>
+    public static readonly Voltage Zero = new();
+
+    /// <summary>
+    /// Set if the voltage is zero.
+    /// </summary>
+    public static bool operator !(Voltage voltage) => voltage._Value == 0;
+
     /// <inheritdoc/>
     public double GetValue() => _Value;
 
@@ -65,6 +75,20 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="voltage1">Some voltage.</param>
+    /// <param name="voltage2">Other voltage.</param>
+    public static bool operator <(Voltage voltage1, Voltage voltage2) => voltage1._Value < voltage2._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="voltage1">Some voltage.</param>
+    /// <param name="voltage2">Other voltage.</param>
+    public static bool operator >(Voltage voltage1, Voltage voltage2) => voltage1._Value > voltage2._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
     /// <param name="deviation"></param>
     /// <returns></returns>
     public Voltage GetRandomNumberWithAbsoluteDeviation(double deviation)
@@ -93,7 +117,6 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber
     /// <summary>
     /// 
     /// </summary>
-    /// <returns></returns>
     public Voltage Abs() => new(Math.Abs(_Value));
 
     /// <summary>

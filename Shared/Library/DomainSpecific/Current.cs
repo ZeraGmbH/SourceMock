@@ -14,6 +14,16 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber
     public Current() : this(0) { }
 
     /// <summary>
+    /// No current at all.
+    /// </summary>
+    public static readonly Current Zero = new();
+
+    /// <summary>
+    /// Set if the current is zero.
+    /// </summary>
+    public static bool operator !(Current current) => current._Value == 0;
+
+    /// <summary>
     /// The real value is always represented as a double.
     /// </summary>
     private readonly double _Value = value;
@@ -62,6 +72,20 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber
     /// <param name="voltage"></param>
     /// <returns></returns>
     public static ApparentPower operator *(Current current, Voltage voltage) => new(current._Value * (double)voltage);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="current1">Some current.</param>
+    /// <param name="current2">Other current.</param>
+    public static bool operator <(Current current1, Current current2) => current1._Value < current2._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="current1">Some current.</param>
+    /// <param name="current2">Other current.</param>
+    public static bool operator >(Current current1, Current current2) => current1._Value > current2._Value;
 
     /// <summary>
     /// 

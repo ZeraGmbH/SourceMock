@@ -123,20 +123,6 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="voltage1">Some voltage.</param>
-    /// <param name="voltage2">Other voltage.</param>
-    public static bool operator <(Voltage voltage1, Voltage voltage2) => voltage1._Value < voltage2._Value;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="voltage1">Some voltage.</param>
-    /// <param name="voltage2">Other voltage.</param>
-    public static bool operator >(Voltage voltage1, Voltage voltage2) => voltage1._Value > voltage2._Value;
-
-    /// <summary>
-    /// 
-    /// </summary>
     /// <param name="deviation"></param>
     /// <returns></returns>
     public Voltage GetRandomNumberWithAbsoluteDeviation(double deviation)

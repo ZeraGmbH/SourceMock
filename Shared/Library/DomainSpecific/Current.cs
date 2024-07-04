@@ -124,20 +124,6 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="current1">Some current.</param>
-    /// <param name="current2">Other current.</param>
-    public static bool operator <(Current current1, Current current2) => current1._Value < current2._Value;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="current1">Some current.</param>
-    /// <param name="current2">Other current.</param>
-    public static bool operator >(Current current1, Current current2) => current1._Value > current2._Value;
-
-    /// <summary>
-    /// 
-    /// </summary>
     /// <param name="deviation"></param>
     /// <returns></returns>
     public Current GetRandomNumberWithAbsoluteDeviation(double deviation)

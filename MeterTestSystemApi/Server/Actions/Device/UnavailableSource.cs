@@ -33,16 +33,4 @@ internal class UnavailableSource : ISource
     public Task StartDosage(IInterfaceLogger logger) => throw new SourceNotReadyException();
 
     public Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger) => throw new SourceNotReadyException();
-
-    /// <inheritdoc/>
-    public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public TargetLoadpointNGX? GetCurrentLoadpointNGX(IInterfaceLogger logger)
-    {
-        throw new NotImplementedException();
-    }
 }

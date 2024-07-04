@@ -31,7 +31,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     /// <summary>
     /// 
     /// </summary>
-    protected TargetLoadpointNGX? Loadpoint { get; private set; }
+    protected TargetLoadpoint? Loadpoint { get; private set; }
 
     /// <summary>
     /// 
@@ -64,10 +64,10 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     public abstract Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger);
 
     /// <inheritdoc/>
-    public virtual TargetLoadpointNGX? GetCurrentLoadpointNGX(IInterfaceLogger interfaceLogger) => Loadpoint;
+    public virtual TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger) => Loadpoint;
 
     /// <inheritdoc/>
-    public virtual async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint)
+    public virtual async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
         /* Always validate the loadpoint against the device capabilities. */
         var isValid = _validator.IsValid(loadpoint, await GetCapabilities(logger));
@@ -83,7 +83,7 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
 
         try
         {
-            await Task.WhenAll(Device.Execute(logger, Translator.ToSerialPortRequestsNGX(loadpoint)));
+            await Task.WhenAll(Device.Execute(logger, Translator.ToSerialPortRequests(loadpoint)));
 
             Info.ActivatedAt = DateTime.Now;
             Info.IsActive = true;

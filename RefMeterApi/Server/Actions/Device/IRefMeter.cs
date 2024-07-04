@@ -1,4 +1,5 @@
 using RefMeterApi.Models;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 
 namespace RefMeterApi.Actions.Device;
@@ -20,7 +21,7 @@ public interface IRefMeter
     /// <param name="logger"></param>
     /// <param name="firstActiveCurrentPhase">Index of the first active voltage phase if known.</param>
     /// <returns>All measurement data.</returns>
-    Task<MeasuredLoadpointNGX> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1);
+    Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1);
 
     /// <summary>
     /// Read all supported measurment modes.
@@ -44,5 +45,5 @@ public interface IRefMeter
     /// <summary>
     /// Report the current megter constant of the reference meter (impulses per kWh).
     /// </summary>
-    Task<double> GetMeterConstant(IInterfaceLogger logger);
+    Task<SharedLibrary.DomainSpecific.MeterConstant> GetMeterConstant(IInterfaceLogger logger);
 }

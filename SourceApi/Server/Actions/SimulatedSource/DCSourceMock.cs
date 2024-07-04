@@ -56,9 +56,9 @@ public class DCSourceMock : SourceMock, IDCSourceMock
         });
     }
 
-    public override Task<DosageProgress> GetDosageProgressNGX(IInterfaceLogger logger, MeterConstant meterConstant)
+    public override Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
     {
-        var power = (_loadpointNGX!.Phases[0].Voltage.DcComponent ?? 0) * (_loadpointNGX!.Phases[0].Current.DcComponent ?? 0);
+        var power = (_loadpoint!.Phases[0].Voltage.DcComponent ?? 0) * (_loadpoint!.Phases[0].Current.DcComponent ?? 0);
         var elapsedHours = (DateTime.Now - _startTime).TotalHours;
         var energy = power * elapsedHours;
 

@@ -12,7 +12,7 @@ namespace SourceApi.Actions.SerialPort;
 public abstract class LoadpointTranslator : ILoadpointTranslator
 {
     /// <inheritdoc/>
-    public abstract SerialPortRequest[] ToSerialPortRequestsNGX(TargetLoadpointNGX loadpoint);
+    public abstract SerialPortRequest[] ToSerialPortRequests(TargetLoadpoint loadpoint);
 
     /// <summary>
     /// Create serial port requests to set the frequency.
@@ -21,7 +21,7 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
     /// <param name="reply">Answer to expect.</param>
     /// <param name="loadpoint">The full loadpoint definition.</param>
     /// <param name="requests">The current list of all requests.</param>
-    protected void CreateFrequencyRequestsNGX(string command, string reply, TargetLoadpointNGX loadpoint, List<SerialPortRequest> requests)
+    protected void CreateFrequencyRequests(string command, string reply, TargetLoadpoint loadpoint, List<SerialPortRequest> requests)
     {
         var request = new StringBuilder(command);
 
@@ -44,7 +44,7 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
     /// <param name="reply">Reply to expect.</param>
     /// <param name="loadpoint">The full loadpoint definition.</param>
     /// <param name="requests">The current list of all requests.</param>
-    protected void CreateVoltageRequestsNGX(string command, string reply, TargetLoadpointNGX loadpoint, List<SerialPortRequest> requests)
+    protected void CreateVoltageRequests(string command, string reply, TargetLoadpoint loadpoint, List<SerialPortRequest> requests)
     {
         var request = new StringBuilder(command);
 
@@ -90,7 +90,7 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
     /// <param name="reply">Reply to expect.</param>
     /// <param name="loadpoint">The full loadpoint definition.</param>
     /// <param name="requests">The current list of all requests.</param>
-    protected void CreateCurrentRequestsNGX(string command, string reply, TargetLoadpointNGX loadpoint, List<SerialPortRequest> requests)
+    protected void CreateCurrentRequests(string command, string reply, TargetLoadpoint loadpoint, List<SerialPortRequest> requests)
     {
         var request = new StringBuilder(command);
 
@@ -137,7 +137,7 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
     /// <param name="reply">Reply to expect.</param>
     /// <param name="loadpoint">The full loadpoint definition.</param>
     /// <param name="requests">The current list of all requests.</param>
-    protected void CreatePhaseRequestsNGX(string command, string reply, TargetLoadpointNGX loadpoint, List<SerialPortRequest> requests)
+    protected void CreatePhaseRequests(string command, string reply, TargetLoadpoint loadpoint, List<SerialPortRequest> requests)
     {
         var request = new StringBuilder(command);
 
@@ -168,19 +168,19 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
     }
 
 
-    protected static TargetLoadpointNGX ConvertFromIECtoDinNGX(TargetLoadpointNGX loadpoint)
+    protected static TargetLoadpoint ConvertFromIECtoDin(TargetLoadpoint loadpoint)
     {
         // Not manipulating the original loadpoint object
         var result = LibUtils.DeepCopy(loadpoint);
 
         var firstActiveVoltagePhase = loadpoint.Phases.FindIndex(p => p.Voltage.On);
 
-        ConvertAnglesNGX(result, firstActiveVoltagePhase);
+        ConvertAngles(result, firstActiveVoltagePhase);
 
         return result;
     }
 
-    private static void ConvertAnglesNGX(TargetLoadpointNGX loadpoint, int firstActiveVoltagePhase)
+    private static void ConvertAngles(TargetLoadpoint loadpoint, int firstActiveVoltagePhase)
     {
         foreach (var phase in loadpoint.Phases)
         {
@@ -201,30 +201,6 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
         {
             phase.Voltage.AcComponent!.Angle = (phase.Voltage.AcComponent.Angle - angle + new Angle(360)) % 360;
             phase.Current.AcComponent!.Angle = (phase.Current.AcComponent.Angle - angle + new Angle(360)) % 360;
-        }
-    }
-
-    private static void ConvertAngles(TargetLoadpoint loadpoint, int firstActiveVoltagePhase)
-    {
-        foreach (var phase in loadpoint.Phases)
-        {
-            phase.Voltage.AcComponent!.Angle = (360 - phase.Voltage.AcComponent.Angle) % 360;
-            phase.Current.AcComponent!.Angle = (360 - phase.Current.AcComponent.Angle) % 360;
-        };
-
-
-        if (firstActiveVoltagePhase < 0)
-            return;
-
-        var angle = loadpoint.Phases[firstActiveVoltagePhase].Voltage.AcComponent!.Angle;
-
-        if (angle == 0)
-            return;
-
-        foreach (var phase in loadpoint.Phases)
-        {
-            phase.Voltage.AcComponent!.Angle = (phase.Voltage.AcComponent.Angle - angle + 360) % 360;
-            phase.Current.AcComponent!.Angle = (phase.Current.AcComponent.Angle - angle + 360) % 360;
         }
     }
 }

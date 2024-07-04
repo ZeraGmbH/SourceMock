@@ -14,18 +14,18 @@ public class MTLoadpointTranslator : LoadpointTranslator
     /// </summary>
     /// <param name="loadpoint">Some already validated loadpoint.</param>
     /// <returns>Sequence of requests to send as a single transaction.</returns>
-    public override SerialPortRequest[] ToSerialPortRequestsNGX(TargetLoadpointNGX loadpoint)
+    public override SerialPortRequest[] ToSerialPortRequests(TargetLoadpoint loadpoint)
     {
-        var loadpointDIN = ConvertFromIECtoDinNGX(loadpoint);
+        var loadpointDIN = ConvertFromIECtoDin(loadpoint);
         var requests = new List<SerialPortRequest>();
 
-        CreateFrequencyRequestsNGX("SFR", "SOKFR", loadpointDIN, requests);
+        CreateFrequencyRequests("SFR", "SOKFR", loadpointDIN, requests);
 
-        CreateVoltageRequestsNGX("SUP", "SOKUP", loadpointDIN, requests);
+        CreateVoltageRequests("SUP", "SOKUP", loadpointDIN, requests);
 
-        CreateCurrentRequestsNGX("SIP", "SOKIP", loadpointDIN, requests);
+        CreateCurrentRequests("SIP", "SOKIP", loadpointDIN, requests);
 
-        CreatePhaseRequestsNGX("SUI", "SOKUI", loadpointDIN, requests);
+        CreatePhaseRequests("SUI", "SOKUI", loadpointDIN, requests);
 
         return requests.ToArray();
     }

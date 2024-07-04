@@ -33,10 +33,4 @@ internal class UnavailableErrorCalculator : IErrorCalculator
 
     /// <inheritdoc/>
     public Task ActivateSource(IInterfaceLogger logger, bool on) => Task.CompletedTask;
-
-    /// <inheritdoc/>
-    public Task StartErrorMeasurementNGX(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
-    {
-        throw new NotImplementedException();
-    }
 }

@@ -14,7 +14,7 @@ public abstract class SourceMock : ISourceMock
     protected DateTime _startTime;
     protected double _dosageEnergy;
     protected bool _dosageMode = false;
-    protected TargetLoadpointNGX? _loadpointNGX;
+    protected TargetLoadpoint? _loadpoint;
     protected ISourceCapabilityValidator _validator;
 
     public SourceMock(ILogger<SourceMock> logger, SourceCapabilities sourceCapabilities, ISourceCapabilityValidator validator)
@@ -25,14 +25,14 @@ public abstract class SourceMock : ISourceMock
     }
 
     /// <inheritdoc/>
-    public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint)
+    public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
         var isValid = _validator.IsValid(loadpoint, _sourceCapabilities);
 
         if (isValid == SourceApiErrorCodes.SUCCESS)
         {
             _logger?.LogTrace("Loadpoint set, source turned on.");
-            _loadpointNGX = loadpoint;
+            _loadpoint = loadpoint;
 
             _info.SavedAt = _info.ActivatedAt = DateTime.Now;
             _info.IsActive = true;
@@ -92,7 +92,7 @@ public abstract class SourceMock : ISourceMock
     /// <param name="logger"></param>
     /// <param name="meterConstant"></param>
     /// <returns></returns>
-    public abstract Task<DosageProgress> GetDosageProgressNGX(IInterfaceLogger logger, MeterConstant meterConstant);
+    public abstract Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant);
 
     public Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger)
     {
@@ -118,6 +118,6 @@ public abstract class SourceMock : ISourceMock
         return _dosageEnergy;
     }
 
-    public TargetLoadpointNGX? GetCurrentLoadpointNGX(IInterfaceLogger logger) => _loadpointNGX;
+    public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger logger) => _loadpoint;
 }
 

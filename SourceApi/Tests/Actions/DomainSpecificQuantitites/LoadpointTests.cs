@@ -8,7 +8,7 @@ public class LoadpointTests
     [Test]
     public void Create_A_Loadpoint()
     {
-        var lp = new TargetLoadpointNGX
+        var lp = new TargetLoadpoint
         {
             Phases = [
                 new(){

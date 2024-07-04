@@ -15,7 +15,7 @@ public static class Utils
     /// <param name="measureOutput"></param>
     /// <param name="firstPhaseAngle"></param>
     /// <returns></returns>
-    public static MeasuredLoadpointNGX ConvertFromDINtoIEC(MeasuredLoadpointNGX measureOutput, int firstPhaseAngle)
+    public static MeasuredLoadpoint ConvertFromDINtoIEC(MeasuredLoadpoint measureOutput, int firstPhaseAngle)
     {
         // Not manipulating the original measureOutput object
         var result = LibUtils.DeepCopy(measureOutput);
@@ -25,7 +25,7 @@ public static class Utils
         return result;
     }
 
-    private static void ConvertAngles(MeasuredLoadpointNGX measureOutput, int firstPhaseAngle)
+    private static void ConvertAngles(MeasuredLoadpoint measureOutput, int firstPhaseAngle)
     {
         // reverse all angles
         var full = new Angle(360);

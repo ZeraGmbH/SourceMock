@@ -13,5 +13,5 @@ public interface ISourceCapabilityValidator
     /// <param name="loadpoint"></param>
     /// <param name="capabilities"></param>
     /// <returns></returns>
-    public SourceApiErrorCodes IsValid(TargetLoadpointNGX loadpoint, SourceCapabilities capabilities);
+    public SourceApiErrorCodes IsValid(TargetLoadpoint loadpoint, SourceCapabilities capabilities);
 }

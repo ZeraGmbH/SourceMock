@@ -48,7 +48,7 @@ namespace SourceApi.Actions.VeinSource
         }
 
         /// <inheritdoc/>
-        public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint)
+        public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
         {
             JObject veinRequest = VeinLoadpointMapper.ConvertToZeraJson(loadpoint);
 
@@ -69,9 +69,9 @@ namespace SourceApi.Actions.VeinSource
 
         public Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger) => Task.FromException<SourceApiErrorCodes>(new NotImplementedException());
 
-        public TargetLoadpointNGX? GetCurrentLoadpointNGX(IInterfaceLogger logger)
+        public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger logger)
         {
-            TargetLoadpointNGX ret = new();
+            TargetLoadpoint ret = new();
 
             var veinResponse = _veinClient.GetLoadpoint();
             // how to act on http statuscode and pass through to api endpoint?

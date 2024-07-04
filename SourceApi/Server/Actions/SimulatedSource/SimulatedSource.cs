@@ -61,11 +61,11 @@ public class SimulatedSource : SourceMock, ISimulatedSource
     /// <inheritdoc/>
     public SimulatedSourceState? GetSimulatedSourceState() => _simulatedSourceState;
 
-    public override Task<DosageProgress> GetDosageProgressNGX(IInterfaceLogger logger, MeterConstant meterConstant)
+    public override Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
     {
         var power = 0d;
 
-        foreach (var phase in _loadpointNGX!.Phases)
+        foreach (var phase in _loadpoint!.Phases)
             if (phase.Voltage.On && phase.Current.On)
                 power += phase.Voltage.AcComponent!.Rms * phase.Current.AcComponent!.Rms *
                     Math.Cos((phase.Voltage.AcComponent!.Angle - phase.Current.AcComponent!.Angle) *

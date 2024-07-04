@@ -81,9 +81,9 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
         httpSource.GetAsync<SourceCapabilities>(interfaceLogger, new Uri(_sourceUri, "Capabilities"));
 
     /// <inheritdoc/>
-    public TargetLoadpointNGX? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger)
+    public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger)
     {
-        var req = httpSource.GetAsync<TargetLoadpointNGX?>(interfaceLogger, new Uri(_sourceUri, "Loadpoint"));
+        var req = httpSource.GetAsync<TargetLoadpoint?>(interfaceLogger, new Uri(_sourceUri, "Loadpoint"));
 
         req.Wait();
 
@@ -167,7 +167,7 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
     }
 
     /// <inheritdoc/>
-    public async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpointNGX loadpoint)
+    public async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
         var res = await httpSource.PutAsync(logger, new Uri(_sourceUri, "Loadpoint"), loadpoint);
 

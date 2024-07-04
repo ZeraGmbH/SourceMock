@@ -120,13 +120,13 @@ public partial class ACRefMeterMock : RefMeterMock
     /// </summary>
     /// <param name="lp">The loadpoint.</param>
     /// <returns>The according measure output.</returns>
-    public override MeasuredLoadpointNGX CalcMeasureOutput(TargetLoadpointNGX lp)
+    public override MeasuredLoadpoint CalcMeasureOutput(TargetLoadpoint lp)
     {
         ActivePower activePowerSum = new();
         ReactivePower reactivePowerSum = new();
         ApparentPower apparentPowerSum = new();
 
-        var measureOutputPhases = new List<MeasuredLoadpointPhaseNGX>();
+        var measureOutputPhases = new List<MeasuredLoadpointPhase>();
 
         foreach (var phase in lp.Phases)
         {
@@ -135,7 +135,7 @@ public partial class ACRefMeterMock : RefMeterMock
 
             var angle = phase.Current.AcComponent!.Angle - phase.Voltage.AcComponent!.Angle.Abs();
 
-            var measureOutputPhase = new MeasuredLoadpointPhaseNGX()
+            var measureOutputPhase = new MeasuredLoadpointPhase()
             {
                 Current = new()
                 {
@@ -171,7 +171,7 @@ public partial class ACRefMeterMock : RefMeterMock
         return new()
         {
             Frequency = lp.Frequency.Value,
-            PhaseOrder = CalculatePhaseOrderNGX(lp),
+            PhaseOrder = CalculatePhaseOrder(lp),
             Phases = measureOutputPhases,
             ActivePower = activePowerSum,
             ApparentPower = apparentPowerSum,
@@ -225,33 +225,6 @@ public partial class ACRefMeterMock : RefMeterMock
     /// <param name="lp">Some loadpoint.</param>
     /// <returns>The phase order.</returns>
     private static string CalculatePhaseOrder(TargetLoadpoint lp)
-    {
-        /* See if there are at least three phases - use very defensive programming, maybe a bit too much. */
-        var phases = lp?.Phases?.Select(p => p.Current).Where(v => v != null).ToList();
-
-        if (phases == null) return "123";
-
-        var phaseCount = phases.Count;
-
-        if (phaseCount < 3) return "123";
-
-        /* Find the first angle - the first voltage seen by any consumer. */
-        var minAngle = phases.Min(v => v.AcComponent!.Angle);
-        var l1 = phases.FindIndex(v => v.AcComponent!.Angle == minAngle);
-
-        /* Get the following phases and compare angles. */
-        var l2 = (l1 + 1) % phaseCount;
-        var l3 = (l2 + 1) % phaseCount;
-
-        return phases[l2].AcComponent!.Angle < phases[l3].AcComponent!.Angle ? "132" : "123";
-    }
-
-    /// <summary>
-    /// Calculate the phase order - simply approach for results 123 and 132 only.
-    /// </summary>
-    /// <param name="lp">Some loadpoint.</param>
-    /// <returns>The phase order.</returns>
-    private static string CalculatePhaseOrderNGX(TargetLoadpointNGX lp)
     {
         /* See if there are at least three phases - use very defensive programming, maybe a bit too much. */
         var phases = lp?.Phases?.Select(p => p.Current).Where(v => v != null).ToList();

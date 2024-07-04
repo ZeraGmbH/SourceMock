@@ -11,21 +11,21 @@ partial class SerialPortFGRefMeter
 {
 
     /* Outstanding AME request - only works properly if the device instance is a singleton. */
-    private readonly ResponseShare<MeasuredLoadpointNGX, IInterfaceLogger> _actualValuesNGX;
+    private readonly ResponseShare<MeasuredLoadpoint, IInterfaceLogger> _actualValues;
 
     /// <inheritdoc/>
-    public async Task<MeasuredLoadpointNGX> GetActualValuesNGX(IInterfaceLogger logger, int firstActiveCurrentPhase = -1)
+    public async Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1)
     {
         TestConfigured(logger);
 
-        return Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValuesNGX.Execute(logger)), firstActiveCurrentPhase);
+        return Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValues.Execute(logger)), firstActiveCurrentPhase);
     }
     /// <summary>
     /// Begin reading the actual values - this may take some time.
     /// </summary>
     /// <returns>Task reading the actual values.</returns>
     /// <exception cref="ArgumentException">Reply from the device was not recognized.</exception>
-    private async Task<MeasuredLoadpointNGX> CreateActualValueRequest(IInterfaceLogger logger)
+    private async Task<MeasuredLoadpoint> CreateActualValueRequest(IInterfaceLogger logger)
     {
         /* Request raw data from device. */
         var afRequest = SerialPortRequest.Create("AF", new Regex(@"^AF(.+)$"));
@@ -73,7 +73,7 @@ partial class SerialPortFGRefMeter
         var voltage3Angle = double.Parse(awRequest.EndMatch!.Groups[5].Value);
         var current3Angle = double.Parse(awRequest.EndMatch!.Groups[6].Value);
 
-        var result = new MeasuredLoadpointNGX
+        var result = new MeasuredLoadpoint
         {
             ActivePower = active1 + active2 + active3,
             ApparentPower = apparent1 + apparent2 + apparent3,

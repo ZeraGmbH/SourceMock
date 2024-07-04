@@ -34,6 +34,6 @@ public class MeasuredLoadpointPhase<TVoltage, TCurrent> : AbstractLoadpointPhase
 /// <summary>
 /// Reports the actual values for a single phase of a reference meter.
 /// </summary>
-public class MeasuredLoadpointPhaseNGX : MeasuredLoadpointPhase<ElectricalQuantity<Voltage>, ElectricalQuantity<Current>>
+public class MeasuredLoadpointPhase : MeasuredLoadpointPhase<ElectricalQuantity<Voltage>, ElectricalQuantity<Current>>
 {
 }

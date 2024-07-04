@@ -26,21 +26,14 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
 
     private DateTime _startTime;
 
-    private double _meterConstant;
-    private MeterConstant _meterConstantNGX;
+    private MeterConstant _meterConstant;
 
-    private long _totalImpulses;
-    private Impulses _totalImpulsesNGX;
-
-    /// <summary>
-    /// Total power of the loadpoint in kW.
-    /// </summary>
-    private double _totalPower;
+    private Impulses _totalImpulses;
 
     /// <summary>
     /// Total power of the loadpoint in W.
     /// </summary>
-    private ActivePower _totalPowerNGX;
+    private ActivePower _totalPower;
 
     /// <summary>
     /// Need SimulatedSource to mock the energy
@@ -118,8 +111,8 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     /// <inheritdoc/>
     public Task SetErrorMeasurementParameters(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, double refMeterMeterConstant)
     {
-        _meterConstantNGX = dutMeterConstant;
-        _totalImpulsesNGX = impulses;
+        _meterConstant = dutMeterConstant;
+        _totalImpulses = impulses;
 
         return Task.CompletedTask;
     }
@@ -155,24 +148,24 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
 
 
     /// <inheritdoc/>
-    public Task<ErrorMeasurementStatus> GetErrorStatusNGX(IInterfaceLogger logger)
+    public Task<ErrorMeasurementStatus> GetErrorStatus(IInterfaceLogger logger)
     {
         /* Time elapses in the current measurement - the mock does not use it's own thred for timing so calling this methode periodically is vital. */
         Time hoursElapsed = new((DateTime.UtcNow - _startTime).TotalHours);
 
         /* Total energy consumed in kWh and store to status. */
-        ActiveEnergy energy = _totalPowerNGX * hoursElapsed;
+        ActiveEnergy energy = _totalPower * hoursElapsed;
 
         /* Get the number of pulses and from this the progress. */
-        Impulses measuredImpulses = _meterConstantNGX * energy;
+        Impulses measuredImpulses = _meterConstant * energy;
 
-        if (measuredImpulses > _totalImpulsesNGX)
+        if (measuredImpulses > _totalImpulses)
         {
             /* In mock never report more than requested - even if time has run out. */
-            measuredImpulses = _totalImpulsesNGX;
+            measuredImpulses = _totalImpulses;
         }
 
-        _status.Progress = 100d * measuredImpulses / _totalImpulsesNGX;
+        _status.Progress = 100d * measuredImpulses / _totalImpulses;
 
         /* Check for end of measurement. */
         if (_status.Progress >= 100)
@@ -198,12 +191,12 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
-    public Task StartErrorMeasurementNGX(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
+    public Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
     {
         /* Get the total power of all active phases of the current loadpoint (in W) */
         ActivePower totalPower = new();
 
-        var loadpoint = _di.GetRequiredService<ISource>().GetCurrentLoadpointNGX(logger)!;
+        var loadpoint = _di.GetRequiredService<ISource>().GetCurrentLoadpoint(logger)!;
 
         foreach (var phase in loadpoint.Phases)
             if (phase.Voltage.On && phase.Current.On)
@@ -212,7 +205,7 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
                 totalPower = CurrentCalculation.CalculateDcPower(totalPower, phase);
             }
 
-        _totalPowerNGX = totalPower;
+        _totalPower = totalPower;
         _continuous = continuous;
 
         _startTime = DateTime.UtcNow;

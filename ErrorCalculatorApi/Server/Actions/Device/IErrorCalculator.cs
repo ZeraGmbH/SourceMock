@@ -29,13 +29,6 @@ public interface IErrorCalculator
     /// <param name="continuous">Unset for a single measurement.</param>
     /// <param name="connection">The physical line to use.</param>
     Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection);
-    /// <summary>
-    /// Start the error measurement.
-    /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="continuous">Unset for a single measurement.</param>
-    /// <param name="connection">The physical line to use.</param>
-    Task StartErrorMeasurementNGX(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection);
 
     /// <summary>
     /// Report all connections that can be used as a parameter of StartErrorMeasurement.

@@ -14,7 +14,7 @@ namespace SourceApi.Model;
 ///     [2] Frequency
 /// </remarks>
 [Serializable]
-public class TargetLoadpointNGX : AbstractLoadpoint<TargetLoadpointPhaseNGX, ActivatableElectricalQuantity<Voltage>, ActivatableElectricalQuantity<Current>>
+public class TargetLoadpoint : AbstractLoadpoint<TargetLoadpointPhase, ActivatableElectricalQuantity<Voltage>, ActivatableElectricalQuantity<Current>>
 {
     /// <summary>
     /// Determines whether or not the voltages neutral conductor is to be connected.

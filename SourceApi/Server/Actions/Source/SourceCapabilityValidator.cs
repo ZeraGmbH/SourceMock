@@ -8,7 +8,7 @@ namespace SourceApi.Actions.Source
     /// </summary>
     public class SourceCapabilityValidator : ISourceCapabilityValidator
     {
-        public SourceApiErrorCodes IsValid(TargetLoadpointNGX loadpoint, SourceCapabilities capabilities)
+        public SourceApiErrorCodes IsValid(TargetLoadpoint loadpoint, SourceCapabilities capabilities)
         {
             if (CheckNumberOfPhasesAreEqual(loadpoint, capabilities))
                 return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES;
@@ -28,7 +28,7 @@ namespace SourceApi.Actions.Source
             return SourceApiErrorCodes.SUCCESS;
         }
 
-        private static bool CheckNumberOfPhasesAreEqual(TargetLoadpointNGX loadpoint, SourceCapabilities capabilities)
+        private static bool CheckNumberOfPhasesAreEqual(TargetLoadpoint loadpoint, SourceCapabilities capabilities)
         {
             return
                 loadpoint.Phases.Count() != capabilities.Phases.Count;
@@ -78,7 +78,7 @@ namespace SourceApi.Actions.Source
             return SourceApiErrorCodes.SUCCESS;
         }
 
-        private static SourceApiErrorCodes CheckCurrents(TargetLoadpointNGX loadpoint, SourceCapabilities capabilities)
+        private static SourceApiErrorCodes CheckCurrents(TargetLoadpoint loadpoint, SourceCapabilities capabilities)
         {
             for (int i = 0; i < loadpoint.Phases.Count; ++i)
             {
@@ -88,7 +88,7 @@ namespace SourceApi.Actions.Source
 
                 if (acCurrent != null)
                 {
-                    if (capabilities.Phases[i].AcCurrentNGX == null)
+                    if (capabilities.Phases[i].AcCurrent == null)
                         return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_AC;
                     return CheckAcCurrents(loadpoint, capabilities, i, acCurrent);
                 }
@@ -97,7 +97,7 @@ namespace SourceApi.Actions.Source
 
                 if (dcCurrent != null)
                 {
-                    if (capabilities.Phases[i].DcCurrentNGX == null)
+                    if (capabilities.Phases[i].DcCurrent == null)
                         return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_DC;
                     return CheckDcCurrents(capabilities, i, dcCurrent.Value);
                 }
@@ -106,10 +106,10 @@ namespace SourceApi.Actions.Source
             return SourceApiErrorCodes.SUCCESS;
         }
 
-        private static SourceApiErrorCodes CheckAcCurrents(TargetLoadpointNGX loadpoint, SourceCapabilities capabilities, int i, ElectricalVectorQuantity<Current> current)
+        private static SourceApiErrorCodes CheckAcCurrents(TargetLoadpoint loadpoint, SourceCapabilities capabilities, int i, ElectricalVectorQuantity<Current> current)
         {
             var actualRms = current.Rms;
-            var allowedRange = capabilities.Phases[i].AcCurrentNGX;
+            var allowedRange = capabilities.Phases[i].AcCurrent;
 
             if (!allowedRange!.IsIncluded(actualRms))
                 return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
@@ -129,7 +129,7 @@ namespace SourceApi.Actions.Source
 
         private static SourceApiErrorCodes CheckDcCurrents(SourceCapabilities capabilities, int i, Current actualRms)
         {
-            var allowedRange = capabilities.Phases[i].DcCurrentNGX;
+            var allowedRange = capabilities.Phases[i].DcCurrent;
 
             if (!allowedRange!.IsIncluded(actualRms))
                 return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
@@ -137,7 +137,7 @@ namespace SourceApi.Actions.Source
             return SourceApiErrorCodes.SUCCESS;
         }
 
-        private static SourceApiErrorCodes CheckVoltages(TargetLoadpointNGX loadpoint, SourceCapabilities capabilities)
+        private static SourceApiErrorCodes CheckVoltages(TargetLoadpoint loadpoint, SourceCapabilities capabilities)
         {
             for (int i = 0; i < loadpoint.Phases.Count; ++i)
             {
@@ -147,7 +147,7 @@ namespace SourceApi.Actions.Source
 
                 if (acVoltage != null)
                 {
-                    if (capabilities.Phases[i].AcVoltageNGX == null)
+                    if (capabilities.Phases[i].AcVoltage == null)
                         return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_AC;
                     return CheckAcVoltage(capabilities, i, acVoltage);
                 }
@@ -156,7 +156,7 @@ namespace SourceApi.Actions.Source
 
                 if (dcVoltage != null)
                 {
-                    if (capabilities.Phases[i].DcVoltageNGX == null)
+                    if (capabilities.Phases[i].DcVoltage == null)
                         return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_AC;
                     return CheckDcVoltage(capabilities, i, dcVoltage.Value);
                 }
@@ -168,7 +168,7 @@ namespace SourceApi.Actions.Source
         private static SourceApiErrorCodes CheckAcVoltage(SourceCapabilities capabilities, int i, ElectricalVectorQuantity<Voltage> voltage)
         {
             var actualRms = voltage!.Rms;
-            var allowedRange = capabilities.Phases[i].AcVoltageNGX;
+            var allowedRange = capabilities.Phases[i].AcVoltage;
 
             if (!allowedRange!.IsIncluded(actualRms))
                 return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID;
@@ -182,7 +182,7 @@ namespace SourceApi.Actions.Source
 
         private static SourceApiErrorCodes CheckDcVoltage(SourceCapabilities capabilities, int i, Voltage voltage)
         {
-            var allowedRange = capabilities.Phases[i].DcVoltageNGX;
+            var allowedRange = capabilities.Phases[i].DcVoltage;
 
             if (!allowedRange!.IsIncluded(voltage))
                 return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID;
@@ -190,7 +190,7 @@ namespace SourceApi.Actions.Source
             return SourceApiErrorCodes.SUCCESS;
         }
 
-        private static SourceApiErrorCodes CheckFrequencies(TargetLoadpointNGX loadpoint, SourceCapabilities capabilities)
+        private static SourceApiErrorCodes CheckFrequencies(TargetLoadpoint loadpoint, SourceCapabilities capabilities)
         {
             if (loadpoint.Frequency.Mode != FrequencyMode.SYNTHETIC)
                 return SourceApiErrorCodes.SUCCESS;

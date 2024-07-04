@@ -70,17 +70,4 @@ public class SerialPortFGErrorCalculator([FromKeyedServices("MeterTestSystem")] 
 
     /// <inheritdoc/>
     public Task ActivateSource(IInterfaceLogger logger, bool on) => Task.CompletedTask;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="continuous"></param>
-    /// <param name="connection"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public Task StartErrorMeasurementNGX(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
-    {
-        throw new NotImplementedException();
-    }
 }

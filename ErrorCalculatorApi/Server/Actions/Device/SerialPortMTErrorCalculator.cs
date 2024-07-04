@@ -75,17 +75,4 @@ public partial class SerialPortMTErrorCalculator([FromKeyedServices("MeterTestSy
             Version = versionMatch.Groups[2].Value
         };
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="continuous"></param>
-    /// <param name="connection"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public Task StartErrorMeasurementNGX(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
-    {
-        throw new NotImplementedException();
-    }
 }

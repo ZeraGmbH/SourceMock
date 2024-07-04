@@ -1,6 +1,5 @@
 using BarcodeApi.Actions.Device;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace BarcodeApiTests;
 

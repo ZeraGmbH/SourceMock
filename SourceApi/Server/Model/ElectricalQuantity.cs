@@ -1,5 +1,3 @@
-using SharedLibrary.DomainSpecific;
-
 namespace SourceApi.Model;
 
 /// <remarks>

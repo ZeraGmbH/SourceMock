@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using RefMeterApi.Models;
 using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;

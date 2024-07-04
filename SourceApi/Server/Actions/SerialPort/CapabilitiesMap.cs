@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using SharedLibrary.DomainSpecific;
 using SourceApi.Model;
 

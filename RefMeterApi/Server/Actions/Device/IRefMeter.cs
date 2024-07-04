@@ -1,5 +1,4 @@
 using RefMeterApi.Models;
-using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 
 namespace RefMeterApi.Actions.Device;

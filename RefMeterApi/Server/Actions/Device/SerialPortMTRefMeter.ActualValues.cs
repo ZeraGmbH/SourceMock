@@ -4,7 +4,6 @@ using RefMeterApi.Models;
 using SerialPortProxy;
 using SharedLibrary;
 using SharedLibrary.Models.Logging;
-using SourceApi.Model;
 
 namespace RefMeterApi.Actions.Device;
 

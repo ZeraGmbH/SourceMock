@@ -1,6 +1,5 @@
 using MeterTestSystemApi.Actions.Device;
 using MeterTestSystemApi.Models;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
 using SharedLibrary.Actions;

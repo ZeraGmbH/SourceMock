@@ -1,5 +1,4 @@
 using SourceApi.Actions.Source;
-using SourceApi.Model;
 
 namespace SourceApi.Tests.Actions.Source
 {

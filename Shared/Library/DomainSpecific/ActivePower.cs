@@ -85,7 +85,7 @@ public readonly struct ActivePower(double value) : IInternalDomainSpecificNumber
     /// <param name="power"></param>
     /// <param name="time"></param>
     /// <returns></returns>
-    public static ActiveEnergy operator *(ActivePower power, Time time) => new(power._Value / (double)time);
+    public static ActiveEnergy operator *(ActivePower power, Time time) => new(power._Value * (double)time / 3600d);
 
     /// <summary>
     /// 

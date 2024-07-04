@@ -29,6 +29,6 @@ public class ElectricalVectorQuantity<T> where T : struct
     /// The phase angle of this vector in degrees.
     /// </summary>
     [Required]
-    [Range(MINIMUM_ANGLE, MAXIMUM_ANGLE)]
+    [DSNRange(MINIMUM_ANGLE, MAXIMUM_ANGLE)]
     public Angle Angle { get; set; }
 }

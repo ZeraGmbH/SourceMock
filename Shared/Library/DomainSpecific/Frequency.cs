@@ -78,7 +78,7 @@ public readonly struct Frequency(double value) : IInternalDomainSpecificNumber<F
     /// <param name="left"></param>
     /// <param name="right"></param>
     /// <returns></returns>
-    public static bool operator >=(Frequency left, Frequency right) => left._Value <= right._Value;
+    public static bool operator >=(Frequency left, Frequency right) => left._Value >= right._Value;
 
     /// <summary>
     /// 

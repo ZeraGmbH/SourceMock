@@ -54,7 +54,7 @@ public class FGSourceTests
     {
         Assert.That(_source.GetCurrentLoadpoint(new NoopInterfaceLogger()), Is.Null);
 
-        var result = await _source.SetLoadpoint(new NoopInterfaceLogger(), new Model.TargetLoadpoint
+        var result = await _source.SetLoadpoint(new NoopInterfaceLogger(), new()
         {
             Frequency = new()
             {

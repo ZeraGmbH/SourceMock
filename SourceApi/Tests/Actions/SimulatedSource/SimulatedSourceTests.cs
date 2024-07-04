@@ -150,7 +150,7 @@ namespace SourceApi.Tests.Actions.Source
             await mock.SetDosageEnergy(new NoopInterfaceLogger(), new(20), new(1));
             await mock.StartDosage(new NoopInterfaceLogger());
 
-            DosageProgress result = await mock.GetDosageProgress(new NoopInterfaceLogger(), new(1));
+            var result = await mock.GetDosageProgress(new NoopInterfaceLogger(), new(1));
 
             Assert.That(result.Active, Is.EqualTo(true));
             Assert.That((double)result.Remaining, Is.LessThan(20));

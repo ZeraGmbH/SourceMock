@@ -85,6 +85,38 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber
     public static Angle operator *(double factor, Angle angle) => angle * factor;
 
     /// <summary>
+    /// Check equality
+    /// </summary>
+    /// <param name="angle1">Some Angle.</param>
+    /// <param name="angle2">Other angle.</param>
+    /// <returns>New Angle with scaled value.</returns>
+    public static bool operator ==(Angle angle1, Angle angle2) => angle1._Value == angle2._Value;
+
+    /// <summary>
+    /// Check unequality
+    /// </summary>
+    /// <param name="angle1">Some Angle.</param>
+    /// <param name="angle2">Other angle.</param>
+    /// <returns>New Angle with scaled value.</returns>
+    public static bool operator !=(Angle angle1, Angle angle2) => angle1._Value != angle2._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="angle1">Some Angle.</param>
+    /// <param name="angle2">Other angle.</param>
+    /// <returns>New Angle with scaled value.</returns>
+    public static bool operator <(Angle angle1, Angle angle2) => angle1._Value < angle2._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="angle1">Some Angle.</param>
+    /// <param name="angle2">Other angle.</param>
+    /// <returns>New Angle with scaled value.</returns>
+    public static bool operator >(Angle angle1, Angle angle2) => angle1._Value > angle2._Value;
+
+    /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
@@ -95,6 +127,12 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber
     /// </summary>
     /// <returns></returns>
     public double Cos() => Math.Cos(ToRad());
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public Angle Abs() => new(Math.Abs(_Value));
 
     /// <summary>
     /// 
@@ -114,4 +152,24 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber
     /// </summary>
     /// <returns></returns>
     public string? ToString(string format) => _Value.ToString(format);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public override bool Equals(object? obj)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public override int GetHashCode()
+    {
+        throw new NotImplementedException();
+    }
 }

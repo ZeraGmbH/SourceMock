@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Models;
 using SharedLibrary;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
@@ -114,6 +115,71 @@ public partial class ACRefMeterMock : RefMeterMock
         };
     }
 
+    /// <summary>
+    /// Calculates an expected Measure Output from a given loadpoint.
+    /// </summary>
+    /// <param name="lp">The loadpoint.</param>
+    /// <returns>The according measure output.</returns>
+    public override MeasuredLoadpointNGX CalcMeasureOutput(TargetLoadpointNGX lp)
+    {
+        ActivePower activePowerSum = new();
+        ReactivePower reactivePowerSum = new();
+        ApparentPower apparentPowerSum = new();
+
+        var measureOutputPhases = new List<MeasuredLoadpointPhaseNGX>();
+
+        foreach (var phase in lp.Phases)
+        {
+            var current = phase.Current.On ? phase.Current.AcComponent!.Rms : new Current();
+            var voltage = phase.Voltage.On ? phase.Voltage.AcComponent!.Rms : new Voltage();
+
+            var angle = phase.Current.AcComponent!.Angle - phase.Voltage.AcComponent!.Angle.Abs();
+
+            var measureOutputPhase = new MeasuredLoadpointPhaseNGX()
+            {
+                Current = new()
+                {
+                    AcComponent = new()
+                    {
+                        Rms = current,
+                        Angle = phase.Current.AcComponent!.Angle,
+                    },
+                },
+                Voltage = new()
+                {
+                    AcComponent = new()
+                    {
+                        Rms = voltage,
+                        Angle = phase.Voltage.AcComponent!.Angle,
+                    },
+                },
+                ActivePower = (current * voltage).GetActivePower(angle),
+                ReactivePower = (current * voltage).GetReactivePower(angle),
+                ApparentPower = current * voltage
+            };
+
+            measureOutputPhase.PowerFactor = (double)measureOutputPhase.ApparentPower == 0
+                ? new PowerFactor(1)
+                : measureOutputPhase.ActivePower.Value / measureOutputPhase.ApparentPower.Value;
+
+            activePowerSum = activePowerSum + measureOutputPhase.ActivePower.Value;
+            reactivePowerSum = reactivePowerSum + measureOutputPhase.ReactivePower.Value;
+            apparentPowerSum = apparentPowerSum + measureOutputPhase.ApparentPower.Value;
+            measureOutputPhases.Add(measureOutputPhase);
+        }
+
+        return new()
+        {
+            Frequency = lp.Frequency.Value,
+            PhaseOrder = CalculatePhaseOrderNGX(lp),
+            Phases = measureOutputPhases,
+            ActivePower = activePowerSum,
+            ApparentPower = apparentPowerSum,
+            ReactivePower = reactivePowerSum
+        };
+    }
+
+
     private async Task<TargetLoadpoint> GetLoadpoint(IInterfaceLogger logger)
     {
         var r = Random.Shared;
@@ -159,6 +225,33 @@ public partial class ACRefMeterMock : RefMeterMock
     /// <param name="lp">Some loadpoint.</param>
     /// <returns>The phase order.</returns>
     private static string CalculatePhaseOrder(TargetLoadpoint lp)
+    {
+        /* See if there are at least three phases - use very defensive programming, maybe a bit too much. */
+        var phases = lp?.Phases?.Select(p => p.Current).Where(v => v != null).ToList();
+
+        if (phases == null) return "123";
+
+        var phaseCount = phases.Count;
+
+        if (phaseCount < 3) return "123";
+
+        /* Find the first angle - the first voltage seen by any consumer. */
+        var minAngle = phases.Min(v => v.AcComponent!.Angle);
+        var l1 = phases.FindIndex(v => v.AcComponent!.Angle == minAngle);
+
+        /* Get the following phases and compare angles. */
+        var l2 = (l1 + 1) % phaseCount;
+        var l3 = (l2 + 1) % phaseCount;
+
+        return phases[l2].AcComponent!.Angle < phases[l3].AcComponent!.Angle ? "132" : "123";
+    }
+
+    /// <summary>
+    /// Calculate the phase order - simply approach for results 123 and 132 only.
+    /// </summary>
+    /// <param name="lp">Some loadpoint.</param>
+    /// <returns>The phase order.</returns>
+    private static string CalculatePhaseOrderNGX(TargetLoadpointNGX lp)
     {
         /* See if there are at least three phases - use very defensive programming, maybe a bit too much. */
         var phases = lp?.Phases?.Select(p => p.Current).Where(v => v != null).ToList();

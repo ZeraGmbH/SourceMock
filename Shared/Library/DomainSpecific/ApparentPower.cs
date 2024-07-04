@@ -70,4 +70,10 @@ public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumb
     /// <param name="phaseAngle"></param>
     /// <returns></returns>
     public ActivePower GetActivePower(Angle phaseAngle) => new(_Value * phaseAngle.Cos());
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="phaseAngle"></param>
+    /// <returns></returns>
+    public ReactivePower GetReactivePower(Angle phaseAngle) => new(_Value * phaseAngle.Sin());
 }

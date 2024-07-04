@@ -78,4 +78,39 @@ public readonly struct ActivePower(double value) : IInternalDomainSpecificNumber
     /// <param name="time"></param>
     /// <returns></returns>
     public static ActiveEnergy operator *(ActivePower power, Time time) => new(power._Value / (double)time);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="deviation"></param>
+    /// <returns></returns>
+    public ActivePower GetRandomNumberWithAbsoluteDeviation(double deviation)
+    {
+        var maximum = _Value + deviation;
+        var minimum = _Value - deviation;
+        var random = Random.Shared;
+
+        return new(random.NextDouble() * (maximum - minimum) + minimum);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="deviation"></param>
+    /// <returns></returns>
+    public ActivePower GetRandomNumberWithPercentageDeviation(double deviation)
+    {
+        var maximum = _Value + _Value * deviation / 100;
+        var minimum = _Value - _Value * deviation / 100;
+        var random = Random.Shared;
+
+        return new(random.NextDouble() * (maximum - minimum) + minimum);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public ActivePower Abs() => new(Math.Abs(_Value));
+
 }

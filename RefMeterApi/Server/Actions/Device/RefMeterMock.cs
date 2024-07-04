@@ -1,4 +1,5 @@
 using RefMeterApi.Models;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 using SourceApi.Model;
 
@@ -28,6 +29,9 @@ public abstract class RefMeterMock : IMockRefMeter
 
     /// <inheritdoc/>
     public Task<double> GetMeterConstant(IInterfaceLogger logger) => Task.FromResult(1000000d);
+
+    // /// <inheritdoc/>
+    // public Task<MeterConstant> GetMeterConstantNGX(IInterfaceLogger logger) => Task.FromResult(new MeterConstant(1000000d));
 
     /// <summary>
     /// Returns all entrys in enum MeasurementModes
@@ -61,6 +65,14 @@ public abstract class RefMeterMock : IMockRefMeter
     /// <param name="lp">The loadpoint.</param>
     /// <returns>The according measure output.</returns>
     public abstract MeasuredLoadpoint CalcMeasureOutput(TargetLoadpoint lp);
+
+
+    /// <summary>
+    /// Calculates an expected Measure Output from a given loadpoint.
+    /// </summary>
+    /// <param name="lp">The loadpoint.</param>
+    /// <returns>The according measure output.</returns>
+    public abstract MeasuredLoadpointNGX CalcMeasureOutput(TargetLoadpointNGX lp);
 
     /// <summary>
     /// 

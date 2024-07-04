@@ -63,6 +63,39 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber
     /// <returns></returns>
     public static ApparentPower operator *(Current current, Voltage voltage) => new(current._Value * (double)voltage);
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="deviation"></param>
+    /// <returns></returns>
+    public Current GetRandomNumberWithAbsoluteDeviation(double deviation)
+    {
+        var maximum = _Value + deviation;
+        var minimum = _Value - deviation;
+        var random = Random.Shared;
+
+        return new(random.NextDouble() * (maximum - minimum) + minimum);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="deviation"></param>
+    /// <returns></returns>
+    public Current GetRandomNumberWithPercentageDeviation(double deviation)
+    {
+        var maximum = _Value + _Value * deviation / 100;
+        var minimum = _Value - _Value * deviation / 100;
+        var random = Random.Shared;
+
+        return new(random.NextDouble() * (maximum - minimum) + minimum);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public Current Abs() => new(Math.Abs(_Value));
 
     /// <summary>
     /// 

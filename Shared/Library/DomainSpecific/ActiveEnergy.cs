@@ -104,4 +104,20 @@ public readonly struct ActiveEnergy(double value) : IInternalDomainSpecificNumbe
     /// <param name="right"></param>
     /// <returns></returns>
     public static bool operator >(ActiveEnergy left, ActiveEnergy right) => left._Value > right._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static bool operator <=(ActiveEnergy left, ActiveEnergy right) => left._Value <= right._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static bool operator >=(ActiveEnergy left, ActiveEnergy right) => left._Value >= right._Value;
 }

@@ -54,4 +54,36 @@ public readonly struct Time(double value) : IInternalDomainSpecificNumber
     /// <param name="factor">Factor to apply to the time.</param>
     /// <returns>New time with scaled value.</returns>
     public static Time operator *(double factor, Time time) => new(factor * time._Value);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value1"></param>
+    /// <param name="value2"></param>
+    /// <returns></returns>
+    public static bool operator >(Time value1, Time value2) => value1._Value > value2._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value1"></param>
+    /// <param name="value2"></param>
+    /// <returns></returns>
+    public static bool operator <(Time value1, Time value2) => value1._Value < value2._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value1"></param>
+    /// <param name="value2"></param>
+    /// <returns></returns>
+    public static bool operator >=(Time value1, Time value2) => value1._Value >= value2._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value1"></param>
+    /// <param name="value2"></param>
+    /// <returns></returns>
+    public static bool operator <=(Time value1, Time value2) => value1._Value <= value2._Value;
 }

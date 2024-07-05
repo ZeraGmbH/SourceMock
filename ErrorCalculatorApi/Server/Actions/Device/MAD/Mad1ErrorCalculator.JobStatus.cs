@@ -59,10 +59,10 @@ partial class Mad1ErrorCalculator
 
     /* Report counters. */
     var refCounts = errorValues?.SelectSingleNode("lastSeenRefCounts")?.InnerText;
-    if (!string.IsNullOrEmpty(refCounts)) reply.ReferenceCounts = ParseLong(refCounts);
+    if (!string.IsNullOrEmpty(refCounts)) reply.ReferenceCounts = new(ParseLong(refCounts));
 
     var meterCounts = errorValues?.SelectSingleNode("lastSeenMeterCounts")?.InnerText;
-    if (!string.IsNullOrEmpty(meterCounts)) reply.MeterCounts = ParseLong(meterCounts);
+    if (!string.IsNullOrEmpty(meterCounts)) reply.MeterCounts = new(ParseLong(meterCounts));
 
     /* Set the progress. */
     if (status != "running")

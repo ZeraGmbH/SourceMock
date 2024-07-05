@@ -101,6 +101,22 @@ public readonly struct ActivePower(double value) : IInternalDomainSpecificNumber
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static bool operator <=(ActivePower left, ActivePower right) => left._Value <= right._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static bool operator >=(ActivePower left, ActivePower right) => left._Value >= right._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
     /// <returns></returns>
     public ActivePower Abs() => new(Math.Abs(_Value));
 

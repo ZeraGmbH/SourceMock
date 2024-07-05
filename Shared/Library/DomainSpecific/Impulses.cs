@@ -107,4 +107,10 @@ public readonly struct Impulses(double value) : IInternalDomainSpecificNumber
     /// <param name="value2"></param>
     /// <returns></returns>
     public static double operator /(Impulses value1, Impulses value2) => (double)value1 / (double)value2;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public Impulses Ceil() => new((long)Math.Ceiling(_Value));
 }

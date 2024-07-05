@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using SharedLibrary.DomainSpecific;
 
 namespace ErrorCalculatorApi.Models;
 
@@ -27,10 +28,10 @@ public class ErrorMeasurementStatus
     /// <summary>
     /// Number of reference impulses for the last error measurement.
     /// </summary>
-    public long? ReferenceCounts { get; set; }
+    public Impulses? ReferenceCounts { get; set; }
 
     /// <summary>
     /// Number of meter impulses for the last error measurement.
     /// </summary>
-    public long? MeterCounts { get; set; }
+    public Impulses? MeterCounts { get; set; }
 }

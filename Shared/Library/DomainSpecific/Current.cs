@@ -141,4 +141,20 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber<Cur
     /// </summary>
     /// <returns></returns>
     public Current Abs() => new(Math.Abs(_Value));
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static Current Max(Current left, Current right) => left._Value >= right._Value ? left : right;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static Current Min(Current left, Current right) => left._Value <= right._Value ? left : right;
 }

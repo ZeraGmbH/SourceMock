@@ -137,4 +137,21 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Vol
     /// 
     /// </summary>
     public Voltage Abs() => new(Math.Abs(_Value));
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static Voltage Max(Voltage left, Voltage right) => left._Value >= right._Value ? left : right;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public static Voltage Min(Voltage left, Voltage right) => left._Value <= right._Value ? left : right;
+
 }

@@ -194,6 +194,12 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber<Angle
     public static Angle Acos(double num) => FromRad(Math.Acos(num));
 
     /// <summary>
+    /// Create a new angle which is normalized to 0° (inclusive)
+    /// and 360° (exclusive).
+    /// </summary>
+    public Angle Normalize() => new((_Value % 360d + 360d) % 360d);
+
+    /// <summary>
     /// 
     /// </summary>
     /// <param name="obj"></param>

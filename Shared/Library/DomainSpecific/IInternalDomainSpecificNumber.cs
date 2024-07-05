@@ -35,6 +35,13 @@ public static class IDomainSpecificNumberExtensions
         => number.Format(null, provider, withUnit, spaceUnit);
 
     /// <summary>
+    /// Allow direct access to the value - may be necessary in dynamic scenarios.
+    /// </summary>
+    /// <param name="number">Some number.</param>
+    /// <returns>The raw value.</returns>
+    public static double GetValue(this IDomainSpecificNumber number) => ((IInternalDomainSpecificNumber)number).GetValue();
+
+    /// <summary>
     /// Format a number.
     /// </summary>
     /// <param name="number">Number to format.</param>

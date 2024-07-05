@@ -5,7 +5,7 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Voltage (V) as domain specific number.
 /// </summary>
-public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Voltage>
+public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Voltage>, IComparable<Voltage>
 {
     /// <summary>
     /// Create voltage 0.
@@ -153,5 +153,25 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Vol
     /// <param name="right"></param>
     /// <returns></returns>
     public static Voltage Min(Voltage left, Voltage right) => left._Value <= right._Value ? left : right;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    public int CompareTo(Voltage other) => _Value.CompareTo(other._Value);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public override bool Equals(object? obj) => obj is Voltage angle && _Value == angle._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>+
+    public override int GetHashCode() => _Value.GetHashCode();
 
 }

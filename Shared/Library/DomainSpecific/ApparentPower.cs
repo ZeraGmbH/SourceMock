@@ -6,7 +6,7 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// apparent power (in VA) as domain specific number.
 /// </summary>
-public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumber<ApparentPower>
+public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumber<ApparentPower>, IComparable<ApparentPower>
 {
     /// <summary>
     /// The real value is always represented as a double.
@@ -94,4 +94,11 @@ public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumb
     /// <param name="phaseAngle"></param>
     /// <returns></returns>
     public ReactivePower GetReactivePower(Angle phaseAngle) => new(_Value * phaseAngle.Sin());
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    public int CompareTo(ApparentPower other) => _Value.CompareTo(other._Value);
 }

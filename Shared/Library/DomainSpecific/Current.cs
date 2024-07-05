@@ -6,7 +6,7 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Current (A) as domain specific number.
 /// </summary>
-public readonly struct Current(double value) : IInternalDomainSpecificNumber<Current>
+public readonly struct Current(double value) : IInternalDomainSpecificNumber<Current>, IComparable<Current>
 {
     /// <summary>
     /// Create current 0.
@@ -157,4 +157,25 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber<Cur
     /// <param name="right"></param>
     /// <returns></returns>
     public static Current Min(Current left, Current right) => left._Value <= right._Value ? left : right;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    public int CompareTo(Current other) => _Value.CompareTo(other._Value);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public override bool Equals(object? obj) => obj is Current angle && _Value == angle._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>+
+    public override int GetHashCode() => _Value.GetHashCode();
+
 }

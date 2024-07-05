@@ -58,6 +58,22 @@ public readonly struct MeterConstant(double value) : IInternalDomainSpecificNumb
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>true if value is smaller, false otherwise</returns>
+    public static bool operator <(MeterConstant left, MeterConstant right) => left._Value < right._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>true if value is bigger, false otherwise</returns>
+    public static bool operator >(MeterConstant left, MeterConstant right) => left._Value > right._Value;
+
+    /// <summary>
+    /// 
+    /// </summary>
     /// <param name="meterConstant"></param>
     /// <param name="value"></param>
     /// <returns>true if value is smaller, false otherwise</returns>

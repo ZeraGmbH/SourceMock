@@ -74,7 +74,7 @@ public class TargetLoadpoint : AbstractLoadpoint<TargetLoadpointPhase, Activatab
                 }
 
             /* Construct name. */
-            return string.IsNullOrEmpty(powerFactor) ? $"({voltage}V/{current}A)" : $"({voltage}V/{current}A/{powerFactor})";
+            return string.IsNullOrEmpty(powerFactor) ? $"({voltage.Format()}/{current.Format()})" : $"({voltage.Format()}/{current.Format()}/{powerFactor})";
         }
     }
 }

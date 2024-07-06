@@ -6,7 +6,7 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// apparent power (in VA) as domain specific number.
 /// </summary>
-public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumber<ApparentPower>, IComparable<ApparentPower>
+public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumber<ApparentPower>
 {
     /// <summary>
     /// The real value is always represented as a double.
@@ -24,9 +24,6 @@ public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumb
     /// No power at all.
     /// </summary>
     public static readonly ApparentPower Zero = new(0);
-
-    /// <inheritdoc/>
-    public static bool operator !(ApparentPower power) => power._Value == 0;
 
     /// <summary>
     /// Only explicit casting out the pure number is allowed.
@@ -88,6 +85,7 @@ public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumb
     /// <param name="phaseAngle"></param>
     /// <returns></returns>
     public ActivePower GetActivePower(Angle phaseAngle) => new(_Value * phaseAngle.Cos());
+
     /// <summary>
     /// 
     /// </summary>
@@ -101,4 +99,76 @@ public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumb
     /// <param name="other"></param>
     /// <returns></returns>
     public int CompareTo(ApparentPower other) => _Value.CompareTo(other._Value);
+
+    #region Comparable
+
+    /// <summary>
+    /// See if the number is exactly zero.
+    /// </summary>
+    /// <param name="number">Some number.</param>
+    /// <returns>Set if number is zero.</returns>
+    public static bool operator !(ApparentPower number) => number._Value == 0;
+
+    /// <summary>
+    /// Compare with any other object.
+    /// </summary>
+    /// <param name="obj">Some other object.</param>
+    /// <returns>Set if this number is identical to the other object.</returns>
+    public override bool Equals(object? obj) => obj is ApparentPower angle && _Value == angle._Value;
+
+    /// <summary>
+    /// Get a hashcode.
+    /// </summary>
+    /// <returns>Hashcode for this number.</returns>
+    public override int GetHashCode() => _Value.GetHashCode();
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the numbers are exactly identical.</returns>
+    public static bool operator ==(ApparentPower left, ApparentPower right) => left._Value == right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the numbers are not exactly identical.</returns>
+    public static bool operator !=(ApparentPower left, ApparentPower right) => left._Value != right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is less than the second number.</returns>
+    public static bool operator <(ApparentPower left, ApparentPower right) => left._Value < right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is not greater than the second number.</returns>
+    public static bool operator <=(ApparentPower left, ApparentPower right) => left._Value <= right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is greater than the second number.</returns>
+    public static bool operator >(ApparentPower left, ApparentPower right) => left._Value > right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is not less than the second number.</returns>
+    public static bool operator >=(ApparentPower left, ApparentPower right) => left._Value >= right._Value;
+
+    #endregion
 }

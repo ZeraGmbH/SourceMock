@@ -5,7 +5,7 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Voltage (V) as domain specific number.
 /// </summary>
-public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Voltage>, IComparable<Voltage>
+public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Voltage>
 {
     /// <summary>
     /// Create voltage 0.
@@ -16,9 +16,6 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Vol
     /// Helper holding 0 volts.
     /// </summary>
     public static readonly Voltage Zero = new();
-
-    /// <inheritdoc/>
-    public static bool operator !(Voltage voltage) => voltage._Value == 0;
 
     /// <inheritdoc/>
     public double GetValue() => _Value;
@@ -69,37 +66,6 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Vol
     /// <returns>New Voltage instance representing the modulo operation of the parameters.</returns>
     public static Voltage operator %(Voltage left, Voltage right) => new(left._Value % right._Value);
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="left">One Voltage.</param>
-    /// <param name="right">Another Voltage.</param>
-    /// <returns></returns>
-    public static bool operator <(Voltage left, Voltage right) => left._Value < right._Value;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="left">One Voltage.</param>
-    /// <param name="right">Another Voltage.</param>
-    /// <returns></returns>
-    public static bool operator >(Voltage left, Voltage right) => left._Value > right._Value;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="left">One Voltage.</param>
-    /// <param name="right">Another Voltage.</param>
-    /// <returns></returns>
-    public static bool operator <=(Voltage left, Voltage right) => left._Value <= right._Value;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="left">One Voltage.</param>
-    /// <param name="right">Another Voltage.</param>
-    /// <returns></returns>
-    public static bool operator >=(Voltage left, Voltage right) => left._Value >= right._Value;
 
     /// <summary>
     /// Scale Voltage by a factor.
@@ -154,24 +120,82 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Vol
     /// <returns></returns>
     public static Voltage Min(Voltage left, Voltage right) => left._Value <= right._Value ? left : right;
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="other"></param>
-    /// <returns></returns>
-    public int CompareTo(Voltage other) => _Value.CompareTo(other._Value);
+    #region Comparable
 
     /// <summary>
-    /// 
+    /// See if the number is exactly zero.
     /// </summary>
-    /// <param name="obj"></param>
-    /// <returns></returns>
+    /// <param name="number">Some number.</param>
+    /// <returns>Set if number is zero.</returns>
+    public static bool operator !(Voltage number) => number._Value == 0;
+
+    /// <summary>
+    /// Compare with any other object.
+    /// </summary>
+    /// <param name="obj">Some other object.</param>
+    /// <returns>Set if this number is identical to the other object.</returns>
     public override bool Equals(object? obj) => obj is Voltage angle && _Value == angle._Value;
 
     /// <summary>
-    /// 
+    /// Get a hashcode.
     /// </summary>
-    /// <returns></returns>+
+    /// <returns>Hashcode for this number.</returns>
     public override int GetHashCode() => _Value.GetHashCode();
 
+    /// <summary>
+    /// Compare to another number.
+    /// </summary>
+    /// <param name="other">The other number.</param>
+    /// <returns>Comparision result of the number.</returns>
+    public int CompareTo(Voltage other) => _Value.CompareTo(other._Value);
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the numbers are exactly identical.</returns>
+    public static bool operator ==(Voltage left, Voltage right) => left._Value == right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the numbers are not exactly identical.</returns>
+    public static bool operator !=(Voltage left, Voltage right) => left._Value != right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is less than the second number.</returns>
+    public static bool operator <(Voltage left, Voltage right) => left._Value < right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is not greater than the second number.</returns>
+    public static bool operator <=(Voltage left, Voltage right) => left._Value <= right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is greater than the second number.</returns>
+    public static bool operator >(Voltage left, Voltage right) => left._Value > right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is not less than the second number.</returns>
+    public static bool operator >=(Voltage left, Voltage right) => left._Value >= right._Value;
+
+    #endregion
 }

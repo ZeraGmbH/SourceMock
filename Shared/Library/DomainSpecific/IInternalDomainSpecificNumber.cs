@@ -14,7 +14,7 @@ internal interface IInternalDomainSpecificNumber : IDomainSpecificNumber
 /// <summary>
 /// Operations only available inside the shared library
 /// </summary>
-internal interface IInternalDomainSpecificNumber<T> : IInternalDomainSpecificNumber, IDomainSpecificNumber<T> where T : IInternalDomainSpecificNumber<T>
+internal interface IInternalDomainSpecificNumber<T> : IInternalDomainSpecificNumber, IDomainSpecificNumber<T>, IComparable<T> where T : IInternalDomainSpecificNumber<T>
 {
 }
 

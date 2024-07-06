@@ -6,7 +6,7 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Current (A) as domain specific number.
 /// </summary>
-public readonly struct Current(double value) : IInternalDomainSpecificNumber<Current>, IComparable<Current>
+public readonly struct Current(double value) : IInternalDomainSpecificNumber<Current>
 {
     /// <summary>
     /// Create current 0.
@@ -17,11 +17,6 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber<Cur
     /// No current at all.
     /// </summary>
     public static readonly Current Zero = new();
-
-    /// <summary>
-    /// Set if the current is zero.
-    /// </summary>
-    public static bool operator !(Current current) => current._Value == 0;
 
     /// <summary>
     /// The real value is always represented as a double.
@@ -72,38 +67,6 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber<Cur
     /// <param name="value"></param>
     /// <returns></returns>
     public static Current operator -(Current Current, Current value) => new(Current._Value - value._Value);
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="Current">Some Current.</param>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public static bool operator <(Current Current, Current value) => Current._Value < value._Value;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="Current">Some Current.</param>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public static bool operator >(Current Current, Current value) => Current._Value > value._Value;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="Current">Some Current.</param>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public static bool operator <=(Current Current, Current value) => Current._Value <= value._Value;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="Current">Some Current.</param>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public static bool operator >=(Current Current, Current value) => Current._Value >= value._Value;
 
     /// <summary>
     /// Scale Current by a factor.
@@ -158,24 +121,82 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber<Cur
     /// <returns></returns>
     public static Current Min(Current left, Current right) => left._Value <= right._Value ? left : right;
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="other"></param>
-    /// <returns></returns>
-    public int CompareTo(Current other) => _Value.CompareTo(other._Value);
+    #region Comparable
 
     /// <summary>
-    /// 
+    /// See if the number is exactly zero.
     /// </summary>
-    /// <param name="obj"></param>
-    /// <returns></returns>
+    /// <param name="number">Some number.</param>
+    /// <returns>Set if number is zero.</returns>
+    public static bool operator !(Current number) => number._Value == 0;
+
+    /// <summary>
+    /// Compare with any other object.
+    /// </summary>
+    /// <param name="obj">Some other object.</param>
+    /// <returns>Set if this number is identical to the other object.</returns>
     public override bool Equals(object? obj) => obj is Current angle && _Value == angle._Value;
 
     /// <summary>
-    /// 
+    /// Get a hashcode.
     /// </summary>
-    /// <returns></returns>+
+    /// <returns>Hashcode for this number.</returns>
     public override int GetHashCode() => _Value.GetHashCode();
 
+    /// <summary>
+    /// Compare to another number.
+    /// </summary>
+    /// <param name="other">The other number.</param>
+    /// <returns>Comparision result of the number.</returns>
+    public int CompareTo(Current other) => _Value.CompareTo(other._Value);
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the numbers are exactly identical.</returns>
+    public static bool operator ==(Current left, Current right) => left._Value == right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the numbers are not exactly identical.</returns>
+    public static bool operator !=(Current left, Current right) => left._Value != right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is less than the second number.</returns>
+    public static bool operator <(Current left, Current right) => left._Value < right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is not greater than the second number.</returns>
+    public static bool operator <=(Current left, Current right) => left._Value <= right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is greater than the second number.</returns>
+    public static bool operator >(Current left, Current right) => left._Value > right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is not less than the second number.</returns>
+    public static bool operator >=(Current left, Current right) => left._Value >= right._Value;
+
+    #endregion
 }

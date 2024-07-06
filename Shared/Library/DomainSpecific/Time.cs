@@ -6,7 +6,7 @@ namespace SharedLibrary.DomainSpecific;
 /// <summary>
 /// Time (in s) as domain specific number.
 /// </summary>
-public readonly struct Time(double value) : IInternalDomainSpecificNumber
+public readonly struct Time(double value) : IInternalDomainSpecificNumber<Time>
 {
     /// <summary>
     /// The real value is always represented as a double.
@@ -55,35 +55,82 @@ public readonly struct Time(double value) : IInternalDomainSpecificNumber
     /// <returns>New time with scaled value.</returns>
     public static Time operator *(double factor, Time time) => new(factor * time._Value);
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="value1"></param>
-    /// <param name="value2"></param>
-    /// <returns></returns>
-    public static bool operator >(Time value1, Time value2) => value1._Value > value2._Value;
+    #region Comparable
 
     /// <summary>
-    /// 
+    /// See if the number is exactly zero.
     /// </summary>
-    /// <param name="value1"></param>
-    /// <param name="value2"></param>
-    /// <returns></returns>
-    public static bool operator <(Time value1, Time value2) => value1._Value < value2._Value;
+    /// <param name="number">Some number.</param>
+    /// <returns>Set if number is zero.</returns>
+    public static bool operator !(Time number) => number._Value == 0;
 
     /// <summary>
-    /// 
+    /// Compare with any other object.
     /// </summary>
-    /// <param name="value1"></param>
-    /// <param name="value2"></param>
-    /// <returns></returns>
-    public static bool operator >=(Time value1, Time value2) => value1._Value >= value2._Value;
+    /// <param name="obj">Some other object.</param>
+    /// <returns>Set if this number is identical to the other object.</returns>
+    public override bool Equals(object? obj) => obj is Time angle && _Value == angle._Value;
 
     /// <summary>
-    /// 
+    /// Get a hashcode.
     /// </summary>
-    /// <param name="value1"></param>
-    /// <param name="value2"></param>
-    /// <returns></returns>
-    public static bool operator <=(Time value1, Time value2) => value1._Value <= value2._Value;
+    /// <returns>Hashcode for this number.</returns>
+    public override int GetHashCode() => _Value.GetHashCode();
+
+    /// <summary>
+    /// Compare to another number.
+    /// </summary>
+    /// <param name="other">The other number.</param>
+    /// <returns>Comparision result of the number.</returns>
+    public int CompareTo(Time other) => _Value.CompareTo(other._Value);
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the numbers are exactly identical.</returns>
+    public static bool operator ==(Time left, Time right) => left._Value == right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the numbers are not exactly identical.</returns>
+    public static bool operator !=(Time left, Time right) => left._Value != right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is less than the second number.</returns>
+    public static bool operator <(Time left, Time right) => left._Value < right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is not greater than the second number.</returns>
+    public static bool operator <=(Time left, Time right) => left._Value <= right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is greater than the second number.</returns>
+    public static bool operator >(Time left, Time right) => left._Value > right._Value;
+
+    /// <summary>
+    /// Compare two numbers.
+    /// </summary>
+    /// <param name="left">First number.</param>
+    /// <param name="right">Second number.</param>
+    /// <returns>Set if the first number is not less than the second number.</returns>
+    public static bool operator >=(Time left, Time right) => left._Value >= right._Value;
+
+    #endregion
 }

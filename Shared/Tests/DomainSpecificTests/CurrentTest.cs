@@ -24,7 +24,7 @@ public class CurrentTest
         var minCurrent = new Current(min);
         var maxCurrent = new Current(max);
 
-        var actualMax = Current.Max(minCurrent, maxCurrent);
+        var actualMax = minCurrent.Largest(maxCurrent);
 
         Assert.That((double)actualMax, Is.EqualTo(max).Within(0.001));
     }
@@ -36,7 +36,7 @@ public class CurrentTest
         var minCurrent = new Current(min);
         var maxCurrent = new Current(max);
 
-        var actualMax = Current.Max(minCurrent, maxCurrent);
+        var actualMax = minCurrent.Largest(maxCurrent);
 
         Assert.That((double)actualMax, Is.EqualTo(max).Within(0.001));
     }
@@ -48,7 +48,7 @@ public class CurrentTest
         var minCurrent = new Current(min);
         var maxCurrent = new Current(max);
 
-        var actualMax = Current.Min(minCurrent, maxCurrent);
+        var actualMax = minCurrent.Smallest(maxCurrent);
 
         Assert.That((double)actualMax, Is.EqualTo(min).Within(0.001));
     }
@@ -60,7 +60,7 @@ public class CurrentTest
         var minCurrent = new Current(min);
         var maxCurrent = new Current(max);
 
-        var actualMax = Current.Min(minCurrent, maxCurrent);
+        var actualMax = minCurrent.Smallest(maxCurrent);
 
         Assert.That((double)actualMax, Is.EqualTo(min).Within(0.001));
     }

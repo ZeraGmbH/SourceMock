@@ -46,27 +46,6 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Vol
     /// <returns></returns>
     public static ApparentPower operator *(Voltage voltage, Current current) => new(voltage._Value * (double)current);
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public Voltage Abs() => new(Math.Abs(_Value));
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns></returns>
-    public static Voltage Max(Voltage left, Voltage right) => left._Value >= right._Value ? left : right;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns></returns>
-    public static Voltage Min(Voltage left, Voltage right) => left._Value <= right._Value ? left : right;
-
     #region Arithmetics
 
     /// <inheritdoc/>

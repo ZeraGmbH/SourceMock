@@ -12,7 +12,7 @@ public class VoltageTest
         var minVoltage = new Voltage(min);
         var maxVoltage = new Voltage(max);
 
-        var actualMax = Voltage.Max(minVoltage, maxVoltage);
+        var actualMax = minVoltage.Largest(maxVoltage);
 
         Assert.That((double)actualMax, Is.EqualTo(max).Within(0.001));
     }
@@ -24,7 +24,7 @@ public class VoltageTest
         var minVoltage = new Voltage(min);
         var maxVoltage = new Voltage(max);
 
-        var actualMax = Voltage.Max(minVoltage, maxVoltage);
+        var actualMax = minVoltage.Largest(maxVoltage);
 
         Assert.That((double)actualMax, Is.EqualTo(max).Within(0.001));
     }
@@ -36,7 +36,7 @@ public class VoltageTest
         var minVoltage = new Voltage(min);
         var maxVoltage = new Voltage(max);
 
-        var actualMax = Voltage.Min(minVoltage, maxVoltage);
+        var actualMax = minVoltage.Smallest(maxVoltage);
 
         Assert.That((double)actualMax, Is.EqualTo(min).Within(0.001));
     }
@@ -48,7 +48,7 @@ public class VoltageTest
         var minVoltage = new Voltage(min);
         var maxVoltage = new Voltage(max);
 
-        var actualMax = Voltage.Min(minVoltage, maxVoltage);
+        var actualMax = minVoltage.Smallest(maxVoltage);
 
         Assert.That((double)actualMax, Is.EqualTo(min).Within(0.001));
     }

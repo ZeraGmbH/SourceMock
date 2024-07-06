@@ -11,7 +11,7 @@ public class FrequencyTest
         var minFrequency = new Frequency(min);
         var maxFrequency = new Frequency(max);
 
-        var actualMax = Frequency.Max(minFrequency, maxFrequency);
+        var actualMax = minFrequency.Largest(maxFrequency);
 
         Assert.That((double)actualMax, Is.EqualTo(max).Within(0.001));
     }
@@ -23,7 +23,7 @@ public class FrequencyTest
         var minFrequency = new Frequency(min);
         var maxFrequency = new Frequency(max);
 
-        var actualMax = Frequency.Max(minFrequency, maxFrequency);
+        var actualMax = minFrequency.Largest(maxFrequency);
 
         Assert.That((double)actualMax, Is.EqualTo(max).Within(0.001));
     }
@@ -35,7 +35,7 @@ public class FrequencyTest
         var minFrequency = new Frequency(min);
         var maxFrequency = new Frequency(max);
 
-        var actualMax = Frequency.Min(minFrequency, maxFrequency);
+        var actualMax = minFrequency.Smallest(maxFrequency);
 
         Assert.That((double)actualMax, Is.EqualTo(min).Within(0.001));
     }
@@ -47,7 +47,7 @@ public class FrequencyTest
         var minFrequency = new Frequency(min);
         var maxFrequency = new Frequency(max);
 
-        var actualMax = Frequency.Min(minFrequency, maxFrequency);
+        var actualMax = minFrequency.Smallest(maxFrequency);
 
         Assert.That((double)actualMax, Is.EqualTo(min).Within(0.001));
     }

@@ -162,10 +162,10 @@ public class CapabilitiesMap : ICapabilitiesMap
 
         capabilties.FrequencyRanges.Add(new()
         {
-            Min = Frequency.Max(current.FrequencyRanges[0].Min, voltage.FrequencyRanges[0].Min),
-            Max = Frequency.Min(current.FrequencyRanges[0].Max, voltage.FrequencyRanges[0].Max),
+            Min = current.FrequencyRanges[0].Min.Largest(voltage.FrequencyRanges[0].Min),
+            Max = current.FrequencyRanges[0].Max.Smallest(voltage.FrequencyRanges[0].Max),
             Mode = current.FrequencyRanges[0].Mode,
-            PrecisionStepSize = Frequency.Max(current.FrequencyRanges[0].Min, voltage.FrequencyRanges[0].Max),
+            PrecisionStepSize = current.FrequencyRanges[0].Min.Largest(voltage.FrequencyRanges[0].Max),
         });
 
         return capabilties;

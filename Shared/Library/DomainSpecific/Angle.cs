@@ -64,12 +64,6 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber<Angle
     /// 
     /// </summary>
     /// <returns></returns>
-    public Angle Abs() => new(Math.Abs(_Value));
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
     public double ToRad() => _Value * DegToRad;
 
     /// <summary>

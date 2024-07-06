@@ -35,22 +35,6 @@ public readonly struct Frequency(double value) : IInternalDomainSpecificNumber<F
     /// <param name="frequency">Some frequency.</param>
     public static explicit operator double(Frequency frequency) => frequency._Value;
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns></returns>
-    public static Frequency Max(Frequency left, Frequency right) => left._Value >= right._Value ? left : right;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns></returns>
-    public static Frequency Min(Frequency left, Frequency right) => left._Value <= right._Value ? left : right;
-
     #region Arithmetics
 
     /// <inheritdoc/>

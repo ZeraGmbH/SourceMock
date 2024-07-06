@@ -17,6 +17,13 @@ public interface IDomainSpecificNumber
 public interface IDomainSpecificNumber<T> : IDomainSpecificNumber, IComparable<T> where T : IDomainSpecificNumber<T>
 {
     /// <summary>
+    /// Create a new instance.
+    /// </summary>
+    /// <param name="value">Value to use.</param>
+    /// <returns>New instance.</returns>
+    static abstract T Create(double value);
+
+    /// <summary>
     /// Extract the underlying number.
     /// </summary>
     /// <param name="value">The domain specific number.</param>

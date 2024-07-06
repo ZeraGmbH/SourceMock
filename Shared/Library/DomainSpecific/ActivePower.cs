@@ -50,12 +50,6 @@ public readonly struct ActivePower(double value) : IInternalDomainSpecificNumber
     /// <returns></returns>
     public static ActiveEnergy operator *(ActivePower power, Time time) => new(power._Value * (double)time / 3600d);
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    public ActivePower Abs() => new(Math.Abs(_Value));
-
     #region Arithmetics
 
     /// <inheritdoc/>

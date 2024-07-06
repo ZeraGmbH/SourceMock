@@ -31,105 +31,64 @@ public readonly struct Time(double value) : IInternalDomainSpecificNumber<Time>
     /// <param name="time">Some active time.</param>
     public static explicit operator double(Time time) => time._Value;
 
-    /// <summary>
-    /// Add to time.
-    /// </summary>
-    /// <param name="left">One time.</param>
-    /// <param name="right">Another time.</param>
-    /// <returns>New time instance representing the sum of the parameters.</returns>
+    #region Arithmetics
+
+    /// <inheritdoc/>
     public static Time operator +(Time left, Time right) => new(left._Value + right._Value);
 
-    /// <summary>
-    /// Scale time by a factor.
-    /// </summary>
-    /// <param name="time">Some time.</param>
-    /// <param name="factor">Factor to apply to the time.</param>
-    /// <returns>New time with scaled value.</returns>
-    public static Time operator *(Time time, double factor) => new(time._Value * factor);
+    /// <inheritdoc/>
+    public static Time operator -(Time left, Time right) => new(left._Value - right._Value);
 
-    /// <summary>
-    /// Scale time by a factor.
-    /// </summary>
-    /// <param name="time">Some time.</param>
-    /// <param name="factor">Factor to apply to the time.</param>
-    /// <returns>New time with scaled value.</returns>
-    public static Time operator *(double factor, Time time) => new(factor * time._Value);
+    /// <inheritdoc/>
+    public static Time operator -(Time value) => new(-value._Value);
+
+    /// <inheritdoc/>
+    public static Time operator %(Time left, Time right) => new(left._Value % right._Value);
+
+    /// <inheritdoc/>
+    public static Time operator *(Time value, double factor) => new(value._Value * factor);
+
+    /// <inheritdoc/>
+    public static Time operator /(Time value, double factor) => new(value._Value / factor);
+
+    /// <inheritdoc/>
+    public static Time operator *(double factor, Time value) => new(factor * value._Value);
+
+    /// <inheritdoc/>
+    public static double operator /(Time left, Time right) => left._Value / right._Value;
+
+    #endregion
 
     #region Comparable
 
-    /// <summary>
-    /// See if the number is exactly zero.
-    /// </summary>
-    /// <param name="number">Some number.</param>
-    /// <returns>Set if number is zero.</returns>
+    /// <inheritdoc/>
     public static bool operator !(Time number) => number._Value == 0;
 
-    /// <summary>
-    /// Compare with any other object.
-    /// </summary>
-    /// <param name="obj">Some other object.</param>
-    /// <returns>Set if this number is identical to the other object.</returns>
+    /// <inheritdoc/>
     public override bool Equals(object? obj) => obj is Time angle && _Value == angle._Value;
 
-    /// <summary>
-    /// Get a hashcode.
-    /// </summary>
-    /// <returns>Hashcode for this number.</returns>
+    /// <inheritdoc/>
     public override int GetHashCode() => _Value.GetHashCode();
 
-    /// <summary>
-    /// Compare to another number.
-    /// </summary>
-    /// <param name="other">The other number.</param>
-    /// <returns>Comparision result of the number.</returns>
+    /// <inheritdoc/>
     public int CompareTo(Time other) => _Value.CompareTo(other._Value);
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the numbers are exactly identical.</returns>
+    /// <inheritdoc/>
     public static bool operator ==(Time left, Time right) => left._Value == right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the numbers are not exactly identical.</returns>
+    /// <inheritdoc/>
     public static bool operator !=(Time left, Time right) => left._Value != right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is less than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator <(Time left, Time right) => left._Value < right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is not greater than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator <=(Time left, Time right) => left._Value <= right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is greater than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator >(Time left, Time right) => left._Value > right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is not less than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator >=(Time left, Time right) => left._Value >= right._Value;
 
     #endregion

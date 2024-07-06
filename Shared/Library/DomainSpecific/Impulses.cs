@@ -36,45 +36,8 @@ public readonly struct Impulses(double value) : IInternalDomainSpecificNumber<Im
     /// <param name="Impulses">Some active Impulses.</param>
     public static explicit operator long(Impulses Impulses) => (long)Impulses._Value;
 
-    /// <summary>
-    /// Add to Impulses.
-    /// </summary>
-    /// <param name="left">One Impulses.</param>
-    /// <param name="right">Another Impulses.</param>
-    /// <returns>New Impulses instance representing the sum of the parameters.</returns>
-    public static Impulses operator +(Impulses left, Impulses right) => new(left._Value + right._Value);
-
-    /// <summary>
-    /// Add to Impulses.
-    /// </summary>
-    /// <param name="impulses">One Impulses.</param>
-    /// <param name="value">Another Impulses.</param>
-    /// <returns>New Impulses instance representing the sum of the parameters.</returns>
-    public static Impulses operator +(Impulses impulses, long value) => new(impulses._Value + value);
-
-    /// <summary>
-    /// Scale Impulses by a factor.
-    /// </summary>
-    /// <param name="impulses">Some Impulses.</param>
-    /// <param name="factor">Factor to apply to the Impulses.</param>
-    /// <returns>New Impulses with scaled value.</returns>
-    public static Impulses operator *(Impulses impulses, long factor) => new(impulses._Value * factor);
-
-    /// <summary>
-    /// Scale Impulses by a factor.
-    /// </summary>
-    /// <param name="impulses">Some Impulses.</param>
-    /// <param name="factor">Factor to apply to the Impulses.</param>
-    /// <returns>New Impulses with scaled value.</returns>
-    public static Impulses operator *(Impulses impulses, double factor) => new(impulses._Value * factor);
-
-    /// <summary>
-    /// Scale Impulses by a factor.
-    /// </summary>
-    /// <param name="impulses">Some Impulses.</param>
-    /// <param name="factor">Factor to apply to the Impulses.</param>
-    /// <returns>New Impulses with scaled value.</returns>
-    public static Impulses operator *(double factor, Impulses impulses) => impulses * factor;
+    /// <inheritdoc/>
+    public static explicit operator double(Impulses Impulses) => Impulses._Value;
 
     /// <summary>
     /// Devide impulses with meterConstant to get ActiveEnergy
@@ -85,95 +48,69 @@ public readonly struct Impulses(double value) : IInternalDomainSpecificNumber<Im
     public static ActiveEnergy operator /(Impulses impulses, MeterConstant meterConstant) => new(impulses._Value / (double)meterConstant * 1000);
 
     /// <summary>
-    /// Get relation of impulses
-    /// </summary>
-    /// <param name="value1"></param>
-    /// <param name="value2"></param>
-    /// <returns></returns>
-    public static double operator /(Impulses value1, Impulses value2) => (double)value1 / (double)value2;
-
-    /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
     public Impulses Ceil() => new((long)Math.Ceiling(_Value));
 
+    #region Arithmetics
+
+    /// <inheritdoc/>
+    public static Impulses operator +(Impulses left, Impulses right) => new(left._Value + right._Value);
+
+    /// <inheritdoc/>
+    public static Impulses operator -(Impulses left, Impulses right) => new(left._Value - right._Value);
+
+    /// <inheritdoc/>
+    public static Impulses operator -(Impulses value) => new(-value._Value);
+
+    /// <inheritdoc/>
+    public static Impulses operator %(Impulses left, Impulses right) => new(left._Value % right._Value);
+
+    /// <inheritdoc/>
+    public static Impulses operator *(Impulses value, double factor) => new(value._Value * factor);
+
+    /// <inheritdoc/>
+    public static Impulses operator /(Impulses value, double factor) => new(value._Value / factor);
+
+    /// <inheritdoc/>
+    public static Impulses operator *(double factor, Impulses value) => new(factor * value._Value);
+
+    /// <inheritdoc/>
+    public static double operator /(Impulses left, Impulses right) => left._Value / right._Value;
+
+    #endregion
 
     #region Comparable
 
-    /// <summary>
-    /// See if the number is exactly zero.
-    /// </summary>
-    /// <param name="number">Some number.</param>
-    /// <returns>Set if number is zero.</returns>
+    /// <inheritdoc/>
     public static bool operator !(Impulses number) => number._Value == 0;
 
-    /// <summary>
-    /// Compare with any other object.
-    /// </summary>
-    /// <param name="obj">Some other object.</param>
-    /// <returns>Set if this number is identical to the other object.</returns>
+    /// <inheritdoc/>
     public override bool Equals(object? obj) => obj is Impulses angle && _Value == angle._Value;
 
-    /// <summary>
-    /// Get a hashcode.
-    /// </summary>
-    /// <returns>Hashcode for this number.</returns>
+    /// <inheritdoc/>
     public override int GetHashCode() => _Value.GetHashCode();
 
-    /// <summary>
-    /// Compare to another number.
-    /// </summary>
-    /// <param name="other">The other number.</param>
-    /// <returns>Comparision result of the number.</returns>
+    /// <inheritdoc/>
     public int CompareTo(Impulses other) => _Value.CompareTo(other._Value);
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the numbers are exactly identical.</returns>
+    /// <inheritdoc/>
     public static bool operator ==(Impulses left, Impulses right) => left._Value == right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the numbers are not exactly identical.</returns>
+    /// <inheritdoc/>
     public static bool operator !=(Impulses left, Impulses right) => left._Value != right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is less than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator <(Impulses left, Impulses right) => left._Value < right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is not greater than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator <=(Impulses left, Impulses right) => left._Value <= right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is greater than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator >(Impulses left, Impulses right) => left._Value > right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is not less than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator >=(Impulses left, Impulses right) => left._Value >= right._Value;
 
     #endregion

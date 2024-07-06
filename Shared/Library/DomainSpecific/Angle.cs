@@ -46,63 +46,6 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber<Angle
     public static explicit operator double(Angle Angle) => Angle._Value;
 
     /// <summary>
-    /// Add to Angle.
-    /// </summary>
-    /// <param name="left">One Angle.</param>
-    /// <param name="right">Another Angle.</param>
-    /// <returns>New Angle instance representing the sum of the parameters.</returns>
-    public static Angle operator +(Angle left, Angle right) => new(left._Value + right._Value);
-
-    /// <summary>
-    /// Substract from Angle.
-    /// </summary>
-    /// <param name="left">One Angle.</param>
-    /// <param name="right">Another Angle.</param>
-    /// <returns>New Angle instance representing the substraction of the parameters.</returns>
-    public static Angle operator -(Angle left, Angle right) => new(left._Value - right._Value);
-
-    /// <summary>
-    /// Modulo operation on angle.
-    /// </summary>
-    /// <param name="left">One Angle.</param>
-    /// <param name="number">Some number.</param>
-    /// <returns>New Angle instance.</returns>
-    public static Angle operator %(Angle left, double number) => new(left._Value % number);
-
-
-    /// <summary>
-    /// Division on angle.
-    /// </summary>
-    /// <param name="left">One Angle.</param>
-    /// <param name="number">Some number.</param>
-    /// <returns>New Angle instance.</returns>
-    public static Angle operator /(Angle left, double number) => new(left._Value / number);
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns></returns>
-    public static double operator /(Angle left, Angle right) => left._Value / right._Value;
-
-    /// <summary>
-    /// Scale Angle by a factor.
-    /// </summary>
-    /// <param name="angle">Some Angle.</param>
-    /// <param name="factor">Factor to apply to the Angle.</param>
-    /// <returns>New Angle with scaled value.</returns>
-    public static Angle operator *(Angle angle, double factor) => new(angle._Value * factor);
-
-    /// <summary>
-    /// Scale Angle by a factor.
-    /// </summary>
-    /// <param name="angle">Some Angle.</param>
-    /// <param name="factor">Factor to apply to the Angle.</param>
-    /// <returns>New Angle with scaled value.</returns>
-    public static Angle operator *(double factor, Angle angle) => angle * factor;
-
-    /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
@@ -146,81 +89,64 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber<Angle
     /// </summary>
     public Angle Normalize() => new((_Value % 360d + 360d) % 360d);
 
+    #region Arithmetics
+
+    /// <inheritdoc/>
+    public static Angle operator +(Angle left, Angle right) => new(left._Value + right._Value);
+
+    /// <inheritdoc/>
+    public static Angle operator -(Angle left, Angle right) => new(left._Value - right._Value);
+
+    /// <inheritdoc/>
+    public static Angle operator -(Angle value) => new(-value._Value);
+
+    /// <inheritdoc/>
+    public static Angle operator %(Angle left, Angle right) => new(left._Value % right._Value);
+
+    /// <inheritdoc/>
+    public static Angle operator *(Angle value, double factor) => new(value._Value * factor);
+
+    /// <inheritdoc/>
+    public static Angle operator /(Angle value, double factor) => new(value._Value / factor);
+
+    /// <inheritdoc/>
+    public static Angle operator *(double factor, Angle value) => new(factor * value._Value);
+
+    /// <inheritdoc/>
+    public static double operator /(Angle left, Angle right) => left._Value / right._Value;
+
+    #endregion
+
     #region Comparable
 
-    /// <summary>
-    /// See if the number is exactly zero.
-    /// </summary>
-    /// <param name="number">Some number.</param>
-    /// <returns>Set if number is zero.</returns>
+    /// <inheritdoc/>
     public static bool operator !(Angle number) => number._Value == 0;
 
-    /// <summary>
-    /// Compare with any other object.
-    /// </summary>
-    /// <param name="obj">Some other object.</param>
-    /// <returns>Set if this number is identical to the other object.</returns>
+    /// <inheritdoc/>
     public override bool Equals(object? obj) => obj is Angle angle && _Value == angle._Value;
 
-    /// <summary>
-    /// Get a hashcode.
-    /// </summary>
-    /// <returns>Hashcode for this number.</returns>
+    /// <inheritdoc/>
     public override int GetHashCode() => _Value.GetHashCode();
 
-    /// <summary>
-    /// Compare to another number.
-    /// </summary>
-    /// <param name="other">The other number.</param>
-    /// <returns>Comparision result of the number.</returns>
+    /// <inheritdoc/>
     public int CompareTo(Angle other) => _Value.CompareTo(other._Value);
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the numbers are exactly identical.</returns>
+    /// <inheritdoc/>
     public static bool operator ==(Angle left, Angle right) => left._Value == right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the numbers are not exactly identical.</returns>
+    /// <inheritdoc/>
     public static bool operator !=(Angle left, Angle right) => left._Value != right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is less than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator <(Angle left, Angle right) => left._Value < right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is not greater than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator <=(Angle left, Angle right) => left._Value <= right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is greater than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator >(Angle left, Angle right) => left._Value > right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is not less than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator >=(Angle left, Angle right) => left._Value >= right._Value;
 
     #endregion

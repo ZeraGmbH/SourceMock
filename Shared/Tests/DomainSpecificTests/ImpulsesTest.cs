@@ -1,4 +1,3 @@
-using System.Diagnostics.Metrics;
 using SharedLibrary.DomainSpecific;
 
 namespace SharedLibrary.Tests.DomainSpecificTests;

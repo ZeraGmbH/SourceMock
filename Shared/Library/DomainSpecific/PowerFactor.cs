@@ -43,82 +43,64 @@ public readonly struct PowerFactor(double value) : IInternalDomainSpecificNumber
     /// <param name="powerFactor">The power factor.</param>
     public static explicit operator Angle(PowerFactor powerFactor) => Angle.Acos(powerFactor._Value);
 
+    #region Arithmetics
+
+    /// <inheritdoc/>
+    public static PowerFactor operator +(PowerFactor left, PowerFactor right) => new(left._Value + right._Value);
+
+    /// <inheritdoc/>
+    public static PowerFactor operator -(PowerFactor left, PowerFactor right) => new(left._Value - right._Value);
+
+    /// <inheritdoc/>
+    public static PowerFactor operator -(PowerFactor value) => new(-value._Value);
+
+    /// <inheritdoc/>
+    public static PowerFactor operator %(PowerFactor left, PowerFactor right) => new(left._Value % right._Value);
+
+    /// <inheritdoc/>
+    public static PowerFactor operator /(PowerFactor value, double factor) => new(value._Value / factor);
+
+    /// <inheritdoc/>
+    public static PowerFactor operator *(PowerFactor value, double factor) => new(value._Value * factor);
+
+    /// <inheritdoc/>
+    public static PowerFactor operator *(double factor, PowerFactor value) => new(factor * value._Value);
+
+    /// <inheritdoc/>
+    public static double operator /(PowerFactor left, PowerFactor right) => left._Value / right._Value;
+
+    #endregion
 
     #region Comparable
 
-    /// <summary>
-    /// See if the number is exactly zero.
-    /// </summary>
-    /// <param name="number">Some number.</param>
-    /// <returns>Set if number is zero.</returns>
+    /// <inheritdoc/>
     public static bool operator !(PowerFactor number) => number._Value == 0;
 
-    /// <summary>
-    /// Compare with any other object.
-    /// </summary>
-    /// <param name="obj">Some other object.</param>
-    /// <returns>Set if this number is identical to the other object.</returns>
+    /// <inheritdoc/>
     public override bool Equals(object? obj) => obj is PowerFactor angle && _Value == angle._Value;
 
-    /// <summary>
-    /// Get a hashcode.
-    /// </summary>
-    /// <returns>Hashcode for this number.</returns>
+    /// <inheritdoc/>
     public override int GetHashCode() => _Value.GetHashCode();
 
-    /// <summary>
-    /// Compare to another number.
-    /// </summary>
-    /// <param name="other">The other number.</param>
-    /// <returns>Comparision result of the number.</returns>
+    /// <inheritdoc/>
     public int CompareTo(PowerFactor other) => _Value.CompareTo(other._Value);
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the numbers are exactly identical.</returns>
+    /// <inheritdoc/>
     public static bool operator ==(PowerFactor left, PowerFactor right) => left._Value == right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the numbers are not exactly identical.</returns>
+    /// <inheritdoc/>
     public static bool operator !=(PowerFactor left, PowerFactor right) => left._Value != right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is less than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator <(PowerFactor left, PowerFactor right) => left._Value < right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is not greater than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator <=(PowerFactor left, PowerFactor right) => left._Value <= right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is greater than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator >(PowerFactor left, PowerFactor right) => left._Value > right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is not less than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator >=(PowerFactor left, PowerFactor right) => left._Value >= right._Value;
 
     #endregion

@@ -31,38 +31,6 @@ public readonly struct ActiveEnergy(double value) : IInternalDomainSpecificNumbe
     public static explicit operator double(ActiveEnergy energy) => energy._Value;
 
     /// <summary>
-    /// Add to active energies.
-    /// </summary>
-    /// <param name="left">One energy.</param>
-    /// <param name="right">Another energy.</param>
-    /// <returns>New active energy instance representing the sum of the parameters.</returns>
-    public static ActiveEnergy operator +(ActiveEnergy left, ActiveEnergy right) => new(left._Value + right._Value);
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns></returns>
-    public static ActiveEnergy operator -(ActiveEnergy left, ActiveEnergy right) => new(left._Value - right._Value);
-
-    /// <summary>
-    /// Scale energy by a factor.
-    /// </summary>
-    /// <param name="energy">Some energy.</param>
-    /// <param name="factor">Factor to apply to the energy.</param>
-    /// <returns>New energy with scaled value.</returns>
-    public static ActiveEnergy operator *(ActiveEnergy energy, double factor) => new(energy._Value * factor);
-
-    /// <summary>
-    /// Scale energy by a factor.
-    /// </summary>
-    /// <param name="energy">Some energy.</param>
-    /// <param name="factor">Factor to apply to the energy.</param>
-    /// <returns>New energy with scaled value.</returns>
-    public static ActiveEnergy operator *(double factor, ActiveEnergy energy) => energy * factor;
-
-    /// <summary>
     /// 
     /// </summary>
     /// <param name="energy"></param>
@@ -78,89 +46,64 @@ public readonly struct ActiveEnergy(double value) : IInternalDomainSpecificNumbe
     /// <returns>time in seconds.</returns>
     public static Time? operator /(ActiveEnergy energy, ActivePower power) => (double)power == 0 ? null : new(energy._Value / (double)power * 3600);
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns></returns>
+    #region Arithmetics
+
+    /// <inheritdoc/>
+    public static ActiveEnergy operator +(ActiveEnergy left, ActiveEnergy right) => new(left._Value + right._Value);
+
+    /// <inheritdoc/>
+    public static ActiveEnergy operator -(ActiveEnergy left, ActiveEnergy right) => new(left._Value - right._Value);
+
+    /// <inheritdoc/>
+    public static ActiveEnergy operator -(ActiveEnergy value) => new(-value._Value);
+
+    /// <inheritdoc/>
+    public static ActiveEnergy operator %(ActiveEnergy left, ActiveEnergy right) => new(left._Value % right._Value);
+
+    /// <inheritdoc/>
+    public static ActiveEnergy operator *(ActiveEnergy value, double factor) => new(value._Value * factor);
+
+    /// <inheritdoc/>
+    public static ActiveEnergy operator /(ActiveEnergy value, double factor) => new(value._Value / factor);
+
+    /// <inheritdoc/>
+    public static ActiveEnergy operator *(double factor, ActiveEnergy value) => new(factor * value._Value);
+
+    /// <inheritdoc/>
     public static double operator /(ActiveEnergy left, ActiveEnergy right) => left._Value / right._Value;
+
+    #endregion
 
     #region Comparable
 
-    /// <summary>
-    /// See if the number is exactly zero.
-    /// </summary>
-    /// <param name="number">Some number.</param>
-    /// <returns>Set if number is zero.</returns>
+    /// <inheritdoc/>
     public static bool operator !(ActiveEnergy number) => number._Value == 0;
 
-    /// <summary>
-    /// Compare with any other object.
-    /// </summary>
-    /// <param name="obj">Some other object.</param>
-    /// <returns>Set if this number is identical to the other object.</returns>
+    /// <inheritdoc/>
     public override bool Equals(object? obj) => obj is ActiveEnergy angle && _Value == angle._Value;
 
-    /// <summary>
-    /// Get a hashcode.
-    /// </summary>
-    /// <returns>Hashcode for this number.</returns>
+    /// <inheritdoc/>
     public override int GetHashCode() => _Value.GetHashCode();
 
-    /// <summary>
-    /// Compare to another number.
-    /// </summary>
-    /// <param name="other">The other number.</param>
-    /// <returns>Comparision result of the number.</returns>
+    /// <inheritdoc/>
     public int CompareTo(ActiveEnergy other) => _Value.CompareTo(other._Value);
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the numbers are exactly identical.</returns>
+    /// <inheritdoc/>
     public static bool operator ==(ActiveEnergy left, ActiveEnergy right) => left._Value == right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the numbers are not exactly identical.</returns>
+    /// <inheritdoc/>
     public static bool operator !=(ActiveEnergy left, ActiveEnergy right) => left._Value != right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is less than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator <(ActiveEnergy left, ActiveEnergy right) => left._Value < right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is not greater than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator <=(ActiveEnergy left, ActiveEnergy right) => left._Value <= right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is greater than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator >(ActiveEnergy left, ActiveEnergy right) => left._Value > right._Value;
 
-    /// <summary>
-    /// Compare two numbers.
-    /// </summary>
-    /// <param name="left">First number.</param>
-    /// <param name="right">Second number.</param>
-    /// <returns>Set if the first number is not less than the second number.</returns>
+    /// <inheritdoc/>
     public static bool operator >=(ActiveEnergy left, ActiveEnergy right) => left._Value >= right._Value;
 
     #endregion

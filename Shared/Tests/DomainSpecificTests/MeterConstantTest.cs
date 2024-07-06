@@ -1,4 +1,3 @@
-using System.Diagnostics.Metrics;
 using SharedLibrary.DomainSpecific;
 
 namespace SharedLibrary.Tests.DomainSpecificTests;
@@ -16,7 +15,7 @@ public class MeterConstantTest
 
         var actualImpulses = meterConstant * activeEnergy;
 
-        Assert.That((double)actualImpulses, Is.EqualTo((double)expectedImpulses).Within(0.01));
+        Assert.That((long)actualImpulses, Is.EqualTo((double)expectedImpulses).Within(0.01));
     }
 
 }

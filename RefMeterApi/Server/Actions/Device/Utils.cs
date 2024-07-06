@@ -28,12 +28,10 @@ public static class Utils
     private static void ConvertAngles(MeasuredLoadpoint measureOutput, int firstPhaseAngle)
     {
         // reverse all angles
-        var full = new Angle(360);
-
         foreach (var phase in measureOutput.Phases)
         {
-            phase.Voltage.AcComponent!.Angle = (full - phase.Voltage.AcComponent!.Angle) % 360;
-            phase.Current.AcComponent!.Angle = (full - phase.Current.AcComponent!.Angle) % 360;
+            phase.Voltage.AcComponent!.Angle = (Angle.Full - phase.Voltage.AcComponent!.Angle) % Angle.Full;
+            phase.Current.AcComponent!.Angle = (Angle.Full - phase.Current.AcComponent!.Angle) % Angle.Full;
         };
 
         // All current phases are off
@@ -50,8 +48,8 @@ public static class Utils
         // first current angle must be 0°. The rest we add up
         foreach (var phase in measureOutput.Phases)
         {
-            phase.Voltage.AcComponent!.Angle = (phase.Voltage.AcComponent!.Angle - angle + full) % 360;
-            phase.Current.AcComponent!.Angle = (phase.Current.AcComponent!.Angle - angle + full) % 360;
+            phase.Voltage.AcComponent!.Angle = (phase.Voltage.AcComponent!.Angle - angle + Angle.Full) % Angle.Full;
+            phase.Current.AcComponent!.Angle = (phase.Current.AcComponent!.Angle - angle + Angle.Full) % Angle.Full;
         }
     }
 }

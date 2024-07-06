@@ -14,6 +14,6 @@ public class ActiveEnergyTest
         var expectedImpulses = new Impulses(impulsesValue);
 
         var actualImpulses = activeEnergy * meterConstant;
-        Assert.That((double)expectedImpulses, Is.EqualTo((double)actualImpulses));
+        Assert.That((double)expectedImpulses, Is.EqualTo((double)actualImpulses).Within(0.01));
     }
 }

@@ -20,6 +20,9 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Vol
     /// <inheritdoc/>
     public double GetValue() => _Value;
 
+    /// <inheritdoc/>
+    public static Voltage Create(double value) => new(value);
+
     /// <summary>
     /// The real value is always represented as a double.
     /// </summary>

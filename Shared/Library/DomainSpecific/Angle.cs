@@ -30,6 +30,9 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber<Angle
     /// <inheritdoc/>
     public double GetValue() => _Value;
 
+    /// <inheritdoc/>
+    public static Angle Create(double value) => new(value);
+
     /// <summary>
     /// The real value is always represented as a double.
     /// </summary>

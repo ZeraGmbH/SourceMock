@@ -17,6 +17,9 @@ public readonly struct MeterConstant(double value) : IInternalDomainSpecificNumb
     public double GetValue() => _Value;
 
     /// <inheritdoc/>
+    public static MeterConstant Create(double value) => new(value);
+
+    /// <inheritdoc/>
     [JsonIgnore]
     public readonly string Unit => "Imp/kWh";
 

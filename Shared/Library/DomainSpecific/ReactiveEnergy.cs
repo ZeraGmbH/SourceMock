@@ -17,6 +17,9 @@ public readonly struct ReactiveEnergy(double value) : IInternalDomainSpecificNum
     public double GetValue() => _Value;
 
     /// <inheritdoc/>
+    public static ReactiveEnergy Create(double value) => new(value);
+
+    /// <inheritdoc/>
     [JsonIgnore]
     public readonly string Unit => "VArh";
 

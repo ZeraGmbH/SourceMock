@@ -23,6 +23,9 @@ public readonly struct Frequency(double value) : IInternalDomainSpecificNumber<F
     public double GetValue() => _Value;
 
     /// <inheritdoc/>
+    public static Frequency Create(double value) => new(value);
+
+    /// <inheritdoc/>
     [JsonIgnore]
     public readonly string Unit => "Hz";
 

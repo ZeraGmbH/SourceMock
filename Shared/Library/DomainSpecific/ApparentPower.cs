@@ -17,6 +17,9 @@ public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumb
     public double GetValue() => _Value;
 
     /// <inheritdoc/>
+    public static ApparentPower Create(double value) => new(value);
+
+    /// <inheritdoc/>
     [JsonIgnore]
     public readonly string Unit => "VA";
 

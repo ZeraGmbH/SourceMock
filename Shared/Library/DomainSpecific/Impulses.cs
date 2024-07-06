@@ -16,6 +16,9 @@ public readonly struct Impulses(double value) : IInternalDomainSpecificNumber<Im
     public double GetValue() => _Value;
 
     /// <inheritdoc/>
+    public static Impulses Create(double value) => new(value);
+
+    /// <inheritdoc/>
     [JsonIgnore]
     public readonly string Unit => "";
 

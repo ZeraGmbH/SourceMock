@@ -16,6 +16,12 @@ internal interface IInternalDomainSpecificNumber : IDomainSpecificNumber
 /// </summary>
 internal interface IInternalDomainSpecificNumber<T> : IInternalDomainSpecificNumber, IDomainSpecificNumber<T> where T : IInternalDomainSpecificNumber<T>
 {
+    /// <summary>
+    /// Create a new instance.
+    /// </summary>
+    /// <param name="value">Value to use.</param>
+    /// <returns>New instance.</returns>
+    static abstract T Create(double value);
 }
 
 /// <summary>

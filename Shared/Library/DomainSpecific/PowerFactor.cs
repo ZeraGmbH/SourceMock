@@ -28,6 +28,9 @@ public readonly struct PowerFactor(double value) : IInternalDomainSpecificNumber
     public double GetValue() => _Value;
 
     /// <inheritdoc/>
+    public static PowerFactor Create(double value) => new(value);
+
+    /// <inheritdoc/>
     [JsonIgnore]
     public readonly string Unit => "";
 

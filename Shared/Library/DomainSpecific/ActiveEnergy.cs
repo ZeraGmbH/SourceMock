@@ -16,6 +16,9 @@ public readonly struct ActiveEnergy(double value) : IInternalDomainSpecificNumbe
     public double GetValue() => _Value;
 
     /// <inheritdoc/>
+    public static ActiveEnergy Create(double value) => new(value);
+
+    /// <inheritdoc/>
     [JsonIgnore]
     public readonly string Unit => "Wh";
 

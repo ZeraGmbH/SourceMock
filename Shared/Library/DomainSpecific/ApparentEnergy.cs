@@ -17,6 +17,9 @@ public readonly struct ApparentEnergy(double value) : IInternalDomainSpecificNum
     public double GetValue() => _Value;
 
     /// <inheritdoc/>
+    public static ApparentEnergy Create(double value) => new(value);
+
+    /// <inheritdoc/>
     [JsonIgnore]
     public readonly string Unit => "VAh";
 

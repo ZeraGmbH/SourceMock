@@ -17,6 +17,9 @@ public readonly struct ActivePower(double value) : IInternalDomainSpecificNumber
     public double GetValue() => _Value;
 
     /// <inheritdoc/>
+    public static ActivePower Create(double value) => new(value);
+
+    /// <inheritdoc/>
     [JsonIgnore]
     public readonly string Unit => "W";
 

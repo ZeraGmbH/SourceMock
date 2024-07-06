@@ -17,6 +17,9 @@ public readonly struct Time(double value) : IInternalDomainSpecificNumber<Time>
     public double GetValue() => _Value;
 
     /// <inheritdoc/>
+    public static Time Create(double value) => new(value);
+
+    /// <inheritdoc/>
     [JsonIgnore]
     public readonly string Unit => "s";
 

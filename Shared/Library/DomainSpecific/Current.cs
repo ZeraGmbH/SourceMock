@@ -27,6 +27,9 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber<Cur
     public double GetValue() => _Value;
 
     /// <inheritdoc/>
+    public static Current Create(double value) => new(value);
+
+    /// <inheritdoc/>
     [JsonIgnore]
     public readonly string Unit => "A";
 

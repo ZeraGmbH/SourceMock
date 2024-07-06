@@ -184,8 +184,8 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
     {
         foreach (var phase in loadpoint.Phases)
         {
-            phase.Voltage.AcComponent!.Angle = (Angle.Full - phase.Voltage.AcComponent.Angle) % Angle.Full;
-            phase.Current.AcComponent!.Angle = (Angle.Full - phase.Current.AcComponent.Angle) % Angle.Full;
+            phase.Voltage.AcComponent!.Angle = (-phase.Voltage.AcComponent.Angle).Normalize();
+            phase.Current.AcComponent!.Angle = (-phase.Current.AcComponent.Angle).Normalize();
         };
 
 
@@ -199,8 +199,8 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
 
         foreach (var phase in loadpoint.Phases)
         {
-            phase.Voltage.AcComponent!.Angle = (phase.Voltage.AcComponent.Angle - angle + Angle.Full) % Angle.Full;
-            phase.Current.AcComponent!.Angle = (phase.Current.AcComponent.Angle - angle + Angle.Full) % Angle.Full;
+            phase.Voltage.AcComponent!.Angle = (phase.Voltage.AcComponent.Angle - angle).Normalize();
+            phase.Current.AcComponent!.Angle = (phase.Current.AcComponent.Angle - angle).Normalize();
         }
     }
 }

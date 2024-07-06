@@ -22,11 +22,6 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber<Angle
     /// </summary>
     public static readonly Angle Zero = new();
 
-    /// <summary>
-    /// Full circle.
-    /// </summary>
-    public static readonly Angle Full = new(360);
-
     /// <inheritdoc/>
     public double GetValue() => _Value;
 

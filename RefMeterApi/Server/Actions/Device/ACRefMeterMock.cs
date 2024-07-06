@@ -220,12 +220,12 @@ public partial class ACRefMeterMock : RefMeterMock
         phase.Current.AcComponent!.Rms = !phase.Current.AcComponent!.Rms
             ? GetRandomNumberWithAbsoluteDeviation(phase.Current.AcComponent!.Rms, new(0.01)).Abs()
             : GetRandomNumberWithPercentageDeviation(phase.Current.AcComponent!.Rms, 0.01);
-        phase.Current.AcComponent!.Angle = GetRandomNumberWithAbsoluteDeviation(phase.Current.AcComponent!.Angle, new(0.1)).Abs() % Angle.Full;
+        phase.Current.AcComponent!.Angle = GetRandomNumberWithAbsoluteDeviation(phase.Current.AcComponent!.Angle, new(0.1)).Abs().Normalize();
         phase.Voltage.AcComponent!.Rms = !phase.Voltage.AcComponent!.Rms
             ? GetRandomNumberWithAbsoluteDeviation(phase.Voltage.AcComponent!.Rms, new(0.05)).Abs()
             : GetRandomNumberWithPercentageDeviation(phase.Voltage.AcComponent!.Rms, 0.05);
         phase.Voltage.AcComponent!.Angle = !phase.Voltage.AcComponent!.Angle
-            ? GetRandomNumberWithAbsoluteDeviation(phase.Voltage.AcComponent!.Angle, new(0.05)).Abs() % Angle.Full
+            ? GetRandomNumberWithAbsoluteDeviation(phase.Voltage.AcComponent!.Angle, new(0.05)).Abs().Normalize()
             : GetRandomNumberWithPercentageDeviation(phase.Voltage.AcComponent!.Angle, 0.05);
         phase.ActivePower = GetRandomNumberWithAbsoluteDeviation(phase.ActivePower!.Value, new(0.02));
         phase.ReactivePower = GetRandomNumberWithAbsoluteDeviation(phase.ReactivePower!.Value, new(0.02));

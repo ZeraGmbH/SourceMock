@@ -47,7 +47,7 @@ public readonly struct ActiveEnergy(double value) : IInternalDomainSpecificNumbe
     /// <param name="power">Some energy.</param>
     /// <param name="energy">Some power.</param>
     /// <returns>time in seconds.</returns>
-    public static Time? operator /(ActiveEnergy energy, ActivePower power) => (double)power == 0 ? null : new(energy._Value / (double)power * 3600);
+    public static Time? operator /(ActiveEnergy energy, ActivePower power) => !power ? null : new(energy._Value / (double)power * 3600);
 
     #region Arithmetics
 

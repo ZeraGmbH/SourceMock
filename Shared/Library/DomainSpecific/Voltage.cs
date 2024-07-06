@@ -108,3 +108,4 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Vol
 
     #endregion
 }
+cc

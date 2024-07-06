@@ -40,7 +40,7 @@ public readonly struct ActivePower(double value) : IInternalDomainSpecificNumber
     /// <param name="power">Active power.</param>
     /// <param name="apparent">Apparent power.</param>
     /// <returns>Ratio of active to apparent power or null if apparent power is zero.</returns>
-    public static PowerFactor? operator /(ActivePower power, ApparentPower apparent) => (double)apparent == 0 ? null : new(power._Value / (double)apparent);
+    public static PowerFactor? operator /(ActivePower power, ApparentPower apparent) => !apparent ? null : new(power._Value / (double)apparent);
 
     /// <summary>
     /// 

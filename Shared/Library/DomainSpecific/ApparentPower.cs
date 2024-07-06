@@ -48,13 +48,6 @@ public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumb
     /// <returns></returns>
     public ReactivePower GetReactivePower(Angle phaseAngle) => new(_Value * phaseAngle.Sin());
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="other"></param>
-    /// <returns></returns>
-    public int CompareTo(ApparentPower other) => _Value.CompareTo(other._Value);
-
     #region Arithmetics
 
     /// <inheritdoc/>
@@ -90,6 +83,9 @@ public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumb
 
     /// <inheritdoc/>
     public override bool Equals(object? obj) => obj is ApparentPower angle && _Value == angle._Value;
+
+    /// <inheritdoc/>
+    public int CompareTo(ApparentPower other) => _Value.CompareTo(other._Value);
 
     /// <inheritdoc/>
     public override int GetHashCode() => _Value.GetHashCode();

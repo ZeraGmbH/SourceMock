@@ -15,14 +15,8 @@ namespace MeterTestSystemApi;
 /// <param name="source"></param>
 /// <param name="refMeter"></param>
 /// <param name="errorCalculatorMock"></param>
-/// <param name="logger"></param>
-/// <param name="configuration"></param>
-public class MeterTestSystemAcMock(ISourceMock source, IMockRefMeter refMeter, IErrorCalculatorMock errorCalculatorMock, ILogger<SimulatedSource> logger, IConfiguration configuration) : IMeterTestSystem
+public class MeterTestSystemAcMock(ISourceMock source, IMockRefMeter refMeter, IErrorCalculatorMock errorCalculatorMock) : IMeterTestSystem
 {
-    private readonly ILogger<SimulatedSource> _logger = logger;
-
-    private readonly IConfiguration _configuration = configuration;
-
     /// <inheritdoc/>
     public event Action<ErrorConditions> ErrorConditionsChanged = null!;
 
@@ -41,13 +35,12 @@ public class MeterTestSystemAcMock(ISourceMock source, IMockRefMeter refMeter, I
     /// </summary>
     public IRefMeter RefMeter { get; } = refMeter;
 
-
     private readonly List<IErrorCalculator> _errorCalculators = [errorCalculatorMock];
 
     /// <summary>
     /// 
     /// </summary>
-    public IErrorCalculator[] ErrorCalculators => _errorCalculators.ToArray();
+    public IErrorCalculator[] ErrorCalculators => [.. _errorCalculators];
 
     /// <summary>
     /// 

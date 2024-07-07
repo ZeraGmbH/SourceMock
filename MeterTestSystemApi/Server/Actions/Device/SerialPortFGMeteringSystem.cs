@@ -168,7 +168,6 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
             throw new ArgumentException("voltage");
         }
 
-
         if (!capabilities.SupportedVoltageAuxiliaries.Contains(settings.VoltageAuxiliary))
         {
             _logger.LogDebug($"Unsupported auxiliary voltage amplifier {settings.VoltageAuxiliary}");

@@ -134,7 +134,7 @@ public static class CodeMappings
         { ReferenceMeters.RMM303x8, 49 },
     };
 
-    private static void Dump<T1, T2>(Dictionary<T1, int> mapping, Dictionary<T2, int> auxMapping, [CallerArgumentExpression("mapping")] string? name = null) where T1 : notnull where T2 : notnull
+    private static void Dump<T1, T2>(Dictionary<T1, int> mapping, Dictionary<T2, int> auxMapping, [CallerArgumentExpression(nameof(mapping))] string? name = null) where T1 : notnull where T2 : notnull
     {
         Console.WriteLine($"Mapping for {name}");
 

@@ -11,9 +11,11 @@ namespace ErrorCalculatorApi.Actions.Device;
 /// </summary>
 public interface IErrorCalculatorMock : IErrorCalculator { }
 /// <summary>
-/// 
+/// Need SimulatedSource to mock the energy
 /// </summary>
-public class ErrorCalculatorMock : IErrorCalculatorMock
+/// <param name="di">Dependency injection to create ISource on demand -
+/// to avoid cyclic dependencies during setup.</param>
+public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
 {
     /// <inheritdoc/>
     public bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
@@ -22,7 +24,7 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
 
     private ErrorMeasurementStatus _status = new();
 
-    private IServiceProvider _di;
+    private IServiceProvider _di = di;
 
     private DateTime _startTime;
 
@@ -34,16 +36,6 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     /// Total power of the loadpoint in W.
     /// </summary>
     private ActivePower _totalPower;
-
-    /// <summary>
-    /// Need SimulatedSource to mock the energy
-    /// </summary>
-    /// <param name="di">Dependency injection to create ISource on demand -
-    /// to avoid cyclic dependencies during setup.</param>
-    public ErrorCalculatorMock(IServiceProvider di)
-    {
-        _di = di;
-    }
 
     /// <inheritdoc/>
     public Task AbortErrorMeasurement(IInterfaceLogger logger)
@@ -86,7 +78,7 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
             measuredImpulses = _totalImpulses;
         }
 
-        _status.Progress = 100d * measuredImpulses / _totalImpulses;
+        _status.Progress = measuredImpulses / _totalImpulses * 100d;
 
         /* Check for end of measurement. */
         if (_status.Progress >= 100)
@@ -115,15 +107,14 @@ public class ErrorCalculatorMock : IErrorCalculatorMock
     public Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
     {
         /* Get the total power of all active phases of the current loadpoint (in W) */
-        ActivePower totalPower = new();
-
+        var totalPower = ActivePower.Zero;
         var loadpoint = _di.GetRequiredService<ISource>().GetCurrentLoadpoint(logger)!;
 
         foreach (var phase in loadpoint.Phases)
             if (phase.Voltage.On && phase.Current.On)
             {
-                totalPower = CurrentCalculation.CalculateAcPower(totalPower, phase);
-                totalPower = CurrentCalculation.CalculateDcPower(totalPower, phase);
+                totalPower += CurrentCalculation.CalculateAcPower(phase);
+                totalPower += CurrentCalculation.CalculateDcPower(phase);
             }
 
         _totalPower = totalPower;

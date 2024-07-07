@@ -13,7 +13,7 @@ public class CurrentCalculationTest
         var expectedPower = current * voltage;
 
         var dcPhase = TestLoadpoints.GetDcLoadpointPhase();
-        var actualPower = CurrentCalculation.CalculateDcPower(new(0), dcPhase);
+        var actualPower = CurrentCalculation.CalculateDcPower(dcPhase);
 
         Assert.That((double)actualPower, Is.EqualTo(expectedPower));
     }
@@ -26,7 +26,7 @@ public class CurrentCalculationTest
         var expectedPower = current * voltage;  // ignore cos, since both angles are 0
 
         var dcPhase = TestLoadpoints.GetAcLoadpointPhase();
-        var actualPower = CurrentCalculation.CalculateAcPower(new(0), dcPhase);
+        var actualPower = CurrentCalculation.CalculateAcPower(dcPhase);
 
         Assert.That((double)actualPower, Is.EqualTo(expectedPower));
     }
@@ -37,7 +37,7 @@ public class CurrentCalculationTest
         var expectedPower = 0;
 
         var acPhase = TestLoadpoints.GetAcLoadpointPhase();
-        var actualPower = CurrentCalculation.CalculateDcPower(new(0), acPhase);
+        var actualPower = CurrentCalculation.CalculateDcPower(acPhase);
 
         Assert.That((double)actualPower, Is.EqualTo(expectedPower));
     }
@@ -48,7 +48,7 @@ public class CurrentCalculationTest
         var expectedPower = 0;
 
         var dcPhase = TestLoadpoints.GetDcLoadpointPhase();
-        var actualPower = CurrentCalculation.CalculateAcPower(new(0), dcPhase);
+        var actualPower = CurrentCalculation.CalculateAcPower(dcPhase);
 
         Assert.That((double)actualPower, Is.EqualTo(expectedPower));
     }

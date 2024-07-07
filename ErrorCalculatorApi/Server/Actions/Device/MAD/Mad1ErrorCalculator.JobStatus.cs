@@ -1,4 +1,5 @@
 using ErrorCalculatorApi.Models;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;
@@ -71,13 +72,12 @@ partial class Mad1ErrorCalculator
 
       reply.Progress = 100d;
     }
-    else
+    else if (_dutImpules != null)
     {
       var seen = errorValues?.SelectSingleNode("actSeenCounts")?.InnerText;
-      var impulses = string.IsNullOrEmpty(seen) ? (long?)null : ParseLong(seen);
+      var impulses = string.IsNullOrEmpty(seen) ? (Impulses?)null : new Impulses(ParseLong(seen));
 
-      if (impulses != null && _dutImpules != null)
-        reply.Progress = impulses * 100.0d / _dutImpules;
+      if (impulses != null) reply.Progress = impulses / _dutImpules * 100d;
     }
 
     /* Report summary. */

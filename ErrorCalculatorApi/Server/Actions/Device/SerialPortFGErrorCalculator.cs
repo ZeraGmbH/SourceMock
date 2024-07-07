@@ -21,19 +21,10 @@ public interface ISerialPortFGErrorCalculator : IErrorCalculator
 /// it has to be connected separatly (via network and Koala XML 
 /// protocol).
 /// </summary>
-/// <remarks>
-/// Initialize device manager.
-/// </remarks>
-/// <param name="device">Service to access the current serial port.</param>
 /// <param name="logger">Logging service for this device type.</param>
 
-public class SerialPortFGErrorCalculator([FromKeyedServices("MeterTestSystem")] ISerialPortConnection device, ILogger<SerialPortFGErrorCalculator> logger) : ISerialPortFGErrorCalculator
+public class SerialPortFGErrorCalculator(ILogger<SerialPortFGErrorCalculator> logger) : ISerialPortFGErrorCalculator
 {
-    /// <summary>
-    /// Serial port connection.
-    /// </summary>
-    private readonly ISerialPortConnection _device = device;
-
     /// <summary>
     /// Logging helper.
     /// </summary>

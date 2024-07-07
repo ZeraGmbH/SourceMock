@@ -16,11 +16,11 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
 
     private IMadConnection _connection = null!;
 
-    private long? _dutImpules;
+    private Impulses? _dutImpules;
 
-    private long? _dutImpulesNext;
+    private Impulses? _dutImpulesNext;
 
-    private long? _refMeterImpulsesNext;
+    private Impulses? _refMeterImpulsesNext;
 
     private string? _jobId;
 
@@ -54,21 +54,11 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, double dutMeterConstant, long impulses, double refMeterMeterConstant)
-    {
-        /* Remember */
-        _refMeterImpulsesNext = (long)Math.Round(impulses * refMeterMeterConstant / dutMeterConstant);
-        _dutImpulesNext = impulses;
-
-        return Task.CompletedTask;
-    }
-
-    /// <inheritdoc/>
     public Task SetErrorMeasurementParameters(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant)
     {
         /* Remember */
-        _refMeterImpulsesNext = (long)(impulses / dutMeterConstant * refMeterMeterConstant);
-        _dutImpulesNext = (long)impulses;
+        _refMeterImpulsesNext = (impulses / dutMeterConstant * refMeterMeterConstant).Floor();
+        _dutImpulesNext = impulses.Floor();
 
         return Task.CompletedTask;
     }
@@ -95,12 +85,11 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
         await ConfigureErrorMeasurement(logger, connection);
 
         /* Start the measurement and remember context. */
-        _jobId = await StartErrorMeasurement(logger, continuous, connection, (long)dut, (long)meter);
+        _jobId = await StartErrorMeasurement(logger, continuous, connection, dut.Value, meter.Value);
 
         _dutImpules = dut;
     }
 
     /* [TODO] add support for 0x HEX response. */
     private static long ParseLong(string number) => long.Parse(number);
-
 }

@@ -59,6 +59,12 @@ public readonly struct Impulses(double value) : IInternalDomainSpecificNumber<Im
     /// <returns></returns>
     public Impulses Ceil() => new((long)Math.Ceiling(_Value));
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public Impulses Floor() => new((long)Math.Floor(_Value));
+
     #region Arithmetics
 
     /// <inheritdoc/>

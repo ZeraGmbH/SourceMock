@@ -11,33 +11,32 @@ public static class CurrentCalculation
     /// <summary>
     /// returns the total power of given ac phase
     /// </summary>
-    /// <param name="totalPower"></param>
     /// <param name="phase"></param>
     /// <returns></returns>
-    public static ActivePower CalculateAcPower(ActivePower totalPower, TargetLoadpointPhase phase)
+    public static ActivePower CalculateAcPower(TargetLoadpointPhase phase)
     {
         var acVoltage = phase.Voltage.AcComponent;
         var acCurrent = phase.Current.AcComponent;
+
         if (acCurrent != null && acVoltage != null)
-            totalPower += (acVoltage.Rms * acCurrent.Rms).GetActivePower(acVoltage.Angle - acCurrent.Angle);
-        return totalPower;
+            return (acVoltage.Rms * acCurrent.Rms).GetActivePower(acVoltage.Angle - acCurrent.Angle);
+
+        return ActivePower.Zero;
     }
 
     /// <summary>
     /// returns the total power of given dc phase
     /// </summary>
-    /// <param name="totalPower"></param>
     /// <param name="phase"></param>
     /// <returns></returns>
-    public static ActivePower CalculateDcPower(ActivePower totalPower, TargetLoadpointPhase phase)
+    public static ActivePower CalculateDcPower(TargetLoadpointPhase phase)
     {
         var dcVoltage = phase.Voltage.DcComponent;
         var dcCurrent = phase.Current.DcComponent;
+
         if (dcCurrent != null && dcVoltage != null)
-        {
-            var apparentPower = dcVoltage.Value * dcCurrent.Value;
-            totalPower = apparentPower.GetActivePower(new Angle());
-        }
-        return totalPower;
+            return (dcVoltage.Value * dcCurrent.Value).GetActivePower(Angle.Zero);
+
+        return ActivePower.Zero;
     }
 }

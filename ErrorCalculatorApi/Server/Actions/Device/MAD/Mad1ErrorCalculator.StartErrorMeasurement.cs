@@ -1,4 +1,5 @@
 using ErrorCalculatorApi.Models;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;
@@ -34,7 +35,7 @@ partial class Mad1ErrorCalculator
       </KMA_XML_0_01>
     ";
 
-    private async Task<string> StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection, long dutImpulses, long refMeterImpulses)
+    private async Task<string> StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection, Impulses dutImpulses, Impulses refMeterImpulses)
     {
         /* Create and configure request. */
         var req = LoadXmlFromString(ErrorMeasurementStartXml);
@@ -44,9 +45,9 @@ partial class Mad1ErrorCalculator
         var refCounts = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureReq/fctErrorMeasurement/referenceCounts")!;
         var source = req.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureReq/fctErrorMeasurement/evaluationSrc")!;
 
-        dutCounts.InnerText = $"{dutImpulses}";
+        dutCounts.InnerText = dutImpulses.Format(withUnit: false)!;
         mode.InnerText = continuous ? "repetition" : "oneShot";
-        refCounts.InnerText = $"{refMeterImpulses}";
+        refCounts.InnerText = refMeterImpulses.Format(withUnit: false)!;
         source.InnerText = _supportedMeterConnections[connection ?? ErrorCalculatorMeterConnections.Intern1];
 
         /* Execute the request. */

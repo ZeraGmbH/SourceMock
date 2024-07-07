@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
 using SharedLibrary.DomainSpecific;
@@ -9,7 +10,7 @@ namespace RefMeterApi.Actions.MeterConstantCalculator;
 /// </summary>
 public class MeterConstantCalculator(ILogger<MeterConstantCalculator> logger) : IMeterConstantCalculator
 {
-    private static readonly Dictionary<ReferenceMeters, Func<double, MeasurementModes, double, double, double>> _calculators = new() {
+    private static readonly Dictionary<ReferenceMeters, Func<Frequency, MeasurementModes, Voltage, Current, MeterConstant>> _calculators = new() {
         {ReferenceMeters.COM3000, Com30AndEpz303},
         {ReferenceMeters.COM3003, Com30AndEpz303},
         {ReferenceMeters.COM3003x1x2, Com30AndEpz303},
@@ -27,19 +28,19 @@ public class MeterConstantCalculator(ILogger<MeterConstantCalculator> logger) : 
     private static readonly double _sqrt3 = Math.Sqrt(3d);
 
     /// <inheritdoc/>
-    public MeterConstant GetMeterConstant(ReferenceMeters meter, double frequency, MeasurementModes mode, double voltageRange, double currentRange)
+    public MeterConstant GetMeterConstant(ReferenceMeters meter, Frequency frequency, MeasurementModes mode, Voltage voltageRange, Current currentRange)
     {
-        if (_calculators.TryGetValue(meter, out var algorithm)) return new(algorithm(frequency, mode, voltageRange, currentRange));
+        if (_calculators.TryGetValue(meter, out var algorithm)) return algorithm(frequency, mode, voltageRange, currentRange);
 
         logger.LogError("No meter constant algorithm for {Meter}", meter);
 
         throw new NotSupportedException($"no meter constant algorithm for {meter}");
     }
 
-    private static double Com30AndEpz303(double frequency, MeasurementModes mode, double voltageRange, double currentRange)
+    private static MeterConstant Com30AndEpz303(Frequency frequency, MeasurementModes mode, Voltage voltageRange, Current currentRange)
     {
         /* Bias for four wire measurements. */
-        var meterConstant = 1000d * 3600d * frequency / (3d * voltageRange * currentRange);
+        var meterConstant = new MeterConstant(1000d * 3600d * (double)frequency / (double)(3d * voltageRange * currentRange));
 
         /* Check measuring mode. */
         return mode switch

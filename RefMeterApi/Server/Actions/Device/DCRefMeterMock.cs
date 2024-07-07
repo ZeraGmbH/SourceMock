@@ -19,17 +19,9 @@ public interface IDCRefMeterMock : IMockRefMeter
 /// <summary>
 /// 
 /// </summary>
-public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
+public class DCRefMeterMock(IServiceProvider di) : RefMeterMock, IDCRefMeterMock
 {
-    private readonly IServiceProvider _di;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public DCRefMeterMock(IServiceProvider di)
-    {
-        _di = di;
-    }
+    private readonly IServiceProvider _di = di;
 
     /// <summary>
     /// 
@@ -40,21 +32,17 @@ public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
     {
         var measureOutputPhases = new List<MeasuredLoadpointPhase>();
 
-        var current = lp.Phases[0].Current.On ? lp.Phases[0].Current.DcComponent : new Current();
-        var voltage = lp.Phases[0].Voltage.On ? lp.Phases[0].Voltage.DcComponent : new Voltage();
+        var current = lp.Phases[0].Current.On ? lp.Phases[0].Current.DcComponent : Current.Zero;
+        var voltage = lp.Phases[0].Voltage.On ? lp.Phases[0].Voltage.DcComponent : Voltage.Zero;
 
-        ActivePower activePower = (current != null && voltage != null) ? (current.Value * voltage.Value).GetActivePower(new Angle()) : new();
+        var activePower = (current != null && voltage != null)
+            ? (current.Value * voltage.Value).GetActivePower(Angle.Zero)
+            : ActivePower.Zero;
 
         var measureOutputPhase = new MeasuredLoadpointPhase()
         {
-            Current = new()
-            {
-                DcComponent = current
-            },
-            Voltage = new()
-            {
-                DcComponent = voltage
-            },
+            Current = new() { DcComponent = current },
+            Voltage = new() { DcComponent = voltage },
             ActivePower = activePower
         };
 
@@ -94,8 +82,8 @@ public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
         {
             Phases = [
                 new () {
-                    Current = new() { DcComponent = new()},
-                    Voltage = new() { DcComponent = new()},
+                    Current = new() { DcComponent =Current.Zero },
+                    Voltage = new() { DcComponent = Voltage.Zero },
                 },
             ]
         };
@@ -120,13 +108,13 @@ public class DCRefMeterMock : RefMeterMock, IDCRefMeterMock
 
 
         if (voltage != null)
-            mo.Phases[0].Voltage.DcComponent = GetRandomNumberWithAbsoluteDeviation(voltage.Value, new(0.01)).Abs();
+            mo.Phases[0].Voltage.DcComponent = GetRandomNumberWithDeviation(voltage.Value, (Voltage)new(0.01)).Abs();
         if (current != null)
-            mo.Phases[0].Current.DcComponent = GetRandomNumberWithAbsoluteDeviation(current.Value, new(0.01)).Abs();
+            mo.Phases[0].Current.DcComponent = GetRandomNumberWithDeviation(current.Value, (Current)new(0.01)).Abs();
 
         if ((double)activePower != 0)
         {
-            mo.Phases[0].ActivePower = GetRandomNumberWithAbsoluteDeviation(activePower, new(0.01));
+            mo.Phases[0].ActivePower = GetRandomNumberWithDeviation(activePower, (ActivePower)new(0.01));
             mo.ActivePower = mo.Phases[0].ActivePower;
         }
     }

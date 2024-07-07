@@ -19,18 +19,9 @@ public interface IMockRefMeter : IRefMeter
 /// <summary>
 /// 
 /// </summary>
-public partial class ACRefMeterMock : RefMeterMock
+public partial class ACRefMeterMock(IServiceProvider di) : RefMeterMock
 {
-    private readonly IServiceProvider _di;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public ACRefMeterMock(IServiceProvider di)
-    {
-        _di = di;
-    }
-
+    private readonly IServiceProvider _di = di;
     private const double PI_BY_180 = Math.PI / 180;
 
     /// <summary>
@@ -58,18 +49,19 @@ public partial class ACRefMeterMock : RefMeterMock
     /// <returns>The according measure output.</returns>
     public override MeasuredLoadpoint CalcMeasureOutput(TargetLoadpoint lp)
     {
-        ActivePower activePowerSum = new();
-        ReactivePower reactivePowerSum = new();
-        ApparentPower apparentPowerSum = new();
+        var activePowerSum = ActivePower.Zero;
+        var reactivePowerSum = ReactivePower.Zero;
+        var apparentPowerSum = ApparentPower.Zero;
 
         var measureOutputPhases = new List<MeasuredLoadpointPhase>();
 
         foreach (var phase in lp.Phases)
         {
-            var current = phase.Current.On ? phase.Current.AcComponent!.Rms : new Current();
-            var voltage = phase.Voltage.On ? phase.Voltage.AcComponent!.Rms : new Voltage();
+            var current = phase.Current.On ? phase.Current.AcComponent!.Rms : Current.Zero;
+            var voltage = phase.Voltage.On ? phase.Voltage.AcComponent!.Rms : Voltage.Zero;
+            var power = current * voltage;
 
-            var angle = phase.Current.AcComponent!.Angle - phase.Voltage.AcComponent!.Angle.Abs();
+            var angle = (phase.Current.AcComponent!.Angle - phase.Voltage.AcComponent!.Angle).Abs();
 
             var measureOutputPhase = new MeasuredLoadpointPhase()
             {
@@ -89,9 +81,9 @@ public partial class ACRefMeterMock : RefMeterMock
                         Angle = phase.Voltage.AcComponent!.Angle,
                     },
                 },
-                ActivePower = (current * voltage).GetActivePower(angle),
-                ReactivePower = (current * voltage).GetReactivePower(angle),
-                ApparentPower = current * voltage
+                ActivePower = power.GetActivePower(angle),
+                ReactivePower = power.GetReactivePower(angle),
+                ApparentPower = power
             };
 
             measureOutputPhase.PowerFactor = (double)measureOutputPhase.ApparentPower == 0
@@ -199,10 +191,10 @@ public partial class ACRefMeterMock : RefMeterMock
     {
         MeasureOutputNullCheck(mo);
 
-        mo.Frequency = GetRandomNumberWithPercentageDeviation(mo.Frequency!.Value, 0.02);
-        mo.ActivePower = GetRandomNumberWithAbsoluteDeviation(mo.ActivePower!.Value, new(0.02));
-        mo.ApparentPower = GetRandomNumberWithAbsoluteDeviation(mo.ApparentPower!.Value, new(0.02));
-        mo.ReactivePower = GetRandomNumberWithAbsoluteDeviation(mo.ReactivePower!.Value, new(0.02));
+        mo.Frequency = GetRandomNumberWithDeviation(mo.Frequency!.Value, 0.02);
+        mo.ActivePower = GetRandomNumberWithDeviation(mo.ActivePower!.Value, (ActivePower)new(0.02));
+        mo.ApparentPower = GetRandomNumberWithDeviation(mo.ApparentPower!.Value, (ApparentPower)new(0.02));
+        mo.ReactivePower = GetRandomNumberWithDeviation(mo.ReactivePower!.Value, (ReactivePower)new(0.02));
     }
 
     private static void MeasureOutputNullCheck(MeasuredLoadpoint mo)
@@ -218,28 +210,23 @@ public partial class ACRefMeterMock : RefMeterMock
         MeasureOutputPhaseNullCheck(phase);
 
         phase.Current.AcComponent!.Rms = !phase.Current.AcComponent!.Rms
-            ? GetRandomNumberWithAbsoluteDeviation(phase.Current.AcComponent!.Rms, new(0.01)).Abs()
-            : GetRandomNumberWithPercentageDeviation(phase.Current.AcComponent!.Rms, 0.01);
-        phase.Current.AcComponent!.Angle = GetRandomNumberWithAbsoluteDeviation(phase.Current.AcComponent!.Angle, new(0.1)).Abs().Normalize();
+            ? GetRandomNumberWithDeviation(phase.Current.AcComponent!.Rms, (Current)new(0.01)).Abs()
+            : GetRandomNumberWithDeviation(phase.Current.AcComponent!.Rms, 0.01);
+        phase.Current.AcComponent!.Angle = GetRandomNumberWithDeviation(phase.Current.AcComponent!.Angle, (Angle)new(0.1)).Abs().Normalize();
         phase.Voltage.AcComponent!.Rms = !phase.Voltage.AcComponent!.Rms
-            ? GetRandomNumberWithAbsoluteDeviation(phase.Voltage.AcComponent!.Rms, new(0.05)).Abs()
-            : GetRandomNumberWithPercentageDeviation(phase.Voltage.AcComponent!.Rms, 0.05);
+            ? GetRandomNumberWithDeviation(phase.Voltage.AcComponent!.Rms, (Voltage)new(0.05)).Abs()
+            : GetRandomNumberWithDeviation(phase.Voltage.AcComponent!.Rms, 0.05);
         phase.Voltage.AcComponent!.Angle = !phase.Voltage.AcComponent!.Angle
-            ? GetRandomNumberWithAbsoluteDeviation(phase.Voltage.AcComponent!.Angle, new(0.05)).Abs().Normalize()
-            : GetRandomNumberWithPercentageDeviation(phase.Voltage.AcComponent!.Angle, 0.05);
-        phase.ActivePower = GetRandomNumberWithAbsoluteDeviation(phase.ActivePower!.Value, new(0.02));
-        phase.ReactivePower = GetRandomNumberWithAbsoluteDeviation(phase.ReactivePower!.Value, new(0.02));
-        phase.ApparentPower = GetRandomNumberWithAbsoluteDeviation(phase.ApparentPower!.Value, new(0.02));
-        phase.PowerFactor = new(PowerFactorIsNotNullOrNan(phase.PowerFactor)
-            ? GetRandomNumberWithAbsoluteDeviation((double)phase.PowerFactor!.Value, 0.02)
-            : GetRandomNumberWithAbsoluteDeviation(0, 0.01));
+            ? GetRandomNumberWithDeviation(phase.Voltage.AcComponent!.Angle, (Angle)new(0.05)).Abs().Normalize()
+            : GetRandomNumberWithDeviation(phase.Voltage.AcComponent!.Angle, 0.05);
+        phase.ActivePower = GetRandomNumberWithDeviation(phase.ActivePower!.Value, (ActivePower)new(0.02));
+        phase.ReactivePower = GetRandomNumberWithDeviation(phase.ReactivePower!.Value, (ReactivePower)new(0.02));
+        phase.ApparentPower = GetRandomNumberWithDeviation(phase.ApparentPower!.Value, (ApparentPower)new(0.02));
+        phase.PowerFactor = PowerFactorIsNotNullOrNan(phase.PowerFactor)
+            ? GetRandomNumberWithDeviation(phase.PowerFactor!.Value, (PowerFactor)new(0.02))
+            : GetRandomNumberWithDeviation(new PowerFactor(0), (PowerFactor)new(0.01));
     }
 
     private static bool PowerFactorIsNotNullOrNan(PowerFactor? powerFactor)
-    {
-        if (powerFactor == null)
-            return false;
-
-        return (double)powerFactor != 0 && !double.IsNaN((double)powerFactor);
-    }
+        => powerFactor != null && !!powerFactor.Value && !powerFactor.Value.IsNaN();
 }

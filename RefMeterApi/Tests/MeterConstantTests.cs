@@ -16,6 +16,6 @@ public class MeterConstantCalculatorTests
     {
         var cut = new MeterConstantCalculator(new NullLogger<MeterConstantCalculator>());
 
-        Assert.That((double)cut.GetMeterConstant(meter, frequency, mode, voltage, current), Is.EqualTo(expected).Within(0.001));
+        Assert.That((double)cut.GetMeterConstant(meter, new(frequency), mode, new(voltage), new(current)), Is.EqualTo(expected).Within(0.001));
     }
 }

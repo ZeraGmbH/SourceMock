@@ -42,7 +42,7 @@ public static class Utils
         var angle = measureOutput.Phases[firstPhaseAngle].Current.AcComponent!.Angle;
 
         // reference angle is already 0°
-        if ((double)angle == 0)
+        if (!angle)
             return;
 
         // first current angle must be 0°. The rest we add up

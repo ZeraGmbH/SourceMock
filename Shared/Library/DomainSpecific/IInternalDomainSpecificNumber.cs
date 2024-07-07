@@ -68,6 +68,14 @@ public static class IDomainSpecificNumberExtensions
     public static T Largest<T>(this T value, T other) where T : IDomainSpecificNumber<T> => (double)value >= (double)other ? value : other;
 
     /// <summary>
+    /// Check if a domain specifc number is NaN.
+    /// </summary>
+    /// <param name="value">Some number.</param>
+    /// <typeparam name="T">Implementation type.</typeparam>
+    /// <returns>Set if the number is NaN.</returns>
+    public static bool IsNaN<T>(this T value) where T : IDomainSpecificNumber<T> => double.IsNaN((double)value);
+
+    /// <summary>
     /// Format a number.
     /// </summary>
     /// <param name="number">Number to format.</param>

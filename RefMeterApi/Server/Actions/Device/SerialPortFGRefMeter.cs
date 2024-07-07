@@ -69,9 +69,9 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
         await Task.WhenAll(_device.Execute(logger, biRequest, buRequest, fiRequest));
 
         /* Convert text representations to numbers. */
-        var voltage = double.Parse(buRequest.EndMatch!.Groups[1].Value);
-        var current = double.Parse(biRequest.EndMatch!.Groups[1].Value);
-        var frequency = double.Parse(fiRequest.EndMatch!.Groups[1].Value);
+        var voltage = new Voltage(double.Parse(buRequest.EndMatch!.Groups[1].Value));
+        var current = new Current(double.Parse(biRequest.EndMatch!.Groups[1].Value));
+        var frequency = new Frequency(double.Parse(fiRequest.EndMatch!.Groups[1].Value));
 
         return _meterConstant.GetMeterConstant(_referenceMeter!.Value, frequency, _measurementMode ?? MeasurementModes.FourWireActivePower, voltage, current);
     }

@@ -18,5 +18,5 @@ public interface IMeterConstantCalculator
     /// <param name="voltageRange">Voltage range in V.</param>
     /// <param name="currentRange">Current range in C.</param>
     /// <returns>The meter constant.</returns>
-    MeterConstant GetMeterConstant(ReferenceMeters meter, double frequency, MeasurementModes mode, double voltageRange, double currentRange);
+    MeterConstant GetMeterConstant(ReferenceMeters meter, Frequency frequency, MeasurementModes mode, Voltage voltageRange, Current currentRange);
 }

@@ -69,7 +69,7 @@ public abstract class RefMeterMock : IMockRefMeter
     /// <param name="value"></param>
     /// <param name="deviation"></param>
     /// <returns></returns>
-    protected static T GetRandomNumberWithAbsoluteDeviation<T>(T value, T deviation) where T : struct, IDomainSpecificNumber<T>
+    protected static T GetRandomNumberWithDeviation<T>(T value, T deviation) where T : struct, IDomainSpecificNumber<T>
     {
         var maximum = value + deviation;
         var minimum = value - deviation;
@@ -83,26 +83,6 @@ public abstract class RefMeterMock : IMockRefMeter
     /// <param name="value"></param>
     /// <param name="deviation"></param>
     /// <returns></returns>
-    protected static double GetRandomNumberWithAbsoluteDeviation(double value, double deviation)
-    {
-        var maximum = value + deviation;
-        var minimum = value - deviation;
-
-        return (Random.Shared.NextDouble() * (maximum - minimum)) + minimum;
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="value"></param>
-    /// <param name="deviation"></param>
-    /// <returns></returns>
-    protected static T GetRandomNumberWithPercentageDeviation<T>(T value, double deviation) where T : struct, IDomainSpecificNumber<T>
-    {
-        var delta = value * (deviation / 100d);
-        var maximum = value + delta;
-        var minimum = value - delta;
-
-        return (Random.Shared.NextDouble() * (maximum - minimum)) + minimum;
-    }
+    protected static T GetRandomNumberWithDeviation<T>(T value, double deviation) where T : struct, IDomainSpecificNumber<T>
+        => GetRandomNumberWithDeviation(value, value * deviation / 100d);
 }

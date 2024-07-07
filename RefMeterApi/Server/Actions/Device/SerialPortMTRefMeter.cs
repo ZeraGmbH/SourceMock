@@ -58,11 +58,11 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
 
         foreach (var value in reply)
             if (value.StartsWith("UB="))
-                voltage = double.Parse(value.Substring(3));
+                voltage = double.Parse(value[3..]);
             else if (value.StartsWith("IB="))
-                current = double.Parse(value.Substring(3));
+                current = double.Parse(value[3..]);
             else if (value.StartsWith("M="))
-                mode = value.Substring(2);
+                mode = value[2..];
 
         if (!voltage.HasValue || !current.HasValue || string.IsNullOrEmpty(mode))
             throw new InvalidOperationException("AST status incomplete");
@@ -74,6 +74,6 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
             throw new ArgumentException($"unsupported measurement mode {mode}");
 
         /* Calculate according to formula - see MT78x_MAN_EXT_GB.pdf section 5.6.*/
-        return new(1000d * 3600d * 60000d / (phases * (double)voltage * (double)current));
+        return new(1000d * 3600d * 60000d / (phases * voltage.Value * current.Value));
     }
 }

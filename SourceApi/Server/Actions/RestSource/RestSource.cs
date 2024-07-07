@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using SharedLibrary;
 using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Logging;
@@ -95,7 +96,7 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
     public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant) =>
         (_dosageUri == null)
             ? throw new NotImplementedException("Dosage")
-            : httpDosage.GetAsync<DosageProgress>(logger, new Uri(_dosageUri, $"Progress?meterConstant={JsonSerializer.Serialize(meterConstant)}"));
+            : httpDosage.GetAsync<DosageProgress>(logger, new Uri(_dosageUri, $"Progress?meterConstant={JsonSerializer.Serialize(meterConstant, LibUtils.JsonSettings)}"));
 
     /// <inheritdoc/>
     public void Initialize(RestConfiguration? sourceEndpoint, RestConfiguration? dosageEndpoint)
@@ -152,7 +153,7 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
     {
         if (_dosageUri == null) throw new NotImplementedException("Dosage");
 
-        var res = await httpDosage.PutAsync(logger, new Uri(_dosageUri, $"Energy?energy={JsonSerializer.Serialize(value)}&meterConstant={JsonSerializer.Serialize(meterConstant)}"));
+        var res = await httpDosage.PutAsync(logger, new Uri(_dosageUri, $"Energy?energy={JsonSerializer.Serialize(value, LibUtils.JsonSettings)}&meterConstant={JsonSerializer.Serialize(meterConstant, LibUtils.JsonSettings)}"));
 
         if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
     }
@@ -162,7 +163,7 @@ public class RestSource(ILoggingHttpClient httpSource, ILoggingHttpClient httpDo
     {
         if (_dosageUri == null) throw new NotImplementedException("Dosage");
 
-        var res = await httpDosage.PostAsync(logger, new Uri(_dosageUri, $"DOSMode?on={JsonSerializer.Serialize(on)}"));
+        var res = await httpDosage.PostAsync(logger, new Uri(_dosageUri, $"DOSMode?on={JsonSerializer.Serialize(on, LibUtils.JsonSettings)}"));
 
         if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
     }

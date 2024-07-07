@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
+using SharedLibrary;
 using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Logging;
@@ -56,7 +57,7 @@ public class RestRefMeter(ILoggingHttpClient httpClient, ILogger<RestRefMeter> l
 
     /// <inheritdoc/>
     public Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1) =>
-        httpClient.GetAsync<MeasuredLoadpoint>(logger, new Uri(_baseUri, $"ActualValues?firstActiveCurrentPhase={JsonSerializer.Serialize(firstActiveCurrentPhase)}"));
+        httpClient.GetAsync<MeasuredLoadpoint>(logger, new Uri(_baseUri, $"ActualValues?firstActiveCurrentPhase={JsonSerializer.Serialize(firstActiveCurrentPhase, LibUtils.JsonSettings)}"));
 
     /// <inheritdoc/>
     public Task<MeasurementModes[]> GetMeasurementModes(IInterfaceLogger logger) =>

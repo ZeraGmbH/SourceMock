@@ -31,10 +31,7 @@ namespace SourceApi.Controllers
         [HttpGet("Capabilities")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetCapabilities")]
-        public async Task<ActionResult<SourceCapabilities>> GetCapablities()
-        {
-            return Ok(await source.GetCapabilities(interfaceLogger));
-        }
+        public async Task<ActionResult<SourceCapabilities>> GetCapablities() => Ok(await source.GetCapabilities(interfaceLogger));
 
         /// <summary>
         /// Gets the capabilities of this source.
@@ -89,7 +86,6 @@ namespace SourceApi.Controllers
                         detail: $"Unkown Response from source: {srcResult}, {srcResult.ToUserFriendlyString()}",
                         statusCode: StatusCodes.Status500InternalServerError);
             }
-#pragma warning restore
         }
 
         /// <summary>
@@ -108,7 +104,6 @@ namespace SourceApi.Controllers
         {
             var srcResult = await source.TurnOff(interfaceLogger);
 
-#pragma warning disable IDE0066 // Not all enum values are appicable here
             switch (srcResult)
             {
                 case SourceApiErrorCodes.SUCCESS:
@@ -120,7 +115,6 @@ namespace SourceApi.Controllers
                         detail: "Unkown Response from source.",
                         statusCode: StatusCodes.Status500InternalServerError);
             }
-#pragma warning restore
         }
 
         /// <summary>

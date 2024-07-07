@@ -33,54 +33,29 @@ namespace SourceApi.Actions.VeinSource
 
         public Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) => Task.FromException<SourceCapabilities>(new NotImplementedException());
 
-        public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant) => throw new NotImplementedException();
 
-        public Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
-        {
-            throw new NotImplementedException();
-        }
+        public Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant) => throw new NotImplementedException();
 
-        public Task SetDosageMode(IInterfaceLogger logger, bool on)
-        {
-            throw new NotImplementedException();
-        }
+        public Task SetDosageMode(IInterfaceLogger logger, bool on) => throw new NotImplementedException();
 
         /// <inheritdoc/>
         public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
         {
-            JObject veinRequest = VeinLoadpointMapper.ConvertToZeraJson(loadpoint);
+            var veinRequest = VeinLoadpointMapper.ConvertToZeraJson(loadpoint);
 
             _logger.LogInformation(veinRequest.ToString());
 
             return Task.FromResult(SourceApiErrorCodes.SUCCESS);
         }
 
-        public Task StartDosage(IInterfaceLogger logger)
-        {
-            throw new NotImplementedException();
-        }
+        public Task StartDosage(IInterfaceLogger logger) => throw new NotImplementedException();
 
-        public Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger) => throw new NotImplementedException();
 
         public Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger) => Task.FromException<SourceApiErrorCodes>(new NotImplementedException());
 
         public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger logger)
-        {
-            TargetLoadpoint ret = new();
-
-            var veinResponse = _veinClient.GetLoadpoint();
-            // how to act on http statuscode and pass through to api endpoint?
-            string zeraJson = veinResponse.Value;
-
-            ret = VeinLoadpointMapper.ConvertToLoadpoint(zeraJson);
-
-            return ret;
-        }
+            => VeinLoadpointMapper.ConvertToLoadpoint(_veinClient.GetLoadpoint().Value);
     }
 }

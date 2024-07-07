@@ -24,23 +24,12 @@ public class SimulatedSource : SourceMock, ISimulatedSource
     /// <param name="validator">The validator to be used.</param>
     public SimulatedSource(ILogger<SimulatedSource> logger, ISourceCapabilityValidator validator) : base(logger, new()
     {
-        Phases = new() {
-                    new() {
-                        AcVoltage = new(new(10), new(300), new(0.01)),
-                        AcCurrent = new(new(0), new(60), new(0.01))
-                    },
-                    new() {
-                        AcVoltage = new(new(10), new(300), new(0.01)),
-                        AcCurrent = new(new(0), new(60), new(0.01))
-                    },
-                    new() {
-                        AcVoltage = new(new(10), new(300), new(0.01)),
-                        AcCurrent = new(new(0), new(60), new(0.01))
-                    }
-                },
-        FrequencyRanges = new() {
-                    new(new(40), new(60), new(0.1), FrequencyMode.SYNTHETIC)
-                }
+        Phases = [
+            new() { AcVoltage = new(new(10), new(300), new(0.01)), AcCurrent = new(new(0), new(60), new(0.01)) },
+            new() { AcVoltage = new(new(10), new(300), new(0.01)), AcCurrent = new(new(0), new(60), new(0.01)) },
+            new() { AcVoltage = new(new(10), new(300), new(0.01)), AcCurrent = new(new(0), new(60), new(0.01)) }
+        ],
+        FrequencyRanges = [new(new(40), new(60), new(0.1), FrequencyMode.SYNTHETIC)]
     }, validator)
     { }
 
@@ -55,8 +44,7 @@ public class SimulatedSource : SourceMock, ISimulatedSource
     }
 
     /// <inheritdoc/>
-    public void SetSimulatedSourceState(SimulatedSourceState simulatedSourceState) =>
-        _simulatedSourceState = simulatedSourceState;
+    public void SetSimulatedSourceState(SimulatedSourceState simulatedSourceState) => _simulatedSourceState = simulatedSourceState;
 
     /// <inheritdoc/>
     public SimulatedSourceState? GetSimulatedSourceState() => _simulatedSourceState;

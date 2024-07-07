@@ -5,24 +5,17 @@ using SourceApi.Model;
 
 namespace SourceApi.Actions.Source;
 
-public abstract class SourceMock : ISourceMock
+public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities sourceCapabilities, ISourceCapabilityValidator validator) : ISourceMock
 {
-    protected ILogger<SourceMock>? _logger;
-    protected SourceCapabilities _sourceCapabilities;
+    protected ILogger<SourceMock>? _logger = logger;
+    protected SourceCapabilities _sourceCapabilities = sourceCapabilities;
     protected LoadpointInfo _info = new();
     protected DosageProgress _status = new();
     protected DateTime _startTime;
     protected ActiveEnergy _dosageEnergy;
     protected bool _dosageMode = false;
     protected TargetLoadpoint? _loadpoint;
-    protected ISourceCapabilityValidator _validator;
-
-    public SourceMock(ILogger<SourceMock> logger, SourceCapabilities sourceCapabilities, ISourceCapabilityValidator validator)
-    {
-        _logger = logger;
-        _sourceCapabilities = sourceCapabilities;
-        _validator = validator;
-    }
+    protected ISourceCapabilityValidator _validator = validator;
 
     /// <inheritdoc/>
     public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)

@@ -158,15 +158,13 @@ public class CapabilitiesMap : ICapabilitiesMap
         if (current.FrequencyRanges[0].Mode != voltage.FrequencyRanges[0].Mode)
             throw new InvalidOperationException("data mismatch - expected same frequency mode");
 
-        capabilties.FrequencyRanges = new();
-
-        capabilties.FrequencyRanges.Add(new()
+        capabilties.FrequencyRanges = [new()
         {
-            Min = current.FrequencyRanges[0].Min.Largest(voltage.FrequencyRanges[0].Min),
             Max = current.FrequencyRanges[0].Max.Smallest(voltage.FrequencyRanges[0].Max),
+            Min = current.FrequencyRanges[0].Min.Largest(voltage.FrequencyRanges[0].Min),
             Mode = current.FrequencyRanges[0].Mode,
             PrecisionStepSize = current.FrequencyRanges[0].PrecisionStepSize.Largest(voltage.FrequencyRanges[0].PrecisionStepSize),
-        });
+        }];
 
         return capabilties;
     }
@@ -182,7 +180,7 @@ public class CapabilitiesMap : ICapabilitiesMap
         if (!VoltageByAmplifier.TryGetValue(modelName, out var voltageInfo))
             throw new ArgumentException($"unknown voltage amplifier {modelName}", nameof(modelName));
 
-        return voltageInfo.Item2.Order().ToArray();
+        return [.. voltageInfo.Item2.Order()];
     }
 
     public Current[] GetCurrentRangesByModel(string modelName)
@@ -194,62 +192,64 @@ public class CapabilitiesMap : ICapabilitiesMap
     }
 
     private static readonly Dictionary<string, Tuple<SourceCapabilities, Voltage[]>> VoltageByAmplifier = new() {
-    { "MT786",  Tuple.Create<SourceCapabilities,Voltage[]>(new () {
-        FrequencyRanges = [new(new(45), new(65), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcVoltage = new(new(20), new(500), new(0.001)) }],
-    }, [ new(60d), new(125d), new(250d), new(420d) ] )},
-    { "VU211", Tuple.Create<SourceCapabilities,Voltage[]>(new () {
-        FrequencyRanges = [new(new(40), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcVoltage = new(new(30), new(480), new(0.001)) }],
-    }, [ new(480d), new(320d), new(240d), new(160d), new(120d), new(80d), new(60d), new(40d) ]) },
-    { "VU220",Tuple.Create<SourceCapabilities,Voltage[]>(new () {
-        FrequencyRanges = [new(new(40), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcVoltage = new(new(30), new(320), new(0.001)) }],
-    }, [ new(320d), new(160d) ]) },
-    { "VU221", Tuple.Create<SourceCapabilities,Voltage[]>(new ()  {
-        FrequencyRanges = [new(new(40), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcVoltage = new(new(30), new(320), new(0.001)) }],
-    }, [ new(320d), new(160d) ]) },
-    { "VUI302", Tuple.Create<SourceCapabilities,Voltage[]>(new ()  {
-        FrequencyRanges = [new(new(40), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcVoltage = new(new(30), new(320), new(0.001)) }],
-    }, [ new(320d), new(160d), new(80d) ] )},
-    { "SVG3020",Tuple.Create<SourceCapabilities,Voltage[]>(new ()  {
-        FrequencyRanges = [new(new(15), new(400), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcVoltage = new(new(30), new(500), new(0.001)) }],
-    }, [ new(75d), new(150d), new(300d), new(600d) ] )} };
+        { "MT786", Tuple.Create<SourceCapabilities,Voltage[]>(new () {
+            FrequencyRanges = [new(new(45), new(65), new(0.01), FrequencyMode.SYNTHETIC)],
+            Phases = [new() { AcVoltage = new(new(20), new(500), new(0.001)) }],
+        }, [ new(60d), new(125d), new(250d), new(420d) ] )},
+        { "VU211", Tuple.Create<SourceCapabilities,Voltage[]>(new () {
+            FrequencyRanges = [new(new(40), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
+            Phases = [new() { AcVoltage = new(new(30), new(480), new(0.001)) }],
+        }, [ new(480d), new(320d), new(240d), new(160d), new(120d), new(80d), new(60d), new(40d) ]) },
+        { "VU220", Tuple.Create<SourceCapabilities,Voltage[]>(new () {
+            FrequencyRanges = [new(new(40), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
+            Phases = [new() { AcVoltage = new(new(30), new(320), new(0.001)) }],
+        }, [ new(320d), new(160d) ]) },
+        { "VU221", Tuple.Create<SourceCapabilities,Voltage[]>(new ()  {
+            FrequencyRanges = [new(new(40), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
+            Phases = [new() { AcVoltage = new(new(30), new(320), new(0.001)) }],
+        }, [ new(320d), new(160d) ]) },
+        { "VUI302", Tuple.Create<SourceCapabilities,Voltage[]>(new ()  {
+            FrequencyRanges = [new(new(40), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
+            Phases = [new() { AcVoltage = new(new(30), new(320), new(0.001)) }],
+        }, [ new(320d), new(160d), new(80d) ] )},
+        { "SVG3020", Tuple.Create<SourceCapabilities,Voltage[]>(new ()  {
+            FrequencyRanges = [new(new(15), new(400), new(0.01), FrequencyMode.SYNTHETIC)],
+            Phases = [new() { AcVoltage = new(new(30), new(500), new(0.001)) }],
+        }, [ new(75d), new(150d), new(300d), new(600d) ] )}
+    };
 
     private static readonly Dictionary<string, Tuple<SourceCapabilities, Current[]>> CurrentByAmplifier = new() {
-    { "MT786", Tuple.Create<SourceCapabilities,Current[]>(new () {
-        FrequencyRanges = [new(new(45), new(65), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcCurrent = new(new(0.001), new(120), new(0.001)) }],
-    }, [new(100d),new(50d),new(20d),new(10d),new(5d),new(2d),new(1d),new(0.5d),new(0.2d),new(0.1d),new(0.05d),new(0.02d) ] )},
-    { "VI201",Tuple.Create<SourceCapabilities,Current[]>(new ()  {
-        FrequencyRanges = [new(new(15), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcCurrent = new(new(500E-6), new(160), new(0.0001)) }],
-    }, [new(160d),new(16d),new(1.6d),new(0.32d),new(0.032d),new(80d),new(8d),new(0.8d),new(0.16d),new(0.016d),new(40d),new(4d),new(0.4d),new(0.08d),new(0.008d),new(20d),new(2d),new(0.2d),new(0.04d),new(0.004d) ] )},
-    { "VI202", Tuple.Create<SourceCapabilities,Current[]>(new ()  {
-        FrequencyRanges = [new(new(15), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcCurrent = new(new(500E-6), new(120), new(0.0001)) }],
-    }, [new(120d),new(16d),new(1.6d),new(0.32d),new(0.032d),new(60d),new(8d),new(0.8d),new(0.16d),new(0.016d),new(30d),new(4d),new(0.4d),new(0.08d),new(0.008d),new(15d),new(2d),new(0.2d),new(0.04d),new(0.004d) ] )},
-    { "VI220",Tuple.Create<SourceCapabilities,Current[]>(new ()  {
-        FrequencyRanges = [new(new(15), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcCurrent = new(new(500E-6), new(120), new(0.0001)) }],
-    }, [new(120d),new(12d),new(1.2d),new(0.12d),new(60d),new(6d),new(0.6d),new(0.06d),new(30d),new(3d),new(0.3d),new(0.03d) ] )},
-    { "VI221", Tuple.Create<SourceCapabilities,Current[]>(new ()  {
-        FrequencyRanges = [new(new(15), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcCurrent = new(new(500E-6), new(120), new(0.0001)) }],
-    }, [new(120d),new(12d),new(1.2d),new(0.12d),new(60d),new(6d),new(0.6d),new(0.06d),new(30d),new(3d),new(0.3d),new(0.03d) ] )},
-    { "VI222", Tuple.Create<SourceCapabilities,Current[]>(new () {
-        FrequencyRanges = [new(new(40), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcCurrent = new(new(500E-6), new(120), new(0.0001)) }],
-    }, [new(120d),new(12d),new(1.2d),new(0.12d),new(60d),new(6d),new(0.6d),new(0.06d),new(30d),new(3d),new(0.3d),new(0.03d) ]) },
-    { "VUI302", Tuple.Create<SourceCapabilities,Current[]>(new () {
-        FrequencyRanges = [new(new(40), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcCurrent = new(new(12E-3), new(120), new(0.001)) }],
-    }, [new(120d),new(12d),new(1.2d),new(0.12d),new(60d),new(6d),new(0.6d),new(0.06d),new(30d),new(3d),new(0.3d),new(0.03d) ])},
-    { "SCG1020", Tuple.Create<SourceCapabilities,Current[]>(new () {
-        FrequencyRanges = [new(new(15), new(400), new(0.01), FrequencyMode.SYNTHETIC)],
-        Phases = [new() { AcCurrent = new(new(0.0005), new(160), new(0.0001))}],
-    }, [new(160d),new(120d),new(80d),new(60d),new(40d),new(30d),new(20d),new(10d),new(5d),new(2d),new(1d),new(0.5d),new(0.2d),new(0.1d),new(0.05d),new(0.025d),new(0.0125d) ] )} };
+        { "MT786", Tuple.Create<SourceCapabilities,Current[]>(new () {
+            FrequencyRanges = [new(new(45), new(65), new(0.01), FrequencyMode.SYNTHETIC)],
+            Phases = [new() { AcCurrent = new(new(0.001), new(120), new(0.001)) }],
+        }, [new(100d),new(50d),new(20d),new(10d),new(5d),new(2d),new(1d),new(0.5d),new(0.2d),new(0.1d),new(0.05d),new(0.02d) ] )},
+        { "VI201", Tuple.Create<SourceCapabilities,Current[]>(new ()  {
+            FrequencyRanges = [new(new(15), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
+            Phases = [new() { AcCurrent = new(new(500E-6), new(160), new(0.0001)) }],
+        }, [new(160d),new(16d),new(1.6d),new(0.32d),new(0.032d),new(80d),new(8d),new(0.8d),new(0.16d),new(0.016d),new(40d),new(4d),new(0.4d),new(0.08d),new(0.008d),new(20d),new(2d),new(0.2d),new(0.04d),new(0.004d) ] )},
+        { "VI202", Tuple.Create<SourceCapabilities,Current[]>(new ()  {
+            FrequencyRanges = [new(new(15), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
+            Phases = [new() { AcCurrent = new(new(500E-6), new(120), new(0.0001)) }],
+        }, [new(120d),new(16d),new(1.6d),new(0.32d),new(0.032d),new(60d),new(8d),new(0.8d),new(0.16d),new(0.016d),new(30d),new(4d),new(0.4d),new(0.08d),new(0.008d),new(15d),new(2d),new(0.2d),new(0.04d),new(0.004d) ] )},
+        { "VI220", Tuple.Create<SourceCapabilities,Current[]>(new ()  {
+            FrequencyRanges = [new(new(15), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
+            Phases = [new() { AcCurrent = new(new(500E-6), new(120), new(0.0001)) }],
+        }, [new(120d),new(12d),new(1.2d),new(0.12d),new(60d),new(6d),new(0.6d),new(0.06d),new(30d),new(3d),new(0.3d),new(0.03d) ] )},
+        { "VI221", Tuple.Create<SourceCapabilities,Current[]>(new ()  {
+            FrequencyRanges = [new(new(15), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
+            Phases = [new() { AcCurrent = new(new(500E-6), new(120), new(0.0001)) }],
+        }, [new(120d),new(12d),new(1.2d),new(0.12d),new(60d),new(6d),new(0.6d),new(0.06d),new(30d),new(3d),new(0.3d),new(0.03d) ] )},
+        { "VI222", Tuple.Create<SourceCapabilities,Current[]>(new () {
+            FrequencyRanges = [new(new(40), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
+            Phases = [new() { AcCurrent = new(new(500E-6), new(120), new(0.0001)) }],
+        }, [new(120d),new(12d),new(1.2d),new(0.12d),new(60d),new(6d),new(0.6d),new(0.06d),new(30d),new(3d),new(0.3d),new(0.03d) ]) },
+        { "VUI302", Tuple.Create<SourceCapabilities,Current[]>(new () {
+            FrequencyRanges = [new(new(40), new(70), new(0.01), FrequencyMode.SYNTHETIC)],
+            Phases = [new() { AcCurrent = new(new(12E-3), new(120), new(0.001)) }],
+        }, [new(120d),new(12d),new(1.2d),new(0.12d),new(60d),new(6d),new(0.6d),new(0.06d),new(30d),new(3d),new(0.3d),new(0.03d) ])},
+        { "SCG1020", Tuple.Create<SourceCapabilities,Current[]>(new () {
+            FrequencyRanges = [new(new(15), new(400), new(0.01), FrequencyMode.SYNTHETIC)],
+            Phases = [new() { AcCurrent = new(new(0.0005), new(160), new(0.0001))}],
+        }, [new(160d),new(120d),new(80d),new(60d),new(40d),new(30d),new(20d),new(10d),new(5d),new(2d),new(1d),new(0.5d),new(0.2d),new(0.1d),new(0.05d),new(0.025d),new(0.0125d) ] )}
+    };
 }

@@ -37,11 +37,10 @@ partial class SerialPortMTSource
     /// <inheritdoc/>
     public override async Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
     {
-        if (value < ActiveEnergy.Zero)
-            throw new ArgumentOutOfRangeException(nameof(value));
+        ArgumentOutOfRangeException.ThrowIfLessThan(value, ActiveEnergy.Zero, nameof(value));
 
         /* Calculate the number of impulses from the energy (in Wh) and the meter constant. */
-        var impulses = meterConstant * value;
+        var impulses = value * meterConstant;
 
         await Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create($"S3PS46;{impulses.Format("0000000000")}", "SOK3PS46")));
     }

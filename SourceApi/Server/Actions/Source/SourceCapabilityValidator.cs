@@ -29,22 +29,11 @@ namespace SourceApi.Actions.Source
         }
 
         private static bool CheckNumberOfPhasesAreEqual(TargetLoadpoint loadpoint, SourceCapabilities capabilities)
-        {
-            return
-                loadpoint.Phases.Count() != capabilities.Phases.Count;
-        }
-
-        private static SourceApiErrorCodes CheckAngle(double actualAngle)
-        {
-            if (actualAngle < 0 || actualAngle >= 360)
-                return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
-
-            return SourceApiErrorCodes.SUCCESS;
-        }
+            => loadpoint.Phases.Count != capabilities.Phases.Count;
 
         private static SourceApiErrorCodes CheckAngle(Angle actualAngle)
         {
-            if (actualAngle < new Angle(0) || actualAngle >= new Angle(360))
+            if (actualAngle < Angle.Zero || actualAngle >= new Angle(360))
                 return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
 
             return SourceApiErrorCodes.SUCCESS;
@@ -81,15 +70,15 @@ namespace SourceApi.Actions.Source
         private static SourceApiErrorCodes CheckAcCurrents(TargetLoadpoint loadpoint, SourceCapabilities capabilities, int i, ElectricalVectorQuantity<Current> current)
         {
             var actualRms = current.Rms;
-            var allowedRange = capabilities.Phases[i].AcCurrent;
+            var allowedRange = capabilities.Phases[i].AcCurrent!;
 
-            if (!allowedRange!.IsIncluded(actualRms))
+            if (!allowedRange.IsIncluded(actualRms))
                 return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
 
             var firstActive = loadpoint.Phases.FirstOrDefault(p => p.Current?.On == true);
 
             // IEC norm expects the first active current to be 0°
-            if (firstActive != null && firstActive.Current.AcComponent!.Angle != new Angle(0))
+            if (firstActive != null && firstActive.Current.AcComponent!.Angle != Angle.Zero)
                 return SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID;
 
             var isAngleValue = CheckAngle(current.Angle);
@@ -101,9 +90,9 @@ namespace SourceApi.Actions.Source
 
         private static SourceApiErrorCodes CheckDcCurrents(SourceCapabilities capabilities, int i, Current actualRms)
         {
-            var allowedRange = capabilities.Phases[i].DcCurrent;
+            var allowedRange = capabilities.Phases[i].DcCurrent!;
 
-            if (!allowedRange!.IsIncluded(actualRms))
+            if (!allowedRange.IsIncluded(actualRms))
                 return SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID;
 
             return SourceApiErrorCodes.SUCCESS;

@@ -1,3 +1,5 @@
+using SharedLibrary.DomainSpecific;
+
 namespace SourceApi.Model;
 
 /// <remarks>
@@ -7,7 +9,7 @@ namespace SourceApi.Model;
 ///     [1] AcComponent
 ///     [2] On
 /// </remarks>
-public class ActivatableElectricalQuantity<T> : ElectricalQuantity<T> where T : struct
+public class ActivatableElectricalQuantity<T> : ElectricalQuantity<T> where T : struct, IDomainSpecificNumber<T>
 {
     public bool On { get; set; }
 }

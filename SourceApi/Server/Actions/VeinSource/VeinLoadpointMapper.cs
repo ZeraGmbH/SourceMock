@@ -11,10 +11,13 @@ namespace SourceApi.Actions.VeinSource
     {
         public static JObject ConvertToZeraJson(TargetLoadpoint inLoadpoint)
         {
-            JObject ret = new();
-            JObject frequency = new();
-            frequency["type"] = MapFrequencyModeToType(inLoadpoint.Frequency.Mode);
-            frequency["val"] = (double)inLoadpoint.Frequency.Value;
+            var ret = new JObject();
+
+            var frequency = new JObject
+            {
+                ["type"] = MapFrequencyModeToType(inLoadpoint.Frequency.Mode),
+                ["val"] = (double)inLoadpoint.Frequency.Value
+            };
 
             ret["Frequency"] = frequency;
 
@@ -64,36 +67,22 @@ namespace SourceApi.Actions.VeinSource
         }
 
         private static JObject MapElectricalVectorQuantityToJObject<T>(ElectricalVectorQuantity<T> evq) where T : struct, IDomainSpecificNumber<T>
-        {
-            JObject ret = new();
-            ret["rms"] = (double)evq.Rms;
-            ret["angle"] = (double)evq.Angle;
-            return ret;
-        }
+            => new() { ["rms"] = (double)evq.Rms, ["angle"] = (double)evq.Angle };
+
         private static string MapFrequencyModeToType(FrequencyMode mode)
-        {
-            switch (mode)
+            => mode switch
             {
-                case FrequencyMode.SYNTHETIC:
-                    return "var";
-                case FrequencyMode.GRID_SYNCRONOUS:
-                    return "sync";
-                default:
-                    throw new NotImplementedException($"Unrecognized frequency mode: {mode}");
-            }
-        }
+                FrequencyMode.SYNTHETIC => "var",
+                FrequencyMode.GRID_SYNCRONOUS => "sync",
+                _ => throw new NotImplementedException($"Unrecognized frequency mode: {mode}"),
+            };
 
         private static FrequencyMode MapFrequencyTypeToMode(string type)
-        {
-            switch (type)
+            => type switch
             {
-                case "var":
-                    return FrequencyMode.SYNTHETIC;
-                case "sync":
-                    return FrequencyMode.GRID_SYNCRONOUS;
-                default:
-                    throw new NotImplementedException($"Unrecognized type: {type}");
-            }
-        }
+                "var" => FrequencyMode.SYNTHETIC,
+                "sync" => FrequencyMode.GRID_SYNCRONOUS,
+                _ => throw new NotImplementedException($"Unrecognized type: {type}"),
+            };
     }
 }

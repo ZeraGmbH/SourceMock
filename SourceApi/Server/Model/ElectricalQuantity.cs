@@ -1,3 +1,5 @@
+using SharedLibrary.DomainSpecific;
+
 namespace SourceApi.Model;
 
 /// <remarks>
@@ -6,7 +8,7 @@ namespace SourceApi.Model;
 ///     [0] DcComponent
 ///     [1] AcComponent
 /// </remarks>
-public class ElectricalQuantity<T> where T : struct
+public class ElectricalQuantity<T> where T : struct, IDomainSpecificNumber<T>
 {
     /// <summary>
     /// 

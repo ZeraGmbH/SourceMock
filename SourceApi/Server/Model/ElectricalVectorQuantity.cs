@@ -14,7 +14,7 @@ namespace SourceApi.Model;
 ///     [1] Angle
 /// </remarks>
 [Serializable]
-public class ElectricalVectorQuantity<T> where T : struct
+public class ElectricalVectorQuantity<T> where T : struct, IDomainSpecificNumber<T>
 {
     private const double MINIMUM_ANGLE = 0;
     private const double MAXIMUM_ANGLE = 360;

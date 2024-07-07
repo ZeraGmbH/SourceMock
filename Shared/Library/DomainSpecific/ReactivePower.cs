@@ -34,6 +34,9 @@ public readonly struct ReactivePower(double value) : IInternalDomainSpecificNumb
     /// <param name="power">Some active power.</param>
     public static explicit operator double(ReactivePower power) => power._Value;
 
+    /// <inheritdoc/>
+    public override string? ToString() => this.Format();
+
     #region Arithmetics
 
     /// <inheritdoc/>

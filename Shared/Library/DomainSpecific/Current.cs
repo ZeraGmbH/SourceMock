@@ -39,6 +39,9 @@ public readonly struct Current(double value) : IInternalDomainSpecificNumber<Cur
     /// <param name="Current">Some Current.</param>
     public static explicit operator double(Current Current) => Current._Value;
 
+    /// <inheritdoc/>
+    public override string? ToString() => this.Format();
+
     /// <summary>
     /// 
     /// </summary>

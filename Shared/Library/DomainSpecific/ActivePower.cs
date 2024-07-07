@@ -34,6 +34,9 @@ public readonly struct ActivePower(double value) : IInternalDomainSpecificNumber
     /// <param name="power">Some active power.</param>
     public static explicit operator double(ActivePower power) => power._Value;
 
+    /// <inheritdoc/>
+    public override string? ToString() => this.Format();
+
     /// <summary>
     /// Calulate the power factor.
     /// </summary>

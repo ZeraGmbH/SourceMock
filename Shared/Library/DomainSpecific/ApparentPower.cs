@@ -48,6 +48,9 @@ public readonly struct ApparentPower(double value) : IInternalDomainSpecificNumb
     /// <returns></returns>
     public ReactivePower GetReactivePower(Angle phaseAngle) => new(_Value * phaseAngle.Sin());
 
+    /// <inheritdoc/>
+    public override string? ToString() => this.Format();
+
     #region Arithmetics
 
     /// <inheritdoc/>

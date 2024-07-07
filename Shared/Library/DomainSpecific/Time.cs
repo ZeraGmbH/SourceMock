@@ -34,6 +34,9 @@ public readonly struct Time(double value) : IInternalDomainSpecificNumber<Time>
     /// <param name="time">Some active time.</param>
     public static explicit operator double(Time time) => time._Value;
 
+    /// <inheritdoc/>
+    public override string? ToString() => this.Format();
+
     #region Arithmetics
 
     /// <inheritdoc/>

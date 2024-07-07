@@ -38,6 +38,9 @@ public readonly struct Voltage(double value) : IInternalDomainSpecificNumber<Vol
     /// <param name="Voltage">Some Voltage.</param>
     public static explicit operator double(Voltage Voltage) => Voltage._Value;
 
+    /// <inheritdoc/>
+    public override string? ToString() => this.Format();
+
     /// <summary>
     /// 
     /// </summary>

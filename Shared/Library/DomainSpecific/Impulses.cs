@@ -42,6 +42,9 @@ public readonly struct Impulses(double value) : IInternalDomainSpecificNumber<Im
     /// <inheritdoc/>
     public static explicit operator double(Impulses Impulses) => Impulses._Value;
 
+    /// <inheritdoc/>
+    public override string? ToString() => this.Format();
+
     /// <summary>
     /// Devide impulses with meterConstant to get ActiveEnergy
     /// </summary>

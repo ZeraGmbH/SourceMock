@@ -34,6 +34,9 @@ public readonly struct MeterConstant(double value) : IInternalDomainSpecificNumb
     /// <param name="MeterConstant">Some MeterConstant.</param>
     public static explicit operator double(MeterConstant MeterConstant) => MeterConstant._Value;
 
+    /// <inheritdoc/>
+    public override string? ToString() => this.Format();
+
     /// <summary>
     /// 
     /// </summary>

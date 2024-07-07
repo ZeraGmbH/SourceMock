@@ -35,6 +35,9 @@ public readonly struct Frequency(double value) : IInternalDomainSpecificNumber<F
     /// <param name="frequency">Some frequency.</param>
     public static explicit operator double(Frequency frequency) => frequency._Value;
 
+    /// <inheritdoc/>
+    public override string? ToString() => this.Format();
+
     #region Arithmetics
 
     /// <inheritdoc/>

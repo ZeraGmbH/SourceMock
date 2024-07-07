@@ -43,6 +43,9 @@ public readonly struct Angle(double value) : IInternalDomainSpecificNumber<Angle
     /// <param name="Angle">Some Angle.</param>
     public static explicit operator double(Angle Angle) => Angle._Value;
 
+    /// <inheritdoc/>
+    public override string? ToString() => this.Format();
+
     /// <summary>
     /// 
     /// </summary>

@@ -40,6 +40,9 @@ public readonly struct PowerFactor(double value) : IInternalDomainSpecificNumber
     /// <param name="powerFactor">Some power factor.</param>
     public static explicit operator double(PowerFactor powerFactor) => powerFactor._Value;
 
+    /// <inheritdoc/>
+    public override string? ToString() => this.Format();
+
     /// <summary>
     /// Convert a power factor to the corresponding angle between voltage and current.
     /// </summary>

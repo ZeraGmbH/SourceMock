@@ -34,6 +34,9 @@ public readonly struct ApparentEnergy(double value) : IInternalDomainSpecificNum
     /// <param name="energy">Some apparent energy.</param>
     public static explicit operator double(ApparentEnergy energy) => energy._Value;
 
+    /// <inheritdoc/>
+    public override string? ToString() => this.Format();
+
     #region Arithmetics
 
     /// <inheritdoc/>

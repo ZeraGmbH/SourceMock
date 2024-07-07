@@ -33,6 +33,9 @@ public readonly struct ActiveEnergy(double value) : IInternalDomainSpecificNumbe
     /// <param name="energy">Some active energy.</param>
     public static explicit operator double(ActiveEnergy energy) => energy._Value;
 
+    /// <inheritdoc/>
+    public override string? ToString() => this.Format();
+
     /// <summary>
     /// 
     /// </summary>

@@ -3,6 +3,8 @@ using ErrorCalculatorApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SerialPortProxy;
+using SharedLibrary;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -36,8 +38,8 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetParameters(double dutMeterConstant, long impulses, double refMeterMeterConstant, int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].SetErrorMeasurementParameters(interfaceLogger, new(dutMeterConstant), new(impulses), new(refMeterMeterConstant)));
+    public Task<ActionResult> SetParameters([ModelFromUri] MeterConstant dutMeterConstant, [ModelFromUri] Impulses impulses, [ModelFromUri] MeterConstant refMeterMeterConstant, int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].SetErrorMeasurementParameters(interfaceLogger, dutMeterConstant, impulses, refMeterMeterConstant));
 
     /// <summary>
     /// Retrieve the current firmware of the error calculator.

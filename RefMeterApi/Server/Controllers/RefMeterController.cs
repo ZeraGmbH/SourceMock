@@ -4,6 +4,7 @@ using RefMeterApi.Actions.Device;
 using RefMeterApi.Exceptions;
 using RefMeterApi.Models;
 using SerialPortProxy;
+using SharedLibrary.DomainSpecific;
 using SharedLibrary.Models.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -109,9 +110,6 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<double>> GetMeterConstant() =>
-         ActionResultMapper.SafeExecuteSerialPortCommand(() =>
-            _device
-                .GetMeterConstant(interfaceLogger)
-                .ContinueWith(t => (double)t.Result, TaskContinuationOptions.OnlyOnRanToCompletion));
+    public Task<ActionResult<MeterConstant>> GetMeterConstant()
+        => ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetMeterConstant(interfaceLogger));
 }

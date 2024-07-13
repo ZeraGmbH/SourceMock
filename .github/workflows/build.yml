@@ -27,6 +27,10 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Register additional NuGet Repositories
+        run: |
+          dotnet nuget add source --name ZERA https://nuget.pkg.github.com/ZeraGmbH/index.json
+
       - name: Build Windows
         run: |
           dotnet publish WebServer/Server -r win-x64 --self-contained false --configuration Release

@@ -1,6 +1,6 @@
 using BarcodeApi.Actions.Device;
 using Microsoft.Extensions.Logging;
-using SharedLibrary.DomainSpecific;
+using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace BarcodeApiTests;
 

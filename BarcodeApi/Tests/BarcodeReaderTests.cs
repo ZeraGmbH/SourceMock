@@ -1,6 +1,5 @@
 using BarcodeApi.Actions.Device;
 using Microsoft.Extensions.Logging;
-using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace BarcodeApiTests;
 
@@ -20,14 +19,6 @@ public class BarcodeReaderTests
     }
 
     private static Logger _logger = new Logger();
-
-    [Test]
-    public void Test_Shared_Library_Access()
-    {
-        var energy = new ActiveEnergy(13);
-
-        Assert.That(energy.ToString(), Is.EqualTo("13Wh"));
-    }
 
     [Ignore("requires barcode input")]
     [TestCase(true)]

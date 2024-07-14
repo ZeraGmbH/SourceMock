@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework.Internal;
 using SerialPortProxy;
-using SharedLibrary.Actions;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.Models.Logging;
 
 namespace Tests;
 

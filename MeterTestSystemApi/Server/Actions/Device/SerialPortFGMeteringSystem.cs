@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SerialPortProxy;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.Source;
 using SourceApi.Model;

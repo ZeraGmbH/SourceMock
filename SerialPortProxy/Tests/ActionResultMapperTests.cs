@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SerialPortProxy;
-using SharedLibrary.Models;
+using ZERA.WebSam.Shared.Models;
 
 namespace SerialPortProxyTests;
 

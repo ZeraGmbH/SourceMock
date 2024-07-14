@@ -1,5 +1,5 @@
-using SharedLibrary.DomainSpecific;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared.DomainSpecific;
+using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Exceptions;
 using SourceApi.Model;

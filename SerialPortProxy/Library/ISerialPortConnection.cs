@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared.Models.Logging;
 
 namespace SerialPortProxy;
 

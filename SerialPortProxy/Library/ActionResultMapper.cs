@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SharedLibrary.ExceptionHandling;
+using ZERA.WebSam.Shared.ExceptionHandling;
 
 namespace SerialPortProxy;
 

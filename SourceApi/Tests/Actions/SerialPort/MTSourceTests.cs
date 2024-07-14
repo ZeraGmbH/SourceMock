@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
-using SharedLibrary.Actions;
-using SharedLibrary.DomainSpecific;
+using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.DomainSpecific;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;

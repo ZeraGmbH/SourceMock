@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SharedLibrary.Actions;
+using ZERA.WebSam.Shared.Actions;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 using SourceApi.Tests.Actions.LoadpointValidator;

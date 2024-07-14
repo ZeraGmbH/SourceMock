@@ -1,7 +1,7 @@
 using ErrorCalculatorApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
-using SharedLibrary.ExceptionHandling;
+using ZERA.WebSam.Shared.ExceptionHandling;
 
 namespace ErrorCalculatorApi.Exceptions;
 

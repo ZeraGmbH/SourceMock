@@ -2,8 +2,8 @@ using System.Text.RegularExpressions;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
-using SharedLibrary.DomainSpecific;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared.DomainSpecific;
+using ZERA.WebSam.Shared.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device;
 

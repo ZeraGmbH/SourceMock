@@ -5,7 +5,7 @@ using RefMeterApi.Controllers;
 using RefMeterApi.Models;
 using RefMeterApiTests.PortMocks;
 using SerialPortProxy;
-using SharedLibrary.Actions;
+using ZERA.WebSam.Shared.Actions;
 
 namespace RefMeterApiTests;
 

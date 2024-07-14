@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions.Device;
 using SerialPortProxy;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
 

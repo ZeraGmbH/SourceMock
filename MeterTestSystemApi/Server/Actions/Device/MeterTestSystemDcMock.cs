@@ -4,7 +4,7 @@ using MeterTestSystemApi.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions.Device;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.SimulatedSource;
 using SourceApi.Actions.Source;
 

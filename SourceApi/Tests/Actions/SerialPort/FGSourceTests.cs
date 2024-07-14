@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
-using SharedLibrary.Actions;
+using ZERA.WebSam.Shared.Actions;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.Source;

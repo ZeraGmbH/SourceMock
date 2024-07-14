@@ -6,9 +6,9 @@ using Swashbuckle.AspNetCore.Annotations;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 using SerialPortProxy;
-using SharedLibrary.Models.Logging;
-using SharedLibrary.DomainSpecific;
-using SharedLibrary;
+using ZERA.WebSam.Shared.Models.Logging;
+using ZERA.WebSam.Shared.DomainSpecific;
+using ZERA.WebSam.Shared;
 
 namespace SourceApi.Controllers;
 

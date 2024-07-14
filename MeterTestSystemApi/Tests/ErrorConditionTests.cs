@@ -2,7 +2,7 @@ using MeterTestSystemApi.Actions.Device;
 using MeterTestSystemApi.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
-using SharedLibrary.Actions;
+using ZERA.WebSam.Shared.Actions;
 
 namespace MeterTestSystemApiTests;
 

@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
-using SharedLibrary.Actions;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.Models.Logging;
 
 namespace Tests;
 

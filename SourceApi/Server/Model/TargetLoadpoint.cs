@@ -1,5 +1,5 @@
 using System.Xml.Serialization;
-using SharedLibrary.DomainSpecific;
+using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace SourceApi.Model;
 

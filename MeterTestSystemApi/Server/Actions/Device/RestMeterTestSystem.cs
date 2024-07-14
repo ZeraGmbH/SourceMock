@@ -9,8 +9,8 @@ using SourceApi.Actions.RestSource;
 using SourceApi.Actions.Source;
 using RefMeterApi.Actions.RestSource;
 using Microsoft.Extensions.Logging;
-using SharedLibrary.Models.Logging;
-using SharedLibrary.Models;
+using ZERA.WebSam.Shared.Models.Logging;
+using ZERA.WebSam.Shared.Models;
 
 namespace MeterTestSystemApi.Actions.Device;
 

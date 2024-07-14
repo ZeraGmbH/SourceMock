@@ -1,7 +1,7 @@
 using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Models;
 using RefMeterApi.Actions.Device;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.Source;
 
 namespace MeterTestSystemApi.Actions.Device;

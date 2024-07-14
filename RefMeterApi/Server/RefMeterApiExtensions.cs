@@ -7,7 +7,7 @@ using RefMeterApi.Actions.MeterConstantCalculator;
 using RefMeterApi.Actions.RestSource;
 using RefMeterApi.Exceptions;
 using RefMeterApi.Models;
-using SharedLibrary;
+using ZERA.WebSam.Shared;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace RefMeterApi;

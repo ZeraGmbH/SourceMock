@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
 using SerialPortProxy;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared.Models.Logging;
 
 namespace RefMeterApi.Actions.Device;
 

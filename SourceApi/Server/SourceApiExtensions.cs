@@ -8,11 +8,11 @@ using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.SerialPort.MT768;
 using Microsoft.Extensions.Logging;
 using SourceApi.Actions.SerialPort;
-using SharedLibrary;
+using ZERA.WebSam.Shared;
 using SourceApi.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using SourceApi.Model.Configuration;
-using SharedLibrary.Models;
+using ZERA.WebSam.Shared.Models;
 using SourceApi.Actions.RestSource;
 using SourceApi.Actions.SimulatedSource;
 

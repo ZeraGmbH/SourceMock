@@ -4,8 +4,8 @@ using SourceApi.Actions.Source;
 using RefMeterApi.Models;
 using SourceApi.Model;
 using Microsoft.Extensions.DependencyInjection;
-using SharedLibrary.Models.Logging;
-using SharedLibrary.Actions;
+using ZERA.WebSam.Shared.Models.Logging;
+using ZERA.WebSam.Shared.Actions;
 
 namespace RefMeterApiTests;
 

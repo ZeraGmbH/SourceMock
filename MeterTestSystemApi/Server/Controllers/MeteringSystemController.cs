@@ -3,7 +3,7 @@ using MeterTestSystemApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SerialPortProxy;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared.Models.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace MeterTestSystemApi.Controllers;

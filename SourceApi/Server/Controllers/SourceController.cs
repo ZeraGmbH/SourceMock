@@ -5,7 +5,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 using SourceApi.Actions.Source;
 using SourceApi.Model;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared.Models.Logging;
 
 namespace SourceApi.Controllers
 {

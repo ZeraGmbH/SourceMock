@@ -1,4 +1,4 @@
-using SharedLibrary.DomainSpecific;
+using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace SourceApi.Model;
 

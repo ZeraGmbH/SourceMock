@@ -3,10 +3,10 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using SharedLibrary;
-using SharedLibrary.DomainSpecific;
-using SharedLibrary.Models;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared;
+using ZERA.WebSam.Shared.DomainSpecific;
+using ZERA.WebSam.Shared.Models;
+using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 

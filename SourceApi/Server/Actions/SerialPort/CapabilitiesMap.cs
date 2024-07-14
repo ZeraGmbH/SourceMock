@@ -1,4 +1,4 @@
-using SharedLibrary.DomainSpecific;
+using ZERA.WebSam.Shared.DomainSpecific;
 using SourceApi.Model;
 
 namespace SourceApi.Actions.SerialPort;

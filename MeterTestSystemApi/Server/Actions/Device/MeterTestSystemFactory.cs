@@ -2,8 +2,8 @@ using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Models.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SharedLibrary.Actions;
-using SharedLibrary.Models;
+using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.Models;
 
 namespace MeterTestSystemApi.Actions.Device;
 

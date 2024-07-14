@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using SharedLibrary.DomainSpecific;
+using ZERA.WebSam.Shared.DomainSpecific;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 

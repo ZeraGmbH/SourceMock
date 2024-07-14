@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
-using SharedLibrary.DomainSpecific;
+using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace RefMeterApi.Actions.MeterConstantCalculator;
 

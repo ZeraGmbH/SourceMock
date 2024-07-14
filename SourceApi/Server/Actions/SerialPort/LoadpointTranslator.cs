@@ -1,7 +1,7 @@
 using System.Text;
 using SerialPortProxy;
-using SharedLibrary;
-using SharedLibrary.DomainSpecific;
+using ZERA.WebSam.Shared;
+using ZERA.WebSam.Shared.DomainSpecific;
 using SourceApi.Model;
 
 namespace SourceApi.Actions.SerialPort;

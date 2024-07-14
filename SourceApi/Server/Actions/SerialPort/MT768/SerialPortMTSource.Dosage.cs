@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
 
 using SerialPortProxy;
-using SharedLibrary.DomainSpecific;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared.DomainSpecific;
+using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Model;
 
 namespace SourceApi.Actions.SerialPort.MT768;

@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SharedLibrary;
-using SharedLibrary.Models;
+using ZERA.WebSam.Shared;
+using ZERA.WebSam.Shared.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MeterTestSystemApi;

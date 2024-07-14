@@ -1,5 +1,5 @@
 using RefMeterApi.Models;
-using SharedLibrary.DomainSpecific;
+using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace RefMeterApi.Actions.MeterConstantCalculator;
 

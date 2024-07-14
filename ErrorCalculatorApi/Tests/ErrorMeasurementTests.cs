@@ -3,7 +3,7 @@ using ErrorCalculatorApi.Models;
 using SerialPortProxy;
 using ErrorCalculatorApi.Actions.Device;
 using Moq;
-using SharedLibrary.Actions;
+using ZERA.WebSam.Shared.Actions;
 
 namespace ErrorCalculatorApiTests;
 

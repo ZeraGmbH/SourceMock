@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using DutApi.Exceptions;
 using DutApi.Models;
 using Microsoft.Extensions.Logging;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared.Models.Logging;
 
 namespace DutApi.Actions;
 

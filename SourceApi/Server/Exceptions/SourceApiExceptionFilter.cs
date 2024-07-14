@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
-using SharedLibrary.ExceptionHandling;
+using ZERA.WebSam.Shared.ExceptionHandling;
 using SourceApi.Actions.Source;
 
 namespace SourceApi.Exceptions;

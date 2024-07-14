@@ -2,10 +2,10 @@ using Microsoft.OpenApi.Models;
 
 using SerialPortProxy;
 
-using SharedLibrary;
-using SharedLibrary.Actions;
-using SharedLibrary.ExceptionHandling;
-using SharedLibrary.Models.Logging;
+using ZERA.WebSam.Shared;
+using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.ExceptionHandling;
+using ZERA.WebSam.Shared.Models.Logging;
 
 using SourceApi;
 

@@ -3,7 +3,7 @@ using System.Xml;
 using ErrorCalculatorApi.Actions.Device.MAD;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging.Abstractions;
-using SharedLibrary.Actions;
+using ZERA.WebSam.Shared.Actions;
 
 namespace ErrorCalculatorApiTests;
 

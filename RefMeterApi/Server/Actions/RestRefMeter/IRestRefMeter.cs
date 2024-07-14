@@ -1,5 +1,5 @@
 using RefMeterApi.Actions.Device;
-using SharedLibrary.Models;
+using ZERA.WebSam.Shared.Models;
 
 namespace RefMeterApi.Actions.RestSource;
 

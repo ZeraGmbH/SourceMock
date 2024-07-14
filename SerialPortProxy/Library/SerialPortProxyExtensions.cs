@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SharedLibrary;
+using ZERA.WebSam.Shared;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SerialPortProxy;

@@ -33,4 +33,30 @@ public class TestPositionConfiguration
     /// Set to enable direct connection to the device under test.
     /// </summary>
     public bool EnableDirectDutConnection { get; set; }
+
+    /// <summary>
+    /// Set to use the UART interface.
+    /// </summary>
+    public bool EnableUART { get; set; }
+
+    /// <summary>
+    /// Set to enable the old UART interface.
+    /// </summary>
+    public bool EnableLegacyUART { get; set; }
+
+    /// <summary>
+    /// Set to enable the old OA interface - STM6000 only.
+    /// </summary>
+    public bool EnableLegacyOA { get; set; }
+
+    /// <summary>
+    /// Make sure that the position parameter is valid.
+    /// </summary>
+    /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Position is not in the indicated range.</exception>
+    public static void AssertPosition(int position)
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThan(position, 1);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(position, 80);
+    }
 }

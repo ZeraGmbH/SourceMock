@@ -11,18 +11,18 @@ public class IPProtocolConfigurationsTests
     [TestCase(1000)]
     public void Can_Validate_Parameters_For_MAD_Server(int position)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolConfigurations.GetMadEndpoint(position, MadServerTypes.STM6000));
+        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolConfigurations.GetMadEndpoint(position, STMTypes.STM6000));
     }
 
-    [TestCase(1, MadServerTypes.STM6000, "192.168.32.101:14207")]
-    [TestCase(10, MadServerTypes.STM6000, "192.168.32.110:14207")]
-    [TestCase(11, MadServerTypes.STM6000, "192.168.32.111:14207")]
-    [TestCase(100, MadServerTypes.STM6000, "192.168.32.200:14207")]
-    [TestCase(1, MadServerTypes.STM4000, "192.168.32.181:14007")]
-    [TestCase(10, MadServerTypes.STM4000, "192.168.32.181:14907")]
-    [TestCase(11, MadServerTypes.STM4000, "192.168.32.182:14007")]
-    [TestCase(100, MadServerTypes.STM4000, "192.168.32.190:14907")]
-    public void Can_Get_IP_Address_For_MAD_Server(int position, MadServerTypes type, string expected)
+    [TestCase(1, STMTypes.STM6000, "192.168.32.101:14207")]
+    [TestCase(10, STMTypes.STM6000, "192.168.32.110:14207")]
+    [TestCase(11, STMTypes.STM6000, "192.168.32.111:14207")]
+    [TestCase(100, STMTypes.STM6000, "192.168.32.200:14207")]
+    [TestCase(1, STMTypes.STM4000, "192.168.32.181:14007")]
+    [TestCase(10, STMTypes.STM4000, "192.168.32.181:14907")]
+    [TestCase(11, STMTypes.STM4000, "192.168.32.182:14007")]
+    [TestCase(100, STMTypes.STM4000, "192.168.32.190:14907")]
+    public void Can_Get_IP_Address_For_MAD_Server(int position, STMTypes type, string expected)
     {
         Assert.That(IPProtocolConfigurations.GetMadEndpoint(position, type).Address.ToString(), Is.EqualTo(expected));
     }

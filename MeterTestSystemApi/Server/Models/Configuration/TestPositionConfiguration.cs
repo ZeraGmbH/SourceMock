@@ -14,11 +14,13 @@ public class TestPositionConfiguration
 
     /// <summary>
     /// Protocol version to use when communicating with the MAD server.
+    /// If not set the error calculator can not be used on this
+    /// position.
     /// </summary>
     public ErrorCalculatorProtocols? MadProtocol { get; set; }
 
     /// <summary>
-    /// MAD server connection to use.
+    /// STM server connection to use.
     /// </summary>
-    public MadServerTypes? MadServer { get; set; }
+    public STMTypes? STMServer { get; set; }
 }

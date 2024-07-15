@@ -6,7 +6,7 @@ namespace MeterTestSystemApi.Models.Configuration;
 /// 
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum MadServerTypes
+public enum STMTypes
 {
     /// <summary>
     /// 

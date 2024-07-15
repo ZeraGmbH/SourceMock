@@ -23,4 +23,9 @@ public class TestPositionConfiguration
     /// STM server connection to use.
     /// </summary>
     public STMTypes? STMServer { get; set; }
+
+    /// <summary>
+    /// Set to enable use of the update server.
+    /// </summary>
+    public bool EnableUpdateServer { get; set; }
 }

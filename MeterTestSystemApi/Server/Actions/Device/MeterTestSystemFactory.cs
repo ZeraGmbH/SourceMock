@@ -61,6 +61,7 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
 
                             _meterTestSystem = meterTestSystem;
 
+                            meterTestSystem.ActivateErrorConditions(new NoopInterfaceLogger()).Wait();
                             meterTestSystem.ConfigureErrorCalculators(configuration.Interfaces.ErrorCalculators, factory).Wait();
 
                             if (configuration.AmplifiersAndReferenceMeter != null)

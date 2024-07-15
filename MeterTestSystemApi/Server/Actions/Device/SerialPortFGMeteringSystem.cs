@@ -264,6 +264,12 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     }
 
     /// <summary>
+    /// Enable error condition generation.
+    /// </summary>
+    /// <param name="logger">Logger to use.</param>
+    public Task ActivateErrorConditions(IInterfaceLogger logger) => _device.Execute(logger, SerialPortRequest.Create("SE1", "OKSE"))[0];
+
+    /// <summary>
     /// Configure the error calculators.
     /// </summary>
     /// <param name="config">List of error calculators to use.</param>

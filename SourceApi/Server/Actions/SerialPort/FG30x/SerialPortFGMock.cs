@@ -139,6 +139,10 @@ public class SerialPortFGMock : ISerialPort
             case "3PA45":
                 _replies.Enqueue($"OK3PA45;{_energy}");
                 break;
+            case "SE0":
+            case "SE1":
+                _replies.Enqueue("OKSE");
+                break;
             case "SM":
                 _replies.Enqueue((DateTime.Now.Minute % 2 == 0) ? "SM4200000200200000080000" : "SM0000000000000000000000");
                 break;

@@ -22,10 +22,15 @@ public class TestPositionConfiguration
     /// <summary>
     /// STM server connection to use.
     /// </summary>
-    public STMTypes? STMServer { get; set; }
+    public ServerTypes? STMServer { get; set; }
 
     /// <summary>
     /// Set to enable use of the update server.
     /// </summary>
     public bool EnableUpdateServer { get; set; }
+
+    /// <summary>
+    /// Set to enable direct connection to the device under test.
+    /// </summary>
+    public bool EnableDirectDutConnection { get; set; }
 }

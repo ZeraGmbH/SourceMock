@@ -50,6 +50,21 @@ public class TestPositionConfiguration
     public bool EnableLegacyOA { get; set; }
 
     /// <summary>
+    /// Set to enable direct access to the COM server.
+    /// </summary>
+    public bool EnableCOMServer { get; set; }
+
+    /// <summary>
+    /// Set to use SIM server 1.
+    /// </summary>
+    public bool EnableSIMServer1 { get; set; }
+
+    /// <summary>
+    /// Set to access the backend gateway.
+    /// </summary>
+    public bool EnableBackendGateway { get; set; }
+
+    /// <summary>
     /// Make sure that the position parameter is valid.
     /// </summary>
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>

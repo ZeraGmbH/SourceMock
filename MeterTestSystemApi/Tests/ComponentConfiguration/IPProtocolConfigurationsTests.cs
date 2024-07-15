@@ -138,4 +138,76 @@ public class IPProtocolConfigurationsTests
     {
         Assert.That(IPProtocolConfigurations.GetLegacyOAEndpoint(position, ServerTypes.STM6000).Address.ToString(), Is.EqualTo(expected));
     }
+
+    [TestCase(-1)]
+    [TestCase(0)]
+    [TestCase(81)]
+    [TestCase(1000)]
+    public void Can_Validate_Parameters_For_COM_Server(int position)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolConfigurations.GetCOMServerEndpoint(position, ServerTypes.STM6000));
+    }
+
+    [TestCase(ServerTypes.STM4000)]
+    public void Can_Detect_Wrong_Server_Type_For_COM_Server(ServerTypes type)
+    {
+        Assert.Throws<ArgumentException>(() => IPProtocolConfigurations.GetCOMServerEndpoint(1, type));
+    }
+
+    [TestCase(1, "192.168.32.101:14201")]
+    [TestCase(10, "192.168.32.110:14201")]
+    [TestCase(11, "192.168.32.111:14201")]
+    [TestCase(80, "192.168.32.180:14201")]
+    public void Can_Get_IP_Address_For_COM_Server(int position, string expected)
+    {
+        Assert.That(IPProtocolConfigurations.GetCOMServerEndpoint(position, ServerTypes.STM6000).Address.ToString(), Is.EqualTo(expected));
+    }
+
+    [TestCase(-1)]
+    [TestCase(0)]
+    [TestCase(81)]
+    [TestCase(1000)]
+    public void Can_Validate_Parameters_For_SIM_Server_1(int position)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolConfigurations.GetSIMServer1Endpoint(position, ServerTypes.STM6000));
+    }
+
+    [TestCase(ServerTypes.STM4000)]
+    public void Can_Detect_Wrong_Server_Type_For_SIM_Server_1(ServerTypes type)
+    {
+        Assert.Throws<ArgumentException>(() => IPProtocolConfigurations.GetSIMServer1Endpoint(1, type));
+    }
+
+    [TestCase(1, "192.168.32.101:14208")]
+    [TestCase(10, "192.168.32.110:14208")]
+    [TestCase(11, "192.168.32.111:14208")]
+    [TestCase(80, "192.168.32.180:14208")]
+    public void Can_Get_IP_Address_For_SIM_Server_1(int position, string expected)
+    {
+        Assert.That(IPProtocolConfigurations.GetSIMServer1Endpoint(position, ServerTypes.STM6000).Address.ToString(), Is.EqualTo(expected));
+    }
+
+    [TestCase(-1)]
+    [TestCase(0)]
+    [TestCase(81)]
+    [TestCase(1000)]
+    public void Can_Validate_Parameters_For_Backend_Gateway(int position)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolConfigurations.GetBackendGatewayEndpoint(position, ServerTypes.STM6000));
+    }
+
+    [TestCase(ServerTypes.STM4000)]
+    public void Can_Detect_Wrong_Server_Type_For_Backend_Gateway(ServerTypes type)
+    {
+        Assert.Throws<ArgumentException>(() => IPProtocolConfigurations.GetBackendGatewayEndpoint(1, type));
+    }
+
+    [TestCase(1, "192.168.32.101:14198")]
+    [TestCase(10, "192.168.32.110:14198")]
+    [TestCase(11, "192.168.32.111:14198")]
+    [TestCase(80, "192.168.32.180:14198")]
+    public void Can_Get_IP_Address_For_Backend_Gateway(int position, string expected)
+    {
+        Assert.That(IPProtocolConfigurations.GetBackendGatewayEndpoint(position, ServerTypes.STM6000).Address.ToString(), Is.EqualTo(expected));
+    }
 }

@@ -134,4 +134,55 @@ public class IPProtocolConfigurations
             _ => throw new ArgumentException("unsupported server type", nameof(type)),
         };
     }
+
+    /// <summary>
+    /// Calculate the endpoint for the STM6000 COM server of any test position.
+    /// </summary>
+    /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
+    /// <param name="type">Type of the STM providing the connection.</param>
+    /// <returns>The configuration for the endpoint.</returns>
+    public static IPEndPointConfiguration GetCOMServerEndpoint(int position, ServerTypes type)
+    {
+        TestPositionConfiguration.AssertPosition(position);
+
+        return type switch
+        {
+            ServerTypes.STM6000 => new() { IP = GetIpForStm6000(position), Port = 14201 },
+            _ => throw new ArgumentException("unsupported server type", nameof(type)),
+        };
+    }
+
+    /// <summary>
+    /// Calculate the endpoint for the STM6000 SIM server 1 of any test position.
+    /// </summary>
+    /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
+    /// <param name="type">Type of the STM providing the connection.</param>
+    /// <returns>The configuration for the endpoint.</returns>
+    public static IPEndPointConfiguration GetSIMServer1Endpoint(int position, ServerTypes type)
+    {
+        TestPositionConfiguration.AssertPosition(position);
+
+        return type switch
+        {
+            ServerTypes.STM6000 => new() { IP = GetIpForStm6000(position), Port = 14208 },
+            _ => throw new ArgumentException("unsupported server type", nameof(type)),
+        };
+    }
+
+    /// <summary>
+    /// Calculate the endpoint for the gateway between WebSam and meter of any test position.
+    /// </summary>
+    /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
+    /// <param name="type">Type of the STM providing the connection.</param>
+    /// <returns>The configuration for the endpoint.</returns>
+    public static IPEndPointConfiguration GetBackendGatewayEndpoint(int position, ServerTypes type)
+    {
+        TestPositionConfiguration.AssertPosition(position);
+
+        return type switch
+        {
+            ServerTypes.STM6000 => new() { IP = GetIpForStm6000(position), Port = 14198 },
+            _ => throw new ArgumentException("unsupported server type", nameof(type)),
+        };
+    }
 }

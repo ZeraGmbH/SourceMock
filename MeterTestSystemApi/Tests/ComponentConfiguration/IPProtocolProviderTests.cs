@@ -217,4 +217,22 @@ public class IPProtocolProviderTests
     {
         Assert.Throws<ArgumentException>(() => IPProtocolProvider.GetDCComponentEndpoint(component));
     }
+
+    [TestCase(TransformerComponents.SPS, "192.168.32.200:0")]
+    [TestCase(TransformerComponents.STR260Phase1, "192.168.32.201:0")]
+    [TestCase(TransformerComponents.STR260Phase2, "192.168.32.202:0")]
+    [TestCase(TransformerComponents.STR260Phase3, "192.168.32.203:0")]
+    [TestCase(TransformerComponents.CurrentWM3000or1000, "192.168.32.211:6315")]
+    [TestCase(TransformerComponents.VoltageWM3000or1000, "192.168.32.221:6315")]
+    public void Can_Get_IP_Address_For_Transformer_Component(TransformerComponents component, string expected)
+    {
+        Assert.That(IPProtocolProvider.GetTransformerComponentEndpoint(component).ToString(), Is.EqualTo(expected));
+    }
+
+    [TestCase(TransformerComponents.None)]
+    [TestCase(TransformerComponents.STR260Phase3 | TransformerComponents.STR260Phase2)]
+    public void Can_Detect_Invalid_Transformer_Component(TransformerComponents component)
+    {
+        Assert.Throws<ArgumentException>(() => IPProtocolProvider.GetTransformerComponentEndpoint(component));
+    }
 }

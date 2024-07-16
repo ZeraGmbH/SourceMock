@@ -180,10 +180,10 @@ public static class IPProtocolProvider
     /// <summary>
     /// Calculate the endpoint of any DC component.
     /// </summary>
-    /// <param name="type">DC component of interest.</param>
-    /// <returns></returns>
-    public static IPEndPoint GetDCComponentEndpoint(DCComponents type)
-        => type switch
+    /// <param name="component">DC component of interest.</param>
+    /// <returns>The configuration for the endpoint.</returns>
+    public static IPEndPoint GetDCComponentEndpoint(DCComponents component)
+        => component switch
         {
             DCComponents.CurrentSCG06 => new IPEndPointProvider { IP = 83, Port = 10001 },
             DCComponents.CurrentSCG1000 => new IPEndPointProvider { IP = 84, Port = 10001 },
@@ -194,6 +194,23 @@ public static class IPProtocolProvider
             DCComponents.SPS => new IPEndPointProvider { IP = 200, Port = 0 },
             DCComponents.VoltageSVG1200 => new IPEndPointProvider { IP = 85, Port = 10001 },
             DCComponents.VoltageSVG150 => new IPEndPointProvider { IP = 89, Port = 10001 },
-            _ => throw new ArgumentException("unsupported DC component or combination of components", nameof(type)),
+            _ => throw new ArgumentException("unsupported DC component or combination of components", nameof(component)),
+        };
+
+    /// <summary>
+    /// Calculate the endpoint of any transformer component.
+    /// </summary>
+    /// <param name="component">Transformer component of interest.</param>
+    /// <returns>The configuration for the endpoint.</returns>
+    public static IPEndPoint GetTransformerComponentEndpoint(TransformerComponents component)
+        => component switch
+        {
+            TransformerComponents.CurrentWM3000or1000 => new IPEndPointProvider { IP = 211, Port = 6315 },
+            TransformerComponents.SPS => new IPEndPointProvider { IP = 200, Port = 0 },
+            TransformerComponents.STR260Phase1 => new IPEndPointProvider { IP = 201, Port = 0 },
+            TransformerComponents.STR260Phase2 => new IPEndPointProvider { IP = 202, Port = 0 },
+            TransformerComponents.STR260Phase3 => new IPEndPointProvider { IP = 203, Port = 0 },
+            TransformerComponents.VoltageWM3000or1000 => new IPEndPointProvider { IP = 221, Port = 6315 },
+            _ => throw new ArgumentException("unsupported transformer component or combination of components", nameof(component)),
         };
 }

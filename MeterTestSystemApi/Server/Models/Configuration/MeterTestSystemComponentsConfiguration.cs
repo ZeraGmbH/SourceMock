@@ -25,4 +25,14 @@ public class MeterTestSystemComponentsConfiguration
     /// Report if any DC component is selected.
     /// </summary>
     public bool EnableDCComponents => DCComponents != DCComponents.None;
+
+    /// <summary>
+    /// Individual flags to set if transformer components shoul be used.
+    /// </summary>
+    public TransformerComponents TransformerComponents { get; set; }
+
+    /// <summary>
+    /// Report if any transformer component is selected.
+    /// </summary>
+    public bool EnableTransformerComponents => TransformerComponents != TransformerComponents.None;
 }

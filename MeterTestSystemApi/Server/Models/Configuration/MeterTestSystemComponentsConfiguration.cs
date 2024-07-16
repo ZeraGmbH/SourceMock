@@ -35,4 +35,15 @@ public class MeterTestSystemComponentsConfiguration
     /// Report if any transformer component is selected.
     /// </summary>
     public bool EnableTransformerComponents => TransformerComponents != TransformerComponents.None;
+
+    /// <summary>
+    /// Individual flags to set if some MT310s2 function will be used.
+    /// </summary>
+    /// <value></value>
+    public MT310s2Functions MT310s2Functions { get; set; }
+
+    /// <summary>
+    /// Report if any MT310s2 function should be used.
+    /// </summary>
+    public bool EnableMT310s2Functions => MT310s2Functions != MT310s2Functions.None;
 }

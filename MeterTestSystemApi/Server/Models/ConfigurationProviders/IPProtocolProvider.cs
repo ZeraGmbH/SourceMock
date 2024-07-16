@@ -213,4 +213,20 @@ public static class IPProtocolProvider
             TransformerComponents.VoltageWM3000or1000 => new IPEndPointProvider { IP = 221, Port = 6315 },
             _ => throw new ArgumentException("unsupported transformer component or combination of components", nameof(component)),
         };
+
+    /// <summary>
+    /// Calculate the endpoint of a MT310s2 function.
+    /// </summary>
+    /// <param name="function">Function of interest.</param>
+    /// <returns>The configuration for the endpoint.</returns>
+    public static IPEndPoint GetMT310s2FunctionEndpoint(MT310s2Functions function)
+        => function switch
+        {
+            MT310s2Functions.DCCalibration => new IPEndPointProvider { IP = 22, Port = 6320 },
+            MT310s2Functions.DCReferenceMeter1 => new IPEndPointProvider { IP = 20, Port = 6320 },
+            MT310s2Functions.DCReferenceMeter2 => new IPEndPointProvider { IP = 21, Port = 6320 },
+            MT310s2Functions.EMobReferenceMeter => new IPEndPointProvider { IP = 14, Port = 6320 },
+            MT310s2Functions.RemoteGUI => new IPEndPointProvider { IP = 14, Port = 8080 },
+            _ => throw new ArgumentException("unsupported MT310s2 function or combination of function2", nameof(function)),
+        };
 }

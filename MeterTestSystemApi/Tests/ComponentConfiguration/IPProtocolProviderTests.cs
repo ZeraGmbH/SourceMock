@@ -235,4 +235,21 @@ public class IPProtocolProviderTests
     {
         Assert.Throws<ArgumentException>(() => IPProtocolProvider.GetTransformerComponentEndpoint(component));
     }
+
+    [TestCase(MT310s2Functions.EMobReferenceMeter, "192.168.32.14:6320")]
+    [TestCase(MT310s2Functions.RemoteGUI, "192.168.32.14:8080")]
+    [TestCase(MT310s2Functions.DCReferenceMeter1, "192.168.32.20:6320")]
+    [TestCase(MT310s2Functions.DCReferenceMeter2, "192.168.32.21:6320")]
+    [TestCase(MT310s2Functions.DCCalibration, "192.168.32.22:6320")]
+    public void Can_Get_IP_Address_For_MT310s2_Functions(MT310s2Functions function, string expected)
+    {
+        Assert.That(IPProtocolProvider.GetMT310s2FunctionEndpoint(function).ToString(), Is.EqualTo(expected));
+    }
+
+    [TestCase(MT310s2Functions.None)]
+    [TestCase(MT310s2Functions.DCReferenceMeter1 | MT310s2Functions.DCReferenceMeter2)]
+    public void Can_Detect_Invalid_MT310s2_Functions(MT310s2Functions funct)
+    {
+        Assert.Throws<ArgumentException>(() => IPProtocolProvider.GetMT310s2FunctionEndpoint(funct));
+    }
 }

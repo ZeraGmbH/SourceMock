@@ -48,6 +48,17 @@ public class MeterTestSystemComponentsConfiguration
     public bool EnableMT310s2Functions => MT310s2Functions != MT310s2Functions.None;
 
     /// <summary>
+    /// Individual flags to set if some Nbox PLC router will be used.
+    /// </summary>
+    /// <value></value>
+    public NBoxRouterTypes NBoxRouterTypes { get; set; }
+
+    /// <summary>
+    /// Report if any NBox PLC router should be used.
+    /// </summary>
+    public bool EnableNBoxRouterTypes => NBoxRouterTypes != NBoxRouterTypes.None;
+
+    /// <summary>
     /// Set to use the Omega iBTHX temperature and humidity sensor.
     /// </summary>
     public bool EnableOmegaiBTHX { get; set; }

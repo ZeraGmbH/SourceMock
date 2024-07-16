@@ -251,6 +251,19 @@ public static class IPProtocolProvider
             MT310s2Functions.DCReferenceMeter2 => new IPEndPointProvider { IP = 21, Port = 6320 },
             MT310s2Functions.EMobReferenceMeter => new IPEndPointProvider { IP = 14, Port = 6320 },
             MT310s2Functions.RemoteGUI => new IPEndPointProvider { IP = 14, Port = 8080 },
-            _ => throw new ArgumentException("unsupported MT310s2 function or combination of function2", nameof(function)),
+            _ => throw new ArgumentException("unsupported MT310s2 function or combination of functions", nameof(function)),
+        };
+
+    /// <summary>
+    /// Calculate the endpoint of a NBox PLC router
+    /// </summary>
+    /// <param name="type">Router of interest.</param>
+    /// <returns>The configuration for the endpoint.</returns>
+    public static IPEndPoint GetNBoxRouterEndpoint(NBoxRouterTypes type)
+        => type switch
+        {
+            NBoxRouterTypes.Prime => new IPEndPointProvider { IP = 18, Port = 80 },
+            NBoxRouterTypes.G3 => new IPEndPointProvider { IP = 19, Port = 80 },
+            _ => throw new ArgumentException("unsupported NBox PLC router type or combination of types", nameof(type)),
         };
 }

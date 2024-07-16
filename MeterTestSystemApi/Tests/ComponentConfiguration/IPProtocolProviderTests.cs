@@ -276,4 +276,18 @@ public class IPProtocolProviderTests
     {
         Assert.Throws<ArgumentException>(() => IPProtocolProvider.GetMT310s2FunctionEndpoint(funct));
     }
+
+    [TestCase(NBoxRouterTypes.Prime, "192.168.32.18:80")]
+    [TestCase(NBoxRouterTypes.G3, "192.168.32.19:80")]
+    public void Can_Get_IP_Address_NBox_Router(NBoxRouterTypes type, string expected)
+    {
+        Assert.That(IPProtocolProvider.GetNBoxRouterEndpoint(type).ToString(), Is.EqualTo(expected));
+    }
+
+    [TestCase(NBoxRouterTypes.None)]
+    [TestCase(NBoxRouterTypes.Prime | NBoxRouterTypes.G3)]
+    public void Can_Detect_Invalid_NBox_Router(NBoxRouterTypes type)
+    {
+        Assert.Throws<ArgumentException>(() => IPProtocolProvider.GetNBoxRouterEndpoint(type));
+    }
 }

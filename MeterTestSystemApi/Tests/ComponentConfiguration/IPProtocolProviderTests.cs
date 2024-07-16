@@ -196,6 +196,30 @@ public class IPProtocolProviderTests
         Assert.That(IPProtocolProvider.Get2020ControlEndpoint().ToString(), Is.EqualTo("192.168.32.100:14200"));
     }
 
+    [Test]
+    public void Can_Get_IP_Address_For_Omega_iBHTX()
+    {
+        Assert.That(IPProtocolProvider.GetOmegaiBTHXEndpoint().ToString(), Is.EqualTo("192.168.32.12:2000"));
+    }
+
+    [Test]
+    public void Can_Get_IP_Address_For_COM5003()
+    {
+        Assert.That(IPProtocolProvider.GetCOM5003Endpoint().ToString(), Is.EqualTo("192.168.32.13:6320"));
+    }
+
+    [Test]
+    public void Can_Get_IP_Address_For_IP_Watchdog()
+    {
+        Assert.That(IPProtocolProvider.GetIPWatchDogEndpoint().ToString(), Is.EqualTo("192.168.32.16:80"));
+    }
+
+    [Test]
+    public void Can_Get_IP_Address_For_DTS100()
+    {
+        Assert.That(IPProtocolProvider.GetDTS100Endpoint().ToString(), Is.EqualTo("192.168.32.17:4001"));
+    }
+
     [TestCase(DCComponents.CurrentSCG8, "192.168.32.80:10001")]
     [TestCase(DCComponents.CurrentSCG80, "192.168.32.81:10001")]
     [TestCase(DCComponents.CurrentSCG750, "192.168.32.82:10001")]

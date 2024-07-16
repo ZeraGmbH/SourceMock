@@ -46,4 +46,24 @@ public class MeterTestSystemComponentsConfiguration
     /// Report if any MT310s2 function should be used.
     /// </summary>
     public bool EnableMT310s2Functions => MT310s2Functions != MT310s2Functions.None;
+
+    /// <summary>
+    /// Set to use the Omega iBTHX temperature and humidity sensor.
+    /// </summary>
+    public bool EnableOmegaiBTHX { get; set; }
+
+    /// <summary>
+    /// Set to use a COM5003 as external reference (absolute).
+    /// </summary>
+    public bool EnableCOM5003 { get; set; }
+
+    /// <summary>
+    /// Set to use the IP watchdog for the whole test system.
+    /// </summary>
+    public bool EnableIPWatchDog { get; set; }
+
+    /// <summary>
+    /// Set to use the DTS100 keyboard.
+    /// </summary>
+    public bool EnableDTS100 { get; set; }
 }

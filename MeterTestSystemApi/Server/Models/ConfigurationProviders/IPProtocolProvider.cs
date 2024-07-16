@@ -178,6 +178,30 @@ public static class IPProtocolProvider
     public static IPEndPoint Get2020ControlEndpoint() => new IPEndPointProvider { IP = 100, Port = 14200 };
 
     /// <summary>
+    /// Calculate the Omega iBTHX temparature and humidity sensor endpoint.
+    /// </summary>
+    /// <returns>The configuration for the endpoint.</returns>
+    public static IPEndPoint GetOmegaiBTHXEndpoint() => new IPEndPointProvider { IP = 12, Port = 2000 };
+
+    /// <summary>
+    /// Calculate the COM5003 endpoint for the external reference (absolute).
+    /// </summary>
+    /// <returns>The configuration for the endpoint.</returns>
+    public static IPEndPoint GetCOM5003Endpoint() => new IPEndPointProvider { IP = 13, Port = 6320 };
+
+    /// <summary>
+    /// Calculate the GUI endpoint of the IP watchdog - for PING only the address part is uses.
+    /// </summary>
+    /// <returns>The configuration for the endpoint.</returns>
+    public static IPEndPoint GetIPWatchDogEndpoint() => new IPEndPointProvider { IP = 16, Port = 80 };
+
+    /// <summary>
+    /// Calculate the endpoint of the DTS100 keyboard.
+    /// </summary>
+    /// <returns>The configuration for the endpoint.</returns>
+    public static IPEndPoint GetDTS100Endpoint() => new IPEndPointProvider { IP = 17, Port = 4001 };
+
+    /// <summary>
     /// Calculate the endpoint of any DC component.
     /// </summary>
     /// <param name="component">DC component of interest.</param>

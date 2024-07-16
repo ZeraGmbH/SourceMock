@@ -75,28 +75,6 @@ public class IPProtocolConfigurationsTests
     [TestCase(0)]
     [TestCase(81)]
     [TestCase(1000)]
-    public void Can_Validate_Parameters_For_Old_UART(int position)
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolConfigurations.GetLegacyUARTEndpoint(position, ServerTypes.STM6000));
-    }
-
-    [TestCase(1, ServerTypes.STM6000, "192.168.32.101:14203")]
-    [TestCase(10, ServerTypes.STM6000, "192.168.32.110:14203")]
-    [TestCase(11, ServerTypes.STM6000, "192.168.32.111:14203")]
-    [TestCase(80, ServerTypes.STM6000, "192.168.32.180:14203")]
-    [TestCase(1, ServerTypes.STM4000, "192.168.32.181:14003")]
-    [TestCase(10, ServerTypes.STM4000, "192.168.32.181:14903")]
-    [TestCase(11, ServerTypes.STM4000, "192.168.32.182:14003")]
-    [TestCase(80, ServerTypes.STM4000, "192.168.32.188:14903")]
-    public void Can_Get_IP_Address_For_Old_UART(int position, ServerTypes type, string expected)
-    {
-        Assert.That(IPProtocolConfigurations.GetLegacyUARTEndpoint(position, type).Address.ToString(), Is.EqualTo(expected));
-    }
-
-    [TestCase(-1)]
-    [TestCase(0)]
-    [TestCase(81)]
-    [TestCase(1000)]
     public void Can_Validate_Parameters_For_UART(int position)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolConfigurations.GetUARTEndpoint(position, ServerTypes.STM6000));
@@ -121,13 +99,13 @@ public class IPProtocolConfigurationsTests
     [TestCase(1000)]
     public void Can_Validate_Parameters_For_Legacy_OA(int position)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolConfigurations.GetLegacyOAEndpoint(position, ServerTypes.STM6000));
+        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolConfigurations.GetObjectAccessEndpoint(position, ServerTypes.STM6000));
     }
 
     [TestCase(ServerTypes.STM4000)]
     public void Can_Detect_Wrong_Server_Type_For_Legacy_OA(ServerTypes type)
     {
-        Assert.Throws<ArgumentException>(() => IPProtocolConfigurations.GetLegacyOAEndpoint(1, type));
+        Assert.Throws<ArgumentException>(() => IPProtocolConfigurations.GetObjectAccessEndpoint(1, type));
     }
 
     [TestCase(1, "192.168.32.101:14204")]
@@ -136,7 +114,7 @@ public class IPProtocolConfigurationsTests
     [TestCase(80, "192.168.32.180:14204")]
     public void Can_Get_IP_Address_For_Legacy_OA(int position, string expected)
     {
-        Assert.That(IPProtocolConfigurations.GetLegacyOAEndpoint(position, ServerTypes.STM6000).Address.ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolConfigurations.GetObjectAccessEndpoint(position, ServerTypes.STM6000).Address.ToString(), Is.EqualTo(expected));
     }
 
     [TestCase(-1)]

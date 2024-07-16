@@ -40,14 +40,9 @@ public class TestPositionConfiguration
     public bool EnableUART { get; set; }
 
     /// <summary>
-    /// Set to enable the old UART interface.
+    /// Set to enable the object access interface - STM6000 only.
     /// </summary>
-    public bool EnableLegacyUART { get; set; }
-
-    /// <summary>
-    /// Set to enable the old OA interface - STM6000 only.
-    /// </summary>
-    public bool EnableLegacyOA { get; set; }
+    public bool EnableObjectAccess { get; set; }
 
     /// <summary>
     /// Set to enable direct access to the COM server.

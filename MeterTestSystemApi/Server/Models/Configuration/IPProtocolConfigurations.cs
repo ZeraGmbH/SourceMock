@@ -83,24 +83,6 @@ public class IPProtocolConfigurations
     }
 
     /// <summary>
-    /// Calculate the endpoint for the old UART interface of any test position.
-    /// </summary>
-    /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
-    /// <param name="type">Type of the STM providing the connection.</param>
-    /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointConfiguration GetLegacyUARTEndpoint(int position, ServerTypes type)
-    {
-        TestPositionConfiguration.AssertPosition(position);
-
-        return type switch
-        {
-            ServerTypes.STM4000 => new() { IP = GetIpForStm4000(position), Port = GetPortForStm4000(14003, position) },
-            ServerTypes.STM6000 => new() { IP = GetIpForStm6000(position), Port = 14203 },
-            _ => throw new ArgumentException("unsupported server type", nameof(type)),
-        };
-    }
-
-    /// <summary>
     /// Calculate the endpoint for the UART interface of any test position.
     /// </summary>
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
@@ -124,7 +106,7 @@ public class IPProtocolConfigurations
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointConfiguration GetLegacyOAEndpoint(int position, ServerTypes type)
+    public static IPEndPointConfiguration GetObjectAccessEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 

@@ -176,4 +176,24 @@ public static class IPProtocolProvider
     /// </summary>
     /// <returns>The configuration for the endpoint.</returns>
     public static IPEndPoint Get2020ControlEndpoint() => new IPEndPointProvider { IP = 100, Port = 14200 };
+
+    /// <summary>
+    /// Calculate the endpoint of any DC component.
+    /// </summary>
+    /// <param name="type">DC component of interest.</param>
+    /// <returns></returns>
+    public static IPEndPoint GetDCComponentEndpoint(DCComponents type)
+        => type switch
+        {
+            DCComponents.CurrentSCG06 => new IPEndPointProvider { IP = 83, Port = 10001 },
+            DCComponents.CurrentSCG1000 => new IPEndPointProvider { IP = 84, Port = 10001 },
+            DCComponents.CurrentSCG750 => new IPEndPointProvider { IP = 82, Port = 10001 },
+            DCComponents.CurrentSCG8 => new IPEndPointProvider { IP = 80, Port = 10001 },
+            DCComponents.CurrentSCG80 => new IPEndPointProvider { IP = 81, Port = 10001 },
+            DCComponents.FGControl => new IPEndPointProvider { IP = 91, Port = 13000 },
+            DCComponents.SPS => new IPEndPointProvider { IP = 200, Port = 0 },
+            DCComponents.VoltageSVG1200 => new IPEndPointProvider { IP = 85, Port = 10001 },
+            DCComponents.VoltageSVG150 => new IPEndPointProvider { IP = 89, Port = 10001 },
+            _ => throw new ArgumentException("unsupported DC component or combination of components", nameof(type)),
+        };
 }

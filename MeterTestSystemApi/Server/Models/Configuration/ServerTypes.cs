@@ -11,10 +11,10 @@ public enum ServerTypes
     /// <summary>
     /// 
     /// </summary>
-    STM4000 = 1,
+    STM4000 = 0,
 
     /// <summary>
     /// 
     /// </summary>
-    STM6000 = 2,
+    STM6000 = 1,
 }

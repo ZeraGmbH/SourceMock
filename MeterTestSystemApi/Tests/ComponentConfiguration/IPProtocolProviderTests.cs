@@ -195,4 +195,26 @@ public class IPProtocolProviderTests
     {
         Assert.That(IPProtocolProvider.Get2020ControlEndpoint().ToString(), Is.EqualTo("192.168.32.100:14200"));
     }
+
+    [TestCase(DCComponents.CurrentSCG8, "192.168.32.80:10001")]
+    [TestCase(DCComponents.CurrentSCG80, "192.168.32.81:10001")]
+    [TestCase(DCComponents.CurrentSCG750, "192.168.32.82:10001")]
+    [TestCase(DCComponents.CurrentSCG06, "192.168.32.83:10001")]
+    [TestCase(DCComponents.CurrentSCG8, "192.168.32.80:10001")]
+    [TestCase(DCComponents.CurrentSCG1000, "192.168.32.84:10001")]
+    [TestCase(DCComponents.VoltageSVG1200, "192.168.32.85:10001")]
+    [TestCase(DCComponents.VoltageSVG150, "192.168.32.89:10001")]
+    [TestCase(DCComponents.SPS, "192.168.32.200:0")]
+    [TestCase(DCComponents.FGControl, "192.168.32.91:13000")]
+    public void Can_Get_IP_Address_For_DC_Component(DCComponents component, string expected)
+    {
+        Assert.That(IPProtocolProvider.GetDCComponentEndpoint(component).ToString(), Is.EqualTo(expected));
+    }
+
+    [TestCase(DCComponents.None)]
+    [TestCase(DCComponents.CurrentSCG8 | DCComponents.VoltageSVG150)]
+    public void Can_Detect_Invalid_DC_Component(DCComponents component)
+    {
+        Assert.Throws<ArgumentException>(() => IPProtocolProvider.GetDCComponentEndpoint(component));
+    }
 }

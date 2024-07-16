@@ -1,9 +1,11 @@
-namespace MeterTestSystemApi.Models.Configuration;
+using MeterTestSystemApi.Models.Configuration;
+
+namespace MeterTestSystemApi.Models.ConfigurationProviders;
 
 /// <summary>
 /// 
 /// </summary>
-public class IPProtocolConfigurations
+public class IPProtocolProvider
 {
     /// <summary>
     /// For a given test position calculate the related IP for an STM 4000.
@@ -33,7 +35,7 @@ public class IPProtocolConfigurations
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointConfiguration GetMadEndpoint(int position, ServerTypes type)
+    public static IPEndPointProvider GetMadEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -51,7 +53,7 @@ public class IPProtocolConfigurations
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointConfiguration GetUpdateEndpoint(int position, ServerTypes type)
+    public static IPEndPointProvider GetUpdateEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -70,7 +72,7 @@ public class IPProtocolConfigurations
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointConfiguration GetDirectDutConnectionEndpoint(int position, ServerTypes type)
+    public static IPEndPointProvider GetDirectDutConnectionEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -88,7 +90,7 @@ public class IPProtocolConfigurations
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointConfiguration GetUARTEndpoint(int position, ServerTypes type)
+    public static IPEndPointProvider GetUARTEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -106,7 +108,7 @@ public class IPProtocolConfigurations
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointConfiguration GetObjectAccessEndpoint(int position, ServerTypes type)
+    public static IPEndPointProvider GetObjectAccessEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -123,7 +125,7 @@ public class IPProtocolConfigurations
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointConfiguration GetCOMServerEndpoint(int position, ServerTypes type)
+    public static IPEndPointProvider GetCOMServerEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -140,7 +142,7 @@ public class IPProtocolConfigurations
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointConfiguration GetSIMServer1Endpoint(int position, ServerTypes type)
+    public static IPEndPointProvider GetSIMServer1Endpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -157,7 +159,7 @@ public class IPProtocolConfigurations
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointConfiguration GetBackendGatewayEndpoint(int position, ServerTypes type)
+    public static IPEndPointProvider GetBackendGatewayEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 

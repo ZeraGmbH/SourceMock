@@ -1,11 +1,11 @@
 using System.Net;
 
-namespace MeterTestSystemApi.Models.Configuration;
+namespace MeterTestSystemApi.Models.ConfigurationProviders;
 
 /// <summary>
 /// Describe a single IP endpoint in the test network.
 /// </summary>
-public class IPEndPointConfiguration
+public class IPEndPointProvider
 {
     /// <summary>
     /// The predefined subnet for all test components.

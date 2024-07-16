@@ -1,13 +1,13 @@
-namespace MeterTestSystemApi.Models.Configuration;
+namespace MeterTestSystemApi.Models.ConfigurationProviders;
 
 /// <summary>
 /// All protocol configurations - these are static and can not be
 /// changed.
 /// </summary>
-public class ProtocolConfiguration
+public class ProtocolProvider
 {
     /// <summary>
     /// Protocolls over TCP/IP.
     /// </summary>
-    public IPProtocolConfigurations IP { get; set; } = new();
+    public IPProtocolProvider IP { get; set; } = new();
 }

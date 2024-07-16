@@ -15,7 +15,7 @@ public class TestPositionConfiguration
     /// <summary>
     /// Set if the position is in use.
     /// </summary>
-    public required bool Enabled { get; set; }
+    public bool Enabled { get; set; }
 
     /// <summary>
     /// Protocol version to use when communicating with the MAD server.

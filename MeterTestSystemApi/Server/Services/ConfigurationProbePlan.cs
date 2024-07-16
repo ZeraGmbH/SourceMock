@@ -1,3 +1,4 @@
+using ErrorCalculatorApi.Models;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -189,62 +190,95 @@ internal class ConfigurationProbePlan
         TestPositionConfiguration.AssertPosition(positionCount);
 
         /* Per test position probes - STM6000 and STM4000. */
-        for (var pos = 0; pos++ < positionCount;)
+        for (var pos = 0; pos < positionCount;)
         {
+            /* See if the position should be scanned. */
+            var config = _request.TestPositions[pos++];
+
+            if (!config.Enabled) continue;
+
             /* STM6000 and STM4000 */
             foreach (var type in STMServerTypes)
             {
+                /* Check the concrete server type. */
+                if (config.STMServer.HasValue && type != config.STMServer) continue;
+
                 foreach (var version in MADVersions)
+                {
+                    /* Must match protocol version. */
+                    switch (config.MadProtocol)
+                    {
+                        case ErrorCalculatorProtocols.MAD_1:
+                            if (version == IPProbeProtocols.MADServer1) break;
+
+                            /* Skip on mismatch. */
+                            continue;
+                        case null:
+                            /* No constraint active. */
+                            break;
+                        default:
+                            throw new NotImplementedException("bad MAD protocol version detected");
+                    }
+
                     TCPIP.Add(new IPProbe
                     {
                         Protocol = version,
                         EndPoint = IPProtocolProvider.GetMadEndpoint(pos, type)
                     });
+                }
 
-                TCPIP.Add(new IPProbe
-                {
-                    Protocol = IPProbeProtocols.UpdateServer,
-                    EndPoint = IPProtocolProvider.GetUpdateEndpoint(pos, type)
-                });
+                if (config.EnableUpdateServer)
+                    TCPIP.Add(new IPProbe
+                    {
+                        Protocol = IPProbeProtocols.UpdateServer,
+                        EndPoint = IPProtocolProvider.GetUpdateEndpoint(pos, type)
+                    });
 
-                TCPIP.Add(new IPProbe
-                {
-                    Protocol = IPProbeProtocols.COMServerDUT,
-                    EndPoint = IPProtocolProvider.GetDirectDutConnectionEndpoint(pos, type)
-                });
+                if (config.EnableDirectDutConnection)
+                    TCPIP.Add(new IPProbe
+                    {
+                        Protocol = IPProbeProtocols.COMServerDUT,
+                        EndPoint = IPProtocolProvider.GetDirectDutConnectionEndpoint(pos, type)
+                    });
 
-
-                TCPIP.Add(new IPProbe
-                {
-                    Protocol = IPProbeProtocols.COMServerUART,
-                    EndPoint = IPProtocolProvider.GetUARTEndpoint(pos, type)
-                });
+                if (config.EnableUART)
+                    TCPIP.Add(new IPProbe
+                    {
+                        Protocol = IPProbeProtocols.COMServerUART,
+                        EndPoint = IPProtocolProvider.GetUARTEndpoint(pos, type)
+                    });
             }
 
             /* STM6000 only. */
-            TCPIP.Add(new IPProbe
-            {
-                Protocol = IPProbeProtocols.COMServerObjectAccess,
-                EndPoint = IPProtocolProvider.GetObjectAccessEndpoint(pos, ServerTypes.STM6000)
-            });
+            if (config.STMServer.HasValue && config.STMServer != ServerTypes.STM6000) continue;
 
-            TCPIP.Add(new IPProbe
-            {
-                Protocol = IPProbeProtocols.COMServer,
-                EndPoint = IPProtocolProvider.GetCOMServerEndpoint(pos, ServerTypes.STM6000)
-            });
+            if (config.EnableObjectAccess)
+                TCPIP.Add(new IPProbe
+                {
+                    Protocol = IPProbeProtocols.COMServerObjectAccess,
+                    EndPoint = IPProtocolProvider.GetObjectAccessEndpoint(pos, ServerTypes.STM6000)
+                });
 
-            TCPIP.Add(new IPProbe
-            {
-                Protocol = IPProbeProtocols.SIMServer1,
-                EndPoint = IPProtocolProvider.GetSIMServer1Endpoint(pos, ServerTypes.STM6000)
-            });
+            if (config.EnableCOMServer)
+                TCPIP.Add(new IPProbe
+                {
+                    Protocol = IPProbeProtocols.COMServer,
+                    EndPoint = IPProtocolProvider.GetCOMServerEndpoint(pos, ServerTypes.STM6000)
+                });
 
-            TCPIP.Add(new IPProbe
-            {
-                Protocol = IPProbeProtocols.BackendGateway,
-                EndPoint = IPProtocolProvider.GetBackendGatewayEndpoint(pos, ServerTypes.STM6000)
-            });
+            if (config.EnableSIMServer1)
+                TCPIP.Add(new IPProbe
+                {
+                    Protocol = IPProbeProtocols.SIMServer1,
+                    EndPoint = IPProtocolProvider.GetSIMServer1Endpoint(pos, ServerTypes.STM6000)
+                });
+
+            if (config.EnableBackendGateway)
+                TCPIP.Add(new IPProbe
+                {
+                    Protocol = IPProbeProtocols.BackendGateway,
+                    EndPoint = IPProtocolProvider.GetBackendGatewayEndpoint(pos, ServerTypes.STM6000)
+                });
         }
     }
 

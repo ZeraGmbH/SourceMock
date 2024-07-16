@@ -30,7 +30,17 @@ public class ProbeTests
         Services?.Dispose();
     }
 
-    private static List<TestPositionConfiguration> MakeList(int count) => Enumerable.Range(0, count).Select(_ => (TestPositionConfiguration)(null!)).ToList();
+    private static List<TestPositionConfiguration> MakeList(int count) => Enumerable.Range(0, count).Select(_ => new TestPositionConfiguration
+    {
+        Enabled = true,
+        EnableBackendGateway = true,
+        EnableCOMServer = true,
+        EnableDirectDutConnection = true,
+        EnableObjectAccess = true,
+        EnableSIMServer1 = true,
+        EnableUART = true,
+        EnableUpdateServer = true,
+    }).ToList();
 
     [Test]
     public void Flag_Enums_All_Provide_Special_Selectors()

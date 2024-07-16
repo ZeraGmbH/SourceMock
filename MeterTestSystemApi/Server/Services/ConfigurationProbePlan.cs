@@ -33,9 +33,9 @@ internal class ConfigurationProbePlan
 
     private static readonly MT310s2Functions[] MT310s2DCReferenceMeters = [MT310s2Functions.DCReferenceMeter1, MT310s2Functions.DCReferenceMeter2];
 
-    private readonly ProbeConfigurationRequest _request;
+    private readonly MeterTestSystemComponentsConfiguration _request;
 
-    public ConfigurationProbePlan(ProbeConfigurationRequest request)
+    public ConfigurationProbePlan(MeterTestSystemComponentsConfiguration request)
     {
         _request = request;
 
@@ -182,12 +182,14 @@ internal class ConfigurationProbePlan
     private void AddStmProbes()
     {
         /* Check for contraint. */
-        if (_request.NumberOfPositions == 0) return;
+        var positionCount = _request.TestPositions.Count;
 
-        TestPositionConfiguration.AssertPosition(_request.NumberOfPositions);
+        if (positionCount == 0) return;
+
+        TestPositionConfiguration.AssertPosition(positionCount);
 
         /* Per test position probes - STM6000 and STM4000. */
-        for (var pos = 0; pos++ < _request.NumberOfPositions;)
+        for (var pos = 0; pos++ < positionCount;)
         {
             /* STM6000 and STM4000 */
             foreach (var type in STMServerTypes)

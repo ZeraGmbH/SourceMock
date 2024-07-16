@@ -1,3 +1,4 @@
+using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 
 namespace MeterTestSystemApi.Services;
@@ -70,7 +71,7 @@ public class ProbeConfigurationService : IProbeConfigurationService
     }
 
     /// <inheritdoc/>
-    public Task StartProbe(ProbeConfigurationRequest request, bool dryRun)
+    public Task StartProbe(MeterTestSystemComponentsConfiguration request, bool dryRun)
     {
         lock (_sync)
         {

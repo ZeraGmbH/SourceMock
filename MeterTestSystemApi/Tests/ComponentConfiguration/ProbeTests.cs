@@ -30,6 +30,8 @@ public class ProbeTests
         Services?.Dispose();
     }
 
+    private static List<TestPositionConfiguration> MakeList(int count) => Enumerable.Range(0, count).Select(_ => (TestPositionConfiguration)(null!)).ToList();
+
     [Test]
     public void Flag_Enums_All_Provide_Special_Selectors()
     {
@@ -44,7 +46,11 @@ public class ProbeTests
     [Test]
     public async Task Can_Create_Probing_Plan()
     {
-        await Prober.StartProbe(new(), true);
+        await Prober.StartProbe(new()
+        {
+            TestPositions = MakeList(TestPositionConfiguration.MaxPosition),
+            DCComponents = DCComponents.All
+        }, true);
 
         Assert.That(Prober.IsActive, Is.False);
         Assert.That(Prober.Result, Is.Not.Null);
@@ -58,7 +64,11 @@ public class ProbeTests
     [TestCase(80, 1146)]
     public async Task Can_Restrict_Probing_Plan_By_Position_Count(int count, int expected)
     {
-        await Prober.StartProbe(new() { NumberOfPositions = count }, true);
+        await Prober.StartProbe(new()
+        {
+            TestPositions = MakeList(count),
+            DCComponents = DCComponents.All
+        }, true);
 
         Assert.That(Prober.IsActive, Is.False);
         Assert.That(Prober.Result, Is.Not.Null);
@@ -66,11 +76,10 @@ public class ProbeTests
         Assert.That(Prober.Result.Log, Has.Count.EqualTo(expected));
     }
 
-    [TestCase(-1)]
     [TestCase(81)]
     public void Can_Detect_Bad_Position_Count(int count)
     {
-        Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => Prober.StartProbe(new() { NumberOfPositions = count }, true));
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => Prober.StartProbe(new() { TestPositions = MakeList(count) }, true));
     }
 
     [TestCase(DCComponents.None, 17)]
@@ -85,7 +94,7 @@ public class ProbeTests
     [TestCase(DCComponents.CurrentSCG06 | DCComponents.VoltageSVG1200 | DCComponents.SPS, 20)]
     public async Task Can_Restrict_Probing_Plan_By_DC_Components(DCComponents components, int expected)
     {
-        await Prober.StartProbe(new() { NumberOfPositions = 0, DCComponents = components }, true);
+        await Prober.StartProbe(new() { DCComponents = components }, true);
 
         Assert.That(Prober.IsActive, Is.False);
         Assert.That(Prober.Result, Is.Not.Null);

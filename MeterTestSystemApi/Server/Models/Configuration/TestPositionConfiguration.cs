@@ -8,6 +8,11 @@ namespace MeterTestSystemApi.Models.Configuration;
 public class TestPositionConfiguration
 {
     /// <summary>
+    /// Maximum number of test positions - before getting IP conflicts.
+    /// </summary>
+    public const int MaxPosition = 80;
+
+    /// <summary>
     /// Set if the position is in use.
     /// </summary>
     public required bool Enabled { get; set; }
@@ -67,6 +72,6 @@ public class TestPositionConfiguration
     public static void AssertPosition(int position)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(position, 1);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(position, 80);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(position, MaxPosition);
     }
 }

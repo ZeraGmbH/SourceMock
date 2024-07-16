@@ -1,13 +1,15 @@
 using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Actions.Device;
 using MeterTestSystemApi.Models;
+using MeterTestSystemApi.Models.ConfigurationProviders;
+using MeterTestSystemApi.Services;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MeterTestSystemApi;
 
@@ -113,5 +115,8 @@ public static class MeterTestSystemApiConfiguration
         services.AddTransient(di => ForbidDisposable(di.GetRequiredService<IErrorCalculator[]>()[0], di));
         services.AddTransient(di => ForbidDisposable(di.GetRequiredService<IMeterTestSystem>().RefMeter, di));
         services.AddTransient(di => ForbidDisposable(di.GetRequiredService<IMeterTestSystem>().Source, di));
+
+        /* Probing core. */
+        services.AddSingleton<IProbeConfigurationService, ProbeConfigurationService>();
     }
 }

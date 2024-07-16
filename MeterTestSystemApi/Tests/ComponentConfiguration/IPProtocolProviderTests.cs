@@ -189,4 +189,10 @@ public class IPProtocolProviderTests
     {
         Assert.That(IPProtocolProvider.GetBackendGatewayEndpoint(position, ServerTypes.STM6000).ToString(), Is.EqualTo(expected));
     }
+
+    [Test]
+    public void Can_Get_IP_Address_For_MP2020_Control()
+    {
+        Assert.That(IPProtocolProvider.Get2020ControlEndpoint().ToString(), Is.EqualTo("192.168.32.100:14200"));
+    }
 }

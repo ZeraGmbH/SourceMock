@@ -4,9 +4,9 @@ using MeterTestSystemApi.Models.Configuration;
 namespace MeterTestSystemApi.Models.ConfigurationProviders;
 
 /// <summary>
-/// 
+/// All endpoint construction algorithms.
 /// </summary>
-public class IPProtocolProvider
+public static class IPProtocolProvider
 {
     /// <summary>
     /// For a given test position calculate the related IP for an STM 4000.

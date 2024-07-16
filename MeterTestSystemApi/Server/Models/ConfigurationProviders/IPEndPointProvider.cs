@@ -25,6 +25,6 @@ public class IPEndPointProvider
     /// <summary>
     /// Construct the full endpoint address from the properties.
     /// </summary>
-    public IPEndPoint Address => new(IPAddress.Parse(TestNetPattern.Replace("{IP}", IP.ToString())), Port);
+    public static implicit operator IPEndPoint(IPEndPointProvider endPoint) => new(IPAddress.Parse(TestNetPattern.Replace("{IP}", endPoint.IP.ToString())), endPoint.Port);
 }
 

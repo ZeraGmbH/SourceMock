@@ -1,3 +1,4 @@
+using System.Net;
 using MeterTestSystemApi.Models.Configuration;
 
 namespace MeterTestSystemApi.Models.ConfigurationProviders;
@@ -35,14 +36,14 @@ public class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointProvider GetMadEndpoint(int position, ServerTypes type)
+    public static IPEndPoint GetMadEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
         return type switch
         {
-            ServerTypes.STM4000 => new() { IP = GetIpForStm4000(position), Port = GetPortForStm4000(14007, position) },
-            ServerTypes.STM6000 => new() { IP = GetIpForStm6000(position), Port = 14207 },
+            ServerTypes.STM4000 => new IPEndPointProvider { IP = GetIpForStm4000(position), Port = GetPortForStm4000(14007, position) },
+            ServerTypes.STM6000 => new IPEndPointProvider { IP = GetIpForStm6000(position), Port = 14207 },
             _ => throw new ArgumentException("unsupported server type", nameof(type)),
         };
     }
@@ -53,14 +54,14 @@ public class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointProvider GetUpdateEndpoint(int position, ServerTypes type)
+    public static IPEndPoint GetUpdateEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
         return type switch
         {
-            ServerTypes.STM4000 => new() { IP = GetIpForStm4000(position), Port = 14196 },
-            ServerTypes.STM6000 => new() { IP = GetIpForStm6000(position), Port = 14196 },
+            ServerTypes.STM4000 => new IPEndPointProvider { IP = GetIpForStm4000(position), Port = 14196 },
+            ServerTypes.STM6000 => new IPEndPointProvider { IP = GetIpForStm6000(position), Port = 14196 },
             _ => throw new ArgumentException("unsupported server type", nameof(type)),
         };
     }
@@ -72,14 +73,14 @@ public class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointProvider GetDirectDutConnectionEndpoint(int position, ServerTypes type)
+    public static IPEndPoint GetDirectDutConnectionEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
         return type switch
         {
-            ServerTypes.STM4000 => new() { IP = GetIpForStm4000(position), Port = GetPortForStm4000(14002, position) },
-            ServerTypes.STM6000 => new() { IP = GetIpForStm6000(position), Port = 14202 },
+            ServerTypes.STM4000 => new IPEndPointProvider { IP = GetIpForStm4000(position), Port = GetPortForStm4000(14002, position) },
+            ServerTypes.STM6000 => new IPEndPointProvider { IP = GetIpForStm6000(position), Port = 14202 },
             _ => throw new ArgumentException("unsupported server type", nameof(type)),
         };
     }
@@ -90,14 +91,14 @@ public class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointProvider GetUARTEndpoint(int position, ServerTypes type)
+    public static IPEndPoint GetUARTEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
         return type switch
         {
-            ServerTypes.STM4000 => new() { IP = GetIpForStm4000(position), Port = GetPortForStm4000(14009, position) },
-            ServerTypes.STM6000 => new() { IP = GetIpForStm6000(position), Port = 14209 },
+            ServerTypes.STM4000 => new IPEndPointProvider { IP = GetIpForStm4000(position), Port = GetPortForStm4000(14009, position) },
+            ServerTypes.STM6000 => new IPEndPointProvider { IP = GetIpForStm6000(position), Port = 14209 },
             _ => throw new ArgumentException("unsupported server type", nameof(type)),
         };
     }
@@ -108,13 +109,13 @@ public class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointProvider GetObjectAccessEndpoint(int position, ServerTypes type)
+    public static IPEndPoint GetObjectAccessEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
         return type switch
         {
-            ServerTypes.STM6000 => new() { IP = GetIpForStm6000(position), Port = 14204 },
+            ServerTypes.STM6000 => new IPEndPointProvider { IP = GetIpForStm6000(position), Port = 14204 },
             _ => throw new ArgumentException("unsupported server type", nameof(type)),
         };
     }
@@ -125,13 +126,13 @@ public class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointProvider GetCOMServerEndpoint(int position, ServerTypes type)
+    public static IPEndPoint GetCOMServerEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
         return type switch
         {
-            ServerTypes.STM6000 => new() { IP = GetIpForStm6000(position), Port = 14201 },
+            ServerTypes.STM6000 => new IPEndPointProvider { IP = GetIpForStm6000(position), Port = 14201 },
             _ => throw new ArgumentException("unsupported server type", nameof(type)),
         };
     }
@@ -142,13 +143,13 @@ public class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointProvider GetSIMServer1Endpoint(int position, ServerTypes type)
+    public static IPEndPoint GetSIMServer1Endpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
         return type switch
         {
-            ServerTypes.STM6000 => new() { IP = GetIpForStm6000(position), Port = 14208 },
+            ServerTypes.STM6000 => new IPEndPointProvider { IP = GetIpForStm6000(position), Port = 14208 },
             _ => throw new ArgumentException("unsupported server type", nameof(type)),
         };
     }
@@ -159,14 +160,20 @@ public class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPointProvider GetBackendGatewayEndpoint(int position, ServerTypes type)
+    public static IPEndPoint GetBackendGatewayEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
         return type switch
         {
-            ServerTypes.STM6000 => new() { IP = GetIpForStm6000(position), Port = 14198 },
+            ServerTypes.STM6000 => new IPEndPointProvider { IP = GetIpForStm6000(position), Port = 14198 },
             _ => throw new ArgumentException("unsupported server type", nameof(type)),
         };
     }
+
+    /// <summary>
+    /// Calculate the CR2020 endpoint to control the MP2020.
+    /// </summary>
+    /// <returns>The configuration for the endpoint.</returns>
+    public static IPEndPoint Get2020ControlEndpoint() => new IPEndPointProvider { IP = 100, Port = 14200 };
 }

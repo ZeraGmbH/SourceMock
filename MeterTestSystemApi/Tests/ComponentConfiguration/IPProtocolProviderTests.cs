@@ -25,7 +25,7 @@ public class IPProtocolProviderTests
     [TestCase(80, ServerTypes.STM4000, "192.168.32.188:14907")]
     public void Can_Get_IP_Address_For_MAD_Server(int position, ServerTypes type, string expected)
     {
-        Assert.That(IPProtocolProvider.GetMadEndpoint(position, type).Address.ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetMadEndpoint(position, type).ToString(), Is.EqualTo(expected));
     }
 
     [TestCase(-1)]
@@ -47,7 +47,7 @@ public class IPProtocolProviderTests
     [TestCase(80, ServerTypes.STM4000, "192.168.32.188:14196")]
     public void Can_Get_IP_Address_For_Update_Server(int position, ServerTypes type, string expected)
     {
-        Assert.That(IPProtocolProvider.GetUpdateEndpoint(position, type).Address.ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetUpdateEndpoint(position, type).ToString(), Is.EqualTo(expected));
     }
 
     [TestCase(-1)]
@@ -69,7 +69,7 @@ public class IPProtocolProviderTests
     [TestCase(80, ServerTypes.STM4000, "192.168.32.188:14902")]
     public void Can_Get_IP_Address_For_Direct_Dut_Connection(int position, ServerTypes type, string expected)
     {
-        Assert.That(IPProtocolProvider.GetDirectDutConnectionEndpoint(position, type).Address.ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetDirectDutConnectionEndpoint(position, type).ToString(), Is.EqualTo(expected));
     }
 
     [TestCase(-1)]
@@ -91,7 +91,7 @@ public class IPProtocolProviderTests
     [TestCase(80, ServerTypes.STM4000, "192.168.32.188:14909")]
     public void Can_Get_IP_Address_For_UART(int position, ServerTypes type, string expected)
     {
-        Assert.That(IPProtocolProvider.GetUARTEndpoint(position, type).Address.ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetUARTEndpoint(position, type).ToString(), Is.EqualTo(expected));
     }
 
     [TestCase(-1)]
@@ -115,7 +115,7 @@ public class IPProtocolProviderTests
     [TestCase(80, "192.168.32.180:14204")]
     public void Can_Get_IP_Address_For_Legacy_OA(int position, string expected)
     {
-        Assert.That(IPProtocolProvider.GetObjectAccessEndpoint(position, ServerTypes.STM6000).Address.ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetObjectAccessEndpoint(position, ServerTypes.STM6000).ToString(), Is.EqualTo(expected));
     }
 
     [TestCase(-1)]
@@ -139,7 +139,7 @@ public class IPProtocolProviderTests
     [TestCase(80, "192.168.32.180:14201")]
     public void Can_Get_IP_Address_For_COM_Server(int position, string expected)
     {
-        Assert.That(IPProtocolProvider.GetCOMServerEndpoint(position, ServerTypes.STM6000).Address.ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetCOMServerEndpoint(position, ServerTypes.STM6000).ToString(), Is.EqualTo(expected));
     }
 
     [TestCase(-1)]
@@ -163,7 +163,7 @@ public class IPProtocolProviderTests
     [TestCase(80, "192.168.32.180:14208")]
     public void Can_Get_IP_Address_For_SIM_Server_1(int position, string expected)
     {
-        Assert.That(IPProtocolProvider.GetSIMServer1Endpoint(position, ServerTypes.STM6000).Address.ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetSIMServer1Endpoint(position, ServerTypes.STM6000).ToString(), Is.EqualTo(expected));
     }
 
     [TestCase(-1)]
@@ -187,6 +187,6 @@ public class IPProtocolProviderTests
     [TestCase(80, "192.168.32.180:14198")]
     public void Can_Get_IP_Address_For_Backend_Gateway(int position, string expected)
     {
-        Assert.That(IPProtocolProvider.GetBackendGatewayEndpoint(position, ServerTypes.STM6000).Address.ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetBackendGatewayEndpoint(position, ServerTypes.STM6000).ToString(), Is.EqualTo(expected));
     }
 }

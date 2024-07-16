@@ -94,7 +94,11 @@ public class ProbeConfigurationService : IProbeConfigurationService
                 /* Finish. */
                 return Task.CompletedTask;
             }
+
+            /* Create the new probing task. */
+            _active = new();
         }
+
 
         throw new NotSupportedException("for now only dry run possible");
     }

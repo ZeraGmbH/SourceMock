@@ -126,14 +126,9 @@ internal enum IPProbeProtocols
     MTS310s2EMob,
 
     /// <summary>
-    /// MTS310s2 reference meter DC source positions 1 to 4.
+    /// MTS310s2 reference meter DC source.
     /// </summary>
-    MTS310s2DC1,
-
-    /// <summary>
-    /// MTS310s2 reference meter DC source positions 5 to 8.
-    /// </summary>
-    MTS310s2DC2,
+    MTS310s2DCSource,
 
     /// <summary>
     /// MTS310s2 DC calibration for 4 position DC test system.

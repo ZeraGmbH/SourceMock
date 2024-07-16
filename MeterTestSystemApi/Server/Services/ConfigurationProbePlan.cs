@@ -9,7 +9,168 @@ internal class ConfigurationProbePlan
 
     private static readonly IPProbeProtocols[] MADVersions = [IPProbeProtocols.MADServer1, IPProbeProtocols.MADServer2];
 
+    private static readonly DCComponents[] DCCurrents = [
+        DCComponents.CurrentSCG06,
+        DCComponents.CurrentSCG1000,
+        DCComponents.CurrentSCG750,
+        DCComponents.CurrentSCG8,
+        DCComponents.CurrentSCG80,
+    ];
+
+    private static readonly DCComponents[] DCCVoltages = [
+        DCComponents.VoltageSVG1200,
+        DCComponents.VoltageSVG150,
+    ];
+
+    private static readonly TransformerComponents[] TransformerPhases = [
+        TransformerComponents.STR260Phase1,
+        TransformerComponents.STR260Phase2,
+        TransformerComponents.STR260Phase3,
+    ];
+
+    private static readonly NBoxRouterTypes[] NBoxRouters = [NBoxRouterTypes.Prime, NBoxRouterTypes.G3];
+
+    private static readonly MT310s2Functions[] MT310s2DCReferenceMeters = [MT310s2Functions.DCReferenceMeter1, MT310s2Functions.DCReferenceMeter2];
+
     public ConfigurationProbePlan()
+    {
+        AddTcpIpProbes();
+    }
+
+    private void AddTcpIpProbes()
+    {
+        AddStmProbes();
+        AddDcProbes();
+        AddTransformerProbes();
+        AddNBoxProbes();
+        AddMt310s2Probes();
+
+        TCPIP.Add(new IPProbe
+        {
+            Protocol = IPProbeProtocols.OmegaiBTHX,
+            EndPoint = IPProtocolProvider.GetOmegaiBTHXEndpoint()
+        });
+
+        TCPIP.Add(new IPProbe
+        {
+            Protocol = IPProbeProtocols.COM5003,
+            EndPoint = IPProtocolProvider.GetCOM5003Endpoint()
+        });
+
+        TCPIP.Add(new IPProbe
+        {
+            Protocol = IPProbeProtocols.IPWatchdog,
+            EndPoint = IPProtocolProvider.GetIPWatchDogEndpoint()
+        });
+
+        TCPIP.Add(new IPProbe
+        {
+            Protocol = IPProbeProtocols.DTS100,
+            EndPoint = IPProtocolProvider.GetDTS100Endpoint()
+        });
+    }
+
+    private void AddMt310s2Probes()
+    {
+        /* MT310s2 */
+        TCPIP.Add(new IPProbe
+        {
+            Protocol = IPProbeProtocols.MTS310s2EMob,
+            EndPoint = IPProtocolProvider.GetMT310s2FunctionEndpoint(MT310s2Functions.EMobReferenceMeter)
+        });
+
+        foreach (var refMeter in MT310s2DCReferenceMeters)
+            TCPIP.Add(new IPProbe
+            {
+                Protocol = IPProbeProtocols.MTS310s2DCSource,
+                EndPoint = IPProtocolProvider.GetMT310s2FunctionEndpoint(refMeter)
+            });
+
+        TCPIP.Add(new IPProbe
+        {
+            Protocol = IPProbeProtocols.MTS310s2Calibration,
+            EndPoint = IPProtocolProvider.GetMT310s2FunctionEndpoint(MT310s2Functions.DCCalibration)
+        });
+
+        /* Single instance. */
+        TCPIP.Add(new IPProbe
+        {
+            Protocol = IPProbeProtocols.MP2020Control,
+            EndPoint = IPProtocolProvider.Get2020ControlEndpoint()
+        });
+    }
+
+    private void AddNBoxProbes()
+    {
+        /* NBox PLC Router. */
+        foreach (var router in NBoxRouters)
+            TCPIP.Add(new IPProbe
+            {
+                Protocol = IPProbeProtocols.NBoxRouter,
+                EndPoint = IPProtocolProvider.GetNBoxRouterEndpoint(router)
+            });
+    }
+
+    private void AddTransformerProbes()
+    {
+        /* Transformers. */
+        TCPIP.Add(new IPProbe
+        {
+            Protocol = IPProbeProtocols.TransformerCurrent,
+            EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(TransformerComponents.CurrentWM3000or1000)
+        });
+
+        TCPIP.Add(new IPProbe
+        {
+            Protocol = IPProbeProtocols.TransformerSPS,
+            EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(TransformerComponents.SPS)
+        });
+
+        foreach (var phase in TransformerPhases)
+            TCPIP.Add(new IPProbe
+            {
+                Protocol = IPProbeProtocols.TransformerSTR260,
+                EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(phase)
+            });
+
+        TCPIP.Add(new IPProbe
+        {
+            Protocol = IPProbeProtocols.TransformerVoltage,
+            EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(TransformerComponents.VoltageWM3000or1000)
+        });
+    }
+
+    private void AddDcProbes()
+    {
+        /* DC test system. */
+        foreach (var dcCurrent in DCCurrents)
+            TCPIP.Add(new IPProbe
+            {
+                Protocol = IPProbeProtocols.DCCurrent,
+                EndPoint = IPProtocolProvider.GetDCComponentEndpoint(dcCurrent)
+            });
+
+        foreach (var dcVoltage in DCCVoltages)
+            TCPIP.Add(new IPProbe
+            {
+                Protocol = IPProbeProtocols.DCVoltage,
+                EndPoint = IPProtocolProvider.GetDCComponentEndpoint(dcVoltage)
+            });
+
+        TCPIP.Add(new IPProbe
+        {
+            Protocol = IPProbeProtocols.DCSPS,
+            EndPoint = IPProtocolProvider.GetDCComponentEndpoint(DCComponents.SPS)
+        });
+
+        TCPIP.Add(new IPProbe
+        {
+            Protocol = IPProbeProtocols.DCFGControl,
+            EndPoint = IPProtocolProvider.GetDCComponentEndpoint(DCComponents.FGControl)
+        });
+    }
+
+    private void AddStmProbes()
     {
         /* Per test position probes - STM6000 and STM4000. */
         for (var pos = 0; pos++ < TestPositionConfiguration.MaxPosition;)
@@ -48,7 +209,7 @@ internal class ConfigurationProbePlan
             TCPIP.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.COMServerObjectAccess,
-                EndPoint = IPProtocolProvider.GetUARTEndpoint(pos, ServerTypes.STM6000)
+                EndPoint = IPProtocolProvider.GetObjectAccessEndpoint(pos, ServerTypes.STM6000)
             });
 
             TCPIP.Add(new IPProbe
@@ -77,6 +238,6 @@ internal class ConfigurationProbePlan
     {
         /* TCP/IP probes. */
         foreach (var probe in TCPIP)
-            request.Log.Add($"TCP/IP {probe}");
+            request.Log.Add($"TCP/IP {probe}: {probe.Result}");
     }
 }

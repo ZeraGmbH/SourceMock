@@ -18,6 +18,11 @@ internal class IPProbe
     public required IPEndPoint EndPoint { get; set; }
 
     /// <summary>
+    /// Set the result of the probing.
+    /// </summary>
+    public ProbeResult Result { get; set; }
+
+    /// <summary>
     /// Create a description for the probe.
     /// </summary>
     public override string ToString() => $"{EndPoint}: {Protocol}";

@@ -1,3 +1,5 @@
+using MeterTestSystemApi.Models.Configuration;
+
 namespace MeterTestSystemApi.Models.ConfigurationProviders;
 
 /// <summary>
@@ -5,4 +7,13 @@ namespace MeterTestSystemApi.Models.ConfigurationProviders;
 /// </summary>
 public class ProbeConfigurationRequest
 {
+    /// <summary>
+    /// Number of positions to test - may reduce probing time.
+    /// </summary>
+    public int NumberOfPositions { get; set; } = TestPositionConfiguration.MaxPosition;
+
+    /// <summary>
+    /// DC components to test.
+    /// </summary>
+    public DCComponents DCComponents { get; set; } = DCComponents.All;
 }

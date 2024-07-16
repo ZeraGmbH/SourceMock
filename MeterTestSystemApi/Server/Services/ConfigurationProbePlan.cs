@@ -1,5 +1,6 @@
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MeterTestSystemApi.Services;
 
@@ -32,8 +33,12 @@ internal class ConfigurationProbePlan
 
     private static readonly MT310s2Functions[] MT310s2DCReferenceMeters = [MT310s2Functions.DCReferenceMeter1, MT310s2Functions.DCReferenceMeter2];
 
-    public ConfigurationProbePlan()
+    private readonly ProbeConfigurationRequest _request;
+
+    public ConfigurationProbePlan(ProbeConfigurationRequest request)
     {
+        _request = request;
+
         AddTcpIpProbes();
     }
 
@@ -144,36 +149,45 @@ internal class ConfigurationProbePlan
     {
         /* DC test system. */
         foreach (var dcCurrent in DCCurrents)
-            TCPIP.Add(new IPProbe
-            {
-                Protocol = IPProbeProtocols.DCCurrent,
-                EndPoint = IPProtocolProvider.GetDCComponentEndpoint(dcCurrent)
-            });
+            if ((_request.DCComponents & dcCurrent) != 0)
+                TCPIP.Add(new IPProbe
+                {
+                    Protocol = IPProbeProtocols.DCCurrent,
+                    EndPoint = IPProtocolProvider.GetDCComponentEndpoint(dcCurrent)
+                });
 
         foreach (var dcVoltage in DCCVoltages)
+            if ((_request.DCComponents & dcVoltage) != 0)
+                TCPIP.Add(new IPProbe
+                {
+                    Protocol = IPProbeProtocols.DCVoltage,
+                    EndPoint = IPProtocolProvider.GetDCComponentEndpoint(dcVoltage)
+                });
+
+        if ((_request.DCComponents & DCComponents.SPS) != 0)
             TCPIP.Add(new IPProbe
             {
-                Protocol = IPProbeProtocols.DCVoltage,
-                EndPoint = IPProtocolProvider.GetDCComponentEndpoint(dcVoltage)
+                Protocol = IPProbeProtocols.DCSPS,
+                EndPoint = IPProtocolProvider.GetDCComponentEndpoint(DCComponents.SPS)
             });
 
-        TCPIP.Add(new IPProbe
-        {
-            Protocol = IPProbeProtocols.DCSPS,
-            EndPoint = IPProtocolProvider.GetDCComponentEndpoint(DCComponents.SPS)
-        });
-
-        TCPIP.Add(new IPProbe
-        {
-            Protocol = IPProbeProtocols.DCFGControl,
-            EndPoint = IPProtocolProvider.GetDCComponentEndpoint(DCComponents.FGControl)
-        });
+        if ((_request.DCComponents & DCComponents.FGControl) != 0)
+            TCPIP.Add(new IPProbe
+            {
+                Protocol = IPProbeProtocols.DCFGControl,
+                EndPoint = IPProtocolProvider.GetDCComponentEndpoint(DCComponents.FGControl)
+            });
     }
 
     private void AddStmProbes()
     {
+        /* Check for contraint. */
+        if (_request.NumberOfPositions == 0) return;
+
+        TestPositionConfiguration.AssertPosition(_request.NumberOfPositions);
+
         /* Per test position probes - STM6000 and STM4000. */
-        for (var pos = 0; pos++ < TestPositionConfiguration.MaxPosition;)
+        for (var pos = 0; pos++ < _request.NumberOfPositions;)
         {
             /* STM6000 and STM4000 */
             foreach (var type in STMServerTypes)

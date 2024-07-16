@@ -57,4 +57,18 @@ public enum DCComponents
     /// DC U/I generator control with FG middleware integrated in the source.
     /// </summary>
     FGControl = 0x100,
+
+    /// <summary>
+    /// All possible options.
+    /// </summary>
+    All =
+        CurrentSCG8 |
+        CurrentSCG80 |
+        CurrentSCG750 |
+        CurrentSCG06 |
+        CurrentSCG1000 |
+        VoltageSVG1200 |
+        VoltageSVG150 |
+        SPS |
+        FGControl,
 }

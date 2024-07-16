@@ -78,7 +78,7 @@ public class ProbeConfigurationService : IProbeConfigurationService
             if (_active != null) throw new InvalidOperationException("probing already active");
 
             /* Create the plan. */
-            var plan = new ConfigurationProbePlan();
+            var plan = new ConfigurationProbePlan(request);
 
             /* Copy plan steps to result. */
             var result = new ProbeConfigurationResult();

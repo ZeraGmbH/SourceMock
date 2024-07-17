@@ -10,7 +10,14 @@ public class IPEndPointProvider
     /// <summary>
     /// The predefined subnet for all test components.
     /// </summary>
-    public const string TestNetPattern = "192.168.32.{IP}";
+    private const string TestNetPattern = "192.168.32.{IP}";
+
+    /// <summary>
+    /// Create a full IP address from the last byte.
+    /// </summary>
+    /// <param name="ip">Last byte of the IP address.</param>
+    /// <returns>Full address.</returns>
+    public static IPAddress MakeAddress(byte ip) => IPAddress.Parse(TestNetPattern.Replace("{IP}", ip.ToString()));
 
     /// <summary>
     /// The last byte of the IP address.
@@ -25,6 +32,6 @@ public class IPEndPointProvider
     /// <summary>
     /// Construct the full endpoint address from the properties.
     /// </summary>
-    public static implicit operator IPEndPoint(IPEndPointProvider endPoint) => new(IPAddress.Parse(TestNetPattern.Replace("{IP}", endPoint.IP.ToString())), endPoint.Port);
+    public static implicit operator IPEndPoint(IPEndPointProvider endPoint) => new(MakeAddress(endPoint.IP), endPoint.Port);
 }
 

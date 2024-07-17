@@ -5,6 +5,7 @@ namespace MeterTestSystemApi.Services;
 /// <summary>
 /// Service to scan the system for meter test system components.
 /// </summary>
+/// <remarks>This is NOT a real implemntation esp. concerning synchronisation. This is another story!</remarks>
 public class ProbeConfigurationService : IProbeConfigurationService
 {
     private class Current

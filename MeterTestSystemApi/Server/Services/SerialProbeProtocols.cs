@@ -1,0 +1,12 @@
+namespace MeterTestSystemApi.Services;
+
+/// <summary>
+/// All protocols available for a serial port connection.
+/// </summary>
+internal enum SerialProbeProtocols
+{
+    /// <summary>
+    /// FG30x frequency generator.
+    /// </summary>
+    FG30x,
+}

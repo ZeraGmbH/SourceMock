@@ -1,5 +1,3 @@
-using MeterTestSystemApi.Models.Configuration;
-
 namespace MeterTestSystemApi.Models.ConfigurationProviders;
 
 /// <summary>
@@ -12,7 +10,7 @@ public interface IProbeConfigurationService
     /// </summary>
     /// <param name="request">Hints on the scan.</param>
     /// <param name="dryRun">Set to do only report what to probe.</param>
-    Task StartProbe(MeterTestSystemComponentsConfiguration request, bool dryRun);
+    Task StartProbe(ProbeConfigurationRequest request, bool dryRun);
 
     /// <summary>
     /// Abort the current probe operation.

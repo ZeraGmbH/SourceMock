@@ -31,6 +31,8 @@ public class ProbeTests
         Services?.Dispose();
     }
 
+    private Task StartProbe(MeterTestSystemComponentsConfiguration config, bool dryRun) => Prober.StartProbe(new() { Configuration = config }, dryRun);
+
     private static List<TestPositionConfiguration> MakeList(int count) => Enumerable.Range(0, count).Select(_ => new TestPositionConfiguration
     {
         Enabled = true,
@@ -66,7 +68,7 @@ public class ProbeTests
     [Test]
     public async Task Can_Create_Probing_Plan()
     {
-        await Prober.StartProbe(new()
+        await StartProbe(new()
         {
             TestPositions = MakeList(TestPositionConfiguration.MaxPosition),
             DCComponents = DCComponents.All,
@@ -92,7 +94,7 @@ public class ProbeTests
     [TestCase(80, 1141)]
     public async Task Can_Restrict_Probing_Plan_By_Position_Count(int count, int expected)
     {
-        await Prober.StartProbe(new()
+        await StartProbe(new()
         {
             TestPositions = MakeList(count),
             DCComponents = DCComponents.All,
@@ -110,7 +112,7 @@ public class ProbeTests
     [TestCase(81)]
     public void Can_Detect_Bad_Position_Count(int count)
     {
-        Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => Prober.StartProbe(new() { TestPositions = MakeList(count) }, true));
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => StartProbe(new() { TestPositions = MakeList(count) }, true));
     }
 
     [TestCase(DCComponents.None, 0)]
@@ -126,7 +128,7 @@ public class ProbeTests
     [TestCase(DCComponents.All, 9)]
     public async Task Can_Restrict_Probing_Plan_By_DC_Components(DCComponents components, int expected)
     {
-        await Prober.StartProbe(new() { DCComponents = components }, true);
+        await StartProbe(new() { DCComponents = components }, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(expected));
     }
@@ -140,14 +142,14 @@ public class ProbeTests
         /* Not enabled. */
         Assert.That(pos.Enabled, Is.False);
 
-        await Prober.StartProbe(config, true);
+        await StartProbe(config, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(0));
 
         /* Enable configuration. */
         pos.Enabled = true;
 
-        await Prober.StartProbe(config, true);
+        await StartProbe(config, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(0));
 
@@ -156,7 +158,7 @@ public class ProbeTests
 
         pos.EnableDirectDutConnection = true;
 
-        await Prober.StartProbe(config, true);
+        await StartProbe(config, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(2));
 
@@ -165,7 +167,7 @@ public class ProbeTests
 
         pos.EnableUART = true;
 
-        await Prober.StartProbe(config, true);
+        await StartProbe(config, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(4));
 
@@ -174,7 +176,7 @@ public class ProbeTests
 
         pos.EnableUpdateServer = true;
 
-        await Prober.StartProbe(config, true);
+        await StartProbe(config, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(6));
 
@@ -183,7 +185,7 @@ public class ProbeTests
 
         pos.EnableCOMServer = true;
 
-        await Prober.StartProbe(config, true);
+        await StartProbe(config, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(7));
 
@@ -192,7 +194,7 @@ public class ProbeTests
 
         pos.EnableBackendGateway = true;
 
-        await Prober.StartProbe(config, true);
+        await StartProbe(config, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(8));
 
@@ -201,7 +203,7 @@ public class ProbeTests
 
         pos.EnableObjectAccess = true;
 
-        await Prober.StartProbe(config, true);
+        await StartProbe(config, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(9));
 
@@ -210,7 +212,7 @@ public class ProbeTests
 
         pos.EnableSIMServer1 = true;
 
-        await Prober.StartProbe(config, true);
+        await StartProbe(config, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(10));
 
@@ -219,7 +221,7 @@ public class ProbeTests
 
         pos.EnableMAD = true;
 
-        await Prober.StartProbe(config, true);
+        await StartProbe(config, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(14));
 
@@ -228,12 +230,12 @@ public class ProbeTests
 
         pos.MadProtocol = (ErrorCalculatorProtocols)33;
 
-        Assert.ThrowsAsync<NotImplementedException>(() => Prober.StartProbe(config, true));
+        Assert.ThrowsAsync<NotImplementedException>(() => StartProbe(config, true));
 
         /* Only old MAD protocol. */
         pos.MadProtocol = ErrorCalculatorProtocols.MAD_1;
 
-        await Prober.StartProbe(config, true);
+        await StartProbe(config, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(12));
 
@@ -242,7 +244,7 @@ public class ProbeTests
 
         pos.STMServer = ServerTypes.STM6000;
 
-        await Prober.StartProbe(config, true);
+        await StartProbe(config, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(8));
     }
@@ -258,7 +260,7 @@ public class ProbeTests
     [TestCase(TransformerComponents.All, 6)]
     public async Task Can_Restrict_Probing_Plan_By_Transformer_Components(TransformerComponents components, int expected)
     {
-        await Prober.StartProbe(new() { TransformerComponents = components }, true);
+        await StartProbe(new() { TransformerComponents = components }, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(expected));
     }
@@ -271,7 +273,7 @@ public class ProbeTests
     [TestCase(NBoxRouterTypes.All, 2)]
     public async Task Can_Restrict_Probing_Plan_By_NBox_Router(NBoxRouterTypes types, int expected)
     {
-        await Prober.StartProbe(new() { NBoxRouterTypes = types }, true);
+        await StartProbe(new() { NBoxRouterTypes = types }, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(expected));
     }
@@ -279,7 +281,7 @@ public class ProbeTests
     [Test]
     public async Task Can_Restrict_Probing_Plan_By_COM5003()
     {
-        await Prober.StartProbe(new() { EnableCOM5003 = true }, true);
+        await StartProbe(new() { EnableCOM5003 = true }, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(1));
     }
@@ -287,7 +289,7 @@ public class ProbeTests
     [Test]
     public async Task Can_Restrict_Probing_Plan_By_DTS100()
     {
-        await Prober.StartProbe(new() { EnableDTS100 = true }, true);
+        await StartProbe(new() { EnableDTS100 = true }, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(1));
     }
@@ -295,7 +297,7 @@ public class ProbeTests
     [Test]
     public async Task Can_Restrict_Probing_Plan_By_IP_Watchdog()
     {
-        await Prober.StartProbe(new() { EnableIPWatchDog = true }, true);
+        await StartProbe(new() { EnableIPWatchDog = true }, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(1));
     }
@@ -303,7 +305,7 @@ public class ProbeTests
     [Test]
     public async Task Can_Restrict_Probing_Plan_By_Omega_iBTHX()
     {
-        await Prober.StartProbe(new() { EnableOmegaiBTHX = true }, true);
+        await StartProbe(new() { EnableOmegaiBTHX = true }, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(1));
     }
@@ -311,8 +313,27 @@ public class ProbeTests
     [Test]
     public async Task Can_Restrict_Probing_Plan_By_MP2020()
     {
-        await Prober.StartProbe(new() { EnableMP2020Control = true }, true);
+        await StartProbe(new() { EnableMP2020Control = true }, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(1));
+    }
+
+    [Test]
+    public async Task Can_Probe_Serial_Ports()
+    {
+        await Prober.StartProbe(new()
+        {
+            Configuration = {
+                FrequencyGenerator = new()
+            },
+            SerialPorts = {
+                SerialPortTypes.None,
+                SerialPortTypes.RS232,
+                SerialPortTypes.USB,
+                SerialPortTypes.All
+        }
+        }, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(4));
     }
 }

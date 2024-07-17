@@ -45,6 +45,11 @@ public class TestPositionConfiguration
     public bool EnableUART { get; set; }
 
     /// <summary>
+    /// Set to use the MAD interface.
+    /// </summary>
+    public bool EnableMAD { get; set; }
+
+    /// <summary>
     /// Set to enable the object access interface - STM6000 only.
     /// </summary>
     public bool EnableObjectAccess { get; set; }

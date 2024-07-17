@@ -203,29 +203,30 @@ internal class ConfigurationProbePlan
                 /* Check the concrete server type. */
                 if (config.STMServer.HasValue && type != config.STMServer) continue;
 
-                foreach (var version in MADVersions)
-                {
-                    /* Must match protocol version. */
-                    switch (config.MadProtocol)
+                if (config.EnableMAD)
+                    foreach (var version in MADVersions)
                     {
-                        case ErrorCalculatorProtocols.MAD_1:
-                            if (version == IPProbeProtocols.MADServer1) break;
+                        /* Must match protocol version. */
+                        switch (config.MadProtocol)
+                        {
+                            case ErrorCalculatorProtocols.MAD_1:
+                                if (version == IPProbeProtocols.MADServer1) break;
 
-                            /* Skip on mismatch. */
-                            continue;
-                        case null:
-                            /* No constraint active. */
-                            break;
-                        default:
-                            throw new NotImplementedException("bad MAD protocol version detected");
+                                /* Skip on mismatch. */
+                                continue;
+                            case null:
+                                /* No constraint active. */
+                                break;
+                            default:
+                                throw new NotImplementedException("bad MAD protocol version detected");
+                        }
+
+                        TCPIP.Add(new IPProbe
+                        {
+                            Protocol = version,
+                            EndPoint = IPProtocolProvider.GetMadEndpoint(pos, type)
+                        });
                     }
-
-                    TCPIP.Add(new IPProbe
-                    {
-                        Protocol = version,
-                        EndPoint = IPProtocolProvider.GetMadEndpoint(pos, type)
-                    });
-                }
 
                 if (config.EnableUpdateServer)
                     TCPIP.Add(new IPProbe

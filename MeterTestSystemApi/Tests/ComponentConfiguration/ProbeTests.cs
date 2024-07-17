@@ -1,3 +1,4 @@
+using ErrorCalculatorApi.Models;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using MeterTestSystemApi.Services;
@@ -36,6 +37,7 @@ public class ProbeTests
         EnableBackendGateway = true,
         EnableCOMServer = true,
         EnableDirectDutConnection = true,
+        EnableMAD = true,
         EnableObjectAccess = true,
         EnableSIMServer1 = true,
         EnableUART = true,
@@ -108,8 +110,124 @@ public class ProbeTests
 
         Assert.That(Prober.IsActive, Is.False);
         Assert.That(Prober.Result, Is.Not.Null);
+        Assert.That(Prober.Result.Configuration, Is.Null);
 
         Assert.That(Prober.Result.Log, Has.Count.EqualTo(expected));
     }
 
+    [Test]
+    public async Task Can_Restrict_By_STM_Settings()
+    {
+        var config = new MeterTestSystemComponentsConfiguration { TestPositions = { new() } };
+        var pos = config.TestPositions.Single();
+
+        /* Not enabled. */
+        Assert.That(pos.Enabled, Is.False);
+
+        await Prober.StartProbe(config, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(17));
+
+        /* Enable configuration. */
+        pos.Enabled = true;
+
+        await Prober.StartProbe(config, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(17));
+
+        /* Enable direct DUT connection. */
+        Assert.That(pos.EnableDirectDutConnection, Is.False);
+
+        pos.EnableDirectDutConnection = true;
+
+        await Prober.StartProbe(config, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(19));
+
+        /* Enable UART interface. */
+        Assert.That(pos.EnableUART, Is.False);
+
+        pos.EnableUART = true;
+
+        await Prober.StartProbe(config, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(21));
+
+        /* Enable update server. */
+        Assert.That(pos.EnableUpdateServer, Is.False);
+
+        pos.EnableUpdateServer = true;
+
+        await Prober.StartProbe(config, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(23));
+
+        /* Enable COM server. */
+        Assert.That(pos.EnableCOMServer, Is.False);
+
+        pos.EnableCOMServer = true;
+
+        await Prober.StartProbe(config, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(24));
+
+        /* Enable backend gateway. */
+        Assert.That(pos.EnableBackendGateway, Is.False);
+
+        pos.EnableBackendGateway = true;
+
+        await Prober.StartProbe(config, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(25));
+
+        /* Enable object access. */
+        Assert.That(pos.EnableObjectAccess, Is.False);
+
+        pos.EnableObjectAccess = true;
+
+        await Prober.StartProbe(config, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(26));
+
+        /* Enable SIM server 1. */
+        Assert.That(pos.EnableSIMServer1, Is.False);
+
+        pos.EnableSIMServer1 = true;
+
+        await Prober.StartProbe(config, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(27));
+
+        /* Enable MAD server. */
+        Assert.That(pos.EnableMAD, Is.False);
+
+        pos.EnableMAD = true;
+
+        await Prober.StartProbe(config, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(31));
+
+        /* Forbidden protocol. */
+        Assert.That(pos.MadProtocol, Is.Null);
+
+        pos.MadProtocol = (ErrorCalculatorProtocols)33;
+
+        Assert.ThrowsAsync<NotImplementedException>(() => Prober.StartProbe(config, true));
+
+        /* Only old MAD protocol. */
+        pos.MadProtocol = ErrorCalculatorProtocols.MAD_1;
+
+        await Prober.StartProbe(config, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(29));
+
+        /* Only STM6000. */
+        Assert.That(pos.STMServer, Is.Null);
+
+        pos.STMServer = ServerTypes.STM6000;
+
+        await Prober.StartProbe(config, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(25));
+    }
 }

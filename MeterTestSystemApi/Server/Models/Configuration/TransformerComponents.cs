@@ -42,4 +42,15 @@ public enum TransformerComponents
     /// WM3000 U or WM1000 U voltage transformer measuring system.
     /// </summary>
     VoltageWM3000or1000 = 0x20,
+
+    /// <summary>
+    /// All components.
+    /// </summary>
+    All =
+        SPS |
+        STR260Phase1 |
+        STR260Phase2 |
+        STR260Phase3 |
+        CurrentWM3000or1000 |
+        VoltageWM3000or1000,
 }

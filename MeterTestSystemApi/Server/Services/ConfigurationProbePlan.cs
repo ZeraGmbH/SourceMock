@@ -110,11 +110,12 @@ internal class ConfigurationProbePlan
     {
         /* NBox PLC Router. */
         foreach (var router in NBoxRouters)
-            TCPIP.Add(new IPProbe
-            {
-                Protocol = IPProbeProtocols.NBoxRouter,
-                EndPoint = IPProtocolProvider.GetNBoxRouterEndpoint(router)
-            });
+            if ((_request.NBoxRouterTypes & router) != 0)
+                TCPIP.Add(new IPProbe
+                {
+                    Protocol = IPProbeProtocols.NBoxRouter,
+                    EndPoint = IPProtocolProvider.GetNBoxRouterEndpoint(router)
+                });
     }
 
     private void AddTransformerProbes()

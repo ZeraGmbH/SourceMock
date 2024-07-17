@@ -21,5 +21,10 @@ public enum NBoxRouterTypes
     /// <summary>
     /// NBox G3.
     /// </summary>
-    G3 = 0x02
+    G3 = 0x02,
+
+    /// <summary>
+    /// All types.
+    /// </summary>
+    All = Prime | G3
 }

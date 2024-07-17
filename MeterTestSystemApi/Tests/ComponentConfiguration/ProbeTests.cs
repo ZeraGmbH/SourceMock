@@ -51,8 +51,13 @@ public class ProbeTests
         {
             Assert.That((int)DCComponents.None, Is.EqualTo(0));
             Assert.That((int)DCComponents.All, Is.EqualTo(0x1ff));
-        });
 
+            Assert.That((int)TransformerComponents.None, Is.EqualTo(0));
+            Assert.That((int)TransformerComponents.All, Is.EqualTo(0x3f));
+
+            Assert.That((int)NBoxRouterTypes.None, Is.EqualTo(0));
+            Assert.That((int)NBoxRouterTypes.All, Is.EqualTo(0x3));
+        });
     }
 
     [Test]
@@ -61,7 +66,9 @@ public class ProbeTests
         await Prober.StartProbe(new()
         {
             TestPositions = MakeList(TestPositionConfiguration.MaxPosition),
-            DCComponents = DCComponents.All
+            DCComponents = DCComponents.All,
+            TransformerComponents = TransformerComponents.All,
+            NBoxRouterTypes = NBoxRouterTypes.All
         }, true);
 
         Assert.That(Prober.IsActive, Is.False);
@@ -79,7 +86,9 @@ public class ProbeTests
         await Prober.StartProbe(new()
         {
             TestPositions = MakeList(count),
-            DCComponents = DCComponents.All
+            DCComponents = DCComponents.All,
+            TransformerComponents = TransformerComponents.All,
+            NBoxRouterTypes = NBoxRouterTypes.All
         }, true);
 
         Assert.That(Prober.IsActive, Is.False);
@@ -94,16 +103,17 @@ public class ProbeTests
         Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => Prober.StartProbe(new() { TestPositions = MakeList(count) }, true));
     }
 
-    [TestCase(DCComponents.None, 17)]
-    [TestCase(DCComponents.CurrentSCG06, 18)]
-    [TestCase(DCComponents.CurrentSCG1000, 18)]
-    [TestCase(DCComponents.CurrentSCG8, 18)]
-    [TestCase(DCComponents.CurrentSCG80, 18)]
-    [TestCase(DCComponents.FGControl, 18)]
-    [TestCase(DCComponents.SPS, 18)]
-    [TestCase(DCComponents.VoltageSVG1200, 18)]
-    [TestCase(DCComponents.VoltageSVG150, 18)]
-    [TestCase(DCComponents.CurrentSCG06 | DCComponents.VoltageSVG1200 | DCComponents.SPS, 20)]
+    [TestCase(DCComponents.None, 9)]
+    [TestCase(DCComponents.CurrentSCG06, 10)]
+    [TestCase(DCComponents.CurrentSCG1000, 10)]
+    [TestCase(DCComponents.CurrentSCG8, 10)]
+    [TestCase(DCComponents.CurrentSCG80, 10)]
+    [TestCase(DCComponents.FGControl, 10)]
+    [TestCase(DCComponents.SPS, 10)]
+    [TestCase(DCComponents.VoltageSVG1200, 10)]
+    [TestCase(DCComponents.VoltageSVG150, 10)]
+    [TestCase(DCComponents.CurrentSCG06 | DCComponents.VoltageSVG1200 | DCComponents.SPS, 12)]
+    [TestCase(DCComponents.All, 18)]
     public async Task Can_Restrict_Probing_Plan_By_DC_Components(DCComponents components, int expected)
     {
         await Prober.StartProbe(new() { DCComponents = components }, true);
@@ -122,14 +132,14 @@ public class ProbeTests
 
         await Prober.StartProbe(config, true);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(17));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(9));
 
         /* Enable configuration. */
         pos.Enabled = true;
 
         await Prober.StartProbe(config, true);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(17));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(9));
 
         /* Enable direct DUT connection. */
         Assert.That(pos.EnableDirectDutConnection, Is.False);
@@ -138,7 +148,7 @@ public class ProbeTests
 
         await Prober.StartProbe(config, true);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(19));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(11));
 
         /* Enable UART interface. */
         Assert.That(pos.EnableUART, Is.False);
@@ -147,7 +157,7 @@ public class ProbeTests
 
         await Prober.StartProbe(config, true);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(21));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(13));
 
         /* Enable update server. */
         Assert.That(pos.EnableUpdateServer, Is.False);
@@ -156,7 +166,7 @@ public class ProbeTests
 
         await Prober.StartProbe(config, true);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(23));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(15));
 
         /* Enable COM server. */
         Assert.That(pos.EnableCOMServer, Is.False);
@@ -165,7 +175,7 @@ public class ProbeTests
 
         await Prober.StartProbe(config, true);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(24));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(16));
 
         /* Enable backend gateway. */
         Assert.That(pos.EnableBackendGateway, Is.False);
@@ -174,7 +184,7 @@ public class ProbeTests
 
         await Prober.StartProbe(config, true);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(25));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(17));
 
         /* Enable object access. */
         Assert.That(pos.EnableObjectAccess, Is.False);
@@ -183,7 +193,7 @@ public class ProbeTests
 
         await Prober.StartProbe(config, true);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(26));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(18));
 
         /* Enable SIM server 1. */
         Assert.That(pos.EnableSIMServer1, Is.False);
@@ -192,7 +202,7 @@ public class ProbeTests
 
         await Prober.StartProbe(config, true);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(27));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(19));
 
         /* Enable MAD server. */
         Assert.That(pos.EnableMAD, Is.False);
@@ -201,7 +211,7 @@ public class ProbeTests
 
         await Prober.StartProbe(config, true);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(31));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(23));
 
         /* Forbidden protocol. */
         Assert.That(pos.MadProtocol, Is.Null);
@@ -215,7 +225,7 @@ public class ProbeTests
 
         await Prober.StartProbe(config, true);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(29));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(21));
 
         /* Only STM6000. */
         Assert.That(pos.STMServer, Is.Null);
@@ -224,20 +234,34 @@ public class ProbeTests
 
         await Prober.StartProbe(config, true);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(25));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(17));
     }
 
-    [TestCase(TransformerComponents.None, 11)]
-    [TestCase(TransformerComponents.STR260Phase1, 12)]
-    [TestCase(TransformerComponents.STR260Phase2, 12)]
-    [TestCase(TransformerComponents.STR260Phase3, 12)]
-    [TestCase(TransformerComponents.CurrentWM3000or1000, 12)]
-    [TestCase(TransformerComponents.VoltageWM3000or1000, 12)]
-    [TestCase(TransformerComponents.SPS, 12)]
-    [TestCase(TransformerComponents.CurrentWM3000or1000 | TransformerComponents.VoltageWM3000or1000, 13)]
+    [TestCase(TransformerComponents.None, 9)]
+    [TestCase(TransformerComponents.STR260Phase1, 10)]
+    [TestCase(TransformerComponents.STR260Phase2, 10)]
+    [TestCase(TransformerComponents.STR260Phase3, 10)]
+    [TestCase(TransformerComponents.CurrentWM3000or1000, 10)]
+    [TestCase(TransformerComponents.VoltageWM3000or1000, 10)]
+    [TestCase(TransformerComponents.SPS, 10)]
+    [TestCase(TransformerComponents.CurrentWM3000or1000 | TransformerComponents.VoltageWM3000or1000, 11)]
+    [TestCase(TransformerComponents.All, 15)]
     public async Task Can_Restrict_Probing_Plan_By_Transformer_Components(TransformerComponents components, int expected)
     {
         await Prober.StartProbe(new() { TransformerComponents = components }, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(expected));
+    }
+
+
+    [TestCase(NBoxRouterTypes.None, 9)]
+    [TestCase(NBoxRouterTypes.Prime, 10)]
+    [TestCase(NBoxRouterTypes.G3, 10)]
+    [TestCase(NBoxRouterTypes.G3 | NBoxRouterTypes.Prime, 11)]
+    [TestCase(NBoxRouterTypes.All, 11)]
+    public async Task Can_Restrict_Probing_Plan_By_NBox_Router(NBoxRouterTypes types, int expected)
+    {
+        await Prober.StartProbe(new() { NBoxRouterTypes = types }, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(expected));
     }

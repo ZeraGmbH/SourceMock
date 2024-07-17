@@ -6,7 +6,7 @@ namespace MeterTestSystemApi.Models.Configuration;
 /// <summary>
 /// Describe a serial port connection.
 /// </summary>
-public class SerialPortConfiguration
+public class SerialPortComponentConfiguration
 {
     /// <summary>
     /// Index of the port as found in the device path.

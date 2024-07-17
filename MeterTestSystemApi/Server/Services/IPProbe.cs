@@ -5,7 +5,7 @@ namespace MeterTestSystemApi.Services;
 /// <summary>
 /// Describe a single IP probing.
 /// </summary>
-internal class IPProbe
+internal class IPProbe : Probe
 {
     /// <summary>
     /// Protocol to use.
@@ -18,13 +18,8 @@ internal class IPProbe
     public required IPEndPoint EndPoint { get; set; }
 
     /// <summary>
-    /// Set the result of the probing.
-    /// </summary>
-    public ProbeResult Result { get; set; }
-
-    /// <summary>
     /// Create a description for the probe.
     /// </summary>
-    public override string ToString() => $"{EndPoint}: {Protocol}";
+    public override string ToString() => $"{EndPoint}[{Protocol}]";
 }
 

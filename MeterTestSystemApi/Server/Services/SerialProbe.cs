@@ -5,7 +5,7 @@ namespace MeterTestSystemApi.Services;
 /// <summary>
 /// Describe a single serial port probing.
 /// </summary>
-internal class SerialProbe
+internal class SerialProbe : Probe
 {
     /// <summary>
     /// Protocol to use.
@@ -15,12 +15,7 @@ internal class SerialProbe
     /// <summary>
     /// Device to use.
     /// </summary>
-    public required SerialPortConfiguration Device { get; set; }
-
-    /// <summary>
-    /// Set the result of the probing.
-    /// </summary>
-    public ProbeResult Result { get; set; }
+    public required SerialPortComponentConfiguration Device { get; set; }
 
     /// <summary>
     /// Create a description for the probe.

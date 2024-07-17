@@ -12,7 +12,7 @@ public class MeterTestSystemComponentsConfiguration
     /// <summary>
     /// Connection to the Frequency generator.
     /// </summary>
-    public SerialPortConfiguration? FrequencyGenerator { get; set; }
+    public SerialPortComponentConfiguration? FrequencyGenerator { get; set; }
 
     /// <summary>
     /// Configuration if each test position. Entries must not be 
@@ -103,10 +103,4 @@ public class MeterTestSystemComponentsConfiguration
     /// </summary>
     [NotNull, Required]
     public bool EnableDTS100 { get; set; }
-
-    /// <summary>
-    /// Get the device path of the barcode reader.
-    /// </summary>
-    [JsonIgnore]
-    public string? BarcodeReaderDevicePath => BarcodeReader.HasValue ? $"/dev/input/event{BarcodeReader}" : null;
 }

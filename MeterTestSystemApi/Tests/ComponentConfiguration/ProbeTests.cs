@@ -323,9 +323,7 @@ public class ProbeTests
     {
         await Prober.StartProbe(new()
         {
-            Configuration = {
-                FrequencyGenerator = new()
-            },
+            Configuration = { FrequencyGenerator = new() },
             SerialPorts = {
                 SerialPortTypes.None,
                 SerialPortTypes.RS232,
@@ -335,5 +333,22 @@ public class ProbeTests
         }, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(4));
+    }
+
+    [Test]
+    public async Task Can_Probe_HID_Events()
+    {
+        await Prober.StartProbe(new()
+        {
+            Configuration = { BarcodeReader = 0 },
+            HIDEvents = {
+                false,
+                true,
+                false,
+                true
+            }
+        }, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(2));
     }
 }

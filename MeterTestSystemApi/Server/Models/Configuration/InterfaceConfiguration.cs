@@ -1,6 +1,7 @@
 using BarcodeApi.Models;
 using ErrorCalculatorApi.Models;
 using MongoDB.Bson.Serialization.Attributes;
+using SourceApi.Model.Configuration;
 using ZERA.WebSam.Shared.Models;
 
 namespace MeterTestSystemApi.Models.Configuration;

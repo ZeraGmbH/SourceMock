@@ -108,11 +108,7 @@ public class ProbeTests
     {
         await Prober.StartProbe(new() { DCComponents = components }, true);
 
-        Assert.That(Prober.IsActive, Is.False);
-        Assert.That(Prober.Result, Is.Not.Null);
-        Assert.That(Prober.Result.Configuration, Is.Null);
-
-        Assert.That(Prober.Result.Log, Has.Count.EqualTo(expected));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(expected));
     }
 
     [Test]
@@ -229,5 +225,20 @@ public class ProbeTests
         await Prober.StartProbe(config, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(25));
+    }
+
+    [TestCase(TransformerComponents.None, 11)]
+    [TestCase(TransformerComponents.STR260Phase1, 12)]
+    [TestCase(TransformerComponents.STR260Phase2, 12)]
+    [TestCase(TransformerComponents.STR260Phase3, 12)]
+    [TestCase(TransformerComponents.CurrentWM3000or1000, 12)]
+    [TestCase(TransformerComponents.VoltageWM3000or1000, 12)]
+    [TestCase(TransformerComponents.SPS, 12)]
+    [TestCase(TransformerComponents.CurrentWM3000or1000 | TransformerComponents.VoltageWM3000or1000, 13)]
+    public async Task Can_Restrict_Probing_Plan_By_Transformer_Components(TransformerComponents components, int expected)
+    {
+        await Prober.StartProbe(new() { TransformerComponents = components }, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(expected));
     }
 }

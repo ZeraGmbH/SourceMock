@@ -120,30 +120,34 @@ internal class ConfigurationProbePlan
     private void AddTransformerProbes()
     {
         /* Transformers. */
-        TCPIP.Add(new IPProbe
-        {
-            Protocol = IPProbeProtocols.TransformerCurrent,
-            EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(TransformerComponents.CurrentWM3000or1000)
-        });
-
-        TCPIP.Add(new IPProbe
-        {
-            Protocol = IPProbeProtocols.TransformerSPS,
-            EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(TransformerComponents.SPS)
-        });
-
-        foreach (var phase in TransformerPhases)
+        if ((_request.TransformerComponents & TransformerComponents.CurrentWM3000or1000) != 0)
             TCPIP.Add(new IPProbe
             {
-                Protocol = IPProbeProtocols.TransformerSTR260,
-                EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(phase)
+                Protocol = IPProbeProtocols.TransformerCurrent,
+                EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(TransformerComponents.CurrentWM3000or1000)
             });
 
-        TCPIP.Add(new IPProbe
-        {
-            Protocol = IPProbeProtocols.TransformerVoltage,
-            EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(TransformerComponents.VoltageWM3000or1000)
-        });
+        if ((_request.TransformerComponents & TransformerComponents.SPS) != 0)
+            TCPIP.Add(new IPProbe
+            {
+                Protocol = IPProbeProtocols.TransformerSPS,
+                EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(TransformerComponents.SPS)
+            });
+
+        foreach (var phase in TransformerPhases)
+            if ((_request.TransformerComponents & phase) != 0)
+                TCPIP.Add(new IPProbe
+                {
+                    Protocol = IPProbeProtocols.TransformerSTR260,
+                    EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(phase)
+                });
+
+        if ((_request.TransformerComponents & TransformerComponents.VoltageWM3000or1000) != 0)
+            TCPIP.Add(new IPProbe
+            {
+                Protocol = IPProbeProtocols.TransformerVoltage,
+                EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(TransformerComponents.VoltageWM3000or1000)
+            });
     }
 
     private void AddDcProbes()

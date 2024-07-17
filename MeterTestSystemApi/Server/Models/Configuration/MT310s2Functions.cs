@@ -37,4 +37,14 @@ public enum MT310s2Functions
     /// Calibration of 4 position DC test system.
     /// </summary>
     DCCalibration = 0x10,
+
+    /// <summary>
+    /// All functions.
+    /// </summary>
+    All =
+        EMobReferenceMeter |
+        RemoteGUI |
+        DCReferenceMeter1 |
+        DCReferenceMeter2 |
+        DCCalibration,
 }

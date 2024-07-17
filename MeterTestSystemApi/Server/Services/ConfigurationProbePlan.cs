@@ -1,6 +1,7 @@
 using ErrorCalculatorApi.Models;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MeterTestSystemApi.Services;
@@ -51,59 +52,67 @@ internal class ConfigurationProbePlan
         AddNBoxProbes();
         AddMt310s2Probes();
 
-        TCPIP.Add(new IPProbe
-        {
-            Protocol = IPProbeProtocols.OmegaiBTHX,
-            EndPoint = IPProtocolProvider.GetOmegaiBTHXEndpoint()
-        });
+        if (_request.EnableMP2020Control)
+            TCPIP.Add(new IPProbe
+            {
+                Protocol = IPProbeProtocols.MP2020Control,
+                EndPoint = IPProtocolProvider.Get2020ControlEndpoint()
+            });
 
-        TCPIP.Add(new IPProbe
-        {
-            Protocol = IPProbeProtocols.COM5003,
-            EndPoint = IPProtocolProvider.GetCOM5003Endpoint()
-        });
+        if (_request.EnableOmegaiBTHX)
+            TCPIP.Add(new IPProbe
+            {
+                Protocol = IPProbeProtocols.OmegaiBTHX,
+                EndPoint = IPProtocolProvider.GetOmegaiBTHXEndpoint()
+            });
 
-        TCPIP.Add(new IPProbe
-        {
-            Protocol = IPProbeProtocols.IPWatchdog,
-            EndPoint = IPProtocolProvider.GetIPWatchDogEndpoint()
-        });
+        if (_request.EnableCOM5003)
+            TCPIP.Add(new IPProbe
+            {
+                Protocol = IPProbeProtocols.COM5003,
+                EndPoint = IPProtocolProvider.GetCOM5003Endpoint()
+            });
 
-        TCPIP.Add(new IPProbe
-        {
-            Protocol = IPProbeProtocols.DTS100,
-            EndPoint = IPProtocolProvider.GetDTS100Endpoint()
-        });
+        if (_request.EnableIPWatchDog)
+
+            TCPIP.Add(new IPProbe
+            {
+                Protocol = IPProbeProtocols.IPWatchdog,
+                EndPoint = IPProtocolProvider.GetIPWatchDogEndpoint()
+            });
+
+        if (_request.EnableDTS100)
+            TCPIP.Add(new IPProbe
+            {
+                Protocol = IPProbeProtocols.DTS100,
+                EndPoint = IPProtocolProvider.GetDTS100Endpoint()
+            });
     }
 
     private void AddMt310s2Probes()
     {
         /* MT310s2 */
-        TCPIP.Add(new IPProbe
-        {
-            Protocol = IPProbeProtocols.MTS310s2EMob,
-            EndPoint = IPProtocolProvider.GetMT310s2FunctionEndpoint(MT310s2Functions.EMobReferenceMeter)
-        });
-
-        foreach (var refMeter in MT310s2DCReferenceMeters)
+        if ((_request.MT310s2Functions & MT310s2Functions.EMobReferenceMeter) != 0)
             TCPIP.Add(new IPProbe
             {
-                Protocol = IPProbeProtocols.MTS310s2DCSource,
-                EndPoint = IPProtocolProvider.GetMT310s2FunctionEndpoint(refMeter)
+                Protocol = IPProbeProtocols.MTS310s2EMob,
+                EndPoint = IPProtocolProvider.GetMT310s2FunctionEndpoint(MT310s2Functions.EMobReferenceMeter)
             });
 
-        TCPIP.Add(new IPProbe
-        {
-            Protocol = IPProbeProtocols.MTS310s2Calibration,
-            EndPoint = IPProtocolProvider.GetMT310s2FunctionEndpoint(MT310s2Functions.DCCalibration)
-        });
+        foreach (var refMeter in MT310s2DCReferenceMeters)
+            if ((_request.MT310s2Functions & refMeter) != 0)
+                TCPIP.Add(new IPProbe
+                {
+                    Protocol = IPProbeProtocols.MTS310s2DCSource,
+                    EndPoint = IPProtocolProvider.GetMT310s2FunctionEndpoint(refMeter)
+                });
 
-        /* Single instance. */
-        TCPIP.Add(new IPProbe
-        {
-            Protocol = IPProbeProtocols.MP2020Control,
-            EndPoint = IPProtocolProvider.Get2020ControlEndpoint()
-        });
+        if ((_request.MT310s2Functions & MT310s2Functions.DCCalibration) != 0)
+            TCPIP.Add(new IPProbe
+            {
+                Protocol = IPProbeProtocols.MTS310s2Calibration,
+                EndPoint = IPProtocolProvider.GetMT310s2FunctionEndpoint(MT310s2Functions.DCCalibration)
+            });
     }
 
     private void AddNBoxProbes()

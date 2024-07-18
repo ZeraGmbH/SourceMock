@@ -36,49 +36,49 @@ public class MeterTestSystemComponentsConfiguration
     /// Individual flags to set if DC component should be used.
     /// </summary>
     [NotNull, Required]
-    public DCComponents DCComponents { get; set; }
+    public List<DCComponents> DCComponents { get; set; } = [];
 
     /// <summary>
     /// Report if any DC component is selected.
     /// </summary>
     [JsonIgnore]
-    public bool EnableDCComponents => DCComponents != DCComponents.None;
+    public bool EnableDCComponents => DCComponents.Count > 0;
 
     /// <summary>
     /// Individual flags to set if transformer components shoul be used.
     /// </summary>
     [NotNull, Required]
-    public TransformerComponents TransformerComponents { get; set; }
+    public List<TransformerComponents> TransformerComponents { get; set; } = [];
 
     /// <summary>
     /// Report if any transformer component is selected.
     /// </summary>
     [JsonIgnore]
-    public bool EnableTransformerComponents => TransformerComponents != TransformerComponents.None;
+    public bool EnableTransformerComponents => TransformerComponents.Count > 0;
 
     /// <summary>
     /// Individual flags to set if some MT310s2 function will be used.
     /// </summary>
     [NotNull, Required]
-    public MT310s2Functions MT310s2Functions { get; set; }
+    public List<MT310s2Functions> MT310s2Functions { get; set; } = [];
 
     /// <summary>
     /// Report if any MT310s2 function should be used.
     /// </summary>
     [JsonIgnore]
-    public bool EnableMT310s2Functions => MT310s2Functions != MT310s2Functions.None;
+    public bool EnableMT310s2Functions => MT310s2Functions.Count > 0;
 
     /// <summary>
     /// Individual flags to set if some Nbox PLC router will be used.
     /// </summary>
     [NotNull, Required]
-    public NBoxRouterTypes NBoxRouterTypes { get; set; }
+    public List<NBoxRouterTypes> NBoxRouterTypes { get; set; } = [];
 
     /// <summary>
     /// Report if any NBox PLC router should be used.
     /// </summary>
     [JsonIgnore]
-    public bool EnableNBoxRouterTypes => NBoxRouterTypes != NBoxRouterTypes.None;
+    public bool EnableNBoxRouterTypes => NBoxRouterTypes.Count > 0;
 
     /// <summary>
     /// Set to use the Omega iBTHX temperature and humidity sensor.

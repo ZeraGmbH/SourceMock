@@ -56,14 +56,18 @@ internal class ConfigurationProbePlan
     private void AddSerialProbes()
     {
         for (var i = 0; i < _request.SerialPorts.Count; i++)
+        {
+            var types = _request.SerialPorts[i].ToHashSet();
+
             foreach (var type in SerialPorts)
-                if ((_request.SerialPorts[i] & type) != 0)
+                if (types.Contains(type))
                     if (_request.Configuration.FrequencyGenerator != null)
                         Probes.Add(new SerialProbe()
                         {
                             Protocol = SerialProbeProtocols.FG30x,
                             Device = new() { Type = type, Index = (uint)i }
                         });
+        }
     }
 
     private void AddHIDProbes()
@@ -126,7 +130,9 @@ internal class ConfigurationProbePlan
     private void AddMt310s2Probes()
     {
         /* MT310s2 */
-        if ((_request.Configuration.MT310s2Functions & MT310s2Functions.EMobReferenceMeter) != 0)
+        var functions = _request.Configuration.MT310s2Functions.ToHashSet();
+
+        if (functions.Contains(MT310s2Functions.EMobReferenceMeter))
             Probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.MTS310s2EMob,
@@ -134,14 +140,14 @@ internal class ConfigurationProbePlan
             });
 
         foreach (var refMeter in MT310s2DCReferenceMeters)
-            if ((_request.Configuration.MT310s2Functions & refMeter) != 0)
+            if (functions.Contains(refMeter))
                 Probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.MTS310s2DCSource,
                     EndPoint = IPProtocolProvider.GetMT310s2FunctionEndpoint(refMeter)
                 });
 
-        if ((_request.Configuration.MT310s2Functions & MT310s2Functions.DCCalibration) != 0)
+        if (functions.Contains(MT310s2Functions.DCCalibration))
             Probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.MTS310s2Calibration,
@@ -152,8 +158,10 @@ internal class ConfigurationProbePlan
     private void AddNBoxProbes()
     {
         /* NBox PLC Router. */
+        var routers = _request.Configuration.NBoxRouterTypes.ToHashSet();
+
         foreach (var router in NBoxRouters)
-            if ((_request.Configuration.NBoxRouterTypes & router) != 0)
+            if (routers.Contains(router))
                 Probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.NBoxRouter,
@@ -164,14 +172,16 @@ internal class ConfigurationProbePlan
     private void AddTransformerProbes()
     {
         /* Transformers. */
-        if ((_request.Configuration.TransformerComponents & TransformerComponents.CurrentWM3000or1000) != 0)
+        var components = _request.Configuration.TransformerComponents.ToHashSet();
+
+        if (components.Contains(TransformerComponents.CurrentWM3000or1000))
             Probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.TransformerCurrent,
                 EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(TransformerComponents.CurrentWM3000or1000)
             });
 
-        if ((_request.Configuration.TransformerComponents & TransformerComponents.SPS) != 0)
+        if (components.Contains(TransformerComponents.SPS))
             Probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.TransformerSPS,
@@ -179,14 +189,14 @@ internal class ConfigurationProbePlan
             });
 
         foreach (var phase in TransformerPhases)
-            if ((_request.Configuration.TransformerComponents & phase) != 0)
+            if (components.Contains(phase))
                 Probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.TransformerSTR260,
                     EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(phase)
                 });
 
-        if ((_request.Configuration.TransformerComponents & TransformerComponents.VoltageWM3000or1000) != 0)
+        if (components.Contains(TransformerComponents.VoltageWM3000or1000))
             Probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.TransformerVoltage,
@@ -197,8 +207,10 @@ internal class ConfigurationProbePlan
     private void AddDcProbes()
     {
         /* DC test system. */
+        var dcComponents = _request.Configuration.DCComponents.ToHashSet();
+
         foreach (var dcCurrent in DCCurrents)
-            if ((_request.Configuration.DCComponents & dcCurrent) != 0)
+            if (dcComponents.Contains(dcCurrent))
                 Probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.DCCurrent,
@@ -206,21 +218,21 @@ internal class ConfigurationProbePlan
                 });
 
         foreach (var dcVoltage in DCCVoltages)
-            if ((_request.Configuration.DCComponents & dcVoltage) != 0)
+            if (dcComponents.Contains(dcVoltage))
                 Probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.DCVoltage,
                     EndPoint = IPProtocolProvider.GetDCComponentEndpoint(dcVoltage)
                 });
 
-        if ((_request.Configuration.DCComponents & DCComponents.SPS) != 0)
+        if (dcComponents.Contains(DCComponents.SPS))
             Probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.DCSPS,
                 EndPoint = IPProtocolProvider.GetDCComponentEndpoint(DCComponents.SPS)
             });
 
-        if ((_request.Configuration.DCComponents & DCComponents.FGControl) != 0)
+        if (dcComponents.Contains(DCComponents.FGControl))
             Probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.DCFGControl,

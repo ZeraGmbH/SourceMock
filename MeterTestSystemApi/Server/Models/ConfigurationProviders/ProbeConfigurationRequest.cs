@@ -19,7 +19,7 @@ public class ProbeConfigurationRequest
     /// Serial ports to scan.
     /// </summary>
     [NotNull, Required]
-    public List<SerialPortTypes> SerialPorts { get; set; } = [];
+    public List<List<SerialPortTypes>> SerialPorts { get; set; } = [];
 
     /// <summary>
     /// HID events to scan.

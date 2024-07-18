@@ -46,24 +46,13 @@ public class ProbeTests
         EnableUpdateServer = true,
     }).ToList();
 
-    [Test]
-    public void Flag_Enums_All_Provide_Special_Selectors()
-    {
-        Assert.Multiple(() =>
-        {
-            Assert.That((int)DCComponents.None, Is.EqualTo(0));
-            Assert.That((int)DCComponents.All, Is.EqualTo(0x1ff));
+    private static readonly List<DCComponents> AllDcComponents = Enum.GetValues<DCComponents>().ToList();
 
-            Assert.That((int)TransformerComponents.None, Is.EqualTo(0));
-            Assert.That((int)TransformerComponents.All, Is.EqualTo(0x3f));
+    private static readonly List<TransformerComponents> AllTransformerComponents = Enum.GetValues<TransformerComponents>().ToList();
 
-            Assert.That((int)NBoxRouterTypes.None, Is.EqualTo(0));
-            Assert.That((int)NBoxRouterTypes.All, Is.EqualTo(0x3));
+    private static readonly List<MT310s2Functions> AllMT310s2Functions = Enum.GetValues<MT310s2Functions>().ToList();
 
-            Assert.That((int)MT310s2Functions.None, Is.EqualTo(0));
-            Assert.That((int)MT310s2Functions.All, Is.EqualTo(0x1f));
-        });
-    }
+    private static readonly List<NBoxRouterTypes> AllNBoxRouters = Enum.GetValues<NBoxRouterTypes>().ToList();
 
     [Test]
     public async Task Can_Create_Probing_Plan()
@@ -71,10 +60,10 @@ public class ProbeTests
         await StartProbe(new()
         {
             TestPositions = MakeList(TestPositionConfiguration.MaxPosition),
-            DCComponents = DCComponents.All,
-            TransformerComponents = TransformerComponents.All,
-            NBoxRouterTypes = NBoxRouterTypes.All,
-            MT310s2Functions = MT310s2Functions.All,
+            DCComponents = AllDcComponents,
+            TransformerComponents = AllTransformerComponents,
+            NBoxRouterTypes = AllNBoxRouters,
+            MT310s2Functions = AllMT310s2Functions,
             EnableCOM5003 = true,
             EnableDTS100 = true,
             EnableIPWatchDog = true,
@@ -97,10 +86,10 @@ public class ProbeTests
         await StartProbe(new()
         {
             TestPositions = MakeList(count),
-            DCComponents = DCComponents.All,
-            MT310s2Functions = MT310s2Functions.All,
-            NBoxRouterTypes = NBoxRouterTypes.All,
-            TransformerComponents = TransformerComponents.All,
+            DCComponents = AllDcComponents,
+            MT310s2Functions = AllMT310s2Functions,
+            NBoxRouterTypes = AllNBoxRouters,
+            TransformerComponents = AllTransformerComponents,
         }, true);
 
         Assert.That(Prober.IsActive, Is.False);
@@ -115,7 +104,6 @@ public class ProbeTests
         Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => StartProbe(new() { TestPositions = MakeList(count) }, true));
     }
 
-    [TestCase(DCComponents.None, 0)]
     [TestCase(DCComponents.CurrentSCG06, 1)]
     [TestCase(DCComponents.CurrentSCG1000, 1)]
     [TestCase(DCComponents.CurrentSCG8, 1)]
@@ -124,13 +112,19 @@ public class ProbeTests
     [TestCase(DCComponents.SPS, 1)]
     [TestCase(DCComponents.VoltageSVG1200, 1)]
     [TestCase(DCComponents.VoltageSVG150, 1)]
-    [TestCase(DCComponents.CurrentSCG06 | DCComponents.VoltageSVG1200 | DCComponents.SPS, 3)]
-    [TestCase(DCComponents.All, 9)]
-    public async Task Can_Restrict_Probing_Plan_By_DC_Components(DCComponents components, int expected)
+    public async Task Can_Restrict_Probing_Plan_By_DC_Component(DCComponents component, int expected)
     {
-        await StartProbe(new() { DCComponents = components }, true);
+        await StartProbe(new() { DCComponents = { component } }, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(expected));
+    }
+
+    [Test]
+    public async Task Can_Restrict_Probing_Plan_By_DC_Components()
+    {
+        await StartProbe(new() { DCComponents = { DCComponents.CurrentSCG06, DCComponents.VoltageSVG1200, DCComponents.SPS } }, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(3));
     }
 
     [Test]
@@ -249,33 +243,42 @@ public class ProbeTests
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(8));
     }
 
-    [TestCase(TransformerComponents.None, 0)]
     [TestCase(TransformerComponents.STR260Phase1, 1)]
     [TestCase(TransformerComponents.STR260Phase2, 1)]
     [TestCase(TransformerComponents.STR260Phase3, 1)]
     [TestCase(TransformerComponents.CurrentWM3000or1000, 1)]
     [TestCase(TransformerComponents.VoltageWM3000or1000, 1)]
     [TestCase(TransformerComponents.SPS, 1)]
-    [TestCase(TransformerComponents.CurrentWM3000or1000 | TransformerComponents.VoltageWM3000or1000, 2)]
-    [TestCase(TransformerComponents.All, 6)]
     public async Task Can_Restrict_Probing_Plan_By_Transformer_Components(TransformerComponents components, int expected)
     {
-        await StartProbe(new() { TransformerComponents = components }, true);
+        await StartProbe(new() { TransformerComponents = { components } }, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(expected));
     }
 
+    [Test]
+    public async Task Can_Restrict_Probing_Plan_By_Transformer_Component()
+    {
+        await StartProbe(new() { TransformerComponents = { TransformerComponents.CurrentWM3000or1000, TransformerComponents.VoltageWM3000or1000 } }, true);
 
-    [TestCase(NBoxRouterTypes.None, 0)]
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(2));
+    }
+
     [TestCase(NBoxRouterTypes.Prime, 1)]
     [TestCase(NBoxRouterTypes.G3, 1)]
-    [TestCase(NBoxRouterTypes.G3 | NBoxRouterTypes.Prime, 2)]
-    [TestCase(NBoxRouterTypes.All, 2)]
     public async Task Can_Restrict_Probing_Plan_By_NBox_Router(NBoxRouterTypes types, int expected)
     {
-        await StartProbe(new() { NBoxRouterTypes = types }, true);
+        await StartProbe(new() { NBoxRouterTypes = { types } }, true);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(expected));
+    }
+
+    [Test]
+    public async Task Can_Restrict_Probing_Plan_By_NBox_Routers()
+    {
+        await StartProbe(new() { NBoxRouterTypes = { NBoxRouterTypes.G3, NBoxRouterTypes.Prime } }, true);
+
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(2));
     }
 
     [Test]
@@ -325,10 +328,10 @@ public class ProbeTests
         {
             Configuration = { FrequencyGenerator = new() },
             SerialPorts = {
-                SerialPortTypes.None,
-                SerialPortTypes.RS232,
-                SerialPortTypes.USB,
-                SerialPortTypes.All
+                new(){},
+                new(){SerialPortTypes.RS232},
+                new(){SerialPortTypes.USB},
+                new(){SerialPortTypes.RS232,SerialPortTypes.USB},
         }
         }, true);
 

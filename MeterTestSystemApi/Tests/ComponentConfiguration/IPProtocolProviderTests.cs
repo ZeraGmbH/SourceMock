@@ -235,13 +235,6 @@ public class IPProtocolProviderTests
         Assert.That(IPProtocolProvider.GetDCComponentEndpoint(component).ToString(), Is.EqualTo(expected));
     }
 
-    [TestCase(DCComponents.None)]
-    [TestCase(DCComponents.CurrentSCG8 | DCComponents.VoltageSVG150)]
-    public void Can_Detect_Invalid_DC_Component(DCComponents component)
-    {
-        Assert.Throws<ArgumentException>(() => IPProtocolProvider.GetDCComponentEndpoint(component));
-    }
-
     [TestCase(TransformerComponents.SPS, "192.168.32.200:0")]
     [TestCase(TransformerComponents.STR260Phase1, "192.168.32.201:0")]
     [TestCase(TransformerComponents.STR260Phase2, "192.168.32.202:0")]
@@ -251,13 +244,6 @@ public class IPProtocolProviderTests
     public void Can_Get_IP_Address_For_Transformer_Component(TransformerComponents component, string expected)
     {
         Assert.That(IPProtocolProvider.GetTransformerComponentEndpoint(component).ToString(), Is.EqualTo(expected));
-    }
-
-    [TestCase(TransformerComponents.None)]
-    [TestCase(TransformerComponents.STR260Phase3 | TransformerComponents.STR260Phase2)]
-    public void Can_Detect_Invalid_Transformer_Component(TransformerComponents component)
-    {
-        Assert.Throws<ArgumentException>(() => IPProtocolProvider.GetTransformerComponentEndpoint(component));
     }
 
     [TestCase(MT310s2Functions.EMobReferenceMeter, "192.168.32.14:6320")]
@@ -270,24 +256,10 @@ public class IPProtocolProviderTests
         Assert.That(IPProtocolProvider.GetMT310s2FunctionEndpoint(function).ToString(), Is.EqualTo(expected));
     }
 
-    [TestCase(MT310s2Functions.None)]
-    [TestCase(MT310s2Functions.DCReferenceMeter1 | MT310s2Functions.DCReferenceMeter2)]
-    public void Can_Detect_Invalid_MT310s2_Functions(MT310s2Functions funct)
-    {
-        Assert.Throws<ArgumentException>(() => IPProtocolProvider.GetMT310s2FunctionEndpoint(funct));
-    }
-
     [TestCase(NBoxRouterTypes.Prime, "192.168.32.18:80")]
     [TestCase(NBoxRouterTypes.G3, "192.168.32.19:80")]
     public void Can_Get_IP_Address_NBox_Router(NBoxRouterTypes type, string expected)
     {
         Assert.That(IPProtocolProvider.GetNBoxRouterEndpoint(type).ToString(), Is.EqualTo(expected));
-    }
-
-    [TestCase(NBoxRouterTypes.None)]
-    [TestCase(NBoxRouterTypes.Prime | NBoxRouterTypes.G3)]
-    public void Can_Detect_Invalid_NBox_Router(NBoxRouterTypes type)
-    {
-        Assert.Throws<ArgumentException>(() => IPProtocolProvider.GetNBoxRouterEndpoint(type));
     }
 }

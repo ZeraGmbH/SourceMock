@@ -86,7 +86,7 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
 
     private readonly List<byte> _collector = new();
 
-    private string ReadLine()
+    private string ReadLine(CancellationToken? cancel)
     {
         var stream = _connection.GetStream();
 
@@ -108,6 +108,8 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
 
             if (len > 0)
                 _collector.AddRange(buf.Take(len));
+            else
+                cancel?.ThrowIfCancellationRequested();
         }
     }
 
@@ -119,7 +121,7 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
     }
 
     /// <inheritdoc/>
-    public Task<object[]> ReadStatusRegisters(IInterfaceLogger interfaceLogger, DutStatusRegisterTypes[] types) => Task.Run(() =>
+    public Task<object[]> ReadStatusRegisters(IInterfaceLogger interfaceLogger, DutStatusRegisterTypes[] types, CancellationToken? cancel = null) => Task.Run(() =>
     {
         /* Prepare logging. */
         var connection = interfaceLogger.CreateConnection(_logConnection!);
@@ -188,7 +190,7 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
 
                 try
                 {
-                    rawValues = commands.Select(c => ReadLine()).ToList();
+                    rawValues = commands.Select(c => ReadLine(cancel)).ToList();
 
                     receiveInfo.Payload = string.Join("\n", rawValues);
                 }

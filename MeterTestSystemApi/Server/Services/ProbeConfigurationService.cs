@@ -82,15 +82,13 @@ public class ProbeConfigurationService : IProbeConfigurationService
             var plan = new ConfigurationProbePlan(request);
 
             /* Copy plan steps to result. */
-            var result = new ProbeConfigurationResult();
-
-            plan.CreateReport(result);
+            plan.CreateReport();
 
             /* Only dry run allowed. */
             if (dryRun)
             {
                 /* Provide as last result. */
-                _lastResult = result;
+                _lastResult = plan.Result;
 
                 /* Finish. */
                 return Task.CompletedTask;

@@ -10,7 +10,7 @@ internal class ConfigurationProbePlan
 
     private static readonly ServerTypes[] STMServerTypes = [ServerTypes.STM4000, ServerTypes.STM6000];
 
-    private static readonly IPProbeProtocols[] MADVersions = [IPProbeProtocols.MADServer1, IPProbeProtocols.MADServer2];
+    private static readonly IPProbeProtocols[] MADVersions = [IPProbeProtocols.MADServer2, IPProbeProtocols.MADServer1];
 
     private static readonly DCComponents[] DCCurrents = [
         DCComponents.CurrentSCG06,
@@ -39,6 +39,8 @@ internal class ConfigurationProbePlan
 
     private readonly ProbeConfigurationRequest _request;
 
+    public readonly ProbeConfigurationResult Result = new();
+
     public ConfigurationProbePlan(ProbeConfigurationRequest request)
     {
         _request = request;
@@ -46,6 +48,9 @@ internal class ConfigurationProbePlan
         AddTcpIpProbes();
         AddSerialProbes();
         AddHIDProbes();
+
+        for (var i = 0; i < _request.Configuration.TestPositions.Count; i++)
+            Result.Configuration.TestPositions.Add(new());
     }
 
     private void AddSerialProbes()
@@ -326,9 +331,9 @@ internal class ConfigurationProbePlan
         }
     }
 
-    public void CreateReport(ProbeConfigurationResult request)
+    public void CreateReport()
     {
         foreach (var probe in Probes)
-            request.Log.Add($"{probe}: {probe.Result}");
+            Result.Log.Add($"{probe}: {probe.Result}");
     }
 }

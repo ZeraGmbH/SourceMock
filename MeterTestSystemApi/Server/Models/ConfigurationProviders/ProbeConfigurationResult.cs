@@ -18,5 +18,5 @@ public class ProbeConfigurationResult
     /// <summary>
     /// The configuration according to the requested operation.
     /// </summary>
-    public MeterTestSystemComponentsConfiguration? Configuration { get; set; }
+    public MeterTestSystemComponentsConfiguration Configuration { get; set; } = new();
 }

@@ -1,5 +1,4 @@
 using System.Net;
-using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 
 namespace MeterTestSystemApiTests.ComponentConfiguration;

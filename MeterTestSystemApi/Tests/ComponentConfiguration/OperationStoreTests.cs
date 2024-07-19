@@ -1,4 +1,3 @@
-using Amazon.Runtime.Internal.Util;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Services;
 using Microsoft.Extensions.DependencyInjection;

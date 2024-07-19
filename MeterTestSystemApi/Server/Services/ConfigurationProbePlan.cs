@@ -4,9 +4,12 @@ using MeterTestSystemApi.Models.ConfigurationProviders;
 
 namespace MeterTestSystemApi.Services;
 
-internal class ConfigurationProbePlan
+/// <summary>
+/// Probing plan.
+/// </summary>
+public class ConfigurationProbePlan : IConfigurationProbePlan
 {
-    public List<Probe> Probes { get; set; } = [];
+    private List<Probe> _probes { get; set; } = [];
 
     private static readonly ServerTypes[] STMServerTypes = [ServerTypes.STM4000, ServerTypes.STM6000];
 
@@ -37,20 +40,24 @@ internal class ConfigurationProbePlan
 
     private static readonly SerialPortTypes[] SerialPorts = [SerialPortTypes.USB, SerialPortTypes.RS232];
 
-    private readonly ProbeConfigurationRequest _request;
+    private ProbingOperation _operation = null!;
 
-    public readonly ProbeConfigurationResult Result = new();
+    private ProbeConfigurationResult _result => _operation.Result;
 
-    public ConfigurationProbePlan(ProbeConfigurationRequest request)
+    private ProbeConfigurationRequest _request => _operation.Request;
+
+    /// <inheritdoc/>
+    public void ConfigureProbe(ProbeConfigurationRequest request)
     {
-        _request = request;
+        _probes.Clear();
+        _operation = new() { Created = DateTime.UtcNow, Id = Guid.NewGuid().ToString(), Request = request, Result = new() };
 
         AddTcpIpProbes();
         AddSerialProbes();
         AddHIDProbes();
 
         for (var i = 0; i < _request.Configuration.TestPositions.Count; i++)
-            Result.Configuration.TestPositions.Add(new());
+            _result.Configuration.TestPositions.Add(new());
     }
 
     private void AddSerialProbes()
@@ -62,7 +69,7 @@ internal class ConfigurationProbePlan
             foreach (var type in SerialPorts)
                 if (types.Contains(type))
                     if (_request.Configuration.FrequencyGenerator != null)
-                        Probes.Add(new SerialProbe()
+                        _probes.Add(new SerialProbe()
                         {
                             Protocol = SerialProbeProtocols.FG30x,
                             Device = new() { Type = type, Index = (uint)i }
@@ -75,7 +82,7 @@ internal class ConfigurationProbePlan
         for (var i = 0; i < _request.HIDEvents.Count; i++)
             if (_request.HIDEvents[i])
                 if (_request.Configuration.BarcodeReader.HasValue)
-                    Probes.Add(new HIDProbe()
+                    _probes.Add(new HIDProbe()
                     {
                         Protocol = HIDProbeProtocols.Keyboard,
                         Index = (uint)i
@@ -91,21 +98,21 @@ internal class ConfigurationProbePlan
         AddMt310s2Probes();
 
         if (_request.Configuration.EnableMP2020Control)
-            Probes.Add(new IPProbe
+            _probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.MP2020Control,
                 EndPoint = IPProtocolProvider.Get2020ControlEndpoint()
             });
 
         if (_request.Configuration.EnableOmegaiBTHX)
-            Probes.Add(new IPProbe
+            _probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.OmegaiBTHX,
                 EndPoint = IPProtocolProvider.GetOmegaiBTHXEndpoint()
             });
 
         if (_request.Configuration.EnableCOM5003)
-            Probes.Add(new IPProbe
+            _probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.COM5003,
                 EndPoint = IPProtocolProvider.GetCOM5003Endpoint()
@@ -113,14 +120,14 @@ internal class ConfigurationProbePlan
 
         if (_request.Configuration.EnableIPWatchDog)
 
-            Probes.Add(new IPProbe
+            _probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.IPWatchdog,
                 EndPoint = IPProtocolProvider.GetIPWatchDogEndpoint()
             });
 
         if (_request.Configuration.EnableDTS100)
-            Probes.Add(new IPProbe
+            _probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.DTS100,
                 EndPoint = IPProtocolProvider.GetDTS100Endpoint()
@@ -133,7 +140,7 @@ internal class ConfigurationProbePlan
         var functions = _request.Configuration.MT310s2Functions.ToHashSet();
 
         if (functions.Contains(MT310s2Functions.EMobReferenceMeter))
-            Probes.Add(new IPProbe
+            _probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.MTS310s2EMob,
                 EndPoint = IPProtocolProvider.GetMT310s2FunctionEndpoint(MT310s2Functions.EMobReferenceMeter)
@@ -141,14 +148,14 @@ internal class ConfigurationProbePlan
 
         foreach (var refMeter in MT310s2DCReferenceMeters)
             if (functions.Contains(refMeter))
-                Probes.Add(new IPProbe
+                _probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.MTS310s2DCSource,
                     EndPoint = IPProtocolProvider.GetMT310s2FunctionEndpoint(refMeter)
                 });
 
         if (functions.Contains(MT310s2Functions.DCCalibration))
-            Probes.Add(new IPProbe
+            _probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.MTS310s2Calibration,
                 EndPoint = IPProtocolProvider.GetMT310s2FunctionEndpoint(MT310s2Functions.DCCalibration)
@@ -162,7 +169,7 @@ internal class ConfigurationProbePlan
 
         foreach (var router in NBoxRouters)
             if (routers.Contains(router))
-                Probes.Add(new IPProbe
+                _probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.NBoxRouter,
                     EndPoint = IPProtocolProvider.GetNBoxRouterEndpoint(router)
@@ -175,14 +182,14 @@ internal class ConfigurationProbePlan
         var components = _request.Configuration.TransformerComponents.ToHashSet();
 
         if (components.Contains(TransformerComponents.CurrentWM3000or1000))
-            Probes.Add(new IPProbe
+            _probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.TransformerCurrent,
                 EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(TransformerComponents.CurrentWM3000or1000)
             });
 
         if (components.Contains(TransformerComponents.SPS))
-            Probes.Add(new IPProbe
+            _probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.TransformerSPS,
                 EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(TransformerComponents.SPS)
@@ -190,14 +197,14 @@ internal class ConfigurationProbePlan
 
         foreach (var phase in TransformerPhases)
             if (components.Contains(phase))
-                Probes.Add(new IPProbe
+                _probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.TransformerSTR260,
                     EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(phase)
                 });
 
         if (components.Contains(TransformerComponents.VoltageWM3000or1000))
-            Probes.Add(new IPProbe
+            _probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.TransformerVoltage,
                 EndPoint = IPProtocolProvider.GetTransformerComponentEndpoint(TransformerComponents.VoltageWM3000or1000)
@@ -211,7 +218,7 @@ internal class ConfigurationProbePlan
 
         foreach (var dcCurrent in DCCurrents)
             if (dcComponents.Contains(dcCurrent))
-                Probes.Add(new IPProbe
+                _probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.DCCurrent,
                     EndPoint = IPProtocolProvider.GetDCComponentEndpoint(dcCurrent)
@@ -219,21 +226,21 @@ internal class ConfigurationProbePlan
 
         foreach (var dcVoltage in DCCVoltages)
             if (dcComponents.Contains(dcVoltage))
-                Probes.Add(new IPProbe
+                _probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.DCVoltage,
                     EndPoint = IPProtocolProvider.GetDCComponentEndpoint(dcVoltage)
                 });
 
         if (dcComponents.Contains(DCComponents.SPS))
-            Probes.Add(new IPProbe
+            _probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.DCSPS,
                 EndPoint = IPProtocolProvider.GetDCComponentEndpoint(DCComponents.SPS)
             });
 
         if (dcComponents.Contains(DCComponents.FGControl))
-            Probes.Add(new IPProbe
+            _probes.Add(new IPProbe
             {
                 Protocol = IPProbeProtocols.DCFGControl,
                 EndPoint = IPProtocolProvider.GetDCComponentEndpoint(DCComponents.FGControl)
@@ -281,7 +288,7 @@ internal class ConfigurationProbePlan
                                 throw new NotImplementedException("bad MAD protocol version detected");
                         }
 
-                        Probes.Add(new IPProbe
+                        _probes.Add(new IPProbe
                         {
                             Protocol = version,
                             EndPoint = IPProtocolProvider.GetMadEndpoint(pos, type)
@@ -289,21 +296,21 @@ internal class ConfigurationProbePlan
                     }
 
                 if (config.EnableUpdateServer)
-                    Probes.Add(new IPProbe
+                    _probes.Add(new IPProbe
                     {
                         Protocol = IPProbeProtocols.UpdateServer,
                         EndPoint = IPProtocolProvider.GetUpdateEndpoint(pos, type)
                     });
 
                 if (config.EnableDirectDutConnection)
-                    Probes.Add(new IPProbe
+                    _probes.Add(new IPProbe
                     {
                         Protocol = IPProbeProtocols.COMServerDUT,
                         EndPoint = IPProtocolProvider.GetDirectDutConnectionEndpoint(pos, type)
                     });
 
                 if (config.EnableUART)
-                    Probes.Add(new IPProbe
+                    _probes.Add(new IPProbe
                     {
                         Protocol = IPProbeProtocols.COMServerUART,
                         EndPoint = IPProtocolProvider.GetUARTEndpoint(pos, type)
@@ -314,28 +321,28 @@ internal class ConfigurationProbePlan
             if (config.STMServer.HasValue && config.STMServer != ServerTypes.STM6000) continue;
 
             if (config.EnableObjectAccess)
-                Probes.Add(new IPProbe
+                _probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.COMServerObjectAccess,
                     EndPoint = IPProtocolProvider.GetObjectAccessEndpoint(pos, ServerTypes.STM6000)
                 });
 
             if (config.EnableCOMServer)
-                Probes.Add(new IPProbe
+                _probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.COMServer,
                     EndPoint = IPProtocolProvider.GetCOMServerEndpoint(pos, ServerTypes.STM6000)
                 });
 
             if (config.EnableSIMServer1)
-                Probes.Add(new IPProbe
+                _probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.SIMServer1,
                     EndPoint = IPProtocolProvider.GetSIMServer1Endpoint(pos, ServerTypes.STM6000)
                 });
 
             if (config.EnableBackendGateway)
-                Probes.Add(new IPProbe
+                _probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.BackendGateway,
                     EndPoint = IPProtocolProvider.GetBackendGatewayEndpoint(pos, ServerTypes.STM6000)
@@ -343,9 +350,14 @@ internal class ConfigurationProbePlan
         }
     }
 
-    public void CreateReport()
+    /// <inheritdoc/>
+    public ProbeConfigurationResult FinishProbe()
     {
-        foreach (var probe in Probes)
-            Result.Log.Add($"{probe}: {probe.Result}");
+        foreach (var probe in _probes)
+            _result.Log.Add($"{probe}: {probe.Result}");
+
+        _operation.Finished = DateTime.UtcNow;
+
+        return _result;
     }
 }

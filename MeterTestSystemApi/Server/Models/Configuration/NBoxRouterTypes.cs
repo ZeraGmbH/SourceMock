@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace MeterTestSystemApi.Models.Configuration;
 
 /// <summary>
-/// All possible PCL router types as flags.
+/// All possible PCL router types.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum NBoxRouterTypes

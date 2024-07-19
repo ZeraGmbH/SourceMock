@@ -19,6 +19,7 @@ public class ProbeTests
         var services = new ServiceCollection();
 
         services.AddSingleton<IProbeConfigurationService, ProbeConfigurationService>();
+        services.AddTransient<IConfigurationProbePlan, ConfigurationProbePlan>();
 
         Services = services.BuildServiceProvider();
 

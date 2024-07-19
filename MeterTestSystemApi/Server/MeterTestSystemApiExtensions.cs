@@ -118,5 +118,6 @@ public static class MeterTestSystemApiConfiguration
 
         /* Probing core. */
         services.AddSingleton<IProbeConfigurationService, ProbeConfigurationService>();
+        services.AddTransient<IConfigurationProbePlan, ConfigurationProbePlan>();
     }
 }

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace MeterTestSystemApi.Models.Configuration;
 
 /// <summary>
-/// All Components provided for a instrument transformer.
+/// All components provided for a instrument transformer.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum TransformerComponents

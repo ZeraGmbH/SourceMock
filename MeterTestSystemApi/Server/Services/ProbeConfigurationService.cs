@@ -1,4 +1,5 @@
 using MeterTestSystemApi.Models.ConfigurationProviders;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MeterTestSystemApi.Services;
 
@@ -6,7 +7,7 @@ namespace MeterTestSystemApi.Services;
 /// Service to scan the system for meter test system components.
 /// </summary>
 /// <remarks>This is NOT a real implemntation esp. concerning synchronisation. This is another story!</remarks>
-public class ProbeConfigurationService : IProbeConfigurationService
+public class ProbeConfigurationService(IServiceProvider services) : IProbeConfigurationService
 {
     private class Current
     {
@@ -79,16 +80,19 @@ public class ProbeConfigurationService : IProbeConfigurationService
             if (_active != null) throw new InvalidOperationException("probing already active");
 
             /* Create the plan. */
-            var plan = new ConfigurationProbePlan(request);
+            var plan = services.GetRequiredService<IConfigurationProbePlan>();
+
+            /* Fill the probes. */
+            plan.ConfigureProbe(request);
 
             /* Copy plan steps to result. */
-            plan.CreateReport();
+            var result = plan.FinishProbe();
 
             /* Only dry run allowed. */
             if (dryRun)
             {
                 /* Provide as last result. */
-                _lastResult = plan.Result;
+                _lastResult = result;
 
                 /* Finish. */
                 return Task.CompletedTask;

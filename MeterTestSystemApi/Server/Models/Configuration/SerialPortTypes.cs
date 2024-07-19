@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace MeterTestSystemApi.Models.Configuration;
 
 /// <summary>
-/// All type of serial port connection.
+/// All types of serial port connection.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum SerialPortTypes

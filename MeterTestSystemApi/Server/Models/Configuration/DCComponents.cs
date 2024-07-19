@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace MeterTestSystemApi.Models.Configuration;
 
 /// <summary>
-/// Various connections for a DC test system - combined using bit fields.
+/// Various connections for a DC test system.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum DCComponents

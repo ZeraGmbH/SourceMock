@@ -11,11 +11,11 @@ public interface IConfigurationProbePlan
     /// Load the list of probes.
     /// </summary>
     /// <param name="request">Probe configuration.</param>
-    void ConfigureProbe(ProbeConfigurationRequest request);
+    Task ConfigureProbe(ProbeConfigurationRequest request);
 
     /// <summary>
     /// Finish the probe.
     /// </summary>
     /// <returns>Result of the probing operation.</returns>
-    ProbeConfigurationResult FinishProbe();
+    Task<ProbeConfigurationResult> FinishProbe();
 }

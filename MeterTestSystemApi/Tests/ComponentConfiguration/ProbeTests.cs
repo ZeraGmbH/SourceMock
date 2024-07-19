@@ -3,6 +3,7 @@ using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using MeterTestSystemApi.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace MeterTestSystemApiTests.ComponentConfiguration;
 
@@ -20,6 +21,12 @@ public class ProbeTests
 
         services.AddSingleton<IProbeConfigurationService, ProbeConfigurationService>();
         services.AddTransient<IConfigurationProbePlan, ConfigurationProbePlan>();
+
+        var storeMock = new Mock<IProbingOperationStore>();
+
+        storeMock.Setup(s => s.Update(It.IsAny<ProbingOperation>())).ReturnsAsync((ProbingOperation op) => op);
+
+        services.AddSingleton(storeMock.Object);
 
         Services = services.BuildServiceProvider();
 
@@ -102,7 +109,7 @@ public class ProbeTests
     [TestCase(81)]
     public void Can_Detect_Bad_Position_Count(int count)
     {
-        Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => StartProbe(new() { TestPositions = MakeList(count) }, true));
+        Assert.ThrowsAsync<AggregateException>(() => StartProbe(new() { TestPositions = MakeList(count) }, true));
     }
 
     [TestCase(DCComponents.CurrentSCG06, 1)]
@@ -225,7 +232,7 @@ public class ProbeTests
 
         pos.MadProtocol = (ErrorCalculatorProtocols)33;
 
-        Assert.ThrowsAsync<NotImplementedException>(() => StartProbe(config, true));
+        Assert.ThrowsAsync<AggregateException>(() => StartProbe(config, true));
 
         /* Only old MAD protocol. */
         pos.MadProtocol = ErrorCalculatorProtocols.MAD_1;

@@ -7,7 +7,7 @@ namespace MeterTestSystemApi.Services;
 /// <summary>
 /// Probing plan.
 /// </summary>
-public class ConfigurationProbePlan : IConfigurationProbePlan
+public class ConfigurationProbePlan(IProbingOperationStore store) : IConfigurationProbePlan
 {
     private List<Probe> _probes { get; set; } = [];
 
@@ -47,7 +47,7 @@ public class ConfigurationProbePlan : IConfigurationProbePlan
     private ProbeConfigurationRequest _request => _operation.Request;
 
     /// <inheritdoc/>
-    public void ConfigureProbe(ProbeConfigurationRequest request)
+    public async Task ConfigureProbe(ProbeConfigurationRequest request)
     {
         _probes.Clear();
         _operation = new() { Created = DateTime.UtcNow, Id = Guid.NewGuid().ToString(), Request = request, Result = new() };
@@ -58,6 +58,8 @@ public class ConfigurationProbePlan : IConfigurationProbePlan
 
         for (var i = 0; i < _request.Configuration.TestPositions.Count; i++)
             _result.Configuration.TestPositions.Add(new());
+
+        await store.Add(_operation);
     }
 
     private void AddSerialProbes()
@@ -351,13 +353,15 @@ public class ConfigurationProbePlan : IConfigurationProbePlan
     }
 
     /// <inheritdoc/>
-    public ProbeConfigurationResult FinishProbe()
+    public async Task<ProbeConfigurationResult> FinishProbe()
     {
         foreach (var probe in _probes)
             _result.Log.Add($"{probe}: {probe.Result}");
 
         _operation.Finished = DateTime.UtcNow;
 
-        return _result;
+        var operation = await store.Update(_operation);
+
+        return operation.Result;
     }
 }

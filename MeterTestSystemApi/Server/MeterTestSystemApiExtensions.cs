@@ -1,6 +1,7 @@
 using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Actions.Device;
 using MeterTestSystemApi.Models;
+using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using MeterTestSystemApi.Services;
 using Microsoft.AspNetCore.Routing;
@@ -119,5 +120,15 @@ public static class MeterTestSystemApiConfiguration
         /* Probing core. */
         services.AddSingleton<IProbeConfigurationService, ProbeConfigurationService>();
         services.AddTransient<IConfigurationProbePlan, ConfigurationProbePlan>();
+        services.AddScoped<IProbingOperationStore, ProbingOperationStore>();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="services"></param>
+    public static void StartMeterTestSystemApi(this IServiceProvider services)
+    {
+        services.GetRequiredService<IProbingOperationStore>();
     }
 }

@@ -83,10 +83,10 @@ public class ProbeConfigurationService(IServiceProvider services) : IProbeConfig
             var plan = services.GetRequiredService<IConfigurationProbePlan>();
 
             /* Fill the probes. */
-            plan.ConfigureProbe(request);
+            plan.ConfigureProbe(request).Wait();
 
             /* Copy plan steps to result. */
-            var result = plan.FinishProbe();
+            var result = plan.FinishProbe().Result;
 
             /* Only dry run allowed. */
             if (dryRun)

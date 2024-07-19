@@ -10,7 +10,7 @@ namespace MeterTestSystemApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class ConfigurationProbingController(IProbeConfigurationService prober) : ControllerBase
+public class ConfigurationProbingController(IProbeConfigurationService prober, IServiceProvider services) : ControllerBase
 {
     /// <summary>
     /// Start a new probe.
@@ -21,7 +21,7 @@ public class ConfigurationProbingController(IProbeConfigurationService prober) :
     [SwaggerOperation(OperationId = "StartConfigurationProbe")]
     public async Task<ActionResult> Start([FromBody] ProbeConfigurationRequest request, bool dryRun = false)
     {
-        await prober.StartProbe(request, dryRun);
+        await prober.StartProbe(request, dryRun, services);
 
         return Ok();
     }

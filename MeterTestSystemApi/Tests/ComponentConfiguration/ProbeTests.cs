@@ -39,7 +39,7 @@ public class ProbeTests
         Services?.Dispose();
     }
 
-    private Task StartProbe(MeterTestSystemComponentsConfiguration config, bool dryRun) => Prober.StartProbe(new() { Configuration = config }, dryRun);
+    private Task StartProbe(MeterTestSystemComponentsConfiguration config, bool dryRun) => Prober.StartProbe(new() { Configuration = config }, dryRun, Services);
 
     private static List<TestPositionConfiguration> MakeList(int count) => Enumerable.Range(0, count).Select(_ => new TestPositionConfiguration
     {
@@ -341,7 +341,7 @@ public class ProbeTests
                 new(){SerialPortTypes.USB},
                 new(){SerialPortTypes.RS232,SerialPortTypes.USB},
         }
-        }, true);
+        }, true, Services);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(4));
     }
@@ -358,7 +358,7 @@ public class ProbeTests
                 false,
                 true
             }
-        }, true);
+        }, true, Services);
 
         Assert.That(Prober.Result!.Log, Has.Count.EqualTo(2));
     }

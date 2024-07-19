@@ -10,7 +10,8 @@ public interface IProbeConfigurationService
     /// </summary>
     /// <param name="request">Hints on the scan.</param>
     /// <param name="dryRun">Set to do only report what to probe.</param>
-    Task StartProbe(ProbeConfigurationRequest request, bool dryRun);
+    /// <param name="services">Scoped service provider.</param>
+    Task StartProbe(ProbeConfigurationRequest request, bool dryRun, IServiceProvider services);
 
     /// <summary>
     /// Abort the current probe operation.

@@ -7,7 +7,7 @@ namespace MeterTestSystemApi.Services;
 /// Service to scan the system for meter test system components.
 /// </summary>
 /// <remarks>This is NOT a real implemntation esp. concerning synchronisation. This is another story!</remarks>
-public class ProbeConfigurationService(IServiceProvider services) : IProbeConfigurationService
+public class ProbeConfigurationService : IProbeConfigurationService
 {
     private class Current
     {
@@ -72,7 +72,7 @@ public class ProbeConfigurationService(IServiceProvider services) : IProbeConfig
     }
 
     /// <inheritdoc/>
-    public Task StartProbe(ProbeConfigurationRequest request, bool dryRun)
+    public Task StartProbe(ProbeConfigurationRequest request, bool dryRun, IServiceProvider services)
     {
         lock (_sync)
         {

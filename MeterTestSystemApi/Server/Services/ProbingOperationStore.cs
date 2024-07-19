@@ -7,14 +7,14 @@ namespace MeterTestSystemApi.Services;
 /// <summary>
 /// 
 /// </summary>
-public class ProbingOperationStore(IHistoryCollectionFactory<ProbingOperation> factory) : IProbingOperationStore
+public class ProbingOperationStore(IObjectCollectionFactory<ProbingOperation> factory) : IProbingOperationStore
 {
-    private readonly IHistoryCollection<ProbingOperation> _collection = factory.Create("sam-configuration-probings", DatabaseCategories.MeterTestSystem);
+    private readonly IObjectCollection<ProbingOperation> _collection = factory.Create("sam-configuration-probe-operations", DatabaseCategories.MeterTestSystem);
 
     /// <summary>
     /// Underlying collection is made available for unit tests.
     /// </summary>
-    public IHistoryCollection<ProbingOperation> Collection => _collection;
+    public IObjectCollection<ProbingOperation> Collection => _collection;
 
     /// <inheritdoc/>
     public Task<ProbingOperation> Add(ProbingOperation operation) => _collection.AddItem(operation);

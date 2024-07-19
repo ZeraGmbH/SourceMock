@@ -8,7 +8,6 @@ namespace MeterTestSystemApi.Models.Configuration;
 /// Describes a probing operation which will be
 /// stored in the database.
 /// </summary>
-[BsonIgnoreExtraElements]
 public class ProbingOperation : IDatabaseObject
 {
     /// <summary>

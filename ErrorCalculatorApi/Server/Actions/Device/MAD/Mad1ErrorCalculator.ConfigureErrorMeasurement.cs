@@ -28,7 +28,7 @@ partial class Mad1ErrorCalculator
                         <referenceSrc>src-ref-1</referenceSrc>
                         <runMode>errorMeasure</runMode>
                         <highActive>true</highActive>
-                        <minPulseDuration>5</minPulseDuration>
+                        <minPulseDuration>1</minPulseDuration>
                         <useLocalDisplay>true</useLocalDisplay>
                         <showProgressBar>true</showProgressBar>
                         <useLocalResetKey>true</useLocalResetKey>

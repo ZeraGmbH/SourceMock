@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.Source;

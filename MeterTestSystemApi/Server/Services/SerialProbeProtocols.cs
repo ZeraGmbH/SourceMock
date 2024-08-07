@@ -9,4 +9,9 @@ internal enum SerialProbeProtocols
     /// FG30x frequency generator.
     /// </summary>
     FG30x,
+
+    /// <summary>
+    /// MT768 compatible.
+    /// </summary>
+    MT768,
 }

@@ -334,7 +334,7 @@ public class ProbeTests
     {
         await Prober.StartProbe(new()
         {
-            Configuration = { FrequencyGenerator = new() },
+            Configuration = { FrequencyGenerator = new(), MT768 = new() },
             SerialPorts = {
                 new(){},
                 new(){SerialPortTypes.RS232},
@@ -343,7 +343,7 @@ public class ProbeTests
         }
         }, true, Services);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(4));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(8));
     }
 
     [Test]

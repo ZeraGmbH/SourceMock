@@ -70,12 +70,21 @@ public class ConfigurationProbePlan(IProbingOperationStore store) : IConfigurati
 
             foreach (var type in SerialPorts)
                 if (types.Contains(type))
+                {
                     if (_request.Configuration.FrequencyGenerator != null)
                         _probes.Add(new SerialProbe()
                         {
                             Protocol = SerialProbeProtocols.FG30x,
                             Device = new() { Type = type, Index = (uint)i }
                         });
+
+                    if (_request.Configuration.MT768 != null)
+                        _probes.Add(new SerialProbe()
+                        {
+                            Protocol = SerialProbeProtocols.MT768,
+                            Device = new() { Type = type, Index = (uint)i }
+                        });
+                }
         }
     }
 

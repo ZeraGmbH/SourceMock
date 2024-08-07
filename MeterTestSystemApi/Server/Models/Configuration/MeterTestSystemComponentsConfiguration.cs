@@ -15,6 +15,11 @@ public class MeterTestSystemComponentsConfiguration
     public SerialPortComponentConfiguration? FrequencyGenerator { get; set; }
 
     /// <summary>
+    /// Connection to the a MT786 compatible device.
+    /// </summary>
+    public SerialPortComponentConfiguration? MT768 { get; set; }
+
+    /// <summary>
     /// Configuration if each test position. Entries must not be 
     /// null but test positions can be disabled if needed.
     /// </summary>

@@ -51,6 +51,6 @@ public class BarcodeReaderTests
             Assert.That(task.Result, Is.Not.Empty);
         }
 
-        TestContext.WriteLine(string.Join("\n", _logger.Messages));
+        TestContext.Out.WriteLine(string.Join("\n", _logger.Messages));
     }
 }

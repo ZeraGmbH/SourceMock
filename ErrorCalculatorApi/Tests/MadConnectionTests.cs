@@ -74,13 +74,13 @@ public class MadConnectionTests
         var jobId = await StartErrorMeasurement();
 
         for (var i = 3; i-- > 0;)
-            TestContext.WriteLine(await ReadJobStatus(jobId, false));
+            TestContext.Out.WriteLine(await ReadJobStatus(jobId, false));
 
         for (var i = 0; ; i = 1)
         {
             var status = await ReadJobStatus(jobId, i == 0);
 
-            TestContext.WriteLine(status);
+            TestContext.Out.WriteLine(status);
 
             if (status.Item1 != "running") break;
         }

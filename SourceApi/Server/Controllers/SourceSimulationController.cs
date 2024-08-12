@@ -5,6 +5,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 using SourceApi.Actions.Source;
 using SourceApi.Model;
+using ZERA.WebSam.Shared.Security;
 
 namespace SourceApi.Controllers
 {
@@ -29,7 +30,7 @@ namespace SourceApi.Controllers
         /// <returns></returns>
         /// <response code="200">If the source state retrieval was successful.</response>
         /// <response code="404">If no source state was set yet.</response>
-        [HttpGet("SourceState")]
+        [HttpGet("SourceState"), SamAuthorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerOperation(OperationId = "GetSourceState")]
@@ -53,7 +54,7 @@ namespace SourceApi.Controllers
         public ActionResult SetSourceState([FromBody] SimulatedSourceState simulatedSourceState)
         {
             _source.SetSimulatedSourceState(simulatedSourceState);
-            _logger.LogTrace($"New simulated source state set: {simulatedSourceState}");
+            _logger.LogTrace("New simulated source state set: {NewState}", simulatedSourceState);
             return Ok();
         }
     }

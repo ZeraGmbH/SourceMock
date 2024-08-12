@@ -9,6 +9,7 @@ using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared;
+using ZERA.WebSam.Shared.Security;
 
 namespace SourceApi.Controllers;
 
@@ -23,12 +24,13 @@ namespace SourceApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/Source/[controller]")]
+[SamAuthorize(WebSamRole.testcaseexecutor)]
 public class DosageController(ISource device, IInterfaceLogger interfaceLogger) : ControllerBase
 {
     /// <summary>
     /// The current source to use for this frequest.
     /// </summary>
-    private readonly ISource _device = device;
+    private readonly IDosage _device = device;
 
     /// <summary>
     /// Start a dosage meaurement.

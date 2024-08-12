@@ -6,6 +6,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZERA.WebSam.Shared.Security;
 
 namespace SourceApi.Controllers
 {
@@ -21,6 +22,7 @@ namespace SourceApi.Controllers
     [ApiVersion("1.0")]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
+    [SamAuthorize(WebSamRole.testcaseexecutor)]
     public class SourceController(ILogger<SourceController> logger, ISource source, IInterfaceLogger interfaceLogger) : Controller
     {
         /// <summary>
@@ -123,7 +125,7 @@ namespace SourceApi.Controllers
         /// <returns>The loadpoint. HTTP 204 when the source is turned off.</returns>
         /// <response code="200">If there is a loadpoint to be returned.</response>
         /// <response code="204">If the source is turned off.</response>
-        [HttpGet("Loadpoint")]
+        [HttpGet("Loadpoint"), SamAuthorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [SwaggerOperation(OperationId = "GetLoadpoint")]
@@ -141,7 +143,7 @@ namespace SourceApi.Controllers
         /// </summary>
         /// <returns>The information including some dates.</returns>
         /// <response code="200">If there is a loadpointinfo to be returned.</response>
-        [HttpGet("LoadpointInfo")]
+        [HttpGet("LoadpointInfo"), SamAuthorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetLoadpointInfo")]
         public ActionResult<LoadpointInfo> GetLoadpointInfo() => source.GetActiveLoadpointInfo(interfaceLogger);

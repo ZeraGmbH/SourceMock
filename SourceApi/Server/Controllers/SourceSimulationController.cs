@@ -48,7 +48,7 @@ namespace SourceApi.Controllers
         /// <param name="simulatedSourceState">The state to be set.</param>
         /// <returns></returns>
         /// <response code="200">If the source state was successfully set.</response>
-        [HttpPost("SourceState")]
+        [HttpPost("SourceState"), SamAuthorize(WebSamRole.testcaseexecutor)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "SetSourceState")]
         public ActionResult SetSourceState([FromBody] SimulatedSourceState simulatedSourceState)

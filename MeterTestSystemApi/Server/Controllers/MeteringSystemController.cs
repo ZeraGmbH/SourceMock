@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using ZERA.WebSam.Shared.Security;
 
 namespace MeterTestSystemApi.Controllers;
 
@@ -19,6 +20,7 @@ namespace MeterTestSystemApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
+[SamAuthorize]
 public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger interfaceLogger) : ControllerBase
 {
     /// <summary>
@@ -44,7 +46,7 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     /// <summary>
     /// Set the physical configuration of a meter test system.
     /// </summary>
-    [HttpPut("AmplifiersAndReferenceMeter")]
+    [HttpPut("AmplifiersAndReferenceMeter"), SamAuthorize(WebSamRole.testsystemadmin)]
     [SwaggerOperation(OperationId = "SetAmplifiersAndReferenceMeter")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

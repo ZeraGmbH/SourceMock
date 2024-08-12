@@ -3,6 +3,7 @@ using BarcodeApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using ZERA.WebSam.Shared.Security;
 
 namespace ErrorCalculatorApi.Controllers;
 
@@ -13,6 +14,7 @@ namespace ErrorCalculatorApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/BarcodeReader/[controller]")]
+[SamAuthorize(WebSamRole.testcaseexecutor)]
 public class BarcodeReaderController(IBarcodeReader _device) : ControllerBase
 {
     /// <summary>

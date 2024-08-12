@@ -7,6 +7,7 @@ using SerialPortProxy;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using ZERA.WebSam.Shared.Security;
 
 namespace RefMeterApi.Controllers;
 
@@ -22,6 +23,7 @@ namespace RefMeterApi.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [TypeFilter<RefMeterApiExceptionFilter>]
+[SamAuthorize(WebSamRole.testcaseexecutor)]
 public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogger) : ControllerBase
 {
     /// <summary>
@@ -34,7 +36,7 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     /// </summary>
     /// <param name="firstActiveCurrentPhase">Optional index of the first active current phase.</param>
     /// <returns>The current data.</returns>
-    [HttpGet("ActualValues")]
+    [HttpGet("ActualValues"), SamAuthorize]
     [SwaggerOperation(OperationId = "GetActualValues")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -49,7 +51,7 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     /// Get the list of supported measurement modes.
     /// </summary>
     /// <returns>The list of modes.</returns>
-    [HttpGet("MeasurementModes")]
+    [HttpGet("MeasurementModes"), SamAuthorize]
     [SwaggerOperation(OperationId = "GetMeasurementModes")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -64,7 +66,7 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     /// Get the current measurement mode.
     /// </summary>
     /// <returns>The current mode.</returns>
-    [HttpGet("MeasurementMode")]
+    [HttpGet("MeasurementMode"), SamAuthorize]
     [SwaggerOperation(OperationId = "GetMeasurementMode")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -92,7 +94,7 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     /// <summary>
     /// Report if the reference meter can be used.
     /// </summary>
-    [HttpGet("Available")]
+    [HttpGet("Available"), SamAuthorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "ReferenceMeterIsAvailable")]
     public ActionResult<bool> IsAvailable() =>
@@ -102,7 +104,7 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     /// Get the current meter constant of the reference meter.
     /// </summary>
     /// <returns>The meter constant (impulses per kWh).</returns>
-    [HttpGet("MeterConstant")]
+    [HttpGet("MeterConstant"), SamAuthorize]
     [SwaggerOperation(OperationId = "GetMeterConstant")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using MeterTestSystemApi.Models.ConfigurationProviders;
+using ZERA.WebSam.Shared.Security;
 
 namespace MeterTestSystemApi.Controllers;
 
@@ -10,6 +11,7 @@ namespace MeterTestSystemApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
+[SamAuthorize(WebSamRole.testsystemadmin)]
 public class ConfigurationProbingController(IProbeConfigurationService prober, IServiceProvider services) : ControllerBase
 {
     /// <summary>

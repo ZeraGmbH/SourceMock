@@ -7,6 +7,7 @@ using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using ZERA.WebSam.Shared.Security;
 
 namespace ErrorCalculatorApi.Controllers;
 
@@ -21,6 +22,7 @@ namespace ErrorCalculatorApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
+[SamAuthorize(WebSamRole.testcaseexecutor)]
 public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLogger interfaceLogger) : ControllerBase
 {
     /// <summary>
@@ -45,7 +47,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     /// Retrieve the current firmware of the error calculator.
     /// </summary>
     /// <returns>Firmware information.</returns>
-    [HttpGet("Version/{pos?}")]
+    [HttpGet("Version/{pos?}"), SamAuthorize]
     [SwaggerOperation(OperationId = "GetFirmware")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -172,18 +174,16 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     /// <summary>
     /// Report if the error calculator can be used.
     /// </summary>
-    [HttpGet("Available/{pos?}")]
+    [HttpGet("Available/{pos?}"), SamAuthorize]
     [SwaggerOperation(OperationId = "ErrorCalculatorIsAvailable")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<bool> IsAvailable(int pos = 0) =>
-        Ok(devices[pos].GetAvailable(interfaceLogger));
+    public ActionResult<bool> IsAvailable(int pos = 0) => Ok(devices[pos].GetAvailable(interfaceLogger));
 
     /// <summary>
     /// Report the number of error calculators.
     /// </summary>
     [HttpGet("Count")]
-    [SwaggerOperation(OperationId = "NumberOfErrorCalculators")]
+    [SwaggerOperation(OperationId = "NumberOfErrorCalculators"), SamAuthorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<int> Count() =>
-        Ok(devices.Length);
+    public ActionResult<int> Count() => Ok(devices.Length);
 }

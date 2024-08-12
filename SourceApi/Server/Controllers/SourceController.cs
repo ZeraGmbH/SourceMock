@@ -30,7 +30,7 @@ namespace SourceApi.Controllers
         /// </summary>
         /// <returns>The corresponding<see cref="SourceCapabilities"/>-Object for this source.</returns>
         /// /// <response code="200">If the capabilities could be returned successfully.</response>
-        [HttpGet("Capabilities")]
+        [HttpGet("Capabilities"), SamAuthorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetCapabilities")]
         public async Task<ActionResult<SourceCapabilities>> GetCapablities() => Ok(await source.GetCapabilities(interfaceLogger));
@@ -40,7 +40,7 @@ namespace SourceApi.Controllers
         /// </summary>
         /// <returns>The corresponding<see cref="SourceCapabilities"/>-Object for this source.</returns>
         /// <response code="200">If the capabilities could be returned successfully.</response>
-        [HttpGet("Available")]
+        [HttpGet("Available"), SamAuthorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "SourceIsAvailable")]
         public ActionResult<bool> IsAvailable() => Ok(source.GetAvailable(interfaceLogger));

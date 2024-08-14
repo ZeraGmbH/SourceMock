@@ -26,7 +26,8 @@ public class ErrorCalculatorConfiguration
 
     /// <summary>
     /// Depending on the connection type a description of the endpoint
-    /// to connect to - e.g. IP:Port for TCP base connections.
+    /// to connect to - e.g. IP:Port for TCP based connections using the
+    /// MAD XML protocol oder full endpoint when using the HTTP proxy.
     /// </summary>
     [BsonElement("endpoint")]
     [NotNull, Required]

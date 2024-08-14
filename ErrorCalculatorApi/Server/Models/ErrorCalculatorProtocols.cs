@@ -12,4 +12,9 @@ public enum ErrorCalculatorProtocols
     /// Error calculator supported MAD XML communication,
     /// </summary>
     MAD_1 = 0,
+
+    /// <summary>
+    /// Using the HTTP/REST proxy.
+    /// </summary>
+    HTTP = 1
 }

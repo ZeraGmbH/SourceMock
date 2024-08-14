@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using ErrorCalculatorApi.Actions.Device;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging;
 using ZERA.WebSam.Shared;
@@ -14,7 +15,7 @@ namespace ErrorCalculatorApi.Actions;
 /// Error calculator interface for external implementations
 /// based on a REST interface.
 /// </summary>
-public class RestErrorCalculator(ILoggingHttpClient errorCalculator, ILogger<RestErrorCalculator> logger) : IRestErrorCalculator
+public class RestErrorCalculator(ILoggingHttpClient errorCalculator, ILogger<RestErrorCalculator> logger) : IErrorCalculatorInternal
 {
     private bool _initialized = false;
 
@@ -81,7 +82,7 @@ public class RestErrorCalculator(ILoggingHttpClient errorCalculator, ILogger<Res
         => errorCalculator.PostAsync(interfaceLogger, new Uri(_uri, $"{(continuous ? "StartContinuous" : "StartSingle")}?connection={ToUrl(connection)}"));
 
     /// <inheritdoc/>
-    public void Initialize(RestConfiguration? endpoint)
+    public Task Initialize(int position, ErrorCalculatorConfiguration configuration, IServiceProvider services)
     {
         /* Can be only done once. */
         if (_initialized) throw new InvalidOperationException("Already initialized");
@@ -90,17 +91,18 @@ public class RestErrorCalculator(ILoggingHttpClient errorCalculator, ILogger<Res
         _uri = null!;
 
         /* Validate. */
-        if (string.IsNullOrEmpty(endpoint?.Endpoint)) throw new InvalidOperationException("no error calculator connection configured");
+        if (string.IsNullOrEmpty(configuration?.Endpoint) || configuration.Protocol != ErrorCalculatorProtocols.HTTP)
+            throw new InvalidOperationException("no error calculator connection configured");
 
         /* Configure connection for logging. */
         errorCalculator.LogConnection = new()
         {
-            Endpoint = endpoint.Endpoint,
+            Endpoint = configuration.Endpoint,
             Protocol = InterfaceLogProtocolTypes.Http,
             WebSamType = InterfaceLogSourceTypes.ErrorCalculator,
         };
 
-        _uri = new Uri(endpoint.Endpoint.TrimEnd('/') + "/");
+        _uri = new Uri(configuration.Endpoint.TrimEnd('/') + "/");
 
         /* May have authorisation. */
         if (!string.IsNullOrEmpty(_uri.UserInfo))
@@ -109,5 +111,10 @@ public class RestErrorCalculator(ILoggingHttpClient errorCalculator, ILogger<Res
 
         /* Did it. */
         _initialized = true;
+
+        return Task.CompletedTask;
     }
+
+    /// <inheritdoc/>
+    public void Destroy() { }
 }

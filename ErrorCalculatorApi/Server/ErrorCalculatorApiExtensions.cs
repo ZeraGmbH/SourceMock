@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ZERA.WebSam.Shared;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using ErrorCalculatorApi.Actions;
 
 namespace ErrorCalculatorApi;
 
@@ -51,12 +52,13 @@ public static class ErrorCalculatorApiConfiguration
     public static void UseErrorCalculatorApi(this IServiceCollection services, IConfiguration configuration)
     {
         /* Make all implementations transient since lifetime is controlled by a meter test system. */
+        services.AddTransient<IErrorCalculatorMock, ErrorCalculatorMock>();
         services.AddTransient<ISerialPortFGErrorCalculator, SerialPortFGErrorCalculator>();
         services.AddTransient<ISerialPortMTErrorCalculator, SerialPortMTErrorCalculator>();
-        services.AddTransient<IErrorCalculatorMock, ErrorCalculatorMock>();
 
         services.AddTransient<IErrorCalculatorFactory, ErrorCalculatorFactory>();
         services.AddKeyedTransient<IErrorCalculatorInternal, Mad1ErrorCalculator>(ErrorCalculatorProtocols.MAD_1);
+        services.AddKeyedTransient<IErrorCalculatorInternal, RestErrorCalculator>(ErrorCalculatorProtocols.HTTP);
 
         services.AddKeyedTransient<IMadConnection, MadTcpConnection>(ErrorCalculatorConnectionTypes.TCP);
     }

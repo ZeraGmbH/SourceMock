@@ -287,6 +287,8 @@ public class ConfigurationProbePlan(IProbingOperationStore store) : IConfigurati
                         /* Must match protocol version. */
                         switch (config.MadProtocol)
                         {
+                            case ErrorCalculatorProtocols.HTTP:
+                                continue;
                             case ErrorCalculatorProtocols.MAD_1:
                                 if (version == IPProbeProtocols.MADServer1) break;
 

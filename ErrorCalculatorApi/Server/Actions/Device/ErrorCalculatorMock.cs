@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.Source;
+using System.Runtime.CompilerServices;
 
 namespace ErrorCalculatorApi.Actions.Device;
 
@@ -17,6 +18,12 @@ public interface IErrorCalculatorMock : IErrorCalculator { }
 /// to avoid cyclic dependencies during setup.</param>
 public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
 {
+    private readonly object _pulseLock = new();
+
+    private DateTime _pulseTime = DateTime.UtcNow;
+
+    private long _dutPulses = Environment.TickCount64;
+
     /// <inheritdoc/>
     public bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
 
@@ -144,5 +151,21 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
-    public Task<long?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger) => Task.FromResult<long?>(null);
+    public Task<long?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger)
+    {
+        lock (_pulseLock)
+        {
+            var now = DateTime.UtcNow;
+            var elapsed = (now - _pulseTime).TotalSeconds;
+
+            /* Simulate around 1 pulse per second. */
+            if (elapsed > 0)
+            {
+                _pulseTime = now;
+                _dutPulses += (long)Math.Ceiling(elapsed * Random.Shared.Next(90, 110) / 100.0);
+            }
+
+            return Task.FromResult<long?>(_dutPulses);
+        }
+    }
 }

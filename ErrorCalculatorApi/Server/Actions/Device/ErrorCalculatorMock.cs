@@ -98,7 +98,7 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
         return Task.FromResult(new ErrorMeasurementStatus
         {
             ErrorValue = _status.ErrorValue,
-            Progress = _status.Progress,
+            Progress = double.IsNaN(_status.Progress.GetValueOrDefault()) ? null : _status.Progress,
             State = _status.State,
         });
     }

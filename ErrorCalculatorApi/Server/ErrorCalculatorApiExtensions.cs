@@ -1,14 +1,16 @@
+using ErrorCalculatorApi.Actions;
 using ErrorCalculatorApi.Actions.Device;
 using ErrorCalculatorApi.Actions.Device.MAD;
+using ErrorCalculatorApi.Actions.Device.REST;
+using ErrorCalculatorApi.Controllers;
 using ErrorCalculatorApi.Exceptions;
 using ErrorCalculatorApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ZERA.WebSam.Shared;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using ErrorCalculatorApi.Actions;
+using ZERA.WebSam.Shared;
 
 namespace ErrorCalculatorApi;
 
@@ -61,5 +63,10 @@ public static class ErrorCalculatorApiConfiguration
         services.AddKeyedTransient<IErrorCalculatorInternal, RestErrorCalculator>(ErrorCalculatorProtocols.HTTP);
 
         services.AddKeyedTransient<IMadConnection, MadTcpConnection>(ErrorCalculatorConnectionTypes.TCP);
+
+        if (configuration.GetValue<bool>("UseErrorCalculatorRestMock") == true)
+            services.AddKeyedSingleton<IErrorCalculator, ErrorCalculatorMock>(ErrorCalculatorRestMockController.MockKey);
+        else
+            services.AddKeyedSingleton<IErrorCalculator, UnavailableErrorCalculator>(ErrorCalculatorRestMockController.MockKey);
     }
 }

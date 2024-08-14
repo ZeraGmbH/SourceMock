@@ -1,15 +1,14 @@
+using ErrorCalculatorApi.Models;
+using Microsoft.Extensions.Logging;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using ErrorCalculatorApi.Actions.Device;
-using ErrorCalculatorApi.Models;
-using Microsoft.Extensions.Logging;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
-namespace ErrorCalculatorApi.Actions;
+namespace ErrorCalculatorApi.Actions.Device.REST;
 
 /// <summary>
 /// Error calculator interface for external implementations
@@ -75,11 +74,11 @@ public class RestErrorCalculator(ILoggingHttpClient errorCalculator, ILogger<Res
 
     /// <inheritdoc/>
     public Task SetErrorMeasurementParameters(IInterfaceLogger interfaceLogger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant)
-        => errorCalculator.PutAsync(interfaceLogger, new Uri(_uri, $"?dutMeterConstant={ToUrl(dutMeterConstant)}&impulses={ToUrl(impulses)}&refMeterMeterConstant?{ToUrl(refMeterMeterConstant)}"));
+        => errorCalculator.PutAsync(interfaceLogger, new Uri(_uri, $"?dutMeterConstant={ToUrl(dutMeterConstant)}&impulses={ToUrl(impulses)}&refMeterMeterConstant={ToUrl(refMeterMeterConstant)}"));
 
     /// <inheritdoc/>
     public Task StartErrorMeasurement(IInterfaceLogger interfaceLogger, bool continuous, ErrorCalculatorMeterConnections? connection)
-        => errorCalculator.PostAsync(interfaceLogger, new Uri(_uri, $"{(continuous ? "StartContinuous" : "StartSingle")}?connection={ToUrl(connection)}"));
+        => errorCalculator.PostAsync(interfaceLogger, new Uri(_uri, $"{(continuous ? "StartContinuous" : "StartSingle")}{(connection.HasValue ? $"?connection={ToUrl(connection)}" : string.Empty)}"));
 
     /// <inheritdoc/>
     public Task Initialize(int position, ErrorCalculatorConfiguration configuration, IServiceProvider services)

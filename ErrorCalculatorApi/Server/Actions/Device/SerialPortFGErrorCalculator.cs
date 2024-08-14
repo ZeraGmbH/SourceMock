@@ -52,7 +52,7 @@ public class SerialPortFGErrorCalculator(ILogger<SerialPortFGErrorCalculator> lo
     public Task SetErrorMeasurementParameters(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections() => throw new NotImplementedException();
+    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections(IInterfaceLogger logger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection) => throw new NotImplementedException();

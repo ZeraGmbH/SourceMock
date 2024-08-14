@@ -35,7 +35,7 @@ public interface IErrorCalculator
     /// Report all connections that can be used as a parameter of StartErrorMeasurement.
     /// </summary>
     /// <returns>List of supported connections, may be empty.</returns>
-    Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections();
+    Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections(IInterfaceLogger interfaceLogger);
 
     /// <summary>
     /// Terminate the error measurement.

@@ -113,7 +113,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<ErrorCalculatorMeterConnections[]>> GetSupportedMeterConnections(int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(devices[pos].GetSupportedMeterConnections);
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].GetSupportedMeterConnections(interfaceLogger));
 
     /// <summary>
     /// Abort the error measurement.

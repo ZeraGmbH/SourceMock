@@ -27,7 +27,7 @@ internal class UnavailableErrorCalculator : IErrorCalculator
 
     public Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection) => throw new ErrorCalculatorNotReadyException();
 
-    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections() => throw new ErrorCalculatorNotReadyException();
+    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
 
     /// <inheritdoc/>
     public Task AbortAllJobs(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();

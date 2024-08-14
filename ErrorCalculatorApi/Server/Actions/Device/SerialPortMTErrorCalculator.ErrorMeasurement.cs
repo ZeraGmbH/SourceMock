@@ -231,4 +231,7 @@ partial class SerialPortMTErrorCalculator
     /// <inheritdoc/>
     public Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection) =>
         _device.Execute(logger, SerialPortRequest.Create(continuous ? "AEB1" : "AEB0", "AEBACK"))[0];
+
+    /// <inheritdoc/>
+    public Task<long?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger) => Task.FromResult<long?>(null);
 }

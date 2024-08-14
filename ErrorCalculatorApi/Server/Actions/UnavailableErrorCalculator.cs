@@ -38,6 +38,9 @@ public class UnavailableErrorCalculator : IErrorCalculator
     public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
 
     /// <inheritdoc/>
+    public Task<long?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
+
+    /// <inheritdoc/>
     public Task AbortAllJobs(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
 
     /// <inheritdoc/>

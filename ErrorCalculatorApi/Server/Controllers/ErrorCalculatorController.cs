@@ -74,6 +74,21 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
         ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].GetErrorStatus(interfaceLogger));
 
     /// <summary>
+    /// Read the number of device under test impulses since the last counter reset.
+    /// </summary>
+    /// <returns>Number of impulses or null if count query is not supported.</returns>
+    [HttpGet("DutImpulses/{pos?}")]
+    [SwaggerOperation(OperationId = "GetDeviceUnderTestImpulses")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult<long?>> GetDeviceUnderTestImpulses(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].GetNumberOfDeviceUnderTestImpulses(interfaceLogger));
+
+    /// <summary>
     /// Start a single error measurement.
     /// </summary>
     [HttpPost("StartSingle/{pos?}")]

@@ -142,4 +142,7 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
     public void Dispose()
     {
     }
+
+    /// <inheritdoc/>
+    public Task<long?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger) => Task.FromResult<long?>(null);
 }

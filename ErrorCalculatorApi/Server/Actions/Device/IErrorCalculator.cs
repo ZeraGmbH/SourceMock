@@ -66,4 +66,13 @@ public interface IErrorCalculator
     /// <param name="logger"></param>
     /// <param name="on">Set to connect else disconnect.</param>
     Task ActivateSource(IInterfaceLogger logger, bool on);
+
+    /// <summary>
+    /// Retrieve the number of impulses detected from the
+    /// device under test.
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <returns>Number of impulses since last counter reset or
+    /// null if readout is not supported.</returns>
+    Task<long?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger);
 }

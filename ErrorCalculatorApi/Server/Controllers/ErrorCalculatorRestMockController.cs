@@ -110,4 +110,13 @@ public class ErrorCalculatorRestMockController([FromKeyedServices(ErrorCalculato
     [HttpGet("Available")]
     public ActionResult<bool> IsAvailable() =>
         Ok(device.GetAvailable(interfaceLogger));
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("DutImpulses")]
+    public Task<ActionResult<long?>> GetDeviceUnderTestImpulses() =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => device.GetNumberOfDeviceUnderTestImpulses(interfaceLogger));
+
 }

@@ -90,6 +90,9 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
         _dutImpules = dut;
     }
 
+    /// <inheritdoc/>
+    public Task<long?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger) => Task.FromResult<long?>(null);
+
     /* [TODO] add support for 0x HEX response. */
     private static long ParseLong(string number) => long.Parse(number);
 }

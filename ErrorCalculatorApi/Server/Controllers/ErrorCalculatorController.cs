@@ -22,7 +22,6 @@ namespace ErrorCalculatorApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
-[SamAuthorize(WebSamRole.testcaseexecutor)]
 public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLogger interfaceLogger) : ControllerBase
 {
     /// <summary>
@@ -32,7 +31,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     /// <param name="impulses">Number of impulses.</param>
     /// <param name="refMeterMeterConstant">Meter constant for the reference meter - impulses per kWh.</param>
     /// <param name="pos"></param>
-    [HttpPut("{pos?}")]
+    [HttpPut("{pos?}"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "SetParameters")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -62,7 +61,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     /// Retrieve the current status of the error measurement.
     /// </summary>
     /// <returns>Status information.</returns>
-    [HttpGet("{pos?}")]
+    [HttpGet("{pos?}"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "GetStatus")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -77,7 +76,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     /// Read the number of device under test impulses since the last counter reset.
     /// </summary>
     /// <returns>Number of impulses or null if count query is not supported.</returns>
-    [HttpGet("DutImpulses/{pos?}")]
+    [HttpGet("DutImpulses/{pos?}"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "GetDeviceUnderTestImpulses")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -91,7 +90,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     /// <summary>
     /// Start a single error measurement.
     /// </summary>
-    [HttpPost("StartSingle/{pos?}")]
+    [HttpPost("StartSingle/{pos?}"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "StartSingle")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -105,7 +104,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     /// <summary>
     /// Start a continous error measurement.
     /// </summary>
-    [HttpPost("StartContinuous/{pos?}")]
+    [HttpPost("StartContinuous/{pos?}"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "StartContinuous")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -119,7 +118,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     /// <summary>
     /// Get all supported physical connections.
     /// </summary>
-    [HttpGet("GetSupportedMeterConnections/{pos?}")]
+    [HttpGet("GetSupportedMeterConnections/{pos?}"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "GetSupportedMeterConnections")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -133,7 +132,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     /// <summary>
     /// Abort the error measurement.
     /// </summary>
-    [HttpPost("Abort/{pos?}")]
+    [HttpPost("Abort/{pos?}"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "Abort")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -147,7 +146,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     /// <summary>
     /// Abort the error measurement.
     /// </summary>
-    [HttpPost("AbortAll/{pos?}")]
+    [HttpPost("AbortAll/{pos?}"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "AbortAll")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -161,7 +160,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     /// <summary>
     /// Make sure that source is connected to device under test.
     /// </summary>
-    [HttpPost("ActivateSource/{pos?}")]
+    [HttpPost("ActivateSource/{pos?}"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "ActivateSource")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -175,7 +174,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     /// <summary>
     /// Disconnect source from all devices under test.
     /// </summary>
-    [HttpPost("DeactivateSource/{pos?}")]
+    [HttpPost("DeactivateSource/{pos?}"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "DeactivateSource")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -197,8 +196,8 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     /// <summary>
     /// Report the number of error calculators.
     /// </summary>
-    [HttpGet("Count")]
-    [SwaggerOperation(OperationId = "NumberOfErrorCalculators"), SamAuthorize]
+    [HttpGet("Count"), SamAuthorize]
+    [SwaggerOperation(OperationId = "NumberOfErrorCalculators")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<int> Count() => Ok(devices.Length);
 }

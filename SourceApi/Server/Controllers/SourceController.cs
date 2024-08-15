@@ -22,7 +22,6 @@ namespace SourceApi.Controllers
     [ApiVersion("1.0")]
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
-    [SamAuthorize(WebSamRole.testcaseexecutor)]
     public class SourceController(ILogger<SourceController> logger, ISource source, IInterfaceLogger interfaceLogger) : Controller
     {
         /// <summary>
@@ -54,7 +53,7 @@ namespace SourceApi.Controllers
         /// <response code="400">If the loadpoint was (generally) malformed. The loadpoint cannot be set with any source.</response>
         /// <response code="422">If the loadpoint was wellformed but invalid. The loadpoint cannot be set with this source.</response>
         /// <response code="500">If an unexpected error occured.</response>
-        [HttpPut("Loadpoint")]
+        [HttpPut("Loadpoint"), SamAuthorize(WebSamRole.testcaseexecutor)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
@@ -97,7 +96,7 @@ namespace SourceApi.Controllers
         /// <response code="200">If the source was turned off successfully.</response>
         /// <response code="409">If the source could not be turned off successfully.</response>
         /// <response code="500">If an unexpected error occured.</response>
-        [HttpPost("TurnOff")]
+        [HttpPost("TurnOff"), SamAuthorize(WebSamRole.testcaseexecutor)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

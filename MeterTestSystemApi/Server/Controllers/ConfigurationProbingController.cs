@@ -11,7 +11,6 @@ namespace MeterTestSystemApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
-[SamAuthorize(WebSamRole.testsystemadmin)]
 public class ConfigurationProbingController(IProbeConfigurationService prober, IServiceProvider services) : ControllerBase
 {
     /// <summary>
@@ -19,7 +18,7 @@ public class ConfigurationProbingController(IProbeConfigurationService prober, I
     /// </summary>
     /// <param name="request">Probe configuration to use.</param>
     /// <param name="dryRun">Set to only get a list of what will be probed.</param>
-    [HttpPost]
+    [HttpPost, SamAuthorize(WebSamRole.testsystemadmin)]
     [SwaggerOperation(OperationId = "StartConfigurationProbe")]
     public async Task<ActionResult> Start([FromBody] ProbeConfigurationRequest request, bool dryRun = false)
     {
@@ -31,7 +30,7 @@ public class ConfigurationProbingController(IProbeConfigurationService prober, I
     /// <summary>
     /// Cancel the current probing.
     /// </summary>
-    [HttpDelete]
+    [HttpDelete, SamAuthorize(WebSamRole.testsystemadmin)]
     [SwaggerOperation(OperationId = "CancelConfigurationProbe")]
     public async Task<ActionResult> Cancel()
     {
@@ -44,7 +43,7 @@ public class ConfigurationProbingController(IProbeConfigurationService prober, I
     /// Get the result of the last probing.
     /// </summary>
     /// <returns>null if a probing is still active.</returns>
-    [HttpGet]
+    [HttpGet, SamAuthorize(WebSamRole.testsystemadmin)]
     [SwaggerOperation(OperationId = "GetConfigurationProbeResult")]
     public ActionResult<ProbeConfigurationResult?> GetResult()
         => prober.IsActive ? NoContent() : prober.Result;

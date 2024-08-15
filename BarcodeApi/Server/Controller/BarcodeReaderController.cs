@@ -14,7 +14,6 @@ namespace ErrorCalculatorApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/BarcodeReader/[controller]")]
-[SamAuthorize(WebSamRole.testcaseexecutor)]
 public class BarcodeReaderController(IBarcodeReader _device) : ControllerBase
 {
     /// <summary>
@@ -22,7 +21,7 @@ public class BarcodeReaderController(IBarcodeReader _device) : ControllerBase
     /// </summary>
     /// <param name="code">Barcode to use.</param>
     /// <exception cref="NotImplementedException">Barcode reader is not in mock mode.</exception>
-    [HttpPut]
+    [HttpPut, SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "SimulateBarcode")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

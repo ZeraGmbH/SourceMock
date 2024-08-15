@@ -24,7 +24,6 @@ namespace SourceApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/Source/[controller]")]
-[SamAuthorize(WebSamRole.testcaseexecutor)]
 public class DosageController(ISource device, IInterfaceLogger interfaceLogger) : ControllerBase
 {
     /// <summary>
@@ -35,7 +34,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     /// <summary>
     /// Start a dosage meaurement.
     /// </summary>
-    [HttpPost("Start")]
+    [HttpPost("Start"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "Start")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -49,7 +48,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     /// <summary>
     /// Start a dosage meaurement.
     /// </summary>
-    [HttpPost("Cancel")]
+    [HttpPost("Cancel"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "Cancel")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -64,7 +63,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     /// Change the DOS mode.
     /// </summary>
     /// <param name="on">Set to activate DOS mode - current will be turned on.</param>
-    [HttpPost("DOSMode")]
+    [HttpPost("DOSMode"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "SetDOSMode")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -79,7 +78,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     /// Read the current progress of a dosage operation.
     /// </summary>
     /// <returns>The information on the current dosage measurement.</returns>
-    [HttpGet("Progress")]
+    [HttpGet("Progress"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "GetProgress")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -95,7 +94,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     /// </summary>
     /// <param name="energy">The energy to sent to the DUT - in Wh.</param>
     /// <param name="meterConstant">The meter constant of the reference meter.</param>
-    [HttpPut("Energy")]
+    [HttpPut("Energy"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "SetEnergy")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
@@ -110,7 +109,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     /// Ask the server if the dosage is activated but the current is off.
     /// </summary>
     /// <returns>Dosage mode is on but current is off.</returns>
-    [HttpGet("IsDosageCurrentOff")]
+    [HttpGet("IsDosageCurrentOff"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "IsDosageCurrentOff")]
     [ProducesResponseType(StatusCodes.Status200OK)]

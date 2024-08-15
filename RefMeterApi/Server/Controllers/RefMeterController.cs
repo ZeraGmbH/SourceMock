@@ -23,7 +23,6 @@ namespace RefMeterApi.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [TypeFilter<RefMeterApiExceptionFilter>]
-[SamAuthorize(WebSamRole.testcaseexecutor)]
 public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogger) : ControllerBase
 {
     /// <summary>
@@ -80,7 +79,7 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     /// <summary>
     /// Set the current measurement mode.
     /// </summary>
-    [HttpPut("MeasurementMode")]
+    [HttpPut("MeasurementMode"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "SetMeasurementMode")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

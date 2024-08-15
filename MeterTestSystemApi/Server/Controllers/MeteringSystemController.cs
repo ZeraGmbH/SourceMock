@@ -20,7 +20,6 @@ namespace MeterTestSystemApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
-[SamAuthorize]
 public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger interfaceLogger) : ControllerBase
 {
     /// <summary>
@@ -32,7 +31,7 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     /// Report the capabilities of the current meter test system.
     /// </summary>
     /// <returns>May be null if the meter test system does not allow configuration.</returns>
-    [HttpGet]
+    [HttpGet, SamAuthorize]
     [SwaggerOperation(OperationId = "GetMeterTestSystemCapabilities")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -61,7 +60,7 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     /// Report the current pysical configuration of the meter test system.
     /// </summary>
     /// <returns></returns>
-    [HttpGet("AmplifiersAndReferenceMeter")]
+    [HttpGet("AmplifiersAndReferenceMeter"), SamAuthorize]
     [SwaggerOperation(OperationId = "GetAmplifiersAndReferenceMeter")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -76,7 +75,7 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     /// Read the firmware from the metering system.
     /// </summary>
     /// <returns>Firmware version of the metering system.</returns>
-    [HttpGet("FirmwareVersion")]
+    [HttpGet("FirmwareVersion"), SamAuthorize]
     [SwaggerOperation(OperationId = "GetFirmwareVersion")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -91,7 +90,7 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     /// Read the current error conditions of the meter test system.
     /// </summary>
     /// <returns>All current error conditions.</returns>
-    [HttpGet("ErrorConditions")]
+    [HttpGet("ErrorConditions"), SamAuthorize]
     [SwaggerOperation(OperationId = "GetErrorConditions")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

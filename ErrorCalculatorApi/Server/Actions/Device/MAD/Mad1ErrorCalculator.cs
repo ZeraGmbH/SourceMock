@@ -91,7 +91,7 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public Task<long?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger) => Task.FromResult<long?>(null);
+    public Task<Impulses?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger) => Task.FromResult<Impulses?>(null);
 
     /* [TODO] add support for 0x HEX response. */
     private static long ParseLong(string number) => long.Parse(number);

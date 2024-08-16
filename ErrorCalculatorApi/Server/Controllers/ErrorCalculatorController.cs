@@ -84,7 +84,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<long?>> GetDeviceUnderTestImpulses(int pos = 0) =>
+    public Task<ActionResult<Impulses?>> GetDeviceUnderTestImpulses(int pos = 0) =>
         ActionResultMapper.SafeExecuteSerialPortCommand(() => devices[pos].GetNumberOfDeviceUnderTestImpulses(interfaceLogger));
 
     /// <summary>

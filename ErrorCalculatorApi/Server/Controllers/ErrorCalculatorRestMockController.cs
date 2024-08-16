@@ -116,7 +116,7 @@ public class ErrorCalculatorRestMockController([FromKeyedServices(ErrorCalculato
     /// </summary>
     /// <returns></returns>
     [HttpGet("DutImpulses")]
-    public Task<ActionResult<long?>> GetDeviceUnderTestImpulses() =>
+    public Task<ActionResult<Impulses?>> GetDeviceUnderTestImpulses() =>
         ActionResultMapper.SafeExecuteSerialPortCommand(() => device.GetNumberOfDeviceUnderTestImpulses(interfaceLogger));
 
 }

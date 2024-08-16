@@ -151,7 +151,7 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
-    public Task<long?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger)
+    public Task<Impulses?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger)
     {
         lock (_pulseLock)
         {
@@ -165,7 +165,7 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
                 _dutPulses += (long)Math.Ceiling(elapsed * Random.Shared.Next(90, 110) / 100.0);
             }
 
-            return Task.FromResult<long?>(_dutPulses);
+            return Task.FromResult<Impulses?>(new Impulses(_dutPulses));
         }
     }
 }

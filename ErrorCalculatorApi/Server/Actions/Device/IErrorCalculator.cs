@@ -74,5 +74,5 @@ public interface IErrorCalculator
     /// <param name="logger"></param>
     /// <returns>Number of impulses since last counter reset or
     /// null if readout is not supported.</returns>
-    Task<long?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger);
+    Task<Impulses?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger);
 }

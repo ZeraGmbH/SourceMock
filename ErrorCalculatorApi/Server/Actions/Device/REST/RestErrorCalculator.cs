@@ -73,8 +73,8 @@ public class RestErrorCalculator(ILoggingHttpClient errorCalculator, ILogger<Res
         => errorCalculator.GetAsync<ErrorCalculatorMeterConnections[]>(interfaceLogger, new Uri(_uri, "GetSupportedMeterConnections"));
 
     /// <inheritdoc/>
-    public Task<long?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger interfaceLogger)
-        => errorCalculator.GetAsync<long?>(interfaceLogger, new Uri(_uri, "DutImpulses"));
+    public Task<Impulses?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger interfaceLogger)
+        => errorCalculator.GetAsync<Impulses?>(interfaceLogger, new Uri(_uri, "DutImpulses"));
 
     /// <inheritdoc/>
     public Task SetErrorMeasurementParameters(IInterfaceLogger interfaceLogger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant)

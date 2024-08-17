@@ -222,7 +222,7 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
 
                             if (match?.Success != true) continue;
 
-                            var value = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+                            var value = double.Parse(match.Groups[1].Value);
                             var info = command.Info!;
 
                             if (info.Scale.GetValueOrDefault(0) != 0) value *= (double)info.Scale!;
@@ -250,7 +250,7 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
                         if (match?.Success != true) continue;
 
                         /* Get the value. */
-                        var value = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+                        var value = double.Parse(match.Groups[1].Value);
 
                         if (info.Scale.GetValueOrDefault(0) != 0) value *= (double)info.Scale!;
 

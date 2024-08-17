@@ -19,7 +19,6 @@ public class NumberParserTests
 
         Assert.That(match?.Success, Is.EqualTo(expected != null));
 
-        if (expected != null)
-            Assert.That(double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture), Is.EqualTo(expected));
+        if (expected != null) Assert.That(double.Parse(match.Groups[1].Value), Is.EqualTo(expected));
     }
 }

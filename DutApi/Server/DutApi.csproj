@@ -13,5 +13,6 @@
     <PackageReference Include="MongoDB.Driver" Version="2.28.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.7.1" />
     <PackageReference Include="ZERA.WebSam.Shared" Version="0.2.13" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@ using RefMeterApi.Actions.Device;
 using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.SimulatedSource;
 using SourceApi.Actions.Source;
+using SourceApi.Actions;
 
 namespace MeterTestSystemApi;
 
@@ -76,4 +77,9 @@ public class MeterTestSystemDcMock(IDCSourceMock source, IDCRefMeterMock refMete
 
         return Task.FromResult(errors);
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void NoSource() => source = new UnavailableSource();
 }

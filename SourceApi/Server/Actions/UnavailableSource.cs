@@ -3,13 +3,14 @@ using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Exceptions;
 using SourceApi.Model;
+using SourceApi.Actions.SimulatedSource;
 
-namespace MeterTestSystemApi.Actions.Device;
+namespace SourceApi.Actions;
 
 /// <summary>
 /// Implementation of a source which is not configured and can therefore not be used.
 /// </summary>
-internal class UnavailableSource : ISource
+public class UnavailableSource : ISourceMock, IDCSourceMock
 {
     public bool GetAvailable(IInterfaceLogger interfaceLogger) => false;
 

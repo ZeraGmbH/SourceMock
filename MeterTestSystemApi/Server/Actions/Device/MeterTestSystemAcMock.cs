@@ -4,6 +4,7 @@ using MeterTestSystemApi.Models;
 using RefMeterApi.Actions.Device;
 using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.Source;
+using SourceApi.Actions;
 
 namespace MeterTestSystemApi;
 
@@ -56,6 +57,11 @@ public class MeterTestSystemAcMock(ISourceMock source, IMockRefMeter refMeter, I
             ModelName = "DeviceMock",
             Version = "1.0"
         });
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void NoSource() => source = new UnavailableSource();
 
     /// <summary>
     /// 

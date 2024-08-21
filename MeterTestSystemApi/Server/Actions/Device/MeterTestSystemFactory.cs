@@ -95,9 +95,27 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                     case MeterTestSystemTypes.ACMock:
                         _meterTestSystem = services.GetRequiredService<MeterTestSystemAcMock>();
                         break;
+                    case MeterTestSystemTypes.ACMockNoSource:
+                        {
+                            var meterTestSystem = services.GetRequiredService<MeterTestSystemAcMock>();
+
+                            meterTestSystem.NoSource();
+
+                            _meterTestSystem = meterTestSystem;
+                            break;
+                        }
                     case MeterTestSystemTypes.DCMock:
                         _meterTestSystem = services.GetRequiredService<MeterTestSystemDcMock>();
                         break;
+                    case MeterTestSystemTypes.DCMockNoSource:
+                        {
+                            var meterTestSystem = services.GetRequiredService<MeterTestSystemDcMock>();
+
+                            meterTestSystem.NoSource();
+
+                            _meterTestSystem = meterTestSystem;
+                            break;
+                        }
                     default:
                         _meterTestSystem = services.GetRequiredService<FallbackMeteringSystem>();
                         break;

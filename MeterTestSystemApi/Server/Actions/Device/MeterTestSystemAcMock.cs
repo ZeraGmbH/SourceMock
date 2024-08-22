@@ -61,7 +61,7 @@ public class MeterTestSystemAcMock(ISourceMock source, IMockRefMeter refMeter, I
     /// <summary>
     /// 
     /// </summary>
-    public void NoSource() => source = new UnavailableSource();
+    public void NoSource() => Source = new UnavailableSource();
 
     /// <summary>
     /// 

@@ -99,12 +99,25 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
             httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(_baseUri.UserInfo)));
 
-        /* Create. */
-        var source = di.GetRequiredService<IRestSource>();
+        /* No source - currently this disables dosage as well which must be improved. */
+        ISource source;
+
+        if (string.IsNullOrEmpty(config.Source?.Endpoint))
+            source = new UnavailableSource();
+        else
+        {
+            /* Full REST source API implementation. */
+            var restSource = di.GetRequiredService<IRestSource>();
+
+            restSource.Initialize(config.Source, config.Dosage);
+
+            /* Use this. */
+            source = restSource;
+        }
+
+        /* Reference meter. */
         var refMeter = di.GetRequiredService<IRestRefMeter>();
 
-        /* Configure. */
-        source.Initialize(config.Source, config.Dosage);
         refMeter.Initialize(config.ReferenceMeter);
 
         /* Error calculators. */

@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -261,5 +260,64 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
             }
 
         return Task.FromResult(result);
+    });
+
+    /// <inheritdoc/>
+    public Task<string[]> DirectCommand(IInterfaceLogger interfaceLogger, string command, int responseLines, CancellationToken? cancel = null) => Task.Run(() =>
+    {
+        /* Prepare logging. */
+        var connection = interfaceLogger.CreateConnection(_logConnection!);
+
+        /* Prepare logging. */
+        var requestId = Guid.NewGuid().ToString();
+        var sendEntry = connection.Prepare(new() { Outgoing = true, RequestId = requestId });
+        var sendInfo = new InterfaceLogPayload() { Encoding = InterfaceLogPayloadEncodings.Scpi, Payload = command, PayloadType = "" };
+
+        try
+        {
+            Flush();
+
+            _connection.GetStream().Write(Encoding.UTF8.GetBytes($"{command}\n"));
+
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Device under test at {Address} not available: {Exception}", _connection, e.Message);
+
+            sendInfo.TransferException = e.Message;
+
+            throw new DutIoException($"Device under test at {_connection} not available: {e.Message}", e);
+        }
+        finally
+        {
+            sendEntry.Finish(sendInfo);
+        }
+
+        /* Prepare logging. */
+        var receiveEntry = connection.Prepare(new() { Outgoing = false, RequestId = requestId });
+        var receiveInfo = new InterfaceLogPayload() { Encoding = InterfaceLogPayloadEncodings.Scpi, Payload = "", PayloadType = "" };
+
+        /* Wait for response. */
+        try
+        {
+            var rawValues = Enumerable.Range(0, responseLines).Select(i => ReadLine(cancel)).ToList();
+
+            receiveInfo.Payload = string.Join("\n", rawValues);
+
+            /* Caller must decode. */
+            return Task.FromResult(rawValues.ToArray());
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Device under test did not respond to {Command} query: {Exception}", command, e.Message);
+
+            receiveInfo.TransferException = e.Message;
+
+            throw new DutIoException($"Device under test did not respond to {command} query: {e.Message}", e);
+        }
+        finally
+        {
+            receiveEntry.Finish(receiveInfo);
+        }
     });
 }

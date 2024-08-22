@@ -55,13 +55,14 @@ public static class SourceApiConfiguration
     {
         services.AddSingleton<ICapabilitiesMap, CapabilitiesMap>();
 
+        services.AddTransient<IDCSourceMock, DCSourceMock>();
+        services.AddTransient<IRestDosage, RestDosage>();
         services.AddTransient<IRestSource, RestSource>();
         services.AddTransient<ISerialPortFGSource, SerialPortFGSource>();
         services.AddTransient<ISerialPortMTSource, SerialPortMTSource>();
         services.AddTransient<ISimulatedSource, SimulatedSource>();
-        services.AddTransient<ISourceMock, SimulatedSource>();
-        services.AddTransient<IDCSourceMock, DCSourceMock>();
         services.AddTransient<ISourceCapabilityValidator, SourceCapabilityValidator>();
+        services.AddTransient<ISourceMock, SimulatedSource>();
 
         /* Legacy configuration from setting files. */
         var useDatabase = configuration["UseDatabaseConfiguration"] == "yes";

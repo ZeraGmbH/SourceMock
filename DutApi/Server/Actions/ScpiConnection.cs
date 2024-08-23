@@ -286,6 +286,14 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
 
             _connection.GetStream().Write(Encoding.UTF8.GetBytes($"{command}\n"));
 
+            if (responseLines == 0)
+            {
+                sendInfo.Payload = $"{sendInfo.Payload}\n*OCP?";
+
+                _connection.GetStream().Write(Encoding.UTF8.GetBytes("*OCP?\n"));
+
+                responseLines = 1;
+            }
         }
         catch (Exception e)
         {

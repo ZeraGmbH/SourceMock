@@ -77,4 +77,26 @@ public enum DutStatusRegisterTypes
     /// Current meter constant.
     /// </summary>
     MeterConstant = 13,
+
+    /// <summary>
+    /// Read the allowed current ranges - semicolon
+    /// separated list.
+    /// </summary>
+    CurrentRanges = 14,
+
+    /// <summary>
+    /// Read the allowed voltage ranges - semicolon
+    /// separated list.
+    /// </summary>
+    VoltageRanges = 15,
+
+    /// <summary>
+    /// Actual range of current - can be set as well.
+    /// </summary>
+    CurrentRange = 16,
+
+    /// <summary>
+    /// Actual range of voltage - can be set as well.
+    /// </summary>
+    VoltageRange = 17
 }

@@ -25,7 +25,14 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
 
     private static readonly HashSet<DutStatusRegisterTypes> _rawNumber = [DutStatusRegisterTypes.MeterConstant];
 
-    private static readonly HashSet<DutStatusRegisterTypes> _raw = [DutStatusRegisterTypes.Serial, .. _rawNumber];
+    private static readonly HashSet<DutStatusRegisterTypes> _raw = [
+        DutStatusRegisterTypes.Serial,
+        DutStatusRegisterTypes.CurrentRange,
+        DutStatusRegisterTypes.CurrentRanges,
+        DutStatusRegisterTypes.VoltageRange,
+        DutStatusRegisterTypes.VoltageRanges,
+        .._rawNumber
+    ];
 
     private TcpClient _connection = null!;
 

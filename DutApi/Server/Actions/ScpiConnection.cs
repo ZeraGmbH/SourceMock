@@ -96,7 +96,7 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
     {
         var stream = _connection.GetStream();
 
-        for (; ; )
+        for (var buf = new byte[1024]; ;)
         {
             var sep = _collector.IndexOf(10);
 
@@ -109,13 +109,12 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
                 return line;
             }
 
-            var buf = new byte[1024];
             var len = stream.Read(buf);
 
             if (len > 0)
                 _collector.AddRange(buf.Take(len));
-            else
-                cancel?.ThrowIfCancellationRequested();
+
+            cancel?.ThrowIfCancellationRequested();
         }
     }
 

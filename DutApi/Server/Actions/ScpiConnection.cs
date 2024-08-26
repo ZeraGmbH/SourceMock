@@ -274,6 +274,14 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
         /* Prepare logging. */
         var connection = interfaceLogger.CreateConnection(_logConnection!);
 
+        /* Extend pure command by status request. */
+        if (responseLines == 0)
+        {
+            command += "\n*OCP?";
+
+            responseLines = 1;
+        }
+
         /* Prepare logging. */
         var requestId = Guid.NewGuid().ToString();
         var sendEntry = connection.Prepare(new() { Outgoing = true, RequestId = requestId });
@@ -284,15 +292,6 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
             Flush();
 
             _connection.GetStream().Write(Encoding.UTF8.GetBytes($"{command}\n"));
-
-            if (responseLines == 0)
-            {
-                sendInfo.Payload = $"{sendInfo.Payload}\n*OCP?";
-
-                _connection.GetStream().Write(Encoding.UTF8.GetBytes("*OCP?\n"));
-
-                responseLines = 1;
-            }
         }
         catch (Exception e)
         {

@@ -77,8 +77,10 @@ public class DCRefMeterMock(IServiceProvider di) : RefMeterMock, IDCRefMeterMock
         var r = Random.Shared;
 
         var source = _di.GetRequiredService<ISource>();
+        var hasSource = source.GetAvailable(logger);
+        var sourceLoadpoint = hasSource ? source.GetCurrentLoadpoint(logger) : null;
 
-        var loadpoint = source.GetCurrentLoadpoint(logger) ?? new TargetLoadpoint()
+        var loadpoint = sourceLoadpoint ?? new TargetLoadpoint()
         {
             Phases = [
                 new () {
@@ -89,6 +91,8 @@ public class DCRefMeterMock(IServiceProvider di) : RefMeterMock, IDCRefMeterMock
         };
 
         loadpoint = LibUtils.DeepCopy(loadpoint);
+
+        if (!hasSource) return loadpoint;
 
         var info = source.GetActiveLoadpointInfo(logger);
         var currentSwitchedOffForDosage = await source.CurrentSwitchedOffForDosage(logger);

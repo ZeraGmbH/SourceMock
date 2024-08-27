@@ -5,6 +5,7 @@ using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
+using ZstdSharp.Unsafe;
 
 namespace RefMeterApi.Actions.Device;
 
@@ -114,8 +115,10 @@ public partial class ACRefMeterMock(IServiceProvider di) : RefMeterMock
         var r = Random.Shared;
 
         var source = _di.GetRequiredService<ISource>();
+        var hasSource = source.GetAvailable(logger);
+        var sourceLoadPoint = hasSource ? source.GetCurrentLoadpoint(logger) : null;
 
-        var loadpoint = source.GetCurrentLoadpoint(logger) ?? new TargetLoadpoint()
+        var loadpoint = sourceLoadPoint ?? new TargetLoadpoint()
         {
             Frequency = new() { Value = new(0) },
             Phases = [
@@ -135,6 +138,8 @@ public partial class ACRefMeterMock(IServiceProvider di) : RefMeterMock
         };
 
         loadpoint = LibUtils.DeepCopy(loadpoint);
+
+        if (!hasSource) return loadpoint;
 
         var info = source.GetActiveLoadpointInfo(logger);
         var currentSwitchedOffForDosage = await source.CurrentSwitchedOffForDosage(logger);

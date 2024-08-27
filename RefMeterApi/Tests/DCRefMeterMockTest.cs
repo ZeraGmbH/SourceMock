@@ -52,6 +52,7 @@ public class DCRefMeterMockTest
         double current = 22222222;
         double voltage = 33333333;
 
+        SourceMock.Setup(s => s.GetAvailable(It.IsAny<IInterfaceLogger>())).Returns(true);
         SourceMock.Setup(s => s.GetCurrentLoadpoint(It.IsAny<IInterfaceLogger>())).Returns(
             new TargetLoadpoint()
             {

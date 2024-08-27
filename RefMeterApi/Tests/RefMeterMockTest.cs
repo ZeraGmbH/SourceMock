@@ -52,6 +52,7 @@ public class RefMeterMockTest
         double currentAngle = 7;
         double voltageAngle = 5;
 
+        SourceMock.Setup(s => s.GetAvailable(It.IsAny<IInterfaceLogger>())).Returns(true);
         SourceMock.Setup(s => s.GetCurrentLoadpoint(It.IsAny<IInterfaceLogger>())).Returns(
             new TargetLoadpoint()
             {

@@ -6,6 +6,8 @@ using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared.Security;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SourceApi.Actions;
 
 namespace MeterTestSystemApi.Controllers;
 
@@ -100,4 +102,12 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<ErrorConditions>> GetErrorConditions() =>
         ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetErrorConditions(interfaceLogger));
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("HasSource"), SamAuthorize]
+    [SwaggerOperation(OperationId = "HasSource")]
+    public ActionResult<bool> HasSource() => Ok(_device.HasSource);
 }

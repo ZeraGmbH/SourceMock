@@ -58,6 +58,11 @@ public interface IMeterTestSystem
     IErrorCalculator[] ErrorCalculators { get; }
 
     /// <summary>
+    /// Set if a real source is configured.
+    /// </summary>
+    bool HasSource { get; }
+
+    /// <summary>
     /// Fired whenever a new error condition is detected.
     /// </summary>
     event Action<ErrorConditions> ErrorConditionsChanged;

@@ -45,6 +45,9 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     private readonly IServiceProvider _services;
 
     /// <inheritdoc/>
+    public bool HasSource { get; } = true;
+
+    /// <inheritdoc/>
     private AmplifiersAndReferenceMeter _amplifiersAndReferenceMeter = null!;
 
     /// <inheritdoc/>

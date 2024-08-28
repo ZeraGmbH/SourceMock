@@ -30,6 +30,9 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
     public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
+    public bool HasSource { get; private set; } = false;
+
+    /// <inheritdoc/>
     public ISource Source { get; private set; } = new UnavailableSource();
 
     /// <inheritdoc/>
@@ -127,6 +130,8 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
 
             /* Use this. */
             source = restSource;
+
+            HasSource = true;
         }
 
         /* Reference meter. */

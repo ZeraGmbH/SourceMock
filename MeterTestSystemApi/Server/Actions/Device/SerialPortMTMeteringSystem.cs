@@ -48,6 +48,9 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     public IErrorCalculator[] ErrorCalculators => _errorCalculators.ToArray();
 
     /// <inheritdoc/>
+    public bool HasSource { get; } = true;
+
+    /// <inheritdoc/>
     public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
     /// <inheritdoc/>

@@ -20,38 +20,27 @@ public class MeterTestSystemDcMock(IDCSourceMock source, IDCRefMeterMock refMete
     /// <inheritdoc/>
     public event Action<ErrorConditions> ErrorConditionsChanged = null!;
 
-    /// <summary>
-    /// 
-    /// </summary>
+    /// <inheritdoc/>
     public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
-    /// <summary>
-    /// 
-    /// </summary>
+    /// <inheritdoc/>
+    public bool HasSource { get; private set; } = true;
+
+    /// <inheritdoc/>
     public ISource Source { get; private set; } = source;
 
-    /// <summary>
-    /// 
-    /// </summary>
+    /// <inheritdoc/>
     public IRefMeter RefMeter { get; } = refMeter;
 
     private readonly List<IErrorCalculator> _errorCalculators = [errorCalculatorMock];
 
-    /// <summary>
-    /// 
-    /// </summary>
+    /// <inheritdoc/>
     public IErrorCalculator[] ErrorCalculators => [.. _errorCalculators];
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public Task<MeterTestSystemCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) => Task.FromResult<MeterTestSystemCapabilities>(null!);
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) =>
         Task.FromResult(new MeterTestSystemFirmwareVersion
         {
@@ -59,13 +48,7 @@ public class MeterTestSystemDcMock(IDCSourceMock source, IDCRefMeterMock refMete
             Version = "1.0"
         });
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="settings"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <inheritdoc/>
     public Task SetAmplifiersAndReferenceMeter(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings) => throw new NotImplementedException();
 
     /// <inheritdoc/>
@@ -81,5 +64,9 @@ public class MeterTestSystemDcMock(IDCSourceMock source, IDCRefMeterMock refMete
     /// <summary>
     /// 
     /// </summary>
-    public void NoSource() => Source = new UnavailableSource();
+    public void NoSource()
+    {
+        Source = new UnavailableSource();
+        HasSource = false;
+    }
 }

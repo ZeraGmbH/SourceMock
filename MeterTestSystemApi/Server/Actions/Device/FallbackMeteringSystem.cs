@@ -17,6 +17,9 @@ public class FallbackMeteringSystem : IMeterTestSystem
     public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
+    public bool HasSource { get; } = false;
+
+    /// <inheritdoc/>
     public ISource Source { get; } = new UnavailableSource();
 
     /// <inheritdoc/>

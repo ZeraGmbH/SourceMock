@@ -39,6 +39,7 @@ public class ErrorCalculatorMockTest
             }
         };
 
+        sourceMock.Setup(s => s.GetAvailable(It.IsAny<IInterfaceLogger>())).Returns(true);
         sourceMock.Setup(s => s.GetCurrentLoadpoint(It.IsAny<IInterfaceLogger>())).Returns(loadpoint);
 
         services.AddSingleton(sourceMock.Object);

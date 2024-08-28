@@ -78,13 +78,22 @@ public class DCRefMeterMock(IServiceProvider di) : RefMeterMock, IDCRefMeterMock
 
         var source = _di.GetRequiredService<ISource>();
         var hasSource = source.GetAvailable(logger);
-        var sourceLoadpoint = hasSource ? source.GetCurrentLoadpoint(logger) : null;
+
+        var sourceLoadpoint = hasSource ? source.GetCurrentLoadpoint(logger) : new TargetLoadpoint()
+        {
+            Phases = [
+                new () {
+                    Current = new() { On = true, DcComponent = new(5) },
+                    Voltage = new() { On = true, DcComponent = new(230) },
+                },
+            ]
+        };
 
         var loadpoint = sourceLoadpoint ?? new TargetLoadpoint()
         {
             Phases = [
                 new () {
-                    Current = new() { DcComponent =Current.Zero },
+                    Current = new() { DcComponent = Current.Zero },
                     Voltage = new() { DcComponent = Voltage.Zero },
                 },
             ]

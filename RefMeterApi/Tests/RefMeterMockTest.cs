@@ -22,6 +22,8 @@ public class RefMeterMockTest
 
         SourceMock = new Mock<ISource>();
 
+        SourceMock.Setup(s => s.GetAvailable(It.IsAny<IInterfaceLogger>())).Returns(true);
+
         services.AddSingleton(SourceMock.Object);
 
         Services = services.BuildServiceProvider();

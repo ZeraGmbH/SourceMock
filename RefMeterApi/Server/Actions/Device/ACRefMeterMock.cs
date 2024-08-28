@@ -116,23 +116,41 @@ public partial class ACRefMeterMock(IServiceProvider di) : RefMeterMock
 
         var source = _di.GetRequiredService<ISource>();
         var hasSource = source.GetAvailable(logger);
-        var sourceLoadPoint = hasSource ? source.GetCurrentLoadpoint(logger) : null;
+
+        var sourceLoadPoint = hasSource ? source.GetCurrentLoadpoint(logger) : new TargetLoadpoint()
+        {
+            Frequency = new() { Value = new(50) },
+            Phases = [
+                new () {
+                    Current = new() { On = true, AcComponent = new() { Rms = new(5), Angle=new(0)}},
+                    Voltage = new() { On = true, AcComponent = new() { Rms = new(230), Angle=new(0)}},
+                },
+                new () {
+                    Current = new() { On = true, AcComponent = new() { Rms = new(5), Angle=new(249)}},
+                    Voltage = new() { On = true, AcComponent = new() { Rms = new(230), Angle=new(240)}},
+                },
+                new () {
+                    Current = new() { On = true, AcComponent = new() { Rms = new(5), Angle=new(120)}},
+                    Voltage = new() { On = true, AcComponent = new() { Rms = new(230), Angle=new(120)}},
+                }
+            ]
+        };
 
         var loadpoint = sourceLoadPoint ?? new TargetLoadpoint()
         {
             Frequency = new() { Value = new(0) },
             Phases = [
                 new () {
-                    Current = new() { AcComponent = new() { Rms = new(0), Angle=new(r.Next(0,360))}},
-                    Voltage = new() { AcComponent = new() { Rms = new(0), Angle=new(r.Next(0,360))}},
+                    Current = new() { AcComponent = new() { Rms = new(0), Angle=new(0)}},
+                    Voltage = new() { AcComponent = new() { Rms = new(0), Angle=new(0)}},
                 },
                 new () {
-                    Current = new() { AcComponent = new() { Rms = new(0), Angle=new(r.Next(0,360))}},
-                    Voltage = new() { AcComponent = new() { Rms = new(0), Angle=new(r.Next(0,360))}},
+                    Current = new() { AcComponent = new() { Rms = new(0), Angle=new(249)}},
+                    Voltage = new() { AcComponent = new() { Rms = new(0), Angle=new(240)}},
                 },
                 new () {
-                    Current = new() { AcComponent = new() { Rms = new(0), Angle=new(r.Next(0,360))}},
-                    Voltage = new() { AcComponent = new() { Rms = new(0), Angle=new(r.Next(0,360))}},
+                    Current = new() { AcComponent = new() { Rms = new(0), Angle=new(120)}},
+                    Voltage = new() { AcComponent = new() { Rms = new(0), Angle=new(120)}},
                 }
             ]
         };

@@ -13,7 +13,9 @@ public static class CurrentCalculation
     /// </summary>
     /// <param name="phase"></param>
     /// <returns></returns>
-    public static ActivePower CalculateAcPower(TargetLoadpointPhase phase)
+    public static ActivePower CalculateAcPower<TVoltage, TCurrent>(AbstractLoadpointPhase<TVoltage, TCurrent> phase)
+        where TVoltage : ElectricalQuantity<Voltage>, new()
+        where TCurrent : ElectricalQuantity<Current>, new()
     {
         var acVoltage = phase.Voltage.AcComponent;
         var acCurrent = phase.Current.AcComponent;
@@ -29,7 +31,9 @@ public static class CurrentCalculation
     /// </summary>
     /// <param name="phase"></param>
     /// <returns></returns>
-    public static ActivePower CalculateDcPower(TargetLoadpointPhase phase)
+    public static ActivePower CalculateDcPower<TVoltage, TCurrent>(AbstractLoadpointPhase<TVoltage, TCurrent> phase)
+        where TVoltage : ElectricalQuantity<Voltage>, new()
+        where TCurrent : ElectricalQuantity<Current>, new()
     {
         var dcVoltage = phase.Voltage.DcComponent;
         var dcCurrent = phase.Current.DcComponent;

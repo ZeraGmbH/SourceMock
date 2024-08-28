@@ -11,6 +11,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\SourceApi\Server\SourceApi.csproj" />
+    <ProjectReference Include="..\..\RefMeterApi\Server\RefMeterApi.csproj" />
   </ItemGroup>
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>

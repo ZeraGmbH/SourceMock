@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.Source;
+using RefMeterApi.Actions.Device;
 
 namespace ErrorCalculatorApi.Actions.Device;
 
@@ -110,18 +111,36 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
-    public Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
+    public async Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
     {
         /* Get the total power of all active phases of the current loadpoint (in W) */
         var totalPower = ActivePower.Zero;
-        var loadpoint = _di.GetRequiredService<ISource>().GetCurrentLoadpoint(logger)!;
 
-        foreach (var phase in loadpoint.Phases)
-            if (phase.Voltage.On && phase.Current.On)
-            {
-                totalPower += CurrentCalculation.CalculateAcPower(phase);
-                totalPower += CurrentCalculation.CalculateDcPower(phase);
-            }
+        var source = _di.GetRequiredService<ISource>();
+        var loadpoint = source.GetAvailable(logger) ? source.GetCurrentLoadpoint(logger)! : null;
+
+        if (loadpoint != null)
+        {
+            /* From loadpoint. */
+            foreach (var phase in loadpoint.Phases)
+                if (phase.Voltage.On && phase.Current.On)
+                {
+                    totalPower += CurrentCalculation.CalculateAcPower(phase);
+                    totalPower += CurrentCalculation.CalculateDcPower(phase);
+                }
+        }
+        else
+        {
+            /* From actual values. */
+            var values = await _di.GetRequiredService<IRefMeter>().GetActualValues(logger)!;
+
+            foreach (var phase in values.Phases)
+                if (phase.Voltage.AcComponent != null && phase.Current.AcComponent != null)
+                {
+                    totalPower += CurrentCalculation.CalculateAcPower(phase);
+                    totalPower += CurrentCalculation.CalculateDcPower(phase);
+                }
+        }
 
         _totalPower = totalPower;
         _continuous = continuous;
@@ -129,9 +148,8 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
         _startTime = DateTime.UtcNow;
 
         _status = new() { State = ErrorMeasurementStates.Running, Progress = 0, ErrorValue = null };
-
-        return Task.CompletedTask;
     }
+
 
     /// <inheritdoc/>
     public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) =>

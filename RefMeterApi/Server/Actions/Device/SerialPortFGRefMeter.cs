@@ -92,4 +92,20 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
     {
         if (!GetAvailable(interfaceLogger)) throw new RefMeterNotReadyException();
     }
+
+    /// <inheritdoc/>
+    public async Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger)
+    {
+        /* Send command and check reply. */
+        var request = SerialPortRequest.Create("TS", new Regex("^TS(.{8})(.{4})$"));
+
+        await _device.Execute(logger, request)[0];
+
+        return new()
+        {
+            Model = request.EndMatch!.Groups[1].Value.Trim(),
+            NumberOfPhases = 3,
+            SoftwareVersion = request.EndMatch!.Groups[2].Value.Trim()
+        };
+    }
 }

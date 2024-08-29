@@ -22,4 +22,7 @@ internal class UnavailableReferenceMeter : IRefMeter
     public Task<MeasurementModes[]> GetMeasurementModes(IInterfaceLogger logger) => throw new RefMeterNotReadyException();
 
     public Task SetActualMeasurementMode(IInterfaceLogger logger, MeasurementModes mode) => throw new RefMeterNotReadyException();
+
+    public Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger) => throw new RefMeterNotReadyException();
+
 }

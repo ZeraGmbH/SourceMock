@@ -46,4 +46,9 @@ public interface IRefMeter
     /// Report the current megter constant of the reference meter (impulses per kWh).
     /// </summary>
     Task<MeterConstant> GetMeterConstant(IInterfaceLogger logger);
+
+    /// <summary>
+    /// Retrieve information on the reference meter.
+    /// </summary>
+    Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger);
 }

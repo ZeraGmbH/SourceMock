@@ -131,4 +131,16 @@ public class DCRefMeterMock(IServiceProvider di) : RefMeterMock, IDCRefMeterMock
             mo.ActivePower = mo.Phases[0].ActivePower;
         }
     }
+
+    /// <inheritdoc/>
+    public override Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger)
+    {
+        return Task.FromResult(new ReferenceMeterInformation
+        {
+            Model = "DCRefMeterMock",
+            SerialNumber = "29091963",
+            NumberOfPhases = 1,
+            SoftwareVersion = "0.1"
+        });
+    }
 }

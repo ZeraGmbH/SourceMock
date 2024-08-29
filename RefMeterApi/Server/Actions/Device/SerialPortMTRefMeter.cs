@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RefMeterApi.Models;
 using SerialPortProxy;
+using System.Text.RegularExpressions;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 
@@ -19,6 +21,11 @@ public interface ISerialPortMTRefMeter : IRefMeter
 /// </summary>
 public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
 {
+    /// <summary>
+    /// Detect model name and version number.
+    /// </summary>
+    private static readonly Regex _versionReg = new("^(.+)V([^V]+)$", RegexOptions.Singleline | RegexOptions.Compiled);
+
     /// <summary>
     /// Connection to the device.
     /// </summary>
@@ -75,5 +82,28 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
 
         /* Calculate according to formula - see MT78x_MAN_EXT_GB.pdf section 5.6.*/
         return new(1000d * 3600d * 60000d / (phases * voltage.Value * current.Value));
+    }
+
+    /// <inheritdoc/>
+    public async Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger)
+    {
+        /* Execute the request and wait for the information string. */
+        var reply = await _device.Execute(logger, SerialPortRequest.Create("AAV", "AAVACK"))[0];
+
+        if (reply.Length < 2)
+            throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");
+
+        /* Validate the response consisting of model name and version numner. */
+        var versionMatch = _versionReg.Match(reply[^2]);
+
+        if (versionMatch?.Success != true)
+            throw new InvalidOperationException($"invalid response {reply[0]} from device");
+
+        return new()
+        {
+            Model = versionMatch.Groups[1].Value,
+            NumberOfPhases = 3,
+            SoftwareVersion = versionMatch.Groups[2].Value
+        };
     }
 }

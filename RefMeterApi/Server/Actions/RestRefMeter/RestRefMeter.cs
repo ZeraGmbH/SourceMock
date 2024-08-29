@@ -64,6 +64,10 @@ public class RestRefMeter(ILoggingHttpClient httpClient, ILogger<RestRefMeter> l
         httpClient.GetAsync<MeasurementModes[]>(logger, new Uri(_baseUri, "MeasurementModes"));
 
     /// <inheritdoc/>
+    public Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger) =>
+        httpClient.GetAsync<ReferenceMeterInformation>(logger, new Uri(_baseUri, "Version"));
+
+    /// <inheritdoc/>
     public void Initialize(RestConfiguration? endpoint)
     {
         /* Can be only done once. */

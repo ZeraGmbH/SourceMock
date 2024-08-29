@@ -252,4 +252,16 @@ public partial class ACRefMeterMock(IServiceProvider di) : RefMeterMock
 
     private static bool PowerFactorIsNotNullOrNan(PowerFactor? powerFactor)
         => powerFactor != null && !!powerFactor.Value && !powerFactor.Value.IsNaN();
+
+    /// <inheritdoc/>
+    public override Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger)
+    {
+        return Task.FromResult(new ReferenceMeterInformation
+        {
+            Model = "ACRefMeterMock",
+            SerialNumber = "29091963",
+            NumberOfPhases = 3,
+            SoftwareVersion = "0.1"
+        });
+    }
 }

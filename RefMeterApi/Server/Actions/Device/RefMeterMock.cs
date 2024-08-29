@@ -55,6 +55,8 @@ public abstract class RefMeterMock : IMockRefMeter
     /// <returns>ActualValues that fluctuate around the set loadpoint</returns>
     public abstract Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveVoltagePhase);
 
+    /// <inheritdoc/>
+    public abstract Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger);
 
     /// <summary>
     /// Calculates an expected Measure Output from a given loadpoint.

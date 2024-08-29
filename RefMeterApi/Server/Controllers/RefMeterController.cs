@@ -113,4 +113,19 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<MeterConstant>> GetMeterConstant()
         => ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetMeterConstant(interfaceLogger));
+
+    /// <summary>
+    /// Get the list of supported measurement modes.
+    /// </summary>
+    /// <returns>The list of modes.</returns>
+    [HttpGet("Version"), SamAuthorize]
+    [SwaggerOperation(OperationId = "GetMeterInformation")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult<ReferenceMeterInformation>> GetMeterInformation() =>
+        ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetMeterInformation(interfaceLogger));
 }

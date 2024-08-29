@@ -63,6 +63,11 @@ public interface IMeterTestSystem
     bool HasSource { get; }
 
     /// <summary>
+    /// Set if a dosage algorizhms can be used.
+    /// </summary>
+    bool HasDosage { get; }
+
+    /// <summary>
     /// Fired whenever a new error condition is detected.
     /// </summary>
     event Action<ErrorConditions> ErrorConditionsChanged;

@@ -110,4 +110,12 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     [HttpGet("HasSource"), SamAuthorize]
     [SwaggerOperation(OperationId = "HasSource")]
     public ActionResult<bool> HasSource() => Ok(_device.HasSource);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("HasDosage"), SamAuthorize]
+    [SwaggerOperation(OperationId = "HasDosage")]
+    public ActionResult<bool> HasDosage() => Ok(_device.HasDosage);
 }

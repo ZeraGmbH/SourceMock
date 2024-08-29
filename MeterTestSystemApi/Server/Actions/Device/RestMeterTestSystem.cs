@@ -33,6 +33,9 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
     public bool HasSource { get; private set; } = false;
 
     /// <inheritdoc/>
+    public bool HasDosage { get; private set; } = false;
+
+    /// <inheritdoc/>
     public ISource Source { get; private set; } = new UnavailableSource();
 
     /// <inheritdoc/>
@@ -114,6 +117,8 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
 
             /* Use this. */
             dosage = restDosage;
+
+            HasDosage = true;
         }
 
         /* No source - currently this disables dosage as well which must be improved. */

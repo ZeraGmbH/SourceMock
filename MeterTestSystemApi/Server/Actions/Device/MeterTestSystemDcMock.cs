@@ -27,6 +27,9 @@ public class MeterTestSystemDcMock(IDCSourceMock source, IDCRefMeterMock refMete
     public bool HasSource { get; private set; } = true;
 
     /// <inheritdoc/>
+    public bool HasDosage { get; private set; } = true;
+
+    /// <inheritdoc/>
     public ISource Source { get; private set; } = source;
 
     /// <inheritdoc/>
@@ -67,6 +70,7 @@ public class MeterTestSystemDcMock(IDCSourceMock source, IDCRefMeterMock refMete
     public void NoSource()
     {
         Source = new UnavailableSource();
+        HasDosage = false;
         HasSource = false;
     }
 }

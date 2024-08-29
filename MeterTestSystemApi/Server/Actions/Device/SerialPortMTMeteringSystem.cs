@@ -51,6 +51,9 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     public bool HasSource { get; } = true;
 
     /// <inheritdoc/>
+    public bool HasDosage { get; } = true;
+
+    /// <inheritdoc/>
     public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
     /// <inheritdoc/>

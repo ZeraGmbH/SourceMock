@@ -20,6 +20,9 @@ public class FallbackMeteringSystem : IMeterTestSystem
     public bool HasSource { get; } = false;
 
     /// <inheritdoc/>
+    public bool HasDosage { get; } = false;
+
+    /// <inheritdoc/>
     public ISource Source { get; } = new UnavailableSource();
 
     /// <inheritdoc/>

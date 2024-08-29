@@ -1,5 +1,6 @@
 using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Actions.Device;
+using MeterTestSystemApi.Controllers;
 using MeterTestSystemApi.Models;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
@@ -121,6 +122,11 @@ public static class MeterTestSystemApiConfiguration
         services.AddSingleton<IProbeConfigurationService, ProbeConfigurationService>();
         services.AddScoped<IConfigurationProbePlan, ConfigurationProbePlan>();
         services.AddScoped<IProbingOperationStore, ProbingOperationStore>();
+
+        if (configuration.GetValue<bool>("UseMeterTestSystemRestMock") == true)
+            services.AddKeyedSingleton<IMeterTestSystem, FallbackMeteringSystem>(MeterTestSystemRestController.MockKey);
+        else
+            services.AddKeyedSingleton<IMeterTestSystem, FallbackMeteringSystem>(MeterTestSystemRestController.MockKey);
     }
 
     /// <summary>

@@ -6,8 +6,6 @@ using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared.Security;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SourceApi.Actions;
 
 namespace MeterTestSystemApi.Controllers;
 

@@ -1,4 +1,3 @@
-using ErrorCalculatorApi.Actions;
 using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Models;
 using RefMeterApi.Actions;
@@ -29,10 +28,8 @@ public class FallbackMeteringSystem : IMeterTestSystem
     /// <inheritdoc/>
     public IRefMeter RefMeter { get; } = new UnavailableReferenceMeter();
 
-    private readonly List<IErrorCalculator> _errorCalculators = [new UnavailableErrorCalculator()];
-
     /// <inheritdoc/>
-    public IErrorCalculator[] ErrorCalculators => _errorCalculators.ToArray();
+    public IErrorCalculator[] ErrorCalculators => [];
 
     /// <inheritdoc/>
 #pragma warning disable CS0414
@@ -51,8 +48,8 @@ public class FallbackMeteringSystem : IMeterTestSystem
     public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) =>
         Task.FromResult(new MeterTestSystemFirmwareVersion
         {
-            ModelName = "Unknown",
-            Version = "0.0"
+            ModelName = "FallbackMeterTestSystem",
+            Version = "0.1"
         });
 
     /// <inheritdoc/>

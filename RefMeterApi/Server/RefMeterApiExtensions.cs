@@ -9,6 +9,8 @@ using RefMeterApi.Exceptions;
 using RefMeterApi.Models;
 using ZERA.WebSam.Shared;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using RefMeterApi.Actions;
+using RefMeterApi.Controllers;
 
 namespace RefMeterApi;
 
@@ -51,6 +53,15 @@ public static class RefMeterApiConfiguration
         services.AddTransient<IRestRefMeter, RestRefMeter>();
         services.AddTransient<ISerialPortFGRefMeter, SerialPortFGRefMeter>();
         services.AddTransient<ISerialPortMTRefMeter, SerialPortMTRefMeter>();
+
+        var restMock = configuration.GetValue<string>("UseReferenceMeterRestMock");
+
+        if (restMock == "AC")
+            services.AddKeyedSingleton<IRefMeter, ACRefMeterMock>(RefMeterRestMockController.MockKey);
+        else if (restMock == "DC")
+            services.AddKeyedSingleton<IRefMeter, DCRefMeterMock>(RefMeterRestMockController.MockKey);
+        else
+            services.AddKeyedSingleton<IRefMeter, UnavailableReferenceMeter>(RefMeterRestMockController.MockKey);
     }
 
     /// <summary>

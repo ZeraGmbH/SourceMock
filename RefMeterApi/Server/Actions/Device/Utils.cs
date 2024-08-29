@@ -1,6 +1,5 @@
 using RefMeterApi.Models;
 using ZERA.WebSam.Shared;
-using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace RefMeterApi.Actions.Device;
 

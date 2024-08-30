@@ -115,10 +115,10 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
         => ActionResultMapper.SafeExecuteSerialPortCommand(() => _device.GetMeterConstant(interfaceLogger));
 
     /// <summary>
-    /// Get the list of supported measurement modes.
+    /// Get information on the reference meter.
     /// </summary>
-    /// <returns>The list of modes.</returns>
-    [HttpGet("Version"), SamAuthorize]
+    /// <returns>Report various information on the reference meter.</returns>
+    [HttpGet, SamAuthorize]
     [SwaggerOperation(OperationId = "GetMeterInformation")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

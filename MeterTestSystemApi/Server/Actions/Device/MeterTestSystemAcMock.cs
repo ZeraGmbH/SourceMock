@@ -14,7 +14,7 @@ namespace MeterTestSystemApi;
 /// <param name="source"></param>
 /// <param name="refMeter"></param>
 /// <param name="errorCalculatorMock"></param>
-public class MeterTestSystemAcMock(ISourceMock source, IMockRefMeter refMeter, IErrorCalculatorMock errorCalculatorMock) : IMeterTestSystem
+public class MeterTestSystemAcMock(IACSourceMock source, IMockRefMeter refMeter, IErrorCalculatorMock errorCalculatorMock) : IMeterTestSystem
 {
     /// <inheritdoc/>
     public event Action<ErrorConditions> ErrorConditionsChanged = null!;

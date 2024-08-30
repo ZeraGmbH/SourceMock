@@ -140,6 +140,11 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
             HasSource = true;
         }
 
+        /* May want to disable source usage in dosage if mocking the devices. */
+        if (HasDosage && !HasSource)
+            if (dosage is IDosageMock dosageMock)
+                dosageMock.NoSource();
+
         /* Reference meter. */
         var refMeter = di.GetRequiredService<IRestRefMeter>();
 

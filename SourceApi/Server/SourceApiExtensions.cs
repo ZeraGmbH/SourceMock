@@ -57,6 +57,7 @@ public static class SourceApiConfiguration
     {
         services.AddSingleton<ICapabilitiesMap, CapabilitiesMap>();
 
+        services.AddTransient<IACSourceMock, ACSourceMock>();
         services.AddTransient<IDCSourceMock, DCSourceMock>();
         services.AddTransient<IRestDosage, RestDosage>();
         services.AddTransient<IRestSource, RestSource>();
@@ -64,7 +65,6 @@ public static class SourceApiConfiguration
         services.AddTransient<ISerialPortMTSource, SerialPortMTSource>();
         services.AddTransient<ISimulatedSource, SimulatedSource>();
         services.AddTransient<ISourceCapabilityValidator, SourceCapabilityValidator>();
-        services.AddTransient<ISourceMock, SimulatedSource>();
 
         /* Legacy configuration from setting files. */
         var useDatabase = configuration["UseDatabaseConfiguration"] == "yes";
@@ -137,7 +137,7 @@ public static class SourceApiConfiguration
         var restMock = configuration.GetValue<string>("UseSourceRestMock");
 
         if (restMock == "AC")
-            services.AddKeyedSingleton<ISource, SimulatedSource>(SourceRestMockController.MockKey);
+            services.AddKeyedSingleton<ISource, ACSourceMock>(SourceRestMockController.MockKey);
         else if (restMock == "DC")
             services.AddKeyedSingleton<ISource, DCSourceMock>(SourceRestMockController.MockKey);
         else

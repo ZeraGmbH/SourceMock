@@ -5,8 +5,19 @@ using SourceApi.Model;
 
 namespace SourceApi.Actions.Source;
 
-public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities sourceCapabilities, ISourceCapabilityValidator validator) : ISourceMock
+public interface ISourceMock : ISource
 {
+}
+
+public interface IDosageMock : IDosage
+{
+    void NoSource();
+}
+
+public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities sourceCapabilities, ISourceCapabilityValidator validator) : ISourceMock, IDosageMock
+{
+    protected bool UseLoadpoint = true;
+
     protected ILogger<SourceMock>? _logger = logger;
     protected SourceCapabilities _sourceCapabilities = sourceCapabilities;
     protected LoadpointInfo _info = new();
@@ -112,5 +123,10 @@ public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities 
     }
 
     public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger logger) => _loadpoint;
+
+    public virtual void NoSource()
+    {
+        UseLoadpoint = false;
+    }
 }
 

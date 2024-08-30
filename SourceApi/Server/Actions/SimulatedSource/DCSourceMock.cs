@@ -9,7 +9,9 @@ namespace SourceApi.Actions.SimulatedSource;
 /// <summary>
 /// 
 /// </summary>
-public interface IDCSourceMock : ISource { }
+public interface IDCSourceMock : ISource
+{
+}
 
 /// <summary>
 /// 
@@ -41,5 +43,20 @@ public class DCSourceMock(ILogger<DCSourceMock> logger, ISourceCapabilityValidat
             Remaining = _status.Remaining,
             Total = _status.Total
         });
+    }
+
+    public override void NoSource()
+    {
+        base.NoSource();
+
+        _loadpoint = new()
+        {
+            Phases = [
+                new () {
+                    Current = new() { On = true, DcComponent = new(5) },
+                    Voltage = new() { On = true, DcComponent = new(230) },
+                },
+            ]
+        };
     }
 }

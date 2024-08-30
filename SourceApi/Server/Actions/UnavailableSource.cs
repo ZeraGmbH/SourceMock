@@ -10,7 +10,7 @@ namespace SourceApi.Actions;
 /// <summary>
 /// Implementation of a source which is not configured and can therefore not be used.
 /// </summary>
-public class UnavailableSource(IDosage? dosage = null) : ISourceMock, IDCSourceMock
+public class UnavailableSource(IDosage? dosage = null) : IACSourceMock, IDCSourceMock
 {
     public bool GetAvailable(IInterfaceLogger interfaceLogger) => false;
 

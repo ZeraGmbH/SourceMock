@@ -62,9 +62,9 @@ public class ACSourceMock(ILogger<ACSourceMock> logger, SourceCapabilities sourc
         });
     }
 
-    public override void NoSource()
+    public override async Task NoSource(IInterfaceLogger logger)
     {
-        base.NoSource();
+        await base.NoSource(logger);
 
         _loadpoint = new()
         {

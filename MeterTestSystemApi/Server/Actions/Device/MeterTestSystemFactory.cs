@@ -84,7 +84,9 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                         {
                             var meterTestSystem = services.GetRequiredService<RestMeterTestSystem>();
 
-                            meterTestSystem.Configure(configuration.Interfaces, services);
+                            meterTestSystem
+                                .Configure(configuration.Interfaces, services, new NoopInterfaceLogger())
+                                .Wait();
 
                             _meterTestSystem = meterTestSystem;
                             break;

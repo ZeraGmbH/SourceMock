@@ -142,5 +142,7 @@ public static class SourceApiConfiguration
             services.AddKeyedSingleton<ISource, DCSourceMock>(SourceRestMockController.MockKey);
         else
             services.AddKeyedSingleton<ISource, UnavailableSource>(SourceRestMockController.MockKey);
+
+        services.AddKeyedTransient<IDosage>(DosageRestMockController.MockKey, (ctx, key) => ctx.GetRequiredKeyedService<ISource>(SourceRestMockController.MockKey));
     }
 }

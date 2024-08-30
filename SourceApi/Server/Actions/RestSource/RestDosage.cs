@@ -1,3 +1,4 @@
+using SourceApi.Actions.Source;
 using SourceApi.Model;
 using System.Net;
 using System.Net.Http.Headers;
@@ -14,11 +15,13 @@ namespace SourceApi.Actions.RestSource;
 /// Dosage algorithm connected to a HTTP/REST web service.
 /// </summary>
 /// <param name="httpDosage">Dosage connection to use.</param>
-public class RestDosage(ILoggingHttpClient httpDosage) : IRestDosage
+public class RestDosage(ILoggingHttpClient httpDosage) : IRestDosage, IDosageMock, IDisposable
 {
     private bool _initialized = false;
 
     private Uri _dosageUri = null!;
+
+    private bool _disposed = false;
 
     /// <inheritdoc/>
     public async Task CancelDosage(IInterfaceLogger logger)
@@ -31,6 +34,8 @@ public class RestDosage(ILoggingHttpClient httpDosage) : IRestDosage
     /// <inheritdoc/>
     public Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger)
         => httpDosage.GetAsync<bool>(logger, new Uri(_dosageUri, "IsDosageCurrentOff"));
+
+    public void Dispose() => _disposed = true;
 
     /// <inheritdoc/>
     public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
@@ -64,6 +69,35 @@ public class RestDosage(ILoggingHttpClient httpDosage) : IRestDosage
 
         /* Did it. */
         _initialized = true;
+    }
+
+    /// <inheritdoc/>
+    public Task NoSource(IInterfaceLogger interfaceLogger)
+    {
+        ThreadPool.QueueUserWorkItem((state) =>
+        {
+            for (; !_disposed; Thread.Sleep(1000))
+                try
+                {
+                    httpDosage.PostAsync(interfaceLogger, new Uri(_dosageUri, "NoSource")).Wait();
+
+                    break;
+                }
+                catch (Exception e)
+                {
+                    if (e is AggregateException aggr)
+                        e = aggr.InnerExceptions.FirstOrDefault() ?? e;
+
+                    if (e is not HttpRequestException req || req.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        Console.WriteLine($"Dosage endpoint does not support mock interface: {e.Message}");
+
+                        break;
+                    }
+                }
+        });
+
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc/>

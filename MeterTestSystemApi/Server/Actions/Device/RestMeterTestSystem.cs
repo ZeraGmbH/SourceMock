@@ -80,7 +80,8 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
     /// </summary>
     /// <param name="config">Configuration to use.</param>
     /// <param name="di">Active dependency injection runtime to create helper.</param>
-    public async void Configure(InterfaceConfiguration config, IServiceProvider di)
+    /// <param name="interfaceLogger"></param>
+    public async Task Configure(InterfaceConfiguration config, IServiceProvider di, IInterfaceLogger interfaceLogger)
     {
         /* Validate. */
         if (string.IsNullOrEmpty(config.MeterTestSystem?.Endpoint))
@@ -143,7 +144,7 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
         /* May want to disable source usage in dosage if mocking the devices. */
         if (HasDosage && !HasSource)
             if (dosage is IDosageMock dosageMock)
-                dosageMock.NoSource();
+                await dosageMock.NoSource(interfaceLogger);
 
         /* Reference meter. */
         var refMeter = di.GetRequiredService<IRestRefMeter>();

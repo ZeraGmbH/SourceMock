@@ -11,7 +11,7 @@ public interface ISourceMock : ISource
 
 public interface IDosageMock : IDosage
 {
-    void NoSource();
+    Task NoSource(IInterfaceLogger logger);
 }
 
 public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities sourceCapabilities, ISourceCapabilityValidator validator) : ISourceMock, IDosageMock
@@ -124,9 +124,11 @@ public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities 
 
     public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger logger) => _loadpoint;
 
-    public virtual void NoSource()
+    public virtual Task NoSource(IInterfaceLogger logger)
     {
         UseLoadpoint = false;
+
+        return Task.CompletedTask;
     }
 }
 

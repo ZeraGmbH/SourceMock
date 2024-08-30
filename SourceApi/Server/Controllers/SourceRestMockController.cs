@@ -1,12 +1,13 @@
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
-
 using SourceApi.Actions.Source;
 using SourceApi.Model;
+using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared.Models.Logging;
-using ZERA.WebSam.Shared.Security;
 
 namespace SourceApi.Controllers;
 
@@ -21,16 +22,19 @@ namespace SourceApi.Controllers;
 /// <param name="interfaceLogger"></param>
 [ApiVersion("1.0")]
 [ApiController]
-[Route("api/v{version:apiVersion}/[controller]")]
-public class SourceController(ILogger<SourceController> logger, ISource source, IInterfaceLogger interfaceLogger) : Controller
+[Route("api/v{version:apiVersion}/srcrestmock")]
+public class SourceRestMockController([FromKeyedServices(SourceRestMockController.MockKey)] ISource source, ILogger<SourceController> logger, IInterfaceLogger interfaceLogger) : Controller
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    public const string MockKey = "RESTMOCK";
+
     /// <summary>
     /// Gets the capabilities of this source.
     /// </summary>
     /// <returns>The corresponding<see cref="SourceCapabilities"/>-Object for this source.</returns>
-    /// /// <response code="200">If the capabilities could be returned successfully.</response>
-    [HttpGet("Capabilities"), SamAuthorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpGet("Capabilities"), AllowAnonymous]
     [SwaggerOperation(OperationId = "GetCapabilities")]
     public async Task<ActionResult<SourceCapabilities>> GetCapablities() => Ok(await source.GetCapabilities(interfaceLogger));
 
@@ -38,9 +42,7 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
     /// Gets the capabilities of this source.
     /// </summary>
     /// <returns>The corresponding<see cref="SourceCapabilities"/>-Object for this source.</returns>
-    /// <response code="200">If the capabilities could be returned successfully.</response>
-    [HttpGet("Available"), SamAuthorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpGet("Available"), AllowAnonymous]
     [SwaggerOperation(OperationId = "SourceIsAvailable")]
     public ActionResult<bool> IsAvailable() => Ok(source.GetAvailable(interfaceLogger));
 
@@ -49,15 +51,7 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
     /// </summary>
     /// <param name="loadpoint">The loadpoint to be set.</param>
     /// <returns>The result of the operation, see responses.</returns>
-    /// <response code="200">If the loadpoint could be set correctly.</response>
-    /// <response code="400">If the loadpoint was (generally) malformed. The loadpoint cannot be set with any source.</response>
-    /// <response code="422">If the loadpoint was wellformed but invalid. The loadpoint cannot be set with this source.</response>
-    /// <response code="500">If an unexpected error occured.</response>
-    [HttpPut("Loadpoint"), SamAuthorize(WebSamRole.testcaseexecutor)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpPut("Loadpoint"), AllowAnonymous]
     [SwaggerOperation(OperationId = "SetLoadpoint")]
     public async Task<ActionResult> SetLoadpoint([FromBody] TargetLoadpoint loadpoint)
     {
@@ -93,13 +87,7 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
     /// Turns off the source.
     /// </summary>
     /// <returns>The result of the operation, see responses.</returns>
-    /// <response code="200">If the source was turned off successfully.</response>
-    /// <response code="409">If the source could not be turned off successfully.</response>
-    /// <response code="500">If an unexpected error occured.</response>
-    [HttpPost("TurnOff"), SamAuthorize(WebSamRole.testcaseexecutor)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpPost("TurnOff"), AllowAnonymous]
     [SwaggerOperation(OperationId = "TurnOff")]
     public async Task<ActionResult> TurnOff()
     {
@@ -121,12 +109,7 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
     /// <summary>
     /// Gets the currently active loadpoint.
     /// </summary>
-    /// <returns>The loadpoint. HTTP 204 when the source is turned off.</returns>
-    /// <response code="200">If there is a loadpoint to be returned.</response>
-    /// <response code="204">If the source is turned off.</response>
-    [HttpGet("Loadpoint"), SamAuthorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [HttpGet("Loadpoint"), AllowAnonymous]
     [SwaggerOperation(OperationId = "GetLoadpoint")]
     public ActionResult<TargetLoadpoint> GetCurrentLoadpoint()
     {
@@ -141,9 +124,7 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
     /// Report information on the last loadpoint activated.
     /// </summary>
     /// <returns>The information including some dates.</returns>
-    /// <response code="200">If there is a loadpointinfo to be returned.</response>
-    [HttpGet("LoadpointInfo"), SamAuthorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpGet("LoadpointInfo"), AllowAnonymous]
     [SwaggerOperation(OperationId = "GetLoadpointInfo")]
     public ActionResult<LoadpointInfo> GetLoadpointInfo() => source.GetActiveLoadpointInfo(interfaceLogger);
 }

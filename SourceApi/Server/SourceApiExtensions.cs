@@ -15,6 +15,8 @@ using SourceApi.Model.Configuration;
 using ZERA.WebSam.Shared.Models;
 using SourceApi.Actions.RestSource;
 using SourceApi.Actions.SimulatedSource;
+using SourceApi.Actions;
+using SourceApi.Controllers;
 
 namespace SourceApi;
 
@@ -131,5 +133,14 @@ public static class SourceApiConfiguration
         });
 
         services.AddKeyedTransient(KeyedService.AnyKey, (ctx, key) => ctx.GetRequiredKeyedService<ISerialPortConnectionFactory>(key).Connection);
+
+        var restMock = configuration.GetValue<string>("UseSourceRestMock");
+
+        if (restMock == "AC")
+            services.AddKeyedSingleton<ISource, SimulatedSource>(SourceRestMockController.MockKey);
+        else if (restMock == "DC")
+            services.AddKeyedSingleton<ISource, DCSourceMock>(SourceRestMockController.MockKey);
+        else
+            services.AddKeyedSingleton<ISource, UnavailableSource>(SourceRestMockController.MockKey);
     }
 }

@@ -64,8 +64,8 @@ public class RefMeterRestMockController([FromKeyedServices(RefMeterRestMockContr
     /// </summary>
     [HttpGet("Available"), AllowAnonymous]
     [SwaggerOperation(OperationId = "ReferenceMeterIsAvailable")]
-    public ActionResult<bool> IsAvailable() =>
-        Ok(device.GetAvailableAsync(interfaceLogger));
+    public async Task<ActionResult<bool>> IsAvailableAsync() =>
+        Ok(await device.GetAvailableAsync(interfaceLogger));
 
     /// <summary>
     /// Get the current meter constant of the reference meter.

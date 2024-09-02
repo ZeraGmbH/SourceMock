@@ -33,7 +33,7 @@ partial class SerialPortMTRefMeter
     private static readonly Regex MeasurementModeReg = new Regex(@"^(\d{1,3});([^;]+);(.+)$");
 
     /// <inheritdoc/>
-    public async Task<MeasurementModes?> GetActualMeasurementMode(IInterfaceLogger logger)
+    public async Task<MeasurementModes?> GetActualMeasurementModeAsync(IInterfaceLogger logger)
     {
         /* Execute the request and get the answer from the device. */
         var replies = await _device.Execute(logger, SerialPortRequest.Create("AST", "ASTACK"))[0];
@@ -48,7 +48,7 @@ partial class SerialPortMTRefMeter
     }
 
     /// <inheritdoc/>
-    public async Task<MeasurementModes[]> GetMeasurementModes(IInterfaceLogger logger)
+    public async Task<MeasurementModes[]> GetMeasurementModesAsync(IInterfaceLogger logger)
     {
         /* Execute the request and get the answer from the device. */
         var replies = await _device.Execute(logger, SerialPortRequest.Create("AML", "AMLACK"))[0];
@@ -80,7 +80,7 @@ partial class SerialPortMTRefMeter
 
 
     /// <inheritdoc/>
-    public Task SetActualMeasurementMode(IInterfaceLogger logger, MeasurementModes mode)
+    public Task SetActualMeasurementModeAsync(IInterfaceLogger logger, MeasurementModes mode)
     {
         /* Reverse lookup the raw string for the mode - somewhat slow. */
         var supported = SupportedModes.Single(m => m.Value == mode);

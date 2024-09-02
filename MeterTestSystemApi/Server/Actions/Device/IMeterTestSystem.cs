@@ -15,31 +15,31 @@ public interface IMeterTestSystem
     /// Retrieve the firmware version of the meter test system.
     /// </summary>
     /// <returns>The firmware version.</returns>
-    Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger);
+    Task<MeterTestSystemFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger logger);
 
     /// <summary>
     /// Request the capabilities of the meter test system.
     /// </summary>
     /// <returns>Capabilities if applicable.</returns>
-    Task<MeterTestSystemCapabilities> GetCapabilities(IInterfaceLogger logger);
+    Task<MeterTestSystemCapabilities> GetCapabilitiesAsync(IInterfaceLogger logger);
 
     /// <summary>
     /// Report the physical configuration to the meter test system implementation.
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="settings">Physical configuration to use.</param>
-    Task SetAmplifiersAndReferenceMeter(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings);
+    Task SetAmplifiersAndReferenceMeterAsync(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings);
 
     /// <summary>
     /// Retrive the current error condition overview for the meter test system.
     /// </summary>
     /// <returns>All available error conditions.</returns>
-    Task<ErrorConditions> GetErrorConditions(IInterfaceLogger logger);
+    Task<ErrorConditions> GetErrorConditionsAsync(IInterfaceLogger logger);
 
     /// <summary>
     /// Request the current physical configuration used.
     /// </summary>
-    AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger logger);
+    Task<AmplifiersAndReferenceMeter> GetAmplifiersAndReferenceMeterAsync(IInterfaceLogger logger);
 
     /// <summary>
     /// The corresponding source.

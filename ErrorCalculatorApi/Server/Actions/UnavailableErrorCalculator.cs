@@ -12,10 +12,10 @@ namespace ErrorCalculatorApi.Actions;
 public class UnavailableErrorCalculator : IErrorCalculator
 {
     /// <inheritdoc/>
-    public bool GetAvailable(IInterfaceLogger interfaceLogger) => false;
+    public Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(false);
 
     /// <inheritdoc/>
-    public Task AbortErrorMeasurement(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
+    public Task AbortErrorMeasurementAsync(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
 
     /// <inheritdoc/>
     public void Dispose()
@@ -23,26 +23,26 @@ public class UnavailableErrorCalculator : IErrorCalculator
     }
 
     /// <inheritdoc/>
-    public Task<ErrorMeasurementStatus> GetErrorStatus(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
+    public Task<ErrorMeasurementStatus> GetErrorStatusAsync(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
+    public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant) => throw new ErrorCalculatorNotReadyException();
+    public Task SetErrorMeasurementParametersAsync(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant) => throw new ErrorCalculatorNotReadyException();
 
     /// <inheritdoc/>
-    public Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection) => throw new ErrorCalculatorNotReadyException();
+    public Task StartErrorMeasurementAsync(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection) => throw new ErrorCalculatorNotReadyException();
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
+    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnectionsAsync(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
 
     /// <inheritdoc/>
-    public Task<Impulses?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
+    public Task<Impulses?> GetNumberOfDeviceUnderTestImpulsesAsync(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
 
     /// <inheritdoc/>
-    public Task AbortAllJobs(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
+    public Task AbortAllJobsAsync(IInterfaceLogger logger) => throw new ErrorCalculatorNotReadyException();
 
     /// <inheritdoc/>
-    public Task ActivateSource(IInterfaceLogger logger, bool on) => Task.CompletedTask;
+    public Task ActivateSourceAsync(IInterfaceLogger logger, bool on) => Task.CompletedTask;
 }

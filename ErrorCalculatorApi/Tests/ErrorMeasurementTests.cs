@@ -85,8 +85,8 @@ public class ErrorMeasurementTests
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
-        await cut.StartErrorMeasurement(new NoopInterfaceLogger(), false, null);
-        await cut.StartErrorMeasurement(new NoopInterfaceLogger(), true, null);
+        await cut.StartErrorMeasurementAsync(new NoopInterfaceLogger(), false, null);
+        await cut.StartErrorMeasurementAsync(new NoopInterfaceLogger(), true, null);
     }
 
     [Test]
@@ -94,7 +94,7 @@ public class ErrorMeasurementTests
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
-        await cut.AbortErrorMeasurement(new NoopInterfaceLogger());
+        await cut.AbortErrorMeasurementAsync(new NoopInterfaceLogger());
     }
 
     [Test]
@@ -102,7 +102,7 @@ public class ErrorMeasurementTests
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
-        var status = await cut.GetErrorStatus(new NoopInterfaceLogger());
+        var status = await cut.GetErrorStatusAsync(new NoopInterfaceLogger());
 
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
@@ -115,7 +115,7 @@ public class ErrorMeasurementTests
 
         _port.StatusResponse = ["00", "oo.oo", "0.000000;0.000000"];
 
-        status = await cut.GetErrorStatus(new NoopInterfaceLogger());
+        status = await cut.GetErrorStatusAsync(new NoopInterfaceLogger());
 
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
@@ -128,7 +128,7 @@ public class ErrorMeasurementTests
 
         _port.StatusResponse = ["11", "--.--", "0.000000;0.000000"];
 
-        status = await cut.GetErrorStatus(new NoopInterfaceLogger());
+        status = await cut.GetErrorStatusAsync(new NoopInterfaceLogger());
 
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
@@ -141,7 +141,7 @@ public class ErrorMeasurementTests
 
         _port.StatusResponse = ["12", "--.--", "51.234112;912.38433"];
 
-        status = await cut.GetErrorStatus(new NoopInterfaceLogger());
+        status = await cut.GetErrorStatusAsync(new NoopInterfaceLogger());
 
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
@@ -154,7 +154,7 @@ public class ErrorMeasurementTests
 
         _port.StatusResponse = ["13", "0.5", "51.234112;912.38433"];
 
-        status = await cut.GetErrorStatus(new NoopInterfaceLogger());
+        status = await cut.GetErrorStatusAsync(new NoopInterfaceLogger());
 
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
@@ -167,7 +167,7 @@ public class ErrorMeasurementTests
 
         _port.StatusResponse = ["13", "-0.2", "51.234112;912.38433"];
 
-        status = await cut.GetErrorStatus(new NoopInterfaceLogger());
+        status = await cut.GetErrorStatusAsync(new NoopInterfaceLogger());
 
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
@@ -180,7 +180,7 @@ public class ErrorMeasurementTests
 
         _port.StatusResponse = ["03", "-.2", "51.234112;912.38433"];
 
-        status = await cut.GetErrorStatus(new NoopInterfaceLogger());
+        status = await cut.GetErrorStatusAsync(new NoopInterfaceLogger());
 
         Assert.That(status, Is.Not.Null);
         Assert.Multiple(() =>
@@ -207,7 +207,7 @@ public class ErrorMeasurementTests
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
-        await cut.SetErrorMeasurementParameters(new NoopInterfaceLogger(), new(meterConstant), new(impluses), new(6000d));
+        await cut.SetErrorMeasurementParametersAsync(new NoopInterfaceLogger(), new(meterConstant), new(impluses), new(6000d));
 
         Assert.That(_port.ActiveParameters, Is.EqualTo(expected));
     }

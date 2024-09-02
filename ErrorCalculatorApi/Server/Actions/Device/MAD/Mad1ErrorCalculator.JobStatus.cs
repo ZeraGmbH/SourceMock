@@ -19,7 +19,7 @@ partial class Mad1ErrorCalculator
     ";
 
   /// <inheritdoc/>
-  public async Task<ErrorMeasurementStatus> GetErrorStatus(IInterfaceLogger logger)
+  public async Task<ErrorMeasurementStatus> GetErrorStatusAsync(IInterfaceLogger logger)
   {
     var reply = new ErrorMeasurementStatus { State = ErrorMeasurementStates.NotActive };
 
@@ -36,7 +36,7 @@ partial class Mad1ErrorCalculator
     id.InnerText = jobId;
 
     /* Execute the request. */
-    var res = await _connection.Execute(logger, req, "runErrorMeasureRes");
+    var res = await _connection.ExecuteAsync(logger, req, "runErrorMeasureRes");
     var jobInfo = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/jobDetails");
 
     var info = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureRes");

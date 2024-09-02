@@ -19,7 +19,7 @@ public interface IMadConnection : IDisposable
     /// </summary>
     /// <param name="webSamId">Unique identifier inside WebSam.</param>
     /// <param name="config">Configuration to use.</param>
-    public Task Initialize(string webSamId, ErrorCalculatorConfiguration config);
+    public Task InitializeAsync(string webSamId, ErrorCalculatorConfiguration config);
 
     /// <summary>
     /// Execute a single XML request.
@@ -28,5 +28,5 @@ public interface IMadConnection : IDisposable
     /// <param name="request">Request to send.</param>
     /// <param name="reply">Reply node to expect.</param>
     /// <returns>Response received.</returns>
-    public Task<XmlDocument> Execute(IInterfaceLogger logger, XmlDocument request, string reply);
+    public Task<XmlDocument> ExecuteAsync(IInterfaceLogger logger, XmlDocument request, string reply);
 }

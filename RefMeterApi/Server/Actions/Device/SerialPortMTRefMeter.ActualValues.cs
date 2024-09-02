@@ -15,7 +15,7 @@ partial class SerialPortMTRefMeter
     private readonly ResponseShare<MeasuredLoadpoint, IInterfaceLogger> _actualValues;
 
     /// <inheritdoc/>
-    public async Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1)
+    public async Task<MeasuredLoadpoint> GetActualValuesAsync(IInterfaceLogger logger, int firstActiveCurrentPhase = -1)
         => Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValues.ExecuteAsync(logger)), firstActiveCurrentPhase);
 
     /// <summary>
@@ -23,7 +23,7 @@ partial class SerialPortMTRefMeter
     /// </summary>
     /// <returns>Task reading the actual values.</returns>
     /// <exception cref="ArgumentException">Reply from the device was not recognized.</exception>
-    private async Task<MeasuredLoadpoint> CreateActualValueRequest(IInterfaceLogger logger)
+    private async Task<MeasuredLoadpoint> CreateActualValueRequestAsync(IInterfaceLogger logger)
     {
         /* Execute the request and get the answer from the device. */
         var replies = await _device.Execute(

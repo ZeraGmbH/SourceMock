@@ -21,7 +21,7 @@ public interface ISerialPortMTSource : ISource
 public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, ISerialPortMTSource
 {
     /// <inheritdoc/>
-    public override bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
+    public override Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(true);
 
     /// <summary>
     /// Initialize a new source implementation.
@@ -35,14 +35,14 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, I
     }
 
     /// <inheritdoc/>
-    public override Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger)
+    public override Task<SourceCapabilities> GetCapabilitiesAsync(IInterfaceLogger interfaceLogger)
     {
         /* Currently we assume MT768, future versions may read the firmware from the device. */
         return Task.FromResult(Capabilities.GetCapabilitiesByModel("MT786"));
     }
 
     /// <inheritdoc/>
-    public override async Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger)
+    public override async Task<SourceApiErrorCodes> TurnOffAsync(IInterfaceLogger logger)
     {
         Logger.LogTrace("Switching anything off.");
 

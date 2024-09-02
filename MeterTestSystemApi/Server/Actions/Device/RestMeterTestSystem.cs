@@ -28,7 +28,7 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
     private Uri _baseUri = null!;
 
     /// <inheritdoc/>
-    public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
+    public Task<AmplifiersAndReferenceMeter> GetAmplifiersAndReferenceMeterAsync(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public bool HasSource { get; private set; } = false;
@@ -51,11 +51,11 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
     public event Action<ErrorConditions> ErrorConditionsChanged = null!;
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) =>
+    public Task<MeterTestSystemCapabilities> GetCapabilitiesAsync(IInterfaceLogger interfaceLogger) =>
         Task.FromResult<MeterTestSystemCapabilities>(null!);
 
     /// <inheritdoc/>
-    public async Task<ErrorConditions> GetErrorConditions(IInterfaceLogger logger)
+    public async Task<ErrorConditions> GetErrorConditionsAsync(IInterfaceLogger logger)
     {
         var errors = await httpClient.GetAsync<ErrorConditions>(logger, new Uri(_baseUri, "ErrorConditions"));
 
@@ -65,11 +65,11 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
     }
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) =>
+    public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger logger) =>
         httpClient.GetAsync<MeterTestSystemFirmwareVersion>(logger, new Uri(_baseUri, "FirmwareVersion"));
 
     /// <inheritdoc/>
-    public Task SetAmplifiersAndReferenceMeter(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings)
+    public Task SetAmplifiersAndReferenceMeterAsync(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings)
     {
         /* The fallback do not support amplifier configurations. */
         throw new InvalidOperationException();
@@ -81,7 +81,7 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
     /// <param name="config">Configuration to use.</param>
     /// <param name="di">Active dependency injection runtime to create helper.</param>
     /// <param name="interfaceLogger"></param>
-    public async Task Configure(InterfaceConfiguration config, IServiceProvider di, IInterfaceLogger interfaceLogger)
+    public async Task ConfigureAsync(InterfaceConfiguration config, IServiceProvider di, IInterfaceLogger interfaceLogger)
     {
         /* Validate. */
         if (string.IsNullOrEmpty(config.MeterTestSystem?.Endpoint))
@@ -144,7 +144,7 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
         /* May want to disable source usage in dosage if mocking the devices. */
         if (HasDosage && !HasSource)
             if (dosage is IDosageMock dosageMock)
-                await dosageMock.NoSource(interfaceLogger);
+                await dosageMock.NoSourceAsync(interfaceLogger);
 
         /* Reference meter. */
         var refMeter = di.GetRequiredService<IRestRefMeter>();
@@ -158,7 +158,7 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
         {
             /* Create calculators based on configuration. */
             for (var i = 0; i < config.ErrorCalculators.Count; i++)
-                errorCalculators.Add(await factory.Create(i, config.ErrorCalculators[i]));
+                errorCalculators.Add(await factory.CreateAsync(i, config.ErrorCalculators[i]));
         }
         catch (Exception e)
         {

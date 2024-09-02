@@ -24,18 +24,14 @@ public class RestSource(ILoggingHttpClient httpSource, ILogger<RestSource> logge
     private IDosage? _dosage = null;
 
     /// <inheritdoc/>
-    public bool GetAvailable(IInterfaceLogger interfaceLogger)
+    public async Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger)
     {
         /* Not yet initialized. */
         if (!_initialized) return false;
 
         try
         {
-            var available = httpSource.GetAsync<bool>(interfaceLogger, new Uri(_sourceUri, "Available"));
-
-            available.Wait();
-
-            return available.Result;
+            return await httpSource.GetAsync<bool>(interfaceLogger, new Uri(_sourceUri, "Available"));
         }
         catch (Exception e)
         {
@@ -50,40 +46,28 @@ public class RestSource(ILoggingHttpClient httpSource, ILogger<RestSource> logge
     }
 
     /// <inheritdoc/>
-    public Task CancelDosage(IInterfaceLogger logger)
-        => _dosage == null ? throw new NotImplementedException("Dosage") : _dosage.CancelDosage(logger);
+    public Task CancelDosageAsync(IInterfaceLogger logger)
+        => _dosage == null ? throw new NotImplementedException("Dosage") : _dosage.CancelDosageAsync(logger);
 
     /// <inheritdoc/>
-    public Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger)
-        => _dosage == null ? Task.FromResult(false) : _dosage.CurrentSwitchedOffForDosage(logger);
+    public Task<bool> CurrentSwitchedOffForDosageAsync(IInterfaceLogger logger)
+        => _dosage == null ? Task.FromResult(false) : _dosage.CurrentSwitchedOffForDosageAsync(logger);
 
     /// <inheritdoc/>
-    public LoadpointInfo GetActiveLoadpointInfo(IInterfaceLogger interfaceLogger)
-    {
-        var req = httpSource.GetAsync<LoadpointInfo>(interfaceLogger, new Uri(_sourceUri, "LoadpointInfo"));
-
-        req.Wait();
-
-        return req.Result;
-    }
+    public Task<LoadpointInfo> GetActiveLoadpointInfoAsync(IInterfaceLogger interfaceLogger)
+        => httpSource.GetAsync<LoadpointInfo>(interfaceLogger, new Uri(_sourceUri, "LoadpointInfo"));
 
     /// <inheritdoc/>
-    public Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) =>
+    public Task<SourceCapabilities> GetCapabilitiesAsync(IInterfaceLogger interfaceLogger) =>
         httpSource.GetAsync<SourceCapabilities>(interfaceLogger, new Uri(_sourceUri, "Capabilities"));
 
     /// <inheritdoc/>
-    public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger)
-    {
-        var req = httpSource.GetAsync<TargetLoadpoint?>(interfaceLogger, new Uri(_sourceUri, "Loadpoint"));
-
-        req.Wait();
-
-        return req.Result;
-    }
+    public Task<TargetLoadpoint?> GetCurrentLoadpointAsync(IInterfaceLogger interfaceLogger)
+        => httpSource.GetAsync<TargetLoadpoint?>(interfaceLogger, new Uri(_sourceUri, "Loadpoint"));
 
     /// <inheritdoc/>
-    public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
-        => _dosage == null ? throw new NotImplementedException("Dosage") : _dosage.GetDosageProgress(logger, meterConstant);
+    public Task<DosageProgress> GetDosageProgressAsync(IInterfaceLogger logger, MeterConstant meterConstant)
+        => _dosage == null ? throw new NotImplementedException("Dosage") : _dosage.GetDosageProgressAsync(logger, meterConstant);
 
     /// <inheritdoc/>
     public void Initialize(RestConfiguration? sourceEndpoint, IDosage? dosage)
@@ -121,15 +105,15 @@ public class RestSource(ILoggingHttpClient httpSource, ILogger<RestSource> logge
     }
 
     /// <inheritdoc/>
-    public Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
-        => _dosage == null ? throw new NotImplementedException("Dosage") : _dosage.SetDosageEnergy(logger, value, meterConstant);
+    public Task SetDosageEnergyAsync(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
+        => _dosage == null ? throw new NotImplementedException("Dosage") : _dosage.SetDosageEnergyAsync(logger, value, meterConstant);
 
     /// <inheritdoc/>
-    public Task SetDosageMode(IInterfaceLogger logger, bool on)
-        => _dosage == null ? throw new NotImplementedException("Dosage") : _dosage.SetDosageMode(logger, on);
+    public Task SetDosageModeAsync(IInterfaceLogger logger, bool on)
+        => _dosage == null ? throw new NotImplementedException("Dosage") : _dosage.SetDosageModeAsync(logger, on);
 
     /// <inheritdoc/>
-    public async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
+    public async Task<SourceApiErrorCodes> SetLoadpointAsync(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
         var res = await httpSource.PutAsync(logger, new Uri(_sourceUri, "Loadpoint"), loadpoint);
 
@@ -137,11 +121,11 @@ public class RestSource(ILoggingHttpClient httpSource, ILogger<RestSource> logge
     }
 
     /// <inheritdoc/>
-    public Task StartDosage(IInterfaceLogger logger)
-        => _dosage == null ? throw new NotImplementedException("Dosage") : _dosage.StartDosage(logger);
+    public Task StartDosageAsync(IInterfaceLogger logger)
+        => _dosage == null ? throw new NotImplementedException("Dosage") : _dosage.StartDosageAsync(logger);
 
     /// <inheritdoc/>
-    public async Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger)
+    public async Task<SourceApiErrorCodes> TurnOffAsync(IInterfaceLogger logger)
     {
         var res = await httpSource.PostAsync(logger, new Uri(_sourceUri, "TurnOff"));
 

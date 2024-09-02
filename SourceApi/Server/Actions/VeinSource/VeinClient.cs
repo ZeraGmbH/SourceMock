@@ -31,9 +31,9 @@ namespace SourceApi.Actions.VeinSource
         /// Query EntityName of Vein System Entity
         /// </summary>
         /// <returns>String of System Entity Name</returns>
-        public VeinGetResult<string> GetSystemEntityName()
+        public async Task<VeinGetResult<string>> GetSystemEntityNameAsync()
         {
-            JObject json = GetFromVein(EntityIds.SYSTEM, "EntityName");
+            JObject json = await GetFromVeinAsync(EntityIds.SYSTEM, "EntityName");
             VeinGetResult<string> result = new()
             {
                 Status = (HttpStatusCode)Int32.Parse(json["status"]?.ToString() ?? ""),
@@ -47,9 +47,9 @@ namespace SourceApi.Actions.VeinSource
         /// </summary>
         /// <param name="cityName">City Name of Customer</param>
         /// <returns>HttpStatusCode of Request</returns>
-        public HttpStatusCode SetCustomerCity(string cityName)
+        public async Task<HttpStatusCode> SetCustomerCityAsync(string cityName)
         {
-            JObject json = SetToVein(EntityIds.CUSTOMER_DATA, "PAR_CustomerCity", cityName);
+            JObject json = await SetToVeinAsync(EntityIds.CUSTOMER_DATA, "PAR_CustomerCity", cityName);
 
             return (HttpStatusCode)Int32.Parse(json["status"]?.ToString() ?? "");
         }
@@ -59,9 +59,9 @@ namespace SourceApi.Actions.VeinSource
         /// </summary>
         /// <param name="jsonLoadpoint">Loadpoint formated in zera compatible json</param>
         /// <returns>HttpStatusCode of Request</returns>
-        public HttpStatusCode SetLoadpoint(string jsonLoadpoint)
+        public async Task<HttpStatusCode> SetLoadpointAsync(string jsonLoadpoint)
         {
-            JObject json = SetToVein(EntityIds.SOURCE, "PAR_SourceState0", jsonLoadpoint);
+            JObject json = await SetToVeinAsync(EntityIds.SOURCE, "PAR_SourceState0", jsonLoadpoint);
 
             return (HttpStatusCode)Int32.Parse(json["status"]?.ToString() ?? "");
         }
@@ -70,9 +70,9 @@ namespace SourceApi.Actions.VeinSource
         /// Get current Loadpoint of Source
         /// </summary>
         /// <returns>String of Current Loadpoint in zera compatible json</returns>
-        public VeinGetResult<string> GetLoadpoint()
+        public async Task<VeinGetResult<string>> GetLoadpointAsync()
         {
-            JObject json = GetFromVein(EntityIds.SOURCE, "PAR_SourceState0");
+            JObject json = await GetFromVeinAsync(EntityIds.SOURCE, "PAR_SourceState0");
             VeinGetResult<string> result = new()
             {
                 Status = (HttpStatusCode)Int32.Parse(json["status"]?.ToString() ?? ""),
@@ -81,16 +81,16 @@ namespace SourceApi.Actions.VeinSource
             return result;
         }
 
-        private JObject GetFromVein(EntityIds entityId, string componentName)
+        private async Task<JObject> GetFromVeinAsync(EntityIds entityId, string componentName)
         {
             string payload = $"?entity_id={(int)entityId}&component_name={componentName}";
 
-            HttpResponseMessage response = _client.GetAsync($"http://{_hostIp}:{_hostPort}/api/v1/Vein/{payload}").Result;
+            HttpResponseMessage response = await _client.GetAsync($"http://{_hostIp}:{_hostPort}/api/v1/Vein/{payload}");
 
-            return JObject.Parse(response.Content.ReadAsStringAsync().Result);
+            return JObject.Parse(await response.Content.ReadAsStringAsync());
         }
 
-        private JObject SetToVein(EntityIds entityId, string componentName, string value)
+        private async Task<JObject> SetToVeinAsync(EntityIds entityId, string componentName, string value)
         {
             // Escape double quotes inside "newValue" json-object
             value = value.Replace("\"", "\\\"");
@@ -98,9 +98,9 @@ namespace SourceApi.Actions.VeinSource
             string payload = $"{{\"EntityID\": {(int)entityId}, \"componentName\": \"{componentName}\", \"newValue\": \"{value}\"}}";
             StringContent stringContent = new(payload);
 
-            HttpResponseMessage response = _client.PutAsync($"http://{_hostIp}:{_hostPort}/api/v1/Vein/", stringContent).Result;
+            HttpResponseMessage response = await _client.PutAsync($"http://{_hostIp}:{_hostPort}/api/v1/Vein/", stringContent);
 
-            return JObject.Parse(response.Content.ReadAsStringAsync().Result);
+            return JObject.Parse(await response.Content.ReadAsStringAsync());
         }
 
         private readonly HttpClient _client;

@@ -13,7 +13,7 @@ public interface IErrorCalculatorInternal : IErrorCalculator
     /// <param name="position">Position of the test system.</param>
     /// <param name="configuration">Configuration to use.</param>
     /// <param name="services">Dependency injection.</param>
-    Task Initialize(int position, ErrorCalculatorConfiguration configuration, IServiceProvider services);
+    Task InitializeAsync(int position, ErrorCalculatorConfiguration configuration, IServiceProvider services);
 
     /// <summary>
     /// Release all resources.

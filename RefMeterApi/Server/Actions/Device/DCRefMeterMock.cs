@@ -61,9 +61,9 @@ public class DCRefMeterMock(IServiceProvider di) : RefMeterMock, IDCRefMeterMock
     /// <param name="logger"></param>
     /// <param name="firstActiveVoltagePhase">Not relevant in dc</param>
     /// <returns></returns>
-    public async override Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveVoltagePhase = -1)
+    public async override Task<MeasuredLoadpoint> GetActualValuesAsync(IInterfaceLogger logger, int firstActiveVoltagePhase = -1)
     {
-        var loadpoint = await GetLoadpoint(logger);
+        var loadpoint = await GetLoadpointAsync(logger);
 
         var mo = CalcMeasureOutput(loadpoint);
 
@@ -72,14 +72,14 @@ public class DCRefMeterMock(IServiceProvider di) : RefMeterMock, IDCRefMeterMock
         return mo;
     }
 
-    private async Task<TargetLoadpoint> GetLoadpoint(IInterfaceLogger logger)
+    private async Task<TargetLoadpoint> GetLoadpointAsync(IInterfaceLogger logger)
     {
         var r = Random.Shared;
 
         var source = _di.GetRequiredService<ISource>();
-        var hasSource = source.GetAvailable(logger);
+        var hasSource = await source.GetAvailableAsync(logger);
 
-        var sourceLoadpoint = hasSource ? source.GetCurrentLoadpoint(logger) : new TargetLoadpoint()
+        var sourceLoadpoint = hasSource ? await source.GetCurrentLoadpointAsync(logger) : new TargetLoadpoint()
         {
             Phases = [
                 new () {
@@ -103,8 +103,8 @@ public class DCRefMeterMock(IServiceProvider di) : RefMeterMock, IDCRefMeterMock
 
         if (!hasSource) return loadpoint;
 
-        var info = source.GetActiveLoadpointInfo(logger);
-        var currentSwitchedOffForDosage = await source.CurrentSwitchedOffForDosage(logger);
+        var info = await source.GetActiveLoadpointInfoAsync(logger);
+        var currentSwitchedOffForDosage = await source.CurrentSwitchedOffForDosageAsync(logger);
 
         var phase = loadpoint.Phases[0];
         if (phase.Voltage.On && info.IsActive == false) phase.Voltage.On = false;
@@ -133,7 +133,7 @@ public class DCRefMeterMock(IServiceProvider di) : RefMeterMock, IDCRefMeterMock
     }
 
     /// <inheritdoc/>
-    public override Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger)
+    public override Task<ReferenceMeterInformation> GetMeterInformationAsync(IInterfaceLogger logger)
     {
         return Task.FromResult(new ReferenceMeterInformation
         {

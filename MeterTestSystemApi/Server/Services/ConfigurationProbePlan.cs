@@ -47,7 +47,7 @@ public class ConfigurationProbePlan(IProbingOperationStore store) : IConfigurati
     private ProbeConfigurationRequest _request => _operation.Request;
 
     /// <inheritdoc/>
-    public async Task ConfigureProbe(ProbeConfigurationRequest request)
+    public async Task ConfigureProbeAsync(ProbeConfigurationRequest request)
     {
         _probes.Clear();
         _operation = new() { Created = DateTime.UtcNow, Id = Guid.NewGuid().ToString(), Request = request, Result = new() };
@@ -59,7 +59,7 @@ public class ConfigurationProbePlan(IProbingOperationStore store) : IConfigurati
         for (var i = 0; i < _request.Configuration.TestPositions.Count; i++)
             _result.Configuration.TestPositions.Add(new());
 
-        await store.Add(_operation);
+        await store.AddAsync(_operation);
     }
 
     private void AddSerialProbes()
@@ -364,14 +364,14 @@ public class ConfigurationProbePlan(IProbingOperationStore store) : IConfigurati
     }
 
     /// <inheritdoc/>
-    public async Task<ProbeConfigurationResult> FinishProbe()
+    public async Task<ProbeConfigurationResult> FinishProbeAsync()
     {
         foreach (var probe in _probes)
             _result.Log.Add($"{probe}: {probe.Result}");
 
         _operation.Finished = DateTime.UtcNow;
 
-        var operation = await store.Update(_operation);
+        var operation = await store.UpdateAsync(_operation);
 
         return operation.Result;
     }

@@ -39,8 +39,8 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<MeterTestSystemCapabilities>> GetCapabilities() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetCapabilities(interfaceLogger));
+    public Task<ActionResult<MeterTestSystemCapabilities>> GetCapabilitiesAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetCapabilitiesAsync(interfaceLogger));
 
     /// <summary>
     /// Set the physical configuration of a meter test system.
@@ -53,8 +53,8 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetAmplifiersAndReferenceMeter([FromBody] AmplifiersAndReferenceMeter request) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetAmplifiersAndReferenceMeter(interfaceLogger, request));
+    public Task<ActionResult> SetAmplifiersAndReferenceMeterAsync([FromBody] AmplifiersAndReferenceMeter request) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetAmplifiersAndReferenceMeterAsync(interfaceLogger, request));
 
     /// <summary>
     /// Report the current pysical configuration of the meter test system.
@@ -68,8 +68,8 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<AmplifiersAndReferenceMeter>> GetAmplifiersAndReferenceMeter() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => Task.FromResult(_device.GetAmplifiersAndReferenceMeter(interfaceLogger)));
+    public Task<ActionResult<AmplifiersAndReferenceMeter>> GetAmplifiersAndReferenceMeterAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetAmplifiersAndReferenceMeterAsync(interfaceLogger));
 
     /// <summary>
     /// Read the firmware from the metering system.
@@ -83,8 +83,8 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<MeterTestSystemFirmwareVersion>> GetFirmwareVersion() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetFirmwareVersion(interfaceLogger));
+    public Task<ActionResult<MeterTestSystemFirmwareVersion>> GetFirmwareVersionAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetFirmwareVersionAsync(interfaceLogger));
 
     /// <summary>
     /// Read the current error conditions of the meter test system.
@@ -98,8 +98,8 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<ErrorConditions>> GetErrorConditions() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetErrorConditions(interfaceLogger));
+    public Task<ActionResult<ErrorConditions>> GetErrorConditionsAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetErrorConditionsAsync(interfaceLogger));
 
     /// <summary>
     /// 

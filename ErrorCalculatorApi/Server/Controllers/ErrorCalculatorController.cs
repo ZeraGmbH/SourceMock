@@ -39,8 +39,8 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetParameters([ModelFromUri] MeterConstant dutMeterConstant, [ModelFromUri] Impulses impulses, [ModelFromUri] MeterConstant refMeterMeterConstant, int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].SetErrorMeasurementParameters(interfaceLogger, dutMeterConstant, impulses, refMeterMeterConstant));
+    public Task<ActionResult> SetParametersAsync([ModelFromUri] MeterConstant dutMeterConstant, [ModelFromUri] Impulses impulses, [ModelFromUri] MeterConstant refMeterMeterConstant, int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].SetErrorMeasurementParametersAsync(interfaceLogger, dutMeterConstant, impulses, refMeterMeterConstant));
 
     /// <summary>
     /// Retrieve the current firmware of the error calculator.
@@ -54,8 +54,8 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<ErrorCalculatorFirmwareVersion>> GetFirmware(int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].GetFirmwareVersion(interfaceLogger));
+    public Task<ActionResult<ErrorCalculatorFirmwareVersion>> GetFirmwareAsync(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].GetFirmwareVersionAsync(interfaceLogger));
 
     /// <summary>
     /// Retrieve the current status of the error measurement.
@@ -69,8 +69,8 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<ErrorMeasurementStatus>> GetStatus(int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].GetErrorStatus(interfaceLogger));
+    public Task<ActionResult<ErrorMeasurementStatus>> GetStatusAsync(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].GetErrorStatusAsync(interfaceLogger));
 
     /// <summary>
     /// Read the number of device under test impulses since the last counter reset.
@@ -84,8 +84,8 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<Impulses?>> GetDeviceUnderTestImpulses(int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].GetNumberOfDeviceUnderTestImpulses(interfaceLogger));
+    public Task<ActionResult<Impulses?>> GetDeviceUnderTestImpulsesAsync(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].GetNumberOfDeviceUnderTestImpulsesAsync(interfaceLogger));
 
     /// <summary>
     /// Start a single error measurement.
@@ -98,8 +98,8 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> StartSingle(ErrorCalculatorMeterConnections? connection, int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].StartErrorMeasurement(interfaceLogger, false, connection));
+    public Task<ActionResult> StartSingleAsync(ErrorCalculatorMeterConnections? connection, int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].StartErrorMeasurementAsync(interfaceLogger, false, connection));
 
     /// <summary>
     /// Start a continous error measurement.
@@ -112,8 +112,8 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> StartContinuous(ErrorCalculatorMeterConnections? connection, int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].StartErrorMeasurement(interfaceLogger, true, connection));
+    public Task<ActionResult> StartContinuousAsync(ErrorCalculatorMeterConnections? connection, int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].StartErrorMeasurementAsync(interfaceLogger, true, connection));
 
     /// <summary>
     /// Get all supported physical connections.
@@ -126,8 +126,8 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<ErrorCalculatorMeterConnections[]>> GetSupportedMeterConnections(int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].GetSupportedMeterConnections(interfaceLogger));
+    public Task<ActionResult<ErrorCalculatorMeterConnections[]>> GetSupportedMeterConnectionsAsync(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].GetSupportedMeterConnectionsAsync(interfaceLogger));
 
     /// <summary>
     /// Abort the error measurement.
@@ -140,8 +140,8 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> Abort(int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].AbortErrorMeasurement(interfaceLogger));
+    public Task<ActionResult> AbortAsync(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].AbortErrorMeasurementAsync(interfaceLogger));
 
     /// <summary>
     /// Abort the error measurement.
@@ -154,8 +154,8 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> AbortAll(int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].AbortAllJobs(interfaceLogger));
+    public Task<ActionResult> AbortAllAsync(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].AbortAllJobsAsync(interfaceLogger));
 
     /// <summary>
     /// Make sure that source is connected to device under test.
@@ -168,8 +168,8 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> ActivateSource(int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].ActivateSource(interfaceLogger, true));
+    public Task<ActionResult> ActivateSourceAsync(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].ActivateSourceAsync(interfaceLogger, true));
 
     /// <summary>
     /// Disconnect source from all devices under test.
@@ -182,8 +182,8 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> DeactivateSource(int pos = 0) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].ActivateSource(interfaceLogger, false));
+    public Task<ActionResult> DeactivateSourceAsync(int pos = 0) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => devices[pos].ActivateSourceAsync(interfaceLogger, false));
 
     /// <summary>
     /// Report if the error calculator can be used.
@@ -191,7 +191,7 @@ public class ErrorCalculatorController(IErrorCalculator[] devices, IInterfaceLog
     [HttpGet("Available/{pos?}"), SamAuthorize]
     [SwaggerOperation(OperationId = "ErrorCalculatorIsAvailable")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<bool> IsAvailable(int pos = 0) => Ok(devices[pos].GetAvailable(interfaceLogger));
+    public async Task<ActionResult<bool>> IsAvailableAsync(int pos = 0) => Ok(await devices[pos].GetAvailableAsync(interfaceLogger));
 
     /// <summary>
     /// Report the number of error calculators.

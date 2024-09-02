@@ -32,15 +32,15 @@ namespace SourceApi.Tests.Actions.Source
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
             // Act
-            var result = await source.SetLoadpoint(new NoopInterfaceLogger(), loadpoint);
+            var result = await source.SetLoadpointAsync(new NoopInterfaceLogger(), loadpoint);
 
             // Assert
-            var currentLoadpoint = source.GetCurrentLoadpoint(new NoopInterfaceLogger());
+            var currentLoadpoint = await source.GetCurrentLoadpointAsync(new NoopInterfaceLogger());
 
             Assert.That(result, Is.EqualTo(SourceApiErrorCodes.SUCCESS));
             Assert.That(loadpoint, Is.EqualTo(currentLoadpoint));
 
-            var info = source.GetActiveLoadpointInfo(new NoopInterfaceLogger());
+            var info = await source.GetActiveLoadpointInfoAsync(new NoopInterfaceLogger());
             Assert.That(info.IsActive, Is.EqualTo(true));
         }
 
@@ -53,17 +53,17 @@ namespace SourceApi.Tests.Actions.Source
 
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
-            await source.SetLoadpoint(new NoopInterfaceLogger(), loadpoint);
+            await source.SetLoadpointAsync(new NoopInterfaceLogger(), loadpoint);
 
             // Act
-            var result = await source.TurnOff(new NoopInterfaceLogger());
+            var result = await source.TurnOffAsync(new NoopInterfaceLogger());
 
             // Assert
-            var currentLoadpoint = source.GetCurrentLoadpoint(new NoopInterfaceLogger());
+            await source.GetCurrentLoadpointAsync(new NoopInterfaceLogger());
 
             Assert.That(result, Is.EqualTo(SourceApiErrorCodes.SUCCESS));
 
-            var info = source.GetActiveLoadpointInfo(new NoopInterfaceLogger());
+            var info = await source.GetActiveLoadpointInfoAsync(new NoopInterfaceLogger());
             Assert.That(info.IsActive, Is.EqualTo(false));
         }
         #endregion
@@ -79,16 +79,16 @@ namespace SourceApi.Tests.Actions.Source
             ISource source = GenerateSimulatedSource(capabilities: capabilities);
 
             // Act
-            var result = await source.SetLoadpoint(new NoopInterfaceLogger(), loadpoint);
+            var result = await source.SetLoadpointAsync(new NoopInterfaceLogger(), loadpoint);
 
             // Assert
-            var currentLoadpoint = source.GetCurrentLoadpoint(new NoopInterfaceLogger());
+            var currentLoadpoint = await source.GetCurrentLoadpointAsync(new NoopInterfaceLogger());
 
             Assert.That(result, Is.EqualTo(SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES));
             Assert.That(currentLoadpoint, Is.Null);
 
 
-            var info = source.GetActiveLoadpointInfo(new NoopInterfaceLogger());
+            var info = await source.GetActiveLoadpointInfoAsync(new NoopInterfaceLogger());
             Assert.That(info.IsActive, Is.EqualTo(null));
         }
         #endregion
@@ -103,10 +103,10 @@ namespace SourceApi.Tests.Actions.Source
             lp.Phases[0].Voltage.AcComponent!.Rms = new(500);
 
             // Act
-            var result = await source.SetLoadpoint(new NoopInterfaceLogger(), lp);
+            var result = await source.SetLoadpointAsync(new NoopInterfaceLogger(), lp);
 
             // Assert
-            var currentLoadpoint = source.GetCurrentLoadpoint(new NoopInterfaceLogger());
+            var currentLoadpoint = await source.GetCurrentLoadpointAsync(new NoopInterfaceLogger());
 
             Assert.That(result, Is.EqualTo(SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID));
             Assert.That(currentLoadpoint, Is.Null);
@@ -121,10 +121,10 @@ namespace SourceApi.Tests.Actions.Source
             lp.Phases[0].Current.AcComponent!.Rms = new(100);
 
             // Act
-            var result = await source.SetLoadpoint(new NoopInterfaceLogger(), lp);
+            var result = await source.SetLoadpointAsync(new NoopInterfaceLogger(), lp);
 
             // Assert
-            var currentLoadpoint = source.GetCurrentLoadpoint(new NoopInterfaceLogger());
+            var currentLoadpoint = await source.GetCurrentLoadpointAsync(new NoopInterfaceLogger());
 
             Assert.That(result, Is.EqualTo(SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID));
             Assert.That(currentLoadpoint, Is.Null);
@@ -146,11 +146,11 @@ namespace SourceApi.Tests.Actions.Source
         [Test]
         public async Task Returns_Correct_Dosage_Progress_Async()
         {
-            await mock.SetLoadpoint(new NoopInterfaceLogger(), GetLoadpoint());
-            await mock.SetDosageEnergy(new NoopInterfaceLogger(), new(20), new(1));
-            await mock.StartDosage(new NoopInterfaceLogger());
+            await mock.SetLoadpointAsync(new NoopInterfaceLogger(), GetLoadpoint());
+            await mock.SetDosageEnergyAsync(new NoopInterfaceLogger(), new(20), new(1));
+            await mock.StartDosageAsync(new NoopInterfaceLogger());
 
-            var result = await mock.GetDosageProgress(new NoopInterfaceLogger(), new(1));
+            var result = await mock.GetDosageProgressAsync(new NoopInterfaceLogger(), new(1));
 
             Assert.That(result.Active, Is.EqualTo(true));
             Assert.That((double)result.Remaining, Is.LessThan(20));
@@ -161,9 +161,9 @@ namespace SourceApi.Tests.Actions.Source
         public async Task Turns_Off_Loadpoint_Async()
         {
             var loadpoint = GetLoadpoint();
-            await mock.SetLoadpoint(new NoopInterfaceLogger(), loadpoint);
+            await mock.SetLoadpointAsync(new NoopInterfaceLogger(), loadpoint);
 
-            await mock.TurnOff(new NoopInterfaceLogger());
+            await mock.TurnOffAsync(new NoopInterfaceLogger());
 
             foreach (var phase in loadpoint.Phases)
             {
@@ -171,7 +171,7 @@ namespace SourceApi.Tests.Actions.Source
                 Assert.That(phase.Current.On, Is.EqualTo(true));
             }
 
-            var info = mock.GetActiveLoadpointInfo(new NoopInterfaceLogger());
+            var info = await mock.GetActiveLoadpointInfoAsync(new NoopInterfaceLogger());
 
             Assert.That(info.IsActive, Is.EqualTo(false));
         }

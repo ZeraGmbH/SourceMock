@@ -22,18 +22,14 @@ public class RestRefMeter(ILoggingHttpClient httpClient, ILogger<RestRefMeter> l
     private Uri _baseUri = null!;
 
     /// <inheritdoc/>
-    public bool GetAvailable(IInterfaceLogger interfaceLogger)
+    public async Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger)
     {
         /* Not yet initialized. */
         if (!_initialized) return false;
 
         try
         {
-            var available = httpClient.GetAsync<bool>(interfaceLogger, new Uri(_baseUri, "Available"));
-
-            available.Wait();
-
-            return available.Result;
+            return await httpClient.GetAsync<bool>(interfaceLogger, new Uri(_baseUri, "Available"));
         }
         catch (Exception e)
         {
@@ -48,23 +44,23 @@ public class RestRefMeter(ILoggingHttpClient httpClient, ILogger<RestRefMeter> l
     }
 
     /// <inheritdoc/>
-    public Task<MeasurementModes?> GetActualMeasurementMode(IInterfaceLogger logger) =>
+    public Task<MeasurementModes?> GetActualMeasurementModeAsync(IInterfaceLogger logger) =>
         httpClient.GetAsync<MeasurementModes?>(logger, new Uri(_baseUri, "MeasurementMode"));
 
     /// <inheritdoc/>
-    public async Task<MeterConstant> GetMeterConstant(IInterfaceLogger logger) =>
+    public async Task<MeterConstant> GetMeterConstantAsync(IInterfaceLogger logger) =>
         new(await httpClient.GetAsync<double>(logger, new Uri(_baseUri, "MeterConstant")));
 
     /// <inheritdoc/>
-    public Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1) =>
+    public Task<MeasuredLoadpoint> GetActualValuesAsync(IInterfaceLogger logger, int firstActiveCurrentPhase = -1) =>
         httpClient.GetAsync<MeasuredLoadpoint>(logger, new Uri(_baseUri, $"ActualValues?firstActiveCurrentPhase={JsonSerializer.Serialize(firstActiveCurrentPhase, LibUtils.JsonSettings)}"));
 
     /// <inheritdoc/>
-    public Task<MeasurementModes[]> GetMeasurementModes(IInterfaceLogger logger) =>
+    public Task<MeasurementModes[]> GetMeasurementModesAsync(IInterfaceLogger logger) =>
         httpClient.GetAsync<MeasurementModes[]>(logger, new Uri(_baseUri, "MeasurementModes"));
 
     /// <inheritdoc/>
-    public Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger) =>
+    public Task<ReferenceMeterInformation> GetMeterInformationAsync(IInterfaceLogger logger) =>
         httpClient.GetAsync<ReferenceMeterInformation>(logger, new Uri(_baseUri, "Version"));
 
     /// <inheritdoc/>
@@ -99,6 +95,6 @@ public class RestRefMeter(ILoggingHttpClient httpClient, ILogger<RestRefMeter> l
     }
 
     /// <inheritdoc/>
-    public Task SetActualMeasurementMode(IInterfaceLogger logger, MeasurementModes mode) =>
+    public Task SetActualMeasurementModeAsync(IInterfaceLogger logger, MeasurementModes mode) =>
         httpClient.PutAsync(logger, new Uri(_baseUri, $"MeasurementMode?mode={mode}"));
 }

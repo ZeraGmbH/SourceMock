@@ -32,7 +32,7 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
     [HttpGet("Capabilities"), SamAuthorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "GetCapabilities")]
-    public async Task<ActionResult<SourceCapabilities>> GetCapablities() => Ok(await source.GetCapabilities(interfaceLogger));
+    public async Task<ActionResult<SourceCapabilities>> GetCapablitiesAsync() => Ok(await source.GetCapabilitiesAsync(interfaceLogger));
 
     /// <summary>
     /// Gets the capabilities of this source.
@@ -42,7 +42,7 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
     [HttpGet("Available"), SamAuthorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "SourceIsAvailable")]
-    public ActionResult<bool> IsAvailable() => Ok(source.GetAvailable(interfaceLogger));
+    public async Task<ActionResult<bool>> IsAvailableAsync() => Ok(await source.GetAvailableAsync(interfaceLogger));
 
     /// <summary>
     /// Sets a loadpoint without turning on the source.
@@ -59,11 +59,11 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [SwaggerOperation(OperationId = "SetLoadpoint")]
-    public async Task<ActionResult> SetLoadpoint([FromBody] TargetLoadpoint loadpoint)
+    public async Task<ActionResult> SetLoadpointAsync([FromBody] TargetLoadpoint loadpoint)
     {
         logger.LogTrace($"Loadpoint to be set: {loadpoint}");
 
-        var srcResult = await source.SetLoadpoint(interfaceLogger, loadpoint);
+        var srcResult = await source.SetLoadpointAsync(interfaceLogger, loadpoint);
 
         switch (srcResult)
         {
@@ -101,9 +101,9 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [SwaggerOperation(OperationId = "TurnOff")]
-    public async Task<ActionResult> TurnOff()
+    public async Task<ActionResult> TurnOffAsync()
     {
-        var srcResult = await source.TurnOff(interfaceLogger);
+        var srcResult = await source.TurnOffAsync(interfaceLogger);
 
         switch (srcResult)
         {
@@ -128,9 +128,9 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [SwaggerOperation(OperationId = "GetLoadpoint")]
-    public ActionResult<TargetLoadpoint> GetCurrentLoadpoint()
+    public async Task<ActionResult<TargetLoadpoint>> GetCurrentLoadpointAsync()
     {
-        var loadpoint = source.GetCurrentLoadpoint(interfaceLogger);
+        var loadpoint = await source.GetCurrentLoadpointAsync(interfaceLogger);
 
         return loadpoint == null
             ? NoContent()
@@ -145,5 +145,5 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
     [HttpGet("LoadpointInfo"), SamAuthorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "GetLoadpointInfo")]
-    public ActionResult<LoadpointInfo> GetLoadpointInfo() => source.GetActiveLoadpointInfo(interfaceLogger);
+    public async Task<ActionResult<LoadpointInfo>> GetLoadpointInfoAsync() => await source.GetActiveLoadpointInfoAsync(interfaceLogger);
 }

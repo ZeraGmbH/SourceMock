@@ -35,7 +35,7 @@ partial class Mad1ErrorCalculator
       </KMA_XML_0_01>
     ";
 
-    private async Task<string> StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection, Impulses dutImpulses, Impulses refMeterImpulses)
+    private async Task<string> StartErrorMeasurementAsync(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection, Impulses dutImpulses, Impulses refMeterImpulses)
     {
         /* Create and configure request. */
         var req = LoadXmlFromString(ErrorMeasurementStartXml);
@@ -51,7 +51,7 @@ partial class Mad1ErrorCalculator
         source.InnerText = _supportedMeterConnections[connection ?? ErrorCalculatorMeterConnections.Intern1];
 
         /* Execute the request. */
-        var res = await _connection.Execute(logger, req, "runErrorMeasureRes");
+        var res = await _connection.ExecuteAsync(logger, req, "runErrorMeasureRes");
         var jobId = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/jobDetails/jobId")?.InnerText;
 
         if (string.IsNullOrEmpty(jobId)) throw new InvalidOperationException("got no job identifier");

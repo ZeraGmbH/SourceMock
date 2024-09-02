@@ -36,19 +36,19 @@ public abstract class OperationStoreTests : DatabaseTestCore
             Result = new() { Configuration = { DCComponents = { DCComponents.SPS } }, Log = { "Test1", "Test2" } }
         };
 
-        var added = await Store.Add(op);
+        var added = await Store.AddAsync(op);
 
         Assert.That(added.Request.Configuration.EnableCOM5003, Is.False);
         Assert.That(added.Request.Configuration.EnableIPWatchDog, Is.True);
 
         op.Request.Configuration.EnableCOM5003 = true;
 
-        var updated = await Store.Update(op);
+        var updated = await Store.UpdateAsync(op);
 
         Assert.That(updated.Request.Configuration.EnableCOM5003, Is.True);
         Assert.That(updated.Request.Configuration.EnableIPWatchDog, Is.True);
 
-        var read = await Store.Get("OP1");
+        var read = await Store.GetAsync("OP1");
 
         Assert.That(read, Is.Not.Null);
         Assert.That(read.Request.Configuration.EnableCOM5003, Is.True);

@@ -12,23 +12,23 @@ namespace RefMeterApi.Actions;
 public class UnavailableReferenceMeter : IRefMeter
 {
     /// <inheritdoc/>
-    public bool GetAvailable(IInterfaceLogger interfaceLogger) => false;
+    public Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(false);
 
     /// <inheritdoc/>
-    public Task<MeterConstant> GetMeterConstant(IInterfaceLogger logger) => throw new NotImplementedException();
+    public Task<MeterConstant> GetMeterConstantAsync(IInterfaceLogger logger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task<MeasurementModes?> GetActualMeasurementMode(IInterfaceLogger logger) => throw new RefMeterNotReadyException();
+    public Task<MeasurementModes?> GetActualMeasurementModeAsync(IInterfaceLogger logger) => throw new RefMeterNotReadyException();
 
     /// <inheritdoc/>
-    public Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveVoltagePhase = -1) => throw new RefMeterNotReadyException();
+    public Task<MeasuredLoadpoint> GetActualValuesAsync(IInterfaceLogger logger, int firstActiveVoltagePhase = -1) => throw new RefMeterNotReadyException();
 
     /// <inheritdoc/>
-    public Task<MeasurementModes[]> GetMeasurementModes(IInterfaceLogger logger) => throw new RefMeterNotReadyException();
+    public Task<MeasurementModes[]> GetMeasurementModesAsync(IInterfaceLogger logger) => throw new RefMeterNotReadyException();
 
     /// <inheritdoc/>
-    public Task SetActualMeasurementMode(IInterfaceLogger logger, MeasurementModes mode) => throw new RefMeterNotReadyException();
+    public Task SetActualMeasurementModeAsync(IInterfaceLogger logger, MeasurementModes mode) => throw new RefMeterNotReadyException();
 
     /// <inheritdoc/>
-    public Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger) => throw new RefMeterNotReadyException();
+    public Task<ReferenceMeterInformation> GetMeterInformationAsync(IInterfaceLogger logger) => throw new RefMeterNotReadyException();
 }

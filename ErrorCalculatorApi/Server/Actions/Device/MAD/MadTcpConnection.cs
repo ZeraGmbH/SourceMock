@@ -74,7 +74,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
     /// Connect to the device.
     /// </summary>
     /// <returns>Terminates after a successful connect.</returns>
-    private async Task Connect()
+    private async Task ConnectAsync()
     {
         /* Try to connect if we are not already connected. */
         for (; !client.Connected; Thread.Sleep(5000))
@@ -98,7 +98,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
     /// <summary>
     /// Process incoming data.
     /// </summary>
-    private async void ProcessIncoming()
+    private async Task ProcessIncomingAsync()
     {
         /* As long as the connection instance is active - use a buffer large enough to hold any XML response to improve performance. */
         for (var buffer = new byte[10000]; ;)
@@ -108,7 +108,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
                 if (_doneReader.IsCancellationRequested) break;
 
                 /* Connect to the device - once. */
-                await Connect();
+                await ConnectAsync();
 
                 // Check for cancel after await.
                 if (_doneReader.IsCancellationRequested) break;
@@ -175,7 +175,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
     }
 
     /// <inheritdoc/>
-    public Task<XmlDocument> Execute(IInterfaceLogger logger, XmlDocument request, string reply) => Task.Run(() =>
+    public Task<XmlDocument> ExecuteAsync(IInterfaceLogger logger, XmlDocument request, string reply) => Task.Run(() =>
     {
         /* Wait for connect. */
         for (var i = 100; !client.Connected && i-- > 0; Thread.Sleep(100))
@@ -259,7 +259,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
     private InterfaceLogEntryConnection? _connectionInfo;
 
     /// <inheritdoc/>
-    public Task Initialize(string webSamId, ErrorCalculatorConfiguration config)
+    public Task InitializeAsync(string webSamId, ErrorCalculatorConfiguration config)
     {
         /* Prepare logging. */
         _connectionInfo = new()
@@ -280,7 +280,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
         port = ushort.Parse(match.Groups[2].Value);
 
         /* Start task to readout incoming data. */
-        Task.Run(ProcessIncoming);
+        ProcessIncomingAsync().Start();
 
         return Task.CompletedTask;
     }

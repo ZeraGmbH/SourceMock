@@ -24,7 +24,7 @@ public class AMLParserTests
             new NullLogger<SerialPortMTRefMeter>()
         );
 
-        var modes = await device.GetMeasurementModes(new NoopInterfaceLogger());
+        var modes = await device.GetMeasurementModesAsync(new NoopInterfaceLogger());
 
         Assert.That(modes.Length, Is.EqualTo(1));
         Assert.That(modes[0], Is.EqualTo(mode));
@@ -46,7 +46,7 @@ public class AMLParserTests
             new NullLogger<SerialPortMTRefMeter>()
         );
 
-        var modes = await device.GetMeasurementModes(new NoopInterfaceLogger());
+        var modes = await device.GetMeasurementModesAsync(new NoopInterfaceLogger());
 
         Assert.That(modes.Length, Is.EqualTo(2));
     }
@@ -61,7 +61,7 @@ public class AMLParserTests
             new NullLogger<SerialPortMTRefMeter>()
         );
 
-        var reply = await device.GetActualMeasurementMode(new NoopInterfaceLogger());
+        var reply = await device.GetActualMeasurementModeAsync(new NoopInterfaceLogger());
 
         Assert.That(reply, Is.EqualTo(mode));
     }
@@ -81,7 +81,7 @@ public class AMLParserTests
             new NullLogger<SerialPortMTRefMeter>()
         );
 
-        var mode = await device.GetActualMeasurementMode(new NoopInterfaceLogger());
+        var mode = await device.GetActualMeasurementModeAsync(new NoopInterfaceLogger());
 
         Assert.That(mode, Is.Null);
     }

@@ -18,23 +18,23 @@ public abstract class RefMeterMock : IMockRefMeter
     /// <summary>
     /// 
     /// </summary>
-    public bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
+    public Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(true);
 
     /// <summary>
     /// MeasurementMode
     /// </summary>
     /// <returns></returns>
-    public Task<MeasurementModes?> GetActualMeasurementMode(IInterfaceLogger logger) =>
+    public Task<MeasurementModes?> GetActualMeasurementModeAsync(IInterfaceLogger logger) =>
         Task.FromResult((MeasurementModes?)_measurementMode);
 
     /// <inheritdoc/>
-    public Task<MeterConstant> GetMeterConstant(IInterfaceLogger logger) => Task.FromResult(new MeterConstant(1000000d));
+    public Task<MeterConstant> GetMeterConstantAsync(IInterfaceLogger logger) => Task.FromResult(new MeterConstant(1000000d));
 
     /// <summary>
     /// Returns all entrys in enum MeasurementModes
     /// </summary>
     /// <returns></returns>
-    public Task<MeasurementModes[]> GetMeasurementModes(IInterfaceLogger logger) =>
+    public Task<MeasurementModes[]> GetMeasurementModesAsync(IInterfaceLogger logger) =>
         Task.FromResult((MeasurementModes[])Enum.GetValues(typeof(MeasurementModes)));
 
     /// <summary>
@@ -43,7 +43,7 @@ public abstract class RefMeterMock : IMockRefMeter
     /// <param name="logger"></param>
     /// <param name="mode">Real RefMeter requieres a mode</param>
     /// <returns>Must return something - no async task requeired without device</returns>
-    public Task SetActualMeasurementMode(IInterfaceLogger logger, MeasurementModes mode)
+    public Task SetActualMeasurementModeAsync(IInterfaceLogger logger, MeasurementModes mode)
     {
         _measurementMode = mode;
 
@@ -53,10 +53,10 @@ public abstract class RefMeterMock : IMockRefMeter
     /// 
     /// </summary>
     /// <returns>ActualValues that fluctuate around the set loadpoint</returns>
-    public abstract Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveVoltagePhase);
+    public abstract Task<MeasuredLoadpoint> GetActualValuesAsync(IInterfaceLogger logger, int firstActiveVoltagePhase);
 
     /// <inheritdoc/>
-    public abstract Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger);
+    public abstract Task<ReferenceMeterInformation> GetMeterInformationAsync(IInterfaceLogger logger);
 
     /// <summary>
     /// Calculates an expected Measure Output from a given loadpoint.

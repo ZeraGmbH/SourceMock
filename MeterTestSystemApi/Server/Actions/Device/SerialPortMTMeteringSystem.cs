@@ -54,7 +54,7 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     public bool HasDosage { get; } = true;
 
     /// <inheritdoc/>
-    public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
+    public Task<AmplifiersAndReferenceMeter> GetAmplifiersAndReferenceMeterAsync(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public event Action<ErrorConditions> ErrorConditionsChanged = null!;
@@ -82,7 +82,7 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public async Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger)
+    public async Task<MeterTestSystemFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger logger)
     {
         /* Execute the request and wait for the information string. */
         var reply = await _device.Execute(logger, SerialPortRequest.Create("AAV", "AAVACK"))[0];
@@ -105,21 +105,21 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger)
+    public Task<MeterTestSystemCapabilities> GetCapabilitiesAsync(IInterfaceLogger interfaceLogger)
     {
         /* The MT line systems do not support amplifier configurations. */
         return Task.FromResult<MeterTestSystemCapabilities>(null!);
     }
 
     /// <inheritdoc/>
-    public Task SetAmplifiersAndReferenceMeter(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings)
+    public Task SetAmplifiersAndReferenceMeterAsync(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings)
     {
         /* The MT line systems do not support amplifier configurations. */
         throw new InvalidOperationException();
     }
 
     /// <inheritdoc/>
-    public async Task<ErrorConditions> GetErrorConditions(IInterfaceLogger logger)
+    public async Task<ErrorConditions> GetErrorConditionsAsync(IInterfaceLogger logger)
     {
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("SSM", _smRegEx);

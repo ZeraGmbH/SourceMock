@@ -17,8 +17,8 @@ partial class Mad1ErrorCalculator
     ";
 
   /// <inheritdoc/>
-  public Task AbortAllJobs(IInterfaceLogger logger)
+  public Task AbortAllJobsAsync(IInterfaceLogger logger)
   {
-    return _connection.Execute(logger, LoadXmlFromString(AbortAllJobsXml), "resetRes");
+    return _connection.ExecuteAsync(logger, LoadXmlFromString(AbortAllJobsXml), "resetRes");
   }
 }

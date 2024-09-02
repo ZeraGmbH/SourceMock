@@ -24,7 +24,7 @@ public class ProbeConfigurationService : IProbeConfigurationService
         /// <summary>
         /// Send a cancel to the probing task.
         /// </summary>
-        public Task Cancel() => _cancel.CancelAsync();
+        public Task CancelAsync() => _cancel.CancelAsync();
 
         /// <summary>
         /// Report the probing task.
@@ -54,7 +54,7 @@ public class ProbeConfigurationService : IProbeConfigurationService
     private Current? _active;
 
     /// <inheritdoc/>
-    public async Task Abort()
+    public async Task AbortAsync()
     {
         /* Request the current probing task. */
         Current? active;
@@ -65,14 +65,16 @@ public class ProbeConfigurationService : IProbeConfigurationService
         if (active == null) throw new InvalidOperationException("no active probing");
 
         /* Send a cancel request. */
-        await active.Cancel();
+        await active.CancelAsync();
 
         /* Wait for the task to cancel. */
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
         await active.Task;
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
     }
 
     /// <inheritdoc/>
-    public Task StartProbe(ProbeConfigurationRequest request, bool dryRun, IServiceProvider services)
+    public Task StartProbeAsync(ProbeConfigurationRequest request, bool dryRun, IServiceProvider services)
     {
         lock (_sync)
         {
@@ -83,10 +85,12 @@ public class ProbeConfigurationService : IProbeConfigurationService
             var plan = services.GetRequiredService<IConfigurationProbePlan>();
 
             /* Fill the probes. */
-            plan.ConfigureProbe(request).Wait();
+#pragma warning disable VSTHRD103 // Call async methods when in an async method
+            plan.ConfigureProbeAsync(request).Wait();
 
             /* Copy plan steps to result. */
-            var result = plan.FinishProbe().Result;
+            var result = plan.FinishProbeAsync().Result;
+#pragma warning restore VSTHRD103 // Call async methods when in an async method
 
             /* Only dry run allowed. */
             if (dryRun)

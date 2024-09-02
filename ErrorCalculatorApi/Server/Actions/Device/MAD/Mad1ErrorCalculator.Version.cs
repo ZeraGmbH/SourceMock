@@ -18,10 +18,10 @@ partial class Mad1ErrorCalculator
   ";
 
   /// <inheritdoc/>
-  public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger)
+  public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger logger)
   {
     /* Execute the request. */
-    var res = await _connection.Execute(logger, LoadXmlFromString(VersionRequestXml), "serverVerRes");
+    var res = await _connection.ExecuteAsync(logger, LoadXmlFromString(VersionRequestXml), "serverVerRes");
 
     /* Analyse overall result. */
     var info = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/serverVerRes");

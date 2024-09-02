@@ -10,11 +10,11 @@ namespace SourceApi.Actions.SerialPort.MT768;
 partial class SerialPortMTSource
 {
     /// <inheritdoc/>
-    public override Task CancelDosage(IInterfaceLogger logger) =>
+    public override Task CancelDosageAsync(IInterfaceLogger logger) =>
         Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("S3CM2", "SOK3CM2")));
 
     /// <inheritdoc/>
-    public override async Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
+    public override async Task<DosageProgress> GetDosageProgressAsync(IInterfaceLogger logger, MeterConstant meterConstant)
     {
         /* Get all actual values - unit is pulse interval. */
         var active = SerialPortRequest.Create("S3SA1", new Regex(@"^SOK3SA1;([0123])$"));
@@ -35,7 +35,7 @@ partial class SerialPortMTSource
     }
 
     /// <inheritdoc/>
-    public override async Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
+    public override async Task SetDosageEnergyAsync(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(value, ActiveEnergy.Zero, nameof(value));
 
@@ -46,7 +46,7 @@ partial class SerialPortMTSource
     }
 
     /// <inheritdoc/>
-    public override Task SetDosageMode(IInterfaceLogger logger, bool on)
+    public override Task SetDosageModeAsync(IInterfaceLogger logger, bool on)
     {
         var onAsNumber = on ? 3 : 4;
 
@@ -54,11 +54,11 @@ partial class SerialPortMTSource
     }
 
     /// <inheritdoc/>
-    public override Task StartDosage(IInterfaceLogger logger) =>
+    public override Task StartDosageAsync(IInterfaceLogger logger) =>
         Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("S3CM1", "SOK3CM1")));
 
     /// <inheritdoc/>
-    public override async Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger)
+    public override async Task<bool> CurrentSwitchedOffForDosageAsync(IInterfaceLogger logger)
     {
         /* Ask device. */
         var dosage = SerialPortRequest.Create("S3SA1", new Regex(@"^SOK3SA1;([0123])$"));

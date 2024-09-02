@@ -12,7 +12,7 @@ public interface IRefMeter
     /// <summary>
     /// Set if the reference meter is fully configured and can be used.
     /// </summary>
-    bool GetAvailable(IInterfaceLogger logger);
+    Task<bool> GetAvailableAsync(IInterfaceLogger logger);
 
     /// <summary>
     /// Queries a device connected to the serial port for the current
@@ -21,34 +21,34 @@ public interface IRefMeter
     /// <param name="logger"></param>
     /// <param name="firstActiveCurrentPhase">Index of the first active voltage phase if known.</param>
     /// <returns>All measurement data.</returns>
-    Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1);
+    Task<MeasuredLoadpoint> GetActualValuesAsync(IInterfaceLogger logger, int firstActiveCurrentPhase = -1);
 
     /// <summary>
     /// Read all supported measurment modes.
     /// </summary>
     /// <returns></returns>
-    Task<MeasurementModes[]> GetMeasurementModes(IInterfaceLogger logger);
+    Task<MeasurementModes[]> GetMeasurementModesAsync(IInterfaceLogger logger);
 
     /// <summary>
     /// Get the active measurement mode.
     /// </summary>
     /// <returns>The currently active measurement mode.</returns>
-    Task<MeasurementModes?> GetActualMeasurementMode(IInterfaceLogger logger);
+    Task<MeasurementModes?> GetActualMeasurementModeAsync(IInterfaceLogger logger);
 
     /// <summary>
     /// Set the active measurement mode.
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="mode">The new measurement mode.</param>
-    Task SetActualMeasurementMode(IInterfaceLogger logger, MeasurementModes mode);
+    Task SetActualMeasurementModeAsync(IInterfaceLogger logger, MeasurementModes mode);
 
     /// <summary>
     /// Report the current megter constant of the reference meter (impulses per kWh).
     /// </summary>
-    Task<MeterConstant> GetMeterConstant(IInterfaceLogger logger);
+    Task<MeterConstant> GetMeterConstantAsync(IInterfaceLogger logger);
 
     /// <summary>
     /// Retrieve information on the reference meter.
     /// </summary>
-    Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger);
+    Task<ReferenceMeterInformation> GetMeterInformationAsync(IInterfaceLogger logger);
 }

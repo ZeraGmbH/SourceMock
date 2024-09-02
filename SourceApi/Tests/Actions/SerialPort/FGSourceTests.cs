@@ -33,13 +33,13 @@ public class FGSourceTests
     private LoggingSourceMock _port;
 
     [SetUp]
-    public void SetUp()
+    public async Task SetUpAsync()
     {
         _port = new();
         _device = SerialPortConnection.FromMockedPortInstance(_port, _connectionLogger);
         _source = new(_portLogger, _device, new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        _source.SetAmplifiers(new NoopInterfaceLogger(), Model.VoltageAmplifiers.VU220, Model.CurrentAmplifiers.VI220, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
+        await _source.SetAmplifiersAsync(new NoopInterfaceLogger(), Model.VoltageAmplifiers.VU220, Model.CurrentAmplifiers.VI220, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
     }
 
     [TearDown]
@@ -52,9 +52,9 @@ public class FGSourceTests
     [TestCase(0.5, "IPAAR000.500000.00S001.000240.00T001.500120.00")]
     public async Task Can_Set_Valid_Loadpoint_Async(double baseAngle, string current)
     {
-        Assert.That(_source.GetCurrentLoadpoint(new NoopInterfaceLogger()), Is.Null);
+        Assert.That(await _source.GetCurrentLoadpointAsync(new NoopInterfaceLogger()), Is.Null);
 
-        var result = await _source.SetLoadpoint(new NoopInterfaceLogger(), new()
+        var result = await _source.SetLoadpointAsync(new NoopInterfaceLogger(), new()
         {
             Frequency = new()
             {
@@ -87,7 +87,7 @@ public class FGSourceTests
             "UIEAEPPAAAA"
         }));
 
-        var loadpoint = _source.GetCurrentLoadpoint(new NoopInterfaceLogger());
+        var loadpoint = await _source.GetCurrentLoadpointAsync(new NoopInterfaceLogger());
 
         Assert.That(loadpoint, Is.Not.Null);
         Assert.That((double)loadpoint.Frequency.Value, Is.EqualTo(50));
@@ -96,9 +96,9 @@ public class FGSourceTests
     [Test]
     public async Task Can_Set_IEC_Loadpoint_Async()
     {
-        Assert.That(_source.GetCurrentLoadpoint(new NoopInterfaceLogger()), Is.Null);
+        Assert.That(await _source.GetCurrentLoadpointAsync(new NoopInterfaceLogger()), Is.Null);
 
-        var result = await _source.SetLoadpoint(new NoopInterfaceLogger(), new Model.TargetLoadpoint
+        var result = await _source.SetLoadpointAsync(new NoopInterfaceLogger(), new Model.TargetLoadpoint
         {
             Frequency = new()
             {
@@ -131,7 +131,7 @@ public class FGSourceTests
             "UIEEEPPPAAA"
         }));
 
-        var loadpoint = _source.GetCurrentLoadpoint(new NoopInterfaceLogger());
+        var loadpoint = await _source.GetCurrentLoadpointAsync(new NoopInterfaceLogger());
 
         Assert.That(loadpoint, Is.Not.Null);
         Assert.That((double)loadpoint.Frequency.Value, Is.EqualTo(50));

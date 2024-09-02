@@ -30,8 +30,8 @@ public class RefMeterRestMockController([FromKeyedServices(RefMeterRestMockContr
     /// <returns>The current data.</returns>
     [HttpGet("ActualValues"), AllowAnonymous]
     [SwaggerOperation(OperationId = "GetActualValues")]
-    public Task<ActionResult<MeasuredLoadpoint>> GetActualValues(int firstActiveCurrentPhase = -1) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetActualValues(interfaceLogger, firstActiveCurrentPhase));
+    public Task<ActionResult<MeasuredLoadpoint>> GetActualValuesAsync(int firstActiveCurrentPhase = -1) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetActualValuesAsync(interfaceLogger, firstActiveCurrentPhase));
 
     /// <summary>
     /// Get the list of supported measurement modes.
@@ -39,8 +39,8 @@ public class RefMeterRestMockController([FromKeyedServices(RefMeterRestMockContr
     /// <returns>The list of modes.</returns>
     [HttpGet("MeasurementModes"), AllowAnonymous]
     [SwaggerOperation(OperationId = "GetMeasurementModes")]
-    public Task<ActionResult<MeasurementModes[]>> GetMeasurementModes() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetMeasurementModes(interfaceLogger));
+    public Task<ActionResult<MeasurementModes[]>> GetMeasurementModesAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetMeasurementModesAsync(interfaceLogger));
 
     /// <summary>
     /// Get the current measurement mode.
@@ -48,16 +48,16 @@ public class RefMeterRestMockController([FromKeyedServices(RefMeterRestMockContr
     /// <returns>The current mode.</returns>
     [HttpGet("MeasurementMode"), AllowAnonymous]
     [SwaggerOperation(OperationId = "GetMeasurementMode")]
-    public Task<ActionResult<MeasurementModes?>> GetActualMeasurementMode() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetActualMeasurementMode(interfaceLogger));
+    public Task<ActionResult<MeasurementModes?>> GetActualMeasurementModeAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetActualMeasurementModeAsync(interfaceLogger));
 
     /// <summary>
     /// Set the current measurement mode.
     /// </summary>
     [HttpPut("MeasurementMode"), AllowAnonymous]
     [SwaggerOperation(OperationId = "SetMeasurementMode")]
-    public Task<ActionResult> SetActualMeasurementMode(MeasurementModes mode) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.SetActualMeasurementMode(interfaceLogger, mode));
+    public Task<ActionResult> SetActualMeasurementModeAsync(MeasurementModes mode) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.SetActualMeasurementModeAsync(interfaceLogger, mode));
 
     /// <summary>
     /// Report if the reference meter can be used.
@@ -65,7 +65,7 @@ public class RefMeterRestMockController([FromKeyedServices(RefMeterRestMockContr
     [HttpGet("Available"), AllowAnonymous]
     [SwaggerOperation(OperationId = "ReferenceMeterIsAvailable")]
     public ActionResult<bool> IsAvailable() =>
-        Ok(device.GetAvailable(interfaceLogger));
+        Ok(device.GetAvailableAsync(interfaceLogger));
 
     /// <summary>
     /// Get the current meter constant of the reference meter.
@@ -73,8 +73,8 @@ public class RefMeterRestMockController([FromKeyedServices(RefMeterRestMockContr
     /// <returns>The meter constant (impulses per kWh).</returns>
     [HttpGet("MeterConstant"), AllowAnonymous]
     [SwaggerOperation(OperationId = "GetMeterConstant")]
-    public Task<ActionResult<MeterConstant>> GetMeterConstant()
-        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetMeterConstant(interfaceLogger));
+    public Task<ActionResult<MeterConstant>> GetMeterConstantAsync()
+        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetMeterConstantAsync(interfaceLogger));
 
     /// <summary>
     /// Get the list of supported measurement modes.
@@ -82,7 +82,7 @@ public class RefMeterRestMockController([FromKeyedServices(RefMeterRestMockContr
     /// <returns>The list of modes.</returns>
     [HttpGet("Version"), AllowAnonymous]
     [SwaggerOperation(OperationId = "GetMeterInformation")]
-    public Task<ActionResult<ReferenceMeterInformation>> GetMeterInformation() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetMeterInformation(interfaceLogger));
+    public Task<ActionResult<ReferenceMeterInformation>> GetMeterInformationAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetMeterInformationAsync(interfaceLogger));
 
 }

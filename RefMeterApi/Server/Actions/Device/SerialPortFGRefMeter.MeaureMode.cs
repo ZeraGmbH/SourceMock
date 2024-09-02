@@ -29,9 +29,9 @@ partial class SerialPortFGRefMeter
     private MeasurementModes? _measurementMode = null;
 
     /// <inheritdoc/>
-    public async Task<MeasurementModes[]> GetMeasurementModes(IInterfaceLogger logger)
+    public async Task<MeasurementModes[]> GetMeasurementModesAsync(IInterfaceLogger logger)
     {
-        TestConfigured(logger);
+        await TestConfiguredAsync(logger);
 
         /* Request from device. */
         var replies = await _device.Execute(logger, SerialPortRequest.Create("MI", new Regex(@"^MI([^;]+;)*$")))[0];
@@ -43,29 +43,29 @@ partial class SerialPortFGRefMeter
             if (SupportedModes.TryGetValue(rawMode, out var mode))
                 response.Add(mode);
 
-        return response.ToArray();
+        return [.. response];
     }
 
     /// <inheritdoc/>
-    public Task<MeasurementModes?> GetActualMeasurementMode(IInterfaceLogger logger)
+    public async Task<MeasurementModes?> GetActualMeasurementModeAsync(IInterfaceLogger logger)
     {
-        TestConfigured(logger);
+        await TestConfiguredAsync(logger);
 
         /* We can only report what was last set using the interface. */
-        return Task.FromResult(_measurementMode);
+        return _measurementMode;
     }
 
     /// <inheritdoc/>
-    public Task SetActualMeasurementMode(IInterfaceLogger logger, MeasurementModes mode)
+    public async Task SetActualMeasurementModeAsync(IInterfaceLogger logger, MeasurementModes mode)
     {
-        TestConfigured(logger);
+        await TestConfiguredAsync(logger);
 
         /* Reverse lookup the raw string for the mode - somewhat slow. */
         var supported = SupportedModes.Single(m => m.Value == mode);
 
         /* Send the command to the device. */
-        return _device
+        await _device
             .Execute(logger, SerialPortRequest.Create($"MA{supported.Key}", "OKMA"))[0]
-            .ContinueWith((_t) => _measurementMode = mode);
+            .ContinueWith((_t) => _measurementMode = mode, TaskScheduler.Default);
     }
 }

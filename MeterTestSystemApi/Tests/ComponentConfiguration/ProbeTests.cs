@@ -24,7 +24,7 @@ public class ProbeTests
 
         var storeMock = new Mock<IProbingOperationStore>();
 
-        storeMock.Setup(s => s.Update(It.IsAny<ProbingOperation>())).ReturnsAsync((ProbingOperation op) => op);
+        storeMock.Setup(s => s.UpdateAsync(It.IsAny<ProbingOperation>())).ReturnsAsync((ProbingOperation op) => op);
 
         services.AddSingleton(storeMock.Object);
 
@@ -39,7 +39,7 @@ public class ProbeTests
         Services?.Dispose();
     }
 
-    private Task StartProbe_Async(MeterTestSystemComponentsConfiguration config, bool dryRun) => Prober.StartProbe(new() { Configuration = config }, dryRun, Services);
+    private Task StartProbe_Async(MeterTestSystemComponentsConfiguration config, bool dryRun) => Prober.StartProbeAsync(new() { Configuration = config }, dryRun, Services);
 
     private static List<TestPositionConfiguration> MakeList(int count) => Enumerable.Range(0, count).Select(_ => new TestPositionConfiguration
     {
@@ -332,7 +332,7 @@ public class ProbeTests
     [Test]
     public async Task Can_Probe_Serial_Ports_Async()
     {
-        await Prober.StartProbe(new()
+        await Prober.StartProbeAsync(new()
         {
             Configuration = { FrequencyGenerator = new(), MT768 = new() },
             SerialPorts = {
@@ -349,7 +349,7 @@ public class ProbeTests
     [Test]
     public async Task Can_Probe_HID_Events_Async()
     {
-        await Prober.StartProbe(new()
+        await Prober.StartProbeAsync(new()
         {
             Configuration = { BarcodeReader = 0 },
             HIDEvents = {

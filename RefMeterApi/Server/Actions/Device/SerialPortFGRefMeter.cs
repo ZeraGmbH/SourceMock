@@ -38,7 +38,7 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
         _meterConstant = meterConstant;
 
         /* Setup caches for shared request results. */
-        _actualValues = new(CreateActualValueRequest, 1000);
+        _actualValues = new(CreateActualValueRequestAsync, 1000);
     }
 
     /// <summary>
@@ -49,7 +49,7 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
     private readonly IMeterConstantCalculator _meterConstant;
 
     /// <inheritdoc/>
-    public bool GetAvailable(IInterfaceLogger interfaceLogger) => _referenceMeter.HasValue;
+    public Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(_referenceMeter.HasValue);
 
     /// <summary>
     /// The reference meter to use.
@@ -57,9 +57,9 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
     private ReferenceMeters? _referenceMeter;
 
     /// <inheritdoc/>
-    public async Task<MeterConstant> GetMeterConstant(IInterfaceLogger logger)
+    public async Task<MeterConstant> GetMeterConstantAsync(IInterfaceLogger logger)
     {
-        TestConfigured(logger);
+        await TestConfiguredAsync(logger);
 
         /* Request raw data from device. */
         var biRequest = SerialPortRequest.Create("BI", new Regex(@"^BI(.+)$"));
@@ -88,13 +88,13 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
     /// See if the reference meter is configured.
     /// </summary>
     /// <exception cref="RefMeterNotReadyException">Reference meter is not configured properly.</exception>
-    private void TestConfigured(IInterfaceLogger interfaceLogger)
+    private async Task TestConfiguredAsync(IInterfaceLogger interfaceLogger)
     {
-        if (!GetAvailable(interfaceLogger)) throw new RefMeterNotReadyException();
+        if (!await GetAvailableAsync(interfaceLogger)) throw new RefMeterNotReadyException();
     }
 
     /// <inheritdoc/>
-    public async Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger)
+    public async Task<ReferenceMeterInformation> GetMeterInformationAsync(IInterfaceLogger logger)
     {
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("TS", new Regex("^TS(.{8})(.{4})$"));

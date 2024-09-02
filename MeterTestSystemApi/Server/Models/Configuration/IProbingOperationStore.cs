@@ -10,14 +10,14 @@ public interface IProbingOperationStore
     /// </summary>
     /// <param name="operation"></param>
     /// <returns></returns>
-    Task<ProbingOperation> Add(ProbingOperation operation);
+    Task<ProbingOperation> AddAsync(ProbingOperation operation);
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="operation"></param>
     /// <returns></returns>
-    Task<ProbingOperation> Update(ProbingOperation operation);
+    Task<ProbingOperation> UpdateAsync(ProbingOperation operation);
 
     /// <summary>
     /// 
@@ -30,5 +30,5 @@ public interface IProbingOperationStore
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<ProbingOperation?> Get(string id);
+    Task<ProbingOperation?> GetAsync(string id);
 }

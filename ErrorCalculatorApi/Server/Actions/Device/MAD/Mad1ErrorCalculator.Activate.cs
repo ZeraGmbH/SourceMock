@@ -34,7 +34,7 @@ partial class Mad1ErrorCalculator
   ";
 
   /// <inheritdoc />
-  public Task ActivateSource(IInterfaceLogger logger, bool on)
+  public Task ActivateSourceAsync(IInterfaceLogger logger, bool on)
   {
     /* Create and configure request. */
     var req = LoadXmlFromString(ActivateXml);
@@ -58,6 +58,6 @@ partial class Mad1ErrorCalculator
     lineN.InnerText = data;
 
     /* Execute the request. */
-    return _connection.Execute(logger, req, "runKodisAccessRes");
+    return _connection.ExecuteAsync(logger, req, "runKodisAccessRes");
   }
 }

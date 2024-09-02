@@ -11,13 +11,13 @@ namespace SourceApi.Actions.Source
         /// <summary>
         /// Set if the source is fully configured and can be used.
         /// </summary>
-        bool GetAvailable(IInterfaceLogger logger);
+        Task<bool> GetAvailableAsync(IInterfaceLogger logger);
 
         /// <summary>
         /// Gets the capabilities of this source.
         /// </summary>
         /// <returns>The corresponding <see cref="SourceCapabilities"/>-Object for this source.</returns>
-        public Task<SourceCapabilities> GetCapabilities(IInterfaceLogger logger);
+        public Task<SourceCapabilities> GetCapabilitiesAsync(IInterfaceLogger logger);
 
         /// <summary>
         /// Sets a specified loadpoint imediatly.
@@ -25,23 +25,23 @@ namespace SourceApi.Actions.Source
         /// <param name="logger"></param>
         /// <param name="loadpoint">The loadpoint to be set.</param>
         /// <returns>The corresponding value of <see cref="SourceApiErrorCodes"/> with regard to the success of the operation.</returns>
-        public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint);
+        public Task<SourceApiErrorCodes> SetLoadpointAsync(IInterfaceLogger logger, TargetLoadpoint loadpoint);
 
         /// <summary>
         /// Turns off the source.
         /// </summary>
         /// <returns>The corresponding value of <see cref="SourceApiErrorCodes"/> with regard to the success of the operation.</returns>
-        public Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger);
+        public Task<SourceApiErrorCodes> TurnOffAsync(IInterfaceLogger logger);
 
         /// <summary>
         /// Gets the currently set loadpoint.
         /// </summary>
         /// <returns>The loadpoint, null if none was set.</returns>
-        public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger logger);
+        public Task<TargetLoadpoint?> GetCurrentLoadpointAsync(IInterfaceLogger logger);
 
         /// <summary>
         /// Reports information on the active loadpoint.
         /// </summary>
-        public LoadpointInfo GetActiveLoadpointInfo(IInterfaceLogger logger);
+        public Task<LoadpointInfo> GetActiveLoadpointInfoAsync(IInterfaceLogger logger);
     }
 }

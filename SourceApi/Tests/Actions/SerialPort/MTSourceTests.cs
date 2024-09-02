@@ -65,7 +65,7 @@ public class MTSourceTests
     {
         var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        var caps = await sut.GetCapabilities(new NoopInterfaceLogger());
+        var caps = await sut.GetCapabilitiesAsync(new NoopInterfaceLogger());
 
         Assert.That((double)caps.FrequencyRanges[0].Min, Is.EqualTo(45));
     }
@@ -76,9 +76,9 @@ public class MTSourceTests
     {
         var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        Assert.That(sut.GetCurrentLoadpoint(new NoopInterfaceLogger()), Is.Null);
+        Assert.That(await sut.GetCurrentLoadpointAsync(new NoopInterfaceLogger()), Is.Null);
 
-        var result = await sut.SetLoadpoint(new NoopInterfaceLogger(), new Model.TargetLoadpoint
+        var result = await sut.SetLoadpointAsync(new NoopInterfaceLogger(), new Model.TargetLoadpoint
         {
             Frequency = new Model.GeneratedFrequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = new(50) },
             Phases = new List<Model.TargetLoadpointPhase>() {
@@ -107,7 +107,7 @@ public class MTSourceTests
             "SUIEAEPPAAAA"
         }));
 
-        var loadpoint = sut.GetCurrentLoadpoint(new NoopInterfaceLogger());
+        var loadpoint = await sut.GetCurrentLoadpointAsync(new NoopInterfaceLogger());
 
         Assert.That(loadpoint, Is.Not.Null);
         Assert.That((double)loadpoint.Frequency.Value, Is.EqualTo(50));
@@ -120,9 +120,9 @@ public class MTSourceTests
     {
         var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        Assert.That(sut.GetCurrentLoadpoint(new NoopInterfaceLogger()), Is.Null);
+        Assert.That(await sut.GetCurrentLoadpointAsync(new NoopInterfaceLogger()), Is.Null);
 
-        var result = await sut.SetLoadpoint(new NoopInterfaceLogger(), new Model.TargetLoadpoint
+        var result = await sut.SetLoadpointAsync(new NoopInterfaceLogger(), new Model.TargetLoadpoint
         {
             Frequency = new Model.GeneratedFrequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = new(50) },
             Phases = new List<Model.TargetLoadpointPhase>() {
@@ -143,6 +143,6 @@ public class MTSourceTests
         });
 
         Assert.That(result, Is.EqualTo(expectedError));
-        Assert.That(sut.GetCurrentLoadpoint(new NoopInterfaceLogger()), Is.Null);
+        Assert.That(await sut.GetCurrentLoadpointAsync(new NoopInterfaceLogger()), Is.Null);
     }
 }

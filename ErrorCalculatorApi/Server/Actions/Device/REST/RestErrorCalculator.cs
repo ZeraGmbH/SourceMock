@@ -23,30 +23,26 @@ public class RestErrorCalculator(ILoggingHttpClient errorCalculator, ILogger<Res
     private static string ToUrl<T>(T value) => JsonSerializer.Serialize(value, LibUtils.JsonSettings);
 
     /// <inheritdoc/>
-    public Task AbortAllJobs(IInterfaceLogger interfaceLogger)
+    public Task AbortAllJobsAsync(IInterfaceLogger interfaceLogger)
         => errorCalculator.PostAsync(interfaceLogger, new Uri(_uri, "AbortAll"));
 
     /// <inheritdoc/>
-    public Task AbortErrorMeasurement(IInterfaceLogger interfaceLogger)
+    public Task AbortErrorMeasurementAsync(IInterfaceLogger interfaceLogger)
         => errorCalculator.PostAsync(interfaceLogger, new Uri(_uri, "Abort"));
 
     /// <inheritdoc/>
-    public Task ActivateSource(IInterfaceLogger interfaceLogger, bool on)
+    public Task ActivateSourceAsync(IInterfaceLogger interfaceLogger, bool on)
         => errorCalculator.PostAsync(interfaceLogger, new Uri(_uri, on ? "ActivateSource" : "DeactivateSource"));
 
     /// <inheritdoc/>
-    public bool GetAvailable(IInterfaceLogger interfaceLogger)
+    public async Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger)
     {
         /* Not yet initialized. */
         if (!_initialized) return false;
 
         try
         {
-            var available = errorCalculator.GetAsync<bool>(interfaceLogger, new Uri(_uri, "Available"));
-
-            available.Wait();
-
-            return available.Result;
+            return await errorCalculator.GetAsync<bool>(interfaceLogger, new Uri(_uri, "Available"));
         }
         catch (Exception e)
         {
@@ -61,31 +57,31 @@ public class RestErrorCalculator(ILoggingHttpClient errorCalculator, ILogger<Res
     }
 
     /// <inheritdoc/>
-    public Task<ErrorMeasurementStatus> GetErrorStatus(IInterfaceLogger interfaceLogger)
+    public Task<ErrorMeasurementStatus> GetErrorStatusAsync(IInterfaceLogger interfaceLogger)
         => errorCalculator.GetAsync<ErrorMeasurementStatus>(interfaceLogger, _uri);
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion(IInterfaceLogger interfaceLogger)
+    public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger interfaceLogger)
         => errorCalculator.GetAsync<ErrorCalculatorFirmwareVersion>(interfaceLogger, new Uri(_uri, "Version"));
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections(IInterfaceLogger interfaceLogger)
+    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnectionsAsync(IInterfaceLogger interfaceLogger)
         => errorCalculator.GetAsync<ErrorCalculatorMeterConnections[]>(interfaceLogger, new Uri(_uri, "GetSupportedMeterConnections"));
 
     /// <inheritdoc/>
-    public Task<Impulses?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger interfaceLogger)
+    public Task<Impulses?> GetNumberOfDeviceUnderTestImpulsesAsync(IInterfaceLogger interfaceLogger)
         => errorCalculator.GetAsync<Impulses?>(interfaceLogger, new Uri(_uri, "DutImpulses"));
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(IInterfaceLogger interfaceLogger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant)
+    public Task SetErrorMeasurementParametersAsync(IInterfaceLogger interfaceLogger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant)
         => errorCalculator.PutAsync(interfaceLogger, new Uri(_uri, $"?dutMeterConstant={ToUrl(dutMeterConstant)}&impulses={ToUrl(impulses)}&refMeterMeterConstant={ToUrl(refMeterMeterConstant)}"));
 
     /// <inheritdoc/>
-    public Task StartErrorMeasurement(IInterfaceLogger interfaceLogger, bool continuous, ErrorCalculatorMeterConnections? connection)
+    public Task StartErrorMeasurementAsync(IInterfaceLogger interfaceLogger, bool continuous, ErrorCalculatorMeterConnections? connection)
         => errorCalculator.PostAsync(interfaceLogger, new Uri(_uri, $"{(continuous ? "StartContinuous" : "StartSingle")}{(connection.HasValue ? $"?connection={ToUrl(connection)}" : string.Empty)}"));
 
     /// <inheritdoc/>
-    public Task Initialize(int position, ErrorCalculatorConfiguration configuration, IServiceProvider services)
+    public Task InitializeAsync(int position, ErrorCalculatorConfiguration configuration, IServiceProvider services)
     {
         /* Can be only done once. */
         if (_initialized) throw new InvalidOperationException("Already initialized");

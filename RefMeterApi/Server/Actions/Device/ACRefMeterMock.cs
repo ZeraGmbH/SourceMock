@@ -28,9 +28,9 @@ public partial class ACRefMeterMock(IServiceProvider di) : RefMeterMock
     /// 
     /// </summary>
     /// <returns>ActualValues that fluctuate around the set loadpoint</returns>
-    public override async Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveVoltagePhase = -1)
+    public override async Task<MeasuredLoadpoint> GetActualValuesAsync(IInterfaceLogger logger, int firstActiveVoltagePhase = -1)
     {
-        var loadpoint = await GetLoadpoint(logger);
+        var loadpoint = await GetLoadpointAsync(logger);
 
         var mo = CalcMeasureOutput(loadpoint);
 
@@ -109,14 +109,14 @@ public partial class ACRefMeterMock(IServiceProvider di) : RefMeterMock
     }
 
 
-    private async Task<TargetLoadpoint> GetLoadpoint(IInterfaceLogger logger)
+    private async Task<TargetLoadpoint> GetLoadpointAsync(IInterfaceLogger logger)
     {
         var r = Random.Shared;
 
         var source = _di.GetRequiredService<ISource>();
-        var hasSource = source.GetAvailable(logger);
+        var hasSource = await source.GetAvailableAsync(logger);
 
-        var sourceLoadPoint = hasSource ? source.GetCurrentLoadpoint(logger) : new TargetLoadpoint()
+        var sourceLoadPoint = hasSource ? await source.GetCurrentLoadpointAsync(logger) : new TargetLoadpoint()
         {
             Frequency = new() { Value = new(50) },
             Phases = [
@@ -158,8 +158,8 @@ public partial class ACRefMeterMock(IServiceProvider di) : RefMeterMock
 
         if (!hasSource) return loadpoint;
 
-        var info = source.GetActiveLoadpointInfo(logger);
-        var currentSwitchedOffForDosage = await source.CurrentSwitchedOffForDosage(logger);
+        var info = await source.GetActiveLoadpointInfoAsync(logger);
+        var currentSwitchedOffForDosage = await source.CurrentSwitchedOffForDosageAsync(logger);
 
         foreach (var phase in loadpoint.Phases)
         {
@@ -253,7 +253,7 @@ public partial class ACRefMeterMock(IServiceProvider di) : RefMeterMock
         => powerFactor != null && !!powerFactor.Value && !powerFactor.Value.IsNaN();
 
     /// <inheritdoc/>
-    public override Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger)
+    public override Task<ReferenceMeterInformation> GetMeterInformationAsync(IInterfaceLogger logger)
     {
         return Task.FromResult(new ReferenceMeterInformation
         {

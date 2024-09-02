@@ -12,33 +12,33 @@ namespace SourceApi.Actions;
 /// </summary>
 public class UnavailableSource(IDosage? dosage = null) : IACSourceMock, IDCSourceMock
 {
-    public bool GetAvailable(IInterfaceLogger interfaceLogger) => false;
+    public Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(false);
 
-    public Task CancelDosage(IInterfaceLogger logger)
-        => dosage == null ? throw new SourceNotReadyException() : dosage.CancelDosage(logger);
+    public Task CancelDosageAsync(IInterfaceLogger logger)
+        => dosage == null ? throw new SourceNotReadyException() : dosage.CancelDosageAsync(logger);
 
-    public Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger)
-        => dosage == null ? throw new SourceNotReadyException() : dosage.CurrentSwitchedOffForDosage(logger);
+    public Task<bool> CurrentSwitchedOffForDosageAsync(IInterfaceLogger logger)
+        => dosage == null ? throw new SourceNotReadyException() : dosage.CurrentSwitchedOffForDosageAsync(logger);
 
-    public LoadpointInfo GetActiveLoadpointInfo(IInterfaceLogger interfaceLogger) => throw new SourceNotReadyException();
+    public Task<LoadpointInfo> GetActiveLoadpointInfoAsync(IInterfaceLogger interfaceLogger) => throw new SourceNotReadyException();
 
-    public Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) => Task.FromResult<SourceCapabilities>(null!);
+    public Task<SourceCapabilities> GetCapabilitiesAsync(IInterfaceLogger interfaceLogger) => Task.FromResult<SourceCapabilities>(null!);
 
-    public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger) => throw new SourceNotReadyException();
+    public Task<TargetLoadpoint?> GetCurrentLoadpointAsync(IInterfaceLogger interfaceLogger) => throw new SourceNotReadyException();
 
-    public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
-        => dosage == null ? throw new SourceNotReadyException() : dosage.GetDosageProgress(logger, meterConstant);
+    public Task<DosageProgress> GetDosageProgressAsync(IInterfaceLogger logger, MeterConstant meterConstant)
+        => dosage == null ? throw new SourceNotReadyException() : dosage.GetDosageProgressAsync(logger, meterConstant);
 
-    public Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
-        => dosage == null ? throw new SourceNotReadyException() : dosage.SetDosageEnergy(logger, value, meterConstant);
+    public Task SetDosageEnergyAsync(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
+        => dosage == null ? throw new SourceNotReadyException() : dosage.SetDosageEnergyAsync(logger, value, meterConstant);
 
-    public Task SetDosageMode(IInterfaceLogger logger, bool on)
-        => dosage == null ? throw new SourceNotReadyException() : dosage.SetDosageMode(logger, on);
+    public Task SetDosageModeAsync(IInterfaceLogger logger, bool on)
+        => dosage == null ? throw new SourceNotReadyException() : dosage.SetDosageModeAsync(logger, on);
 
-    public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint) => throw new SourceNotReadyException();
+    public Task<SourceApiErrorCodes> SetLoadpointAsync(IInterfaceLogger logger, TargetLoadpoint loadpoint) => throw new SourceNotReadyException();
 
-    public Task StartDosage(IInterfaceLogger logger)
-        => dosage == null ? throw new SourceNotReadyException() : dosage.StartDosage(logger);
+    public Task StartDosageAsync(IInterfaceLogger logger)
+        => dosage == null ? throw new SourceNotReadyException() : dosage.StartDosageAsync(logger);
 
-    public Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger) => throw new SourceNotReadyException();
+    public Task<SourceApiErrorCodes> TurnOffAsync(IInterfaceLogger logger) => throw new SourceNotReadyException();
 }

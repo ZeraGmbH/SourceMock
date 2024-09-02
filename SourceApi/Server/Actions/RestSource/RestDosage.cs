@@ -24,7 +24,7 @@ public class RestDosage(ILoggingHttpClient httpDosage) : IRestDosage, IDosageMoc
     private bool _disposed = false;
 
     /// <inheritdoc/>
-    public async Task CancelDosage(IInterfaceLogger logger)
+    public async Task CancelDosageAsync(IInterfaceLogger logger)
     {
         var res = await httpDosage.PostAsync(logger, new Uri(_dosageUri, "Cancel"));
 
@@ -32,13 +32,13 @@ public class RestDosage(ILoggingHttpClient httpDosage) : IRestDosage, IDosageMoc
     }
 
     /// <inheritdoc/>
-    public Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger)
+    public Task<bool> CurrentSwitchedOffForDosageAsync(IInterfaceLogger logger)
         => httpDosage.GetAsync<bool>(logger, new Uri(_dosageUri, "IsDosageCurrentOff"));
 
     public void Dispose() => _disposed = true;
 
     /// <inheritdoc/>
-    public Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
+    public Task<DosageProgress> GetDosageProgressAsync(IInterfaceLogger logger, MeterConstant meterConstant)
         => httpDosage.GetAsync<DosageProgress>(logger, new Uri(_dosageUri, $"Progress?meterConstant={JsonSerializer.Serialize(meterConstant, LibUtils.JsonSettings)}"));
 
     /// <inheritdoc/>
@@ -72,7 +72,7 @@ public class RestDosage(ILoggingHttpClient httpDosage) : IRestDosage, IDosageMoc
     }
 
     /// <inheritdoc/>
-    public Task NoSource(IInterfaceLogger interfaceLogger)
+    public Task NoSourceAsync(IInterfaceLogger interfaceLogger)
     {
         ThreadPool.QueueUserWorkItem((state) =>
         {
@@ -101,7 +101,7 @@ public class RestDosage(ILoggingHttpClient httpDosage) : IRestDosage, IDosageMoc
     }
 
     /// <inheritdoc/>
-    public async Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
+    public async Task SetDosageEnergyAsync(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
     {
         var res = await httpDosage.PutAsync(logger, new Uri(_dosageUri, $"Energy?energy={JsonSerializer.Serialize(value, LibUtils.JsonSettings)}&meterConstant={JsonSerializer.Serialize(meterConstant, LibUtils.JsonSettings)}"));
 
@@ -109,7 +109,7 @@ public class RestDosage(ILoggingHttpClient httpDosage) : IRestDosage, IDosageMoc
     }
 
     /// <inheritdoc/>
-    public async Task SetDosageMode(IInterfaceLogger logger, bool on)
+    public async Task SetDosageModeAsync(IInterfaceLogger logger, bool on)
     {
         var res = await httpDosage.PostAsync(logger, new Uri(_dosageUri, $"DOSMode?on={JsonSerializer.Serialize(on, LibUtils.JsonSettings)}"));
 
@@ -117,7 +117,7 @@ public class RestDosage(ILoggingHttpClient httpDosage) : IRestDosage, IDosageMoc
     }
 
     /// <inheritdoc/>
-    public async Task StartDosage(IInterfaceLogger logger)
+    public async Task StartDosageAsync(IInterfaceLogger logger)
     {
         var res = await httpDosage.PostAsync(logger, new Uri(_dosageUri, "Start"));
 

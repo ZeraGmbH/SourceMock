@@ -39,8 +39,8 @@ public class ErrorCalculatorMockTest
             }
         };
 
-        sourceMock.Setup(s => s.GetAvailable(It.IsAny<IInterfaceLogger>())).Returns(true);
-        sourceMock.Setup(s => s.GetCurrentLoadpoint(It.IsAny<IInterfaceLogger>())).Returns(loadpoint);
+        sourceMock.Setup(s => s.GetAvailableAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(true);
+        sourceMock.Setup(s => s.GetCurrentLoadpointAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(loadpoint);
 
         services.AddSingleton(sourceMock.Object);
 
@@ -61,13 +61,13 @@ public class ErrorCalculatorMockTest
         var cut = Services.GetRequiredService<IErrorCalculatorMock>();
 
         /* 200 impulses at 10000/kWh is equivalent to 20. */
-        await cut.SetErrorMeasurementParameters(new NoopInterfaceLogger(), new(10000), new(200), new(6000d));
-        await cut.StartErrorMeasurement(new NoopInterfaceLogger(), false, null);
+        await cut.SetErrorMeasurementParametersAsync(new NoopInterfaceLogger(), new(10000), new(200), new(6000d));
+        await cut.StartErrorMeasurementAsync(new NoopInterfaceLogger(), false, null);
 
         /* 100ms delay generates ~1.8W. */
         Thread.Sleep(100);
 
-        var result = await cut.GetErrorStatus(new NoopInterfaceLogger());
+        var result = await cut.GetErrorStatusAsync(new NoopInterfaceLogger());
 
         Assert.Multiple(() =>
         {
@@ -79,7 +79,7 @@ public class ErrorCalculatorMockTest
         /* 1.5s delay generates 27.5W. */
         Thread.Sleep(1500);
 
-        result = await cut.GetErrorStatus(new NoopInterfaceLogger());
+        result = await cut.GetErrorStatusAsync(new NoopInterfaceLogger());
 
         Assert.Multiple(() =>
         {
@@ -95,13 +95,13 @@ public class ErrorCalculatorMockTest
         var cut = Services.GetRequiredService<IErrorCalculatorMock>();
 
         /* 200 impulses at 10000/kWh is equivalent to 20W. */
-        await cut.SetErrorMeasurementParameters(new NoopInterfaceLogger(), new(10000), new(200), new(6000d));
-        await cut.StartErrorMeasurement(new NoopInterfaceLogger(), true, null);
+        await cut.SetErrorMeasurementParametersAsync(new NoopInterfaceLogger(), new(10000), new(200), new(6000d));
+        await cut.StartErrorMeasurementAsync(new NoopInterfaceLogger(), true, null);
 
         /* 1.5s delay generates 27.5W. */
         Thread.Sleep(1500);
 
-        var result = await cut.GetErrorStatus(new NoopInterfaceLogger());
+        var result = await cut.GetErrorStatusAsync(new NoopInterfaceLogger());
         var error = result.ErrorValue;
 
         Assert.Multiple(() =>
@@ -113,7 +113,7 @@ public class ErrorCalculatorMockTest
 
         Thread.Sleep(100);
 
-        result = await cut.GetErrorStatus(new NoopInterfaceLogger());
+        result = await cut.GetErrorStatusAsync(new NoopInterfaceLogger());
 
         /* There should be no full cycle be done and the error value keeps its value. */
         Assert.That(error, Is.EqualTo(result.ErrorValue));
@@ -121,7 +121,7 @@ public class ErrorCalculatorMockTest
         /* 1.5s delay generates 27.5W. */
         Thread.Sleep(1500);
 
-        result = await cut.GetErrorStatus(new NoopInterfaceLogger());
+        result = await cut.GetErrorStatusAsync(new NoopInterfaceLogger());
 
         /* Now the second iteration should be complete and the error value "should" change - indeed there is a tin chance of random generation clashes. */
         Assert.That(error, Is.Not.EqualTo(result.ErrorValue));

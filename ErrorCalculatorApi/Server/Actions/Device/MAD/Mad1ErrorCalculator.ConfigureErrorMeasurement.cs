@@ -74,7 +74,7 @@ partial class Mad1ErrorCalculator
         {ErrorCalculatorMeterConnections.Software, "src-software"},
     };
 
-    private Task ConfigureErrorMeasurement(IInterfaceLogger logger, ErrorCalculatorMeterConnections? connection)
+    private Task ConfigureErrorMeasurementAsync(IInterfaceLogger logger, ErrorCalculatorMeterConnections? connection)
     {
         /* Create and configure request. */
         var req = LoadXmlFromString(ErrorMeasurementConfigurationXml);
@@ -86,6 +86,6 @@ partial class Mad1ErrorCalculator
         place.InnerText = $"{_position:00}";
 
         /* Execute the request. */
-        return _connection.Execute(logger, req, "bindErrorCalculatorsRes");
+        return _connection.ExecuteAsync(logger, req, "bindErrorCalculatorsRes");
     }
 }

@@ -28,16 +28,16 @@ public class MeterTestSystemRestController([FromKeyedServices(MeterTestSystemRes
     /// <returns>May be null if the meter test system does not allow configuration.</returns>
     [HttpGet, AllowAnonymous]
     [SwaggerOperation(OperationId = "GetMeterTestSystemCapabilities")]
-    public Task<ActionResult<MeterTestSystemCapabilities>> GetCapabilities() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetCapabilities(interfaceLogger));
+    public Task<ActionResult<MeterTestSystemCapabilities>> GetCapabilitiesAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetCapabilitiesAsync(interfaceLogger));
 
     /// <summary>
     /// Set the physical configuration of a meter test system.
     /// </summary>
     [HttpPut("AmplifiersAndReferenceMeter"), AllowAnonymous]
     [SwaggerOperation(OperationId = "SetAmplifiersAndReferenceMeter")]
-    public Task<ActionResult> SetAmplifiersAndReferenceMeter([FromBody] AmplifiersAndReferenceMeter request) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.SetAmplifiersAndReferenceMeter(interfaceLogger, request));
+    public Task<ActionResult> SetAmplifiersAndReferenceMeterAsync([FromBody] AmplifiersAndReferenceMeter request) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.SetAmplifiersAndReferenceMeterAsync(interfaceLogger, request));
 
     /// <summary>
     /// Report the current pysical configuration of the meter test system.
@@ -45,8 +45,8 @@ public class MeterTestSystemRestController([FromKeyedServices(MeterTestSystemRes
     /// <returns></returns>
     [HttpGet("AmplifiersAndReferenceMeter"), AllowAnonymous]
     [SwaggerOperation(OperationId = "GetAmplifiersAndReferenceMeter")]
-    public Task<ActionResult<AmplifiersAndReferenceMeter>> GetAmplifiersAndReferenceMeter() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => Task.FromResult(device.GetAmplifiersAndReferenceMeter(interfaceLogger)));
+    public Task<ActionResult<AmplifiersAndReferenceMeter>> GetAmplifiersAndReferenceMeterAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetAmplifiersAndReferenceMeterAsync(interfaceLogger));
 
     /// <summary>
     /// Read the firmware from the metering system.
@@ -54,8 +54,8 @@ public class MeterTestSystemRestController([FromKeyedServices(MeterTestSystemRes
     /// <returns>Firmware version of the metering system.</returns>
     [HttpGet("FirmwareVersion"), AllowAnonymous]
     [SwaggerOperation(OperationId = "GetFirmwareVersion")]
-    public Task<ActionResult<MeterTestSystemFirmwareVersion>> GetFirmwareVersion() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetFirmwareVersion(interfaceLogger));
+    public Task<ActionResult<MeterTestSystemFirmwareVersion>> GetFirmwareVersionAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetFirmwareVersionAsync(interfaceLogger));
 
     /// <summary>
     /// Read the current error conditions of the meter test system.
@@ -63,6 +63,6 @@ public class MeterTestSystemRestController([FromKeyedServices(MeterTestSystemRes
     /// <returns>All current error conditions.</returns>
     [HttpGet("ErrorConditions"), AllowAnonymous]
     [SwaggerOperation(OperationId = "GetErrorConditions")]
-    public Task<ActionResult<ErrorConditions>> GetErrorConditions() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetErrorConditions(interfaceLogger));
+    public Task<ActionResult<ErrorConditions>> GetErrorConditionsAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetErrorConditionsAsync(interfaceLogger));
 }

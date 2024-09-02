@@ -19,7 +19,7 @@ partial class Mad1ErrorCalculator
 
 
   /// <inheritdoc/>
-  public Task AbortErrorMeasurement(IInterfaceLogger logger)
+  public Task AbortErrorMeasurementAsync(IInterfaceLogger logger)
   {
     /* Validate. */
     var jobId = _jobId;
@@ -36,6 +36,6 @@ partial class Mad1ErrorCalculator
     id.InnerText = jobId;
 
     /* Execute the request. */
-    return _connection.Execute(logger, req, "runErrorMeasureRes");
+    return _connection.ExecuteAsync(logger, req, "runErrorMeasureRes");
   }
 }

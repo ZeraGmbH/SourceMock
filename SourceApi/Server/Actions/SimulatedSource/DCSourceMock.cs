@@ -24,7 +24,7 @@ public interface IDCSourceMock : ISource
 public class DCSourceMock(ILogger<DCSourceMock> logger, ISourceCapabilityValidator validator) :
     SourceMock(logger, new() { Phases = [new() { DcVoltage = new(new(10), new(300), new(0.01)), DcCurrent = new(new(0), new(60), new(0.01)) }] }, validator), IDCSourceMock
 {
-    public override Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
+    public override Task<DosageProgress> GetDosageProgressAsync(IInterfaceLogger logger, MeterConstant meterConstant)
     {
         var power = (_loadpoint!.Phases[0].Voltage.DcComponent ?? Voltage.Zero) * (_loadpoint!.Phases[0].Current.DcComponent ?? Current.Zero);
         var elapsed = new Time((DateTime.Now - _startTime).TotalSeconds);
@@ -45,9 +45,9 @@ public class DCSourceMock(ILogger<DCSourceMock> logger, ISourceCapabilityValidat
         });
     }
 
-    public override async Task NoSource(IInterfaceLogger logger)
+    public override async Task NoSourceAsync(IInterfaceLogger logger)
     {
-        await base.NoSource(logger);
+        await base.NoSourceAsync(logger);
 
         _loadpoint = new()
         {

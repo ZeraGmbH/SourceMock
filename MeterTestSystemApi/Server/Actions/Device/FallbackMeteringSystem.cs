@@ -14,7 +14,7 @@ namespace MeterTestSystemApi.Actions.Device;
 public class FallbackMeteringSystem : IMeterTestSystem
 {
     /// <inheritdoc/>
-    public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
+    public Task<AmplifiersAndReferenceMeter> GetAmplifiersAndReferenceMeterAsync(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public bool HasSource { get; } = false;
@@ -37,15 +37,15 @@ public class FallbackMeteringSystem : IMeterTestSystem
 #pragma warning restore CS0414
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) =>
+    public Task<MeterTestSystemCapabilities> GetCapabilitiesAsync(IInterfaceLogger interfaceLogger) =>
         Task.FromResult<MeterTestSystemCapabilities>(null!);
 
     /// <inheritdoc/>
-    public Task<ErrorConditions> GetErrorConditions(IInterfaceLogger logger) =>
+    public Task<ErrorConditions> GetErrorConditionsAsync(IInterfaceLogger logger) =>
         Task.FromResult(new ErrorConditions());
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) =>
+    public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger logger) =>
         Task.FromResult(new MeterTestSystemFirmwareVersion
         {
             ModelName = "FallbackMeterTestSystem",
@@ -53,7 +53,7 @@ public class FallbackMeteringSystem : IMeterTestSystem
         });
 
     /// <inheritdoc/>
-    public Task SetAmplifiersAndReferenceMeter(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings)
+    public Task SetAmplifiersAndReferenceMeterAsync(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings)
     {
         /* The fallback do not support amplifier configurations. */
         throw new InvalidOperationException();

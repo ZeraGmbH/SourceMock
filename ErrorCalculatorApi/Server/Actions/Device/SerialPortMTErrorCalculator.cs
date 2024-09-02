@@ -40,13 +40,13 @@ public partial class SerialPortMTErrorCalculator([FromKeyedServices("MeterTestSy
     private readonly ILogger<SerialPortMTErrorCalculator> _logger = logger;
 
     /// <inheritdoc/>
-    public bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
+    public Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(true);
 
     /// <inheritdoc/>
-    public Task AbortAllJobs(IInterfaceLogger logger) => Task.CompletedTask;
+    public Task AbortAllJobsAsync(IInterfaceLogger logger) => Task.CompletedTask;
 
     /// <inheritdoc/>
-    public Task ActivateSource(IInterfaceLogger logger, bool on) => Task.CompletedTask;
+    public Task ActivateSourceAsync(IInterfaceLogger logger, bool on) => Task.CompletedTask;
 
     /// <inheritdoc/>
     public void Dispose()
@@ -54,7 +54,7 @@ public partial class SerialPortMTErrorCalculator([FromKeyedServices("MeterTestSy
     }
 
     /// <inheritdoc/>
-    public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger)
+    public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger logger)
     {
         /* Execute the request and wait for the information string. */
         var reply = await _device.Execute(logger, SerialPortRequest.Create("AAV", "AAVACK"))[0];

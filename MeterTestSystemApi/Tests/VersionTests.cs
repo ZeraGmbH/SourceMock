@@ -135,7 +135,7 @@ public class VersionTests
             _portLogger,
             new SerialPortMTSource(new NullLogger<SerialPortMTSource>(), device, new CapabilitiesMap(), new SourceCapabilityValidator()));
 
-        var ex = Assert.ThrowsAsync(exception ?? typeof(InvalidOperationException), async () => await dut.GetFirmwareVersion(new NoopInterfaceLogger()));
+        var ex = Assert.ThrowsAsync(exception ?? typeof(InvalidOperationException), async () => await dut.GetFirmwareVersionAsync(new NoopInterfaceLogger()));
 
         Assert.That(ex.Message, Is.EqualTo(message));
     }

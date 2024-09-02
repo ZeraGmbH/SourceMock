@@ -55,7 +55,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     private AmplifiersAndReferenceMeter _amplifiersAndReferenceMeter = null!;
 
     /// <inheritdoc/>
-    public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => _amplifiersAndReferenceMeter;
+    public Task<AmplifiersAndReferenceMeter> GetAmplifiersAndReferenceMeterAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(_amplifiersAndReferenceMeter);
 
     /// <inheritdoc/>
     public ISource Source { get; private set; } = new UnavailableSource();
@@ -88,7 +88,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) =>
+    public Task<MeterTestSystemCapabilities> GetCapabilitiesAsync(IInterfaceLogger interfaceLogger) =>
         Task.FromResult(new MeterTestSystemCapabilities
         {
             SupportedCurrentAmplifiers = {
@@ -165,10 +165,10 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         });
 
     /// <inheritdoc/>
-    public async Task SetAmplifiersAndReferenceMeter(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings)
+    public async Task SetAmplifiersAndReferenceMeterAsync(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings)
     {
         /* Validate all input parameters against our own capabilities. */
-        var capabilities = await GetCapabilities(logger);
+        var capabilities = await GetCapabilitiesAsync(logger);
 
         if (!capabilities.SupportedVoltageAmplifiers.Contains(settings.VoltageAmplifier))
         {
@@ -211,7 +211,8 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
 
         /* Configure the sub devices if necessary. */
         refMeter.SetReferenceMeter(settings.ReferenceMeter);
-        source.SetAmplifiers(logger, settings.VoltageAmplifier, settings.CurrentAmplifier, settings.VoltageAuxiliary, settings.CurrentAuxiliary);
+
+        await source.SetAmplifiersAsync(logger, settings.VoltageAmplifier, settings.CurrentAmplifier, settings.VoltageAuxiliary, settings.CurrentAuxiliary);
 
         try
         {
@@ -245,7 +246,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public async Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger)
+    public async Task<MeterTestSystemFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger logger)
     {
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("TS", new Regex("^TS(.{8})(.{4})$"));
@@ -261,7 +262,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     }
 
     /// <inheritdoc/>
-    public async Task<ErrorConditions> GetErrorConditions(IInterfaceLogger logger)
+    public async Task<ErrorConditions> GetErrorConditionsAsync(IInterfaceLogger logger)
     {
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("SM", _smRegEx);
@@ -276,14 +277,14 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     /// Enable error condition generation.
     /// </summary>
     /// <param name="logger">Logger to use.</param>
-    public Task ActivateErrorConditions(IInterfaceLogger logger) => _device.Execute(logger, SerialPortRequest.Create("SE1", "OKSE"))[0];
+    public Task ActivateErrorConditionsAsync(IInterfaceLogger logger) => _device.Execute(logger, SerialPortRequest.Create("SE1", "OKSE"))[0];
 
     /// <summary>
     /// Configure the error calculators.
     /// </summary>
     /// <param name="config">List of error calculators to use.</param>
     /// <param name="factory">Factory to create error calculators.</param>
-    public async Task ConfigureErrorCalculators(List<ErrorCalculatorConfiguration> config, IErrorCalculatorFactory factory)
+    public async Task ConfigureErrorCalculatorsAsync(List<ErrorCalculatorConfiguration> config, IErrorCalculatorFactory factory)
     {
         if (config.Count < 1) return;
 
@@ -294,7 +295,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         {
             /* Create calculators based on configuration. */
             for (var i = 0; i < config.Count; i++)
-                errorCalculators.Add(await factory.Create(i, config[i]));
+                errorCalculators.Add(await factory.CreateAsync(i, config[i]));
         }
         catch (Exception)
         {

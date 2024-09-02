@@ -61,15 +61,16 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
 
                             _meterTestSystem = meterTestSystem;
 
-                            meterTestSystem.ActivateErrorConditions(new NoopInterfaceLogger()).Wait();
-                            meterTestSystem.ConfigureErrorCalculators(configuration.Interfaces.ErrorCalculators, factory).Wait();
+#pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
+                            meterTestSystem.ActivateErrorConditionsAsync(new NoopInterfaceLogger()).Wait();
+                            meterTestSystem.ConfigureErrorCalculatorsAsync(configuration.Interfaces.ErrorCalculators, factory).Wait();
 
                             if (configuration.AmplifiersAndReferenceMeter != null)
                                 try
                                 {
                                     /* Do all configurations. */
                                     _meterTestSystem
-                                        .SetAmplifiersAndReferenceMeter(new NoopInterfaceLogger(), configuration.AmplifiersAndReferenceMeter)
+                                        .SetAmplifiersAndReferenceMeterAsync(new NoopInterfaceLogger(), configuration.AmplifiersAndReferenceMeter)
                                         .Wait();
                                 }
                                 catch (Exception e)
@@ -77,6 +78,7 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                                     /* Just report - let meter test system run. */
                                     logger.LogError("Unable to restore amplifiers: {Exception}", e.Message);
                                 }
+#pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
 
                             break;
                         }
@@ -84,11 +86,14 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                         {
                             var meterTestSystem = services.GetRequiredService<RestMeterTestSystem>();
 
-                            meterTestSystem
-                                .Configure(configuration.Interfaces, services, new NoopInterfaceLogger())
-                                .Wait();
-
                             _meterTestSystem = meterTestSystem;
+
+#pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
+                            meterTestSystem
+                                .ConfigureAsync(configuration.Interfaces, services, new NoopInterfaceLogger())
+                                .Wait();
+#pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
+
                             break;
                         }
                     case MeterTestSystemTypes.MT786:

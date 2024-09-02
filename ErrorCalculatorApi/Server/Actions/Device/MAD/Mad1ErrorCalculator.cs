@@ -12,7 +12,7 @@ namespace ErrorCalculatorApi.Actions.Device.MAD;
 public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
 {
     /// <inheritdoc/>
-    public bool GetAvailable(IInterfaceLogger interfaceLogger) => _connection?.Available == true;
+    public Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(_connection?.Available == true);
 
     private IMadConnection _connection = null!;
 
@@ -43,18 +43,18 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public Task Initialize(int position, ErrorCalculatorConfiguration configuration, IServiceProvider services)
+    public Task InitializeAsync(int position, ErrorCalculatorConfiguration configuration, IServiceProvider services)
     {
         _position = position;
 
         /* Create connection implementation. */
         _connection = services.GetRequiredKeyedService<IMadConnection>(ErrorCalculatorConnectionTypes.TCP);
 
-        return _connection.Initialize($"{position}", configuration);
+        return _connection.InitializeAsync($"{position}", configuration);
     }
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant)
+    public Task SetErrorMeasurementParametersAsync(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant)
     {
         /* Remember */
         _refMeterImpulsesNext = (impulses / dutMeterConstant * refMeterMeterConstant).Floor();
@@ -64,10 +64,10 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections(IInterfaceLogger logger) => Task.FromResult(_supportedMeterConnections.Keys.ToArray());
+    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnectionsAsync(IInterfaceLogger logger) => Task.FromResult(_supportedMeterConnections.Keys.ToArray());
 
     /// <inheritdoc/>
-    public async Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
+    public async Task StartErrorMeasurementAsync(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
     {
         /* Already running. */
         if (!string.IsNullOrEmpty(_jobId)) throw new InvalidOperationException("error measurement still active - abort first");
@@ -82,16 +82,16 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
         if (dut == null || meter == null) throw new InvalidOperationException("error measurement not configured");
 
         /* Configure the measurement. */
-        await ConfigureErrorMeasurement(logger, connection);
+        await ConfigureErrorMeasurementAsync(logger, connection);
 
         /* Start the measurement and remember context. */
-        _jobId = await StartErrorMeasurement(logger, continuous, connection, dut.Value, meter.Value);
+        _jobId = await StartErrorMeasurementAsync(logger, continuous, connection, dut.Value, meter.Value);
 
         _dutImpules = dut;
     }
 
     /// <inheritdoc/>
-    public Task<Impulses?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger) => Task.FromResult<Impulses?>(null);
+    public Task<Impulses?> GetNumberOfDeviceUnderTestImpulsesAsync(IInterfaceLogger logger) => Task.FromResult<Impulses?>(null);
 
     /* [TODO] add support for 0x HEX response. */
     private static long ParseLong(string number) => long.Parse(number);

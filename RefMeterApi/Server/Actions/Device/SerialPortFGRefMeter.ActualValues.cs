@@ -14,9 +14,9 @@ partial class SerialPortFGRefMeter
     private readonly ResponseShare<MeasuredLoadpoint, IInterfaceLogger> _actualValues;
 
     /// <inheritdoc/>
-    public async Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1)
+    public async Task<MeasuredLoadpoint> GetActualValuesAsync(IInterfaceLogger logger, int firstActiveCurrentPhase = -1)
     {
-        TestConfigured(logger);
+        await TestConfiguredAsync(logger);
 
         return Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValues.ExecuteAsync(logger)), firstActiveCurrentPhase);
     }
@@ -26,7 +26,7 @@ partial class SerialPortFGRefMeter
     /// </summary>
     /// <returns>Task reading the actual values.</returns>
     /// <exception cref="ArgumentException">Reply from the device was not recognized.</exception>
-    private async Task<MeasuredLoadpoint> CreateActualValueRequest(IInterfaceLogger logger)
+    private async Task<MeasuredLoadpoint> CreateActualValueRequestAsync(IInterfaceLogger logger)
     {
         /* Request raw data from device. */
         var afRequest = SerialPortRequest.Create("AF", new Regex(@"^AF(.+)$"));

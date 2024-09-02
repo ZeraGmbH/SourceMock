@@ -17,14 +17,14 @@ public class ProbingOperationStore(IObjectCollectionFactory<ProbingOperation> fa
     public IObjectCollection<ProbingOperation> Collection => _collection;
 
     /// <inheritdoc/>
-    public Task<ProbingOperation> Add(ProbingOperation operation) => _collection.AddItem(operation);
+    public Task<ProbingOperation> AddAsync(ProbingOperation operation) => _collection.AddItem(operation);
 
     /// <inheritdoc/>
-    public Task<ProbingOperation?> Get(string id) => _collection.GetItem(id);
+    public Task<ProbingOperation?> GetAsync(string id) => _collection.GetItem(id);
 
     /// <inheritdoc/>
     public IQueryable<ProbingOperation> Query() => _collection.CreateQueryable();
 
     /// <inheritdoc/>
-    public Task<ProbingOperation> Update(ProbingOperation operation) => _collection.UpdateItem(operation);
+    public Task<ProbingOperation> UpdateAsync(ProbingOperation operation) => _collection.UpdateItem(operation);
 }

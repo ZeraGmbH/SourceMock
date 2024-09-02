@@ -23,7 +23,7 @@ public class RefMeterControllerTests
 
         var cut = new RefMeterController(new SerialPortMTRefMeter(port, _deviceLogger), new NoopInterfaceLogger());
 
-        var response = await cut.GetActualValues();
+        var response = await cut.GetActualValuesAsync();
         var result = response.Result as OkObjectResult;
         var data = result?.Value as MeasuredLoadpoint;
 

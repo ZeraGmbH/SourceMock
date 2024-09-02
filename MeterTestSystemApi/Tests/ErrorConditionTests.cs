@@ -146,7 +146,7 @@ public class ErrorConditionTests
                 byEvent.Add(errors);
         };
 
-        var errors = await cut.GetErrorConditions(new NoopInterfaceLogger());
+        var errors = await cut.GetErrorConditionsAsync(new NoopInterfaceLogger());
 
         Thread.Sleep(500);
 
@@ -198,7 +198,7 @@ public class ErrorConditionTests
                 byEvent.Add(errors);
         };
 
-        var errors = await cut.GetErrorConditions(new NoopInterfaceLogger());
+        var errors = await cut.GetErrorConditionsAsync(new NoopInterfaceLogger());
 
         Thread.Sleep(500);
 

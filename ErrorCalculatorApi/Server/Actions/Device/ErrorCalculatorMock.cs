@@ -25,7 +25,7 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
     private long _dutPulses = Environment.TickCount64;
 
     /// <inheritdoc/>
-    public bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
+    public Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(true);
 
     private bool _continuous = false;
 
@@ -45,7 +45,7 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
     private ActivePower _totalPower;
 
     /// <inheritdoc/>
-    public Task AbortErrorMeasurement(IInterfaceLogger logger)
+    public Task AbortErrorMeasurementAsync(IInterfaceLogger logger)
     {
         _status.State = ErrorMeasurementStates.Finished;
 
@@ -53,10 +53,10 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
-    public Task AbortAllJobs(IInterfaceLogger logger) => Task.CompletedTask;
+    public Task AbortAllJobsAsync(IInterfaceLogger logger) => Task.CompletedTask;
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant)
+    public Task SetErrorMeasurementParametersAsync(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant)
     {
         _meterConstant = dutMeterConstant;
         _totalImpulses = impulses;
@@ -65,10 +65,10 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections(IInterfaceLogger logger) => Task.FromResult<ErrorCalculatorMeterConnections[]>([]);
+    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnectionsAsync(IInterfaceLogger logger) => Task.FromResult<ErrorCalculatorMeterConnections[]>([]);
 
     /// <inheritdoc/>
-    public Task<ErrorMeasurementStatus> GetErrorStatus(IInterfaceLogger logger)
+    public Task<ErrorMeasurementStatus> GetErrorStatusAsync(IInterfaceLogger logger)
     {
         /* Time elapses in the current measurement - the mock does not use it's own thred for timing so calling this methode periodically is vital. */
         var elapsed = new Time((DateTime.UtcNow - _startTime).TotalSeconds);
@@ -111,13 +111,13 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
-    public async Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
+    public async Task StartErrorMeasurementAsync(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection)
     {
         /* Get the total power of all active phases of the current loadpoint (in W) */
         var totalPower = ActivePower.Zero;
 
         var source = _di.GetRequiredService<ISource>();
-        var loadpoint = source.GetAvailable(logger) ? source.GetCurrentLoadpoint(logger)! : null;
+        var loadpoint = await source.GetAvailableAsync(logger) ? await source.GetCurrentLoadpointAsync(logger)! : null;
 
         if (loadpoint != null)
         {
@@ -132,7 +132,7 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
         else
         {
             /* From actual values. */
-            var values = await _di.GetRequiredService<IRefMeter>().GetActualValues(logger)!;
+            var values = await _di.GetRequiredService<IRefMeter>().GetActualValuesAsync(logger)!;
 
             foreach (var phase in values.Phases)
                 if (phase.Voltage.AcComponent != null && phase.Current.AcComponent != null)
@@ -152,7 +152,7 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
 
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) =>
+    public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger logger) =>
         Task.FromResult(new ErrorCalculatorFirmwareVersion()
         {
             ModelName = "CalculatorMock",
@@ -160,7 +160,7 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
         });
 
     /// <inheritdoc/>
-    public Task ActivateSource(IInterfaceLogger logger, bool on) => Task.CompletedTask;
+    public Task ActivateSourceAsync(IInterfaceLogger logger, bool on) => Task.CompletedTask;
 
     /// <inheritdoc/>
     public void Dispose()
@@ -168,7 +168,7 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
     }
 
     /// <inheritdoc/>
-    public Task<Impulses?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger)
+    public Task<Impulses?> GetNumberOfDeviceUnderTestImpulsesAsync(IInterfaceLogger logger)
     {
         lock (_pulseLock)
         {

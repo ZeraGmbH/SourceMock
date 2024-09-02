@@ -36,7 +36,7 @@ public class SourceRestMockController([FromKeyedServices(SourceRestMockControlle
     /// <returns>The corresponding<see cref="SourceCapabilities"/>-Object for this source.</returns>
     [HttpGet("Capabilities"), AllowAnonymous]
     [SwaggerOperation(OperationId = "GetCapabilities")]
-    public async Task<ActionResult<SourceCapabilities>> GetCapablities() => Ok(await source.GetCapabilities(interfaceLogger));
+    public async Task<ActionResult<SourceCapabilities>> GetCapablitiesAsync() => Ok(await source.GetCapabilitiesAsync(interfaceLogger));
 
     /// <summary>
     /// Gets the capabilities of this source.
@@ -44,7 +44,7 @@ public class SourceRestMockController([FromKeyedServices(SourceRestMockControlle
     /// <returns>The corresponding<see cref="SourceCapabilities"/>-Object for this source.</returns>
     [HttpGet("Available"), AllowAnonymous]
     [SwaggerOperation(OperationId = "SourceIsAvailable")]
-    public ActionResult<bool> IsAvailable() => Ok(source.GetAvailable(interfaceLogger));
+    public async Task<ActionResult<bool>> IsAvailableAsync() => Ok(await source.GetAvailableAsync(interfaceLogger));
 
     /// <summary>
     /// Sets a loadpoint without turning on the source.
@@ -53,11 +53,11 @@ public class SourceRestMockController([FromKeyedServices(SourceRestMockControlle
     /// <returns>The result of the operation, see responses.</returns>
     [HttpPut("Loadpoint"), AllowAnonymous]
     [SwaggerOperation(OperationId = "SetLoadpoint")]
-    public async Task<ActionResult> SetLoadpoint([FromBody] TargetLoadpoint loadpoint)
+    public async Task<ActionResult> SetLoadpointAsync([FromBody] TargetLoadpoint loadpoint)
     {
         logger.LogTrace($"Loadpoint to be set: {loadpoint}");
 
-        var srcResult = await source.SetLoadpoint(interfaceLogger, loadpoint);
+        var srcResult = await source.SetLoadpointAsync(interfaceLogger, loadpoint);
 
         switch (srcResult)
         {
@@ -89,9 +89,9 @@ public class SourceRestMockController([FromKeyedServices(SourceRestMockControlle
     /// <returns>The result of the operation, see responses.</returns>
     [HttpPost("TurnOff"), AllowAnonymous]
     [SwaggerOperation(OperationId = "TurnOff")]
-    public async Task<ActionResult> TurnOff()
+    public async Task<ActionResult> TurnOffAsync()
     {
-        var srcResult = await source.TurnOff(interfaceLogger);
+        var srcResult = await source.TurnOffAsync(interfaceLogger);
 
         switch (srcResult)
         {
@@ -113,7 +113,7 @@ public class SourceRestMockController([FromKeyedServices(SourceRestMockControlle
     [SwaggerOperation(OperationId = "GetLoadpoint")]
     public ActionResult<TargetLoadpoint> GetCurrentLoadpoint()
     {
-        var loadpoint = source.GetCurrentLoadpoint(interfaceLogger);
+        var loadpoint = source.GetCurrentLoadpointAsync(interfaceLogger);
 
         return loadpoint == null
             ? NoContent()
@@ -126,5 +126,5 @@ public class SourceRestMockController([FromKeyedServices(SourceRestMockControlle
     /// <returns>The information including some dates.</returns>
     [HttpGet("LoadpointInfo"), AllowAnonymous]
     [SwaggerOperation(OperationId = "GetLoadpointInfo")]
-    public ActionResult<LoadpointInfo> GetLoadpointInfo() => source.GetActiveLoadpointInfo(interfaceLogger);
+    public async Task<ActionResult<LoadpointInfo>> GetLoadpointInfoAsync() => await source.GetActiveLoadpointInfoAsync(interfaceLogger);
 }

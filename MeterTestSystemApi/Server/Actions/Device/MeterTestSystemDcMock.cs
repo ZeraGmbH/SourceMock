@@ -21,7 +21,7 @@ public class MeterTestSystemDcMock(IDCSourceMock source, IDCRefMeterMock refMete
     public event Action<ErrorConditions> ErrorConditionsChanged = null!;
 
     /// <inheritdoc/>
-    public AmplifiersAndReferenceMeter GetAmplifiersAndReferenceMeter(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
+    public Task<AmplifiersAndReferenceMeter> GetAmplifiersAndReferenceMeterAsync(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public bool HasSource { get; private set; } = true;
@@ -41,10 +41,10 @@ public class MeterTestSystemDcMock(IDCSourceMock source, IDCRefMeterMock refMete
     public IErrorCalculator[] ErrorCalculators => [.. _errorCalculators];
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) => Task.FromResult<MeterTestSystemCapabilities>(null!);
+    public Task<MeterTestSystemCapabilities> GetCapabilitiesAsync(IInterfaceLogger interfaceLogger) => Task.FromResult<MeterTestSystemCapabilities>(null!);
 
     /// <inheritdoc/>
-    public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersion(IInterfaceLogger logger) =>
+    public Task<MeterTestSystemFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger logger) =>
         Task.FromResult(new MeterTestSystemFirmwareVersion
         {
             ModelName = "DcDeviceMock",
@@ -52,10 +52,10 @@ public class MeterTestSystemDcMock(IDCSourceMock source, IDCRefMeterMock refMete
         });
 
     /// <inheritdoc/>
-    public Task SetAmplifiersAndReferenceMeter(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings) => throw new NotImplementedException();
+    public Task SetAmplifiersAndReferenceMeterAsync(IInterfaceLogger logger, AmplifiersAndReferenceMeter settings) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task<ErrorConditions> GetErrorConditions(IInterfaceLogger logger)
+    public Task<ErrorConditions> GetErrorConditionsAsync(IInterfaceLogger logger)
     {
         var errors = new ErrorConditions { HasFuseError = DateTime.Now.Minute % 2 == 0 };
 

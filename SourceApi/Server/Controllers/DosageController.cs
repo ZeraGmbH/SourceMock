@@ -43,7 +43,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> StartDosage_Async() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.StartDosage(interfaceLogger));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.StartDosageAsync(interfaceLogger));
 
     /// <summary>
     /// Start a dosage meaurement.
@@ -57,7 +57,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> CancelDosage_Async() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.CancelDosage(interfaceLogger));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.CancelDosageAsync(interfaceLogger));
 
     /// <summary>
     /// Change the DOS mode.
@@ -72,7 +72,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SetDOSMode_Async(bool on) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetDosageMode(interfaceLogger, on));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetDosageModeAsync(interfaceLogger, on));
 
     /// <summary>
     /// Read the current progress of a dosage operation.
@@ -87,7 +87,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<DosageProgress>> GetProgress_Async([ModelFromUri] MeterConstant meterConstant) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetDosageProgress(interfaceLogger, meterConstant));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetDosageProgressAsync(interfaceLogger, meterConstant));
 
     /// <summary>
     /// Set the dosage energy.
@@ -103,7 +103,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SetEnergy_Async([ModelFromUri] ActiveEnergy energy, [ModelFromUri] MeterConstant meterConstant) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetDosageEnergy(interfaceLogger, energy, meterConstant));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetDosageEnergyAsync(interfaceLogger, energy, meterConstant));
 
     /// <summary>
     /// Ask the server if the dosage is activated but the current is off.
@@ -119,5 +119,5 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<bool>> IsDosageCurrentOff_Async() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.CurrentSwitchedOffForDosage(interfaceLogger));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.CurrentSwitchedOffForDosageAsync(interfaceLogger));
 }

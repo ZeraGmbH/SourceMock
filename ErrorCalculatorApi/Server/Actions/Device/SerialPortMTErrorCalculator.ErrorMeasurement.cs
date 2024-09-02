@@ -25,10 +25,10 @@ partial class SerialPortMTErrorCalculator
     private static readonly Regex MatchErrorStatus3 = new(@"^([^;]+);([^;]+)$");
 
     /// <inheritdoc/>
-    public Task AbortErrorMeasurement(IInterfaceLogger logger) => _device.Execute(logger, SerialPortRequest.Create("AEE", "AEEACK"))[0];
+    public Task AbortErrorMeasurementAsync(IInterfaceLogger logger) => _device.Execute(logger, SerialPortRequest.Create("AEE", "AEEACK"))[0];
 
     /// <inheritdoc/>
-    public async Task<ErrorMeasurementStatus> GetErrorStatus(IInterfaceLogger logger)
+    public async Task<ErrorMeasurementStatus> GetErrorStatusAsync(IInterfaceLogger logger)
     {
         /* Ask the device for the current status. */
         var replies = await _device.Execute(logger, SerialPortRequest.Create("AES1", "AESACK"))[0];
@@ -144,7 +144,7 @@ partial class SerialPortMTErrorCalculator
     }
 
     /// <inheritdoc/>
-    public Task SetErrorMeasurementParameters(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant)
+    public Task SetErrorMeasurementParametersAsync(IInterfaceLogger logger, MeterConstant dutMeterConstant, Impulses impulses, MeterConstant refMeterMeterConstant)
     {
         /* Create the text representation of the meter constant and see if it fits the protocol requirements. */
         var (rawMeter, powMeter) = ClipNumberToProtocol((long)Math.Round((double)dutMeterConstant * 1E5), 16);
@@ -226,12 +226,12 @@ partial class SerialPortMTErrorCalculator
     }
 
     /// <inheritdoc/>
-    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnections(IInterfaceLogger logger) => Task.FromResult<ErrorCalculatorMeterConnections[]>([]);
+    public Task<ErrorCalculatorMeterConnections[]> GetSupportedMeterConnectionsAsync(IInterfaceLogger logger) => Task.FromResult<ErrorCalculatorMeterConnections[]>([]);
 
     /// <inheritdoc/>
-    public Task StartErrorMeasurement(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection) =>
+    public Task StartErrorMeasurementAsync(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection) =>
         _device.Execute(logger, SerialPortRequest.Create(continuous ? "AEB1" : "AEB0", "AEBACK"))[0];
 
     /// <inheritdoc/>
-    public Task<Impulses?> GetNumberOfDeviceUnderTestImpulses(IInterfaceLogger logger) => Task.FromResult<Impulses?>(null);
+    public Task<Impulses?> GetNumberOfDeviceUnderTestImpulsesAsync(IInterfaceLogger logger) => Task.FromResult<Impulses?>(null);
 }

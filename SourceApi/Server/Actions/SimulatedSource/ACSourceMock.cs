@@ -36,7 +36,7 @@ public class ACSourceMock(ILogger<ACSourceMock> logger, SourceCapabilities sourc
     }, validator)
     { }
 
-    public override Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
+    public override Task<DosageProgress> GetDosageProgressAsync(IInterfaceLogger logger, MeterConstant meterConstant)
     {
         var power = ActivePower.Zero;
 
@@ -62,9 +62,9 @@ public class ACSourceMock(ILogger<ACSourceMock> logger, SourceCapabilities sourc
         });
     }
 
-    public override async Task NoSource(IInterfaceLogger logger)
+    public override async Task NoSourceAsync(IInterfaceLogger logger)
     {
-        await base.NoSource(logger);
+        await base.NoSourceAsync(logger);
 
         _loadpoint = new()
         {

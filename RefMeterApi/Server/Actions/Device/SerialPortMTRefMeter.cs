@@ -48,14 +48,14 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
         _device = device.CreateExecutor(InterfaceLogSourceTypes.ReferenceMeter);
 
         /* Setup caches for shared request results. */
-        _actualValues = new(CreateActualValueRequest, 1000);
+        _actualValues = new(CreateActualValueRequestAsync, 1000);
     }
 
     /// <inheritdoc/>
-    public bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
+    public Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(true);
 
     /// <inheritdoc/>
-    public async Task<MeterConstant> GetMeterConstant(IInterfaceLogger logger)
+    public async Task<MeterConstant> GetMeterConstantAsync(IInterfaceLogger logger)
     {
         var reply = await _device.Execute(logger, SerialPortRequest.Create("AST", "ASTACK"))[0];
 
@@ -85,7 +85,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     }
 
     /// <inheritdoc/>
-    public async Task<ReferenceMeterInformation> GetMeterInformation(IInterfaceLogger logger)
+    public async Task<ReferenceMeterInformation> GetMeterInformationAsync(IInterfaceLogger logger)
     {
         /* Execute the request and wait for the information string. */
         var reply = await _device.Execute(logger, SerialPortRequest.Create("AAV", "AAVACK"))[0];

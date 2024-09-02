@@ -35,14 +35,14 @@ public class MadConnectionTests
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
 
-        await cut.Initialize("0", new()
+        await cut.InitializeAsync("0", new()
         {
             Connection = ErrorCalculatorConnectionTypes.TCP,
             Protocol = ErrorCalculatorProtocols.MAD_1,
             Endpoint = $"{MADServer}:14207"
         });
 
-        var res = await cut.Execute(new NoopInterfaceLogger(), LoadXmlFromString(
+        var res = await cut.ExecuteAsync(new NoopInterfaceLogger(), LoadXmlFromString(
             @"<?xml version=""1.0"" encoding=""UTF-8""?>
             <KMA_XML_0_01 xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:noNamespaceSchemaLocation=""KoaLaKMA.xsd"">
             <!--   MAD_Version.xml -->
@@ -90,7 +90,7 @@ public class MadConnectionTests
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
 
-        await cut.Initialize("0", new()
+        await cut.InitializeAsync("0", new()
         {
             Connection = ErrorCalculatorConnectionTypes.TCP,
             Protocol = ErrorCalculatorProtocols.MAD_1,
@@ -140,14 +140,14 @@ public class MadConnectionTests
 
         source.InnerText = "src-intern-1";
 
-        await cut.Execute(new NoopInterfaceLogger(), req, "bindErrorCalculatorsRes");
+        await cut.ExecuteAsync(new NoopInterfaceLogger(), req, "bindErrorCalculatorsRes");
     }
 
     private async Task<string> StartErrorMeasurement_Async()
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
 
-        await cut.Initialize("0", new()
+        await cut.InitializeAsync("0", new()
         {
             Connection = ErrorCalculatorConnectionTypes.TCP,
             Protocol = ErrorCalculatorProtocols.MAD_1,
@@ -193,7 +193,7 @@ public class MadConnectionTests
         refCounts.InnerText = "180000";
         source.InnerText = "src-intern-1";
 
-        var res = await cut.Execute(new NoopInterfaceLogger(), req, "runErrorMeasureRes");
+        var res = await cut.ExecuteAsync(new NoopInterfaceLogger(), req, "runErrorMeasureRes");
 
         var jobInfo = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/jobDetails");
         var jobId = jobInfo?.SelectSingleNode("jobId")?.InnerText?.Trim();
@@ -212,7 +212,7 @@ public class MadConnectionTests
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
 
-        await cut.Initialize("0", new()
+        await cut.InitializeAsync("0", new()
         {
             Connection = ErrorCalculatorConnectionTypes.TCP,
             Protocol = ErrorCalculatorProtocols.MAD_1,
@@ -238,7 +238,7 @@ public class MadConnectionTests
         id.InnerText = jobId;
         op.InnerText = abort ? "true" : "false";
 
-        var res = await cut.Execute(new NoopInterfaceLogger(), req, "runErrorMeasureRes");
+        var res = await cut.ExecuteAsync(new NoopInterfaceLogger(), req, "runErrorMeasureRes");
 
         var info = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/runErrorMeasureRes");
 

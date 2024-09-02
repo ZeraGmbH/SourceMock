@@ -62,16 +62,16 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     }
 
     /// <inheritdoc/>
-    public abstract Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger);
+    public abstract Task<SourceCapabilities> GetCapabilitiesAsync(IInterfaceLogger interfaceLogger);
 
     /// <inheritdoc/>
-    public virtual TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger interfaceLogger) => Loadpoint;
+    public virtual Task<TargetLoadpoint?> GetCurrentLoadpointAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(Loadpoint);
 
     /// <inheritdoc/>
-    public virtual async Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
+    public virtual async Task<SourceApiErrorCodes> SetLoadpointAsync(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
         /* Always validate the loadpoint against the device capabilities. */
-        var isValid = _validator.IsValid(loadpoint, await GetCapabilities(logger));
+        var isValid = _validator.IsValid(loadpoint, await GetCapabilitiesAsync(logger));
 
         if (isValid != SourceApiErrorCodes.SUCCESS)
             return isValid;
@@ -101,29 +101,29 @@ public abstract class CommonSource<T> : ISource where T : ILoadpointTranslator, 
     }
 
     /// <inheritdoc/>
-    public abstract Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger);
+    public abstract Task<SourceApiErrorCodes> TurnOffAsync(IInterfaceLogger logger);
 
     /// <inheritdoc/>
-    public virtual LoadpointInfo GetActiveLoadpointInfo(IInterfaceLogger interfaceLogger) => Info;
+    public virtual Task<LoadpointInfo> GetActiveLoadpointInfoAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(Info);
 
     /// <inheritdoc/>
-    public abstract Task SetDosageMode(IInterfaceLogger logger, bool on);
+    public abstract Task SetDosageModeAsync(IInterfaceLogger logger, bool on);
 
     /// <inheritdoc/>
-    public abstract Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant);
+    public abstract Task SetDosageEnergyAsync(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant);
 
     /// <inheritdoc/>
-    public abstract Task StartDosage(IInterfaceLogger logger);
+    public abstract Task StartDosageAsync(IInterfaceLogger logger);
 
     /// <inheritdoc/>
-    public abstract Task CancelDosage(IInterfaceLogger logger);
+    public abstract Task CancelDosageAsync(IInterfaceLogger logger);
 
     /// <inheritdoc/>
-    public abstract Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant);
+    public abstract Task<DosageProgress> GetDosageProgressAsync(IInterfaceLogger logger, MeterConstant meterConstant);
 
     /// <inheritdoc/>
-    public abstract bool GetAvailable(IInterfaceLogger interfaceLogger);
+    public abstract Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger);
 
     /// <inheritdoc/>
-    public abstract Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger);
+    public abstract Task<bool> CurrentSwitchedOffForDosageAsync(IInterfaceLogger logger);
 }

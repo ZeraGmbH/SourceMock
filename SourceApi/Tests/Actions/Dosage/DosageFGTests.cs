@@ -22,11 +22,11 @@ public class DosageFGTests
 
     private readonly DeviceLogger<SerialPortFGSource> _deviceLogger = new();
 
-    private ISource CreateDevice(params string[] replies)
+    private async Task<ISource> CreateDeviceAsync(params string[] replies)
     {
         var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        device.SetAmplifiers(new NoopInterfaceLogger(), Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
+        await device.SetAmplifiersAsync(new NoopInterfaceLogger(), Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
 
         return device;
     }
@@ -34,25 +34,25 @@ public class DosageFGTests
     [Test]
     public async Task Can_Turn_Off_DOS_Mode_Async()
     {
-        await CreateDevice(["OK3CM4"]).SetDosageMode(new NoopInterfaceLogger(), false);
+        await (await CreateDeviceAsync(["OK3CM4"])).SetDosageModeAsync(new NoopInterfaceLogger(), false);
     }
 
     [Test]
     public async Task Can_Turn_On_DOS_Mode_Async()
     {
-        await CreateDevice(["OK3CM3"]).SetDosageMode(new NoopInterfaceLogger(), true);
+        await (await CreateDeviceAsync(["OK3CM3"])).SetDosageModeAsync(new NoopInterfaceLogger(), true);
     }
 
     [Test]
     public async Task Can_Start_Dosage_Async()
     {
-        await CreateDevice(["OK3CM1"]).StartDosage(new NoopInterfaceLogger());
+        await (await CreateDeviceAsync(["OK3CM1"])).StartDosageAsync(new NoopInterfaceLogger());
     }
 
     [Test]
     public async Task Can_Abort_Dosage_Async()
     {
-        await CreateDevice(["OK3CM2"]).CancelDosage(new NoopInterfaceLogger());
+        await (await CreateDeviceAsync(["OK3CM2"])).CancelDosageAsync(new NoopInterfaceLogger());
     }
 
     [TestCase(2, "113834")]
@@ -64,11 +64,11 @@ public class DosageFGTests
     public async Task Can_Read_Dosage_Progress_Async(int dosage, string remaining)
     {
         /* Warning: knows about internal sequence of requests. */
-        var progress = await CreateDevice([
+        var progress = await (await CreateDeviceAsync([
             $"OK3SA1;{dosage}",
             $"OK3MA1;{remaining}",
             "OK3PA45;918.375",
-        ]).GetDosageProgress(new NoopInterfaceLogger(), new(1d));
+        ])).GetDosageProgressAsync(new NoopInterfaceLogger(), new(1d));
 
         var rest = double.Parse(remaining) * 1000d;
 
@@ -92,9 +92,9 @@ public class DosageFGTests
 
         var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromMockedPortInstance(mock, _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        device.SetAmplifiers(new NoopInterfaceLogger(), Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
+        await device.SetAmplifiersAsync(new NoopInterfaceLogger(), Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
 
-        await device.SetDosageEnergy(new NoopInterfaceLogger(), new(energy), new(1d));
+        await device.SetDosageEnergyAsync(new NoopInterfaceLogger(), new(energy), new(1d));
 
         Assert.That(mock.Commands[0], Is.EqualTo($"3PS45;{energy / 1000d}"));
     }

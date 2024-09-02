@@ -9,17 +9,17 @@ namespace SourceApi.Actions.SerialPort.FG30x;
 partial class SerialPortFGSource
 {
     /// <inheritdoc/>
-    public override Task CancelDosage(IInterfaceLogger logger)
+    public override async Task CancelDosageAsync(IInterfaceLogger logger)
     {
-        TestConfigured(logger);
+        await TestConfiguredAsync(logger);
 
-        return Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("3CM2", "OK3CM2")));
+        await Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("3CM2", "OK3CM2")));
     }
 
     /// <inheritdoc/>
-    public override async Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant)
+    public override async Task<DosageProgress> GetDosageProgressAsync(IInterfaceLogger logger, MeterConstant meterConstant)
     {
-        TestConfigured(logger);
+        await TestConfiguredAsync(logger);
 
         /* Get all actual values - unit is pulse interval. */
         var activeReq = SerialPortRequest.Create("3SA1", new Regex(@"^OK3SA1;([0123])$"));
@@ -42,36 +42,35 @@ partial class SerialPortFGSource
     }
 
     /// <inheritdoc/>
-    public override Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
+    public override async Task SetDosageEnergyAsync(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
     {
-        TestConfigured(logger);
+        await TestConfiguredAsync(logger);
 
-        if (value < ActiveEnergy.Zero)
-            throw new ArgumentOutOfRangeException(nameof(value));
+        if (value < ActiveEnergy.Zero) throw new ArgumentOutOfRangeException(nameof(value));
 
-        return Device.Execute(logger, SerialPortRequest.Create($"3PS45;{(double)value / 1000d}", "OK3PS45"))[0];
+        await Device.Execute(logger, SerialPortRequest.Create($"3PS45;{(double)value / 1000d}", "OK3PS45"))[0];
     }
 
     /// <inheritdoc/>
-    public override Task SetDosageMode(IInterfaceLogger logger, bool on)
+    public override async Task SetDosageModeAsync(IInterfaceLogger logger, bool on)
     {
-        TestConfigured(logger);
+        await TestConfiguredAsync(logger);
 
         var onAsNumber = on ? 3 : 4;
 
-        return Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create($"3CM{onAsNumber}", $"OK3CM{onAsNumber}")));
+        await Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create($"3CM{onAsNumber}", $"OK3CM{onAsNumber}")));
     }
 
     /// <inheritdoc/>
-    public override Task StartDosage(IInterfaceLogger logger)
+    public override async Task StartDosageAsync(IInterfaceLogger logger)
     {
-        TestConfigured(logger);
+        await TestConfiguredAsync(logger);
 
-        return Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("3CM1", "OK3CM1")));
+        await Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("3CM1", "OK3CM1")));
     }
 
     /// <inheritdoc/>
-    public override async Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger)
+    public override async Task<bool> CurrentSwitchedOffForDosageAsync(IInterfaceLogger logger)
     {
         /* Ask device. */
         var dosage = SerialPortRequest.Create("3SA1", new Regex(@"^OK3SA1;([0123])$"));

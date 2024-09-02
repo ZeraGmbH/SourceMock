@@ -20,9 +20,9 @@ public class ConfigurationProbingController(IProbeConfigurationService prober, I
     /// <param name="dryRun">Set to only get a list of what will be probed.</param>
     [HttpPost, SamAuthorize(WebSamRole.testsystemadmin)]
     [SwaggerOperation(OperationId = "StartConfigurationProbe")]
-    public async Task<ActionResult> Start([FromBody] ProbeConfigurationRequest request, bool dryRun = false)
+    public async Task<ActionResult> StartAsync([FromBody] ProbeConfigurationRequest request, bool dryRun = false)
     {
-        await prober.StartProbe(request, dryRun, services);
+        await prober.StartProbeAsync(request, dryRun, services);
 
         return Ok();
     }
@@ -32,9 +32,9 @@ public class ConfigurationProbingController(IProbeConfigurationService prober, I
     /// </summary>
     [HttpDelete, SamAuthorize(WebSamRole.testsystemadmin)]
     [SwaggerOperation(OperationId = "CancelConfigurationProbe")]
-    public async Task<ActionResult> Cancel()
+    public async Task<ActionResult> CancelAsync()
     {
-        await prober.Abort();
+        await prober.AbortAsync();
 
         return Ok();
     }

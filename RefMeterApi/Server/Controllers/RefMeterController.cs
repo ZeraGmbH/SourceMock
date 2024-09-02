@@ -43,8 +43,8 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<MeasuredLoadpoint>> GetActualValues(int firstActiveCurrentPhase = -1) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetActualValues(interfaceLogger, firstActiveCurrentPhase));
+    public Task<ActionResult<MeasuredLoadpoint>> GetActualValuesAsync(int firstActiveCurrentPhase = -1) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetActualValuesAsync(interfaceLogger, firstActiveCurrentPhase));
 
     /// <summary>
     /// Get the list of supported measurement modes.
@@ -58,8 +58,8 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<MeasurementModes[]>> GetMeasurementModes() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetMeasurementModes(interfaceLogger));
+    public Task<ActionResult<MeasurementModes[]>> GetMeasurementModesAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetMeasurementModesAsync(interfaceLogger));
 
     /// <summary>
     /// Get the current measurement mode.
@@ -73,8 +73,8 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<MeasurementModes?>> GetActualMeasurementMode() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetActualMeasurementMode(interfaceLogger));
+    public Task<ActionResult<MeasurementModes?>> GetActualMeasurementModeAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetActualMeasurementModeAsync(interfaceLogger));
 
     /// <summary>
     /// Set the current measurement mode.
@@ -87,8 +87,8 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetActualMeasurementMode(MeasurementModes mode) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetActualMeasurementMode(interfaceLogger, mode));
+    public Task<ActionResult> SetActualMeasurementModeAsync(MeasurementModes mode) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetActualMeasurementModeAsync(interfaceLogger, mode));
 
     /// <summary>
     /// Report if the reference meter can be used.
@@ -97,7 +97,7 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "ReferenceMeterIsAvailable")]
     public ActionResult<bool> IsAvailable() =>
-        Ok(_device.GetAvailable(interfaceLogger));
+        Ok(_device.GetAvailableAsync(interfaceLogger));
 
     /// <summary>
     /// Get the current meter constant of the reference meter.
@@ -111,8 +111,8 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<MeterConstant>> GetMeterConstant()
-        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetMeterConstant(interfaceLogger));
+    public Task<ActionResult<MeterConstant>> GetMeterConstantAsync()
+        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetMeterConstantAsync(interfaceLogger));
 
     /// <summary>
     /// Get information on the reference meter.
@@ -126,6 +126,6 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<ReferenceMeterInformation>> GetMeterInformation() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetMeterInformation(interfaceLogger));
+    public Task<ActionResult<ReferenceMeterInformation>> GetMeterInformationAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetMeterInformationAsync(interfaceLogger));
 }

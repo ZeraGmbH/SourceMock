@@ -22,7 +22,7 @@ public class RefMeterMockTest
 
         SourceMock = new Mock<ISource>();
 
-        SourceMock.Setup(s => s.GetAvailable(It.IsAny<IInterfaceLogger>())).Returns(true);
+        SourceMock.Setup(s => s.GetAvailableAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(true);
 
         services.AddSingleton(SourceMock.Object);
 
@@ -40,7 +40,7 @@ public class RefMeterMockTest
     {
         ACRefMeterMock refMeterMock = new(Services);
 
-        MeasuredLoadpoint measureOutput = await refMeterMock.GetActualValues(new NoopInterfaceLogger());
+        MeasuredLoadpoint measureOutput = await refMeterMock.GetActualValuesAsync(new NoopInterfaceLogger());
 
         Assert.That((double?)measureOutput.Frequency, Is.EqualTo(0));
     }
@@ -54,8 +54,8 @@ public class RefMeterMockTest
         double currentAngle = 7;
         double voltageAngle = 5;
 
-        SourceMock.Setup(s => s.GetAvailable(It.IsAny<IInterfaceLogger>())).Returns(true);
-        SourceMock.Setup(s => s.GetCurrentLoadpoint(It.IsAny<IInterfaceLogger>())).Returns(
+        SourceMock.Setup(s => s.GetAvailableAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(true);
+        SourceMock.Setup(s => s.GetCurrentLoadpointAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(
             new TargetLoadpoint()
             {
                 Frequency = new() { Value = new(frequencyValue) },
@@ -67,11 +67,11 @@ public class RefMeterMockTest
                 }
             });
 
-        SourceMock.Setup(s => s.GetActiveLoadpointInfo(It.IsAny<IInterfaceLogger>())).Returns(new LoadpointInfo { IsActive = true });
-        SourceMock.Setup(s => s.CurrentSwitchedOffForDosage(It.IsAny<IInterfaceLogger>())).ReturnsAsync(false);
+        SourceMock.Setup(s => s.GetActiveLoadpointInfoAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(new LoadpointInfo { IsActive = true });
+        SourceMock.Setup(s => s.CurrentSwitchedOffForDosageAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(false);
 
         ACRefMeterMock refMeterMock = new(Services);
-        MeasuredLoadpoint measureOutput = await refMeterMock.GetActualValues(new NoopInterfaceLogger());
+        MeasuredLoadpoint measureOutput = await refMeterMock.GetActualValuesAsync(new NoopInterfaceLogger());
 
         Assert.That((double?)measureOutput.Frequency, Is.InRange(GetMinValue(frequencyValue, 0.0002), GetMaxValue(frequencyValue, 0.0002)));
         Assert.That((double)measureOutput.Phases[0].Current.AcComponent!.Rms, Is.InRange(GetMinValue(current, 0.0001), GetMaxValue(current, 0.0001)));

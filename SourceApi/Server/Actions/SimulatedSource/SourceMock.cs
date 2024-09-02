@@ -11,7 +11,7 @@ public interface ISourceMock : ISource
 
 public interface IDosageMock : IDosage
 {
-    Task NoSource(IInterfaceLogger logger);
+    Task NoSourceAsync(IInterfaceLogger logger);
 }
 
 public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities sourceCapabilities, ISourceCapabilityValidator validator) : ISourceMock, IDosageMock
@@ -29,7 +29,7 @@ public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities 
     protected ISourceCapabilityValidator _validator = validator;
 
     /// <inheritdoc/>
-    public Task<SourceApiErrorCodes> SetLoadpoint(IInterfaceLogger logger, TargetLoadpoint loadpoint)
+    public Task<SourceApiErrorCodes> SetLoadpointAsync(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
         var isValid = _validator.IsValid(loadpoint, _sourceCapabilities);
 
@@ -48,7 +48,7 @@ public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities 
     }
 
     /// <inheritdoc/>
-    public Task<SourceApiErrorCodes> TurnOff(IInterfaceLogger logger)
+    public Task<SourceApiErrorCodes> TurnOffAsync(IInterfaceLogger logger)
     {
         _logger?.LogTrace("Source turned off.");
 
@@ -57,23 +57,23 @@ public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities 
         return Task.FromResult(SourceApiErrorCodes.SUCCESS);
     }
 
-    public Task<SourceCapabilities> GetCapabilities(IInterfaceLogger interfaceLogger) => Task.FromResult(_sourceCapabilities);
+    public Task<SourceCapabilities> GetCapabilitiesAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(_sourceCapabilities);
 
-    public Task SetDosageMode(IInterfaceLogger logger, bool on)
+    public Task SetDosageModeAsync(IInterfaceLogger logger, bool on)
     {
         _dosageMode = on;
 
         return Task.CompletedTask;
     }
 
-    public Task SetDosageEnergy(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
+    public Task SetDosageEnergyAsync(IInterfaceLogger logger, ActiveEnergy value, MeterConstant meterConstant)
     {
         _dosageEnergy = value;
 
         return Task.CompletedTask;
     }
 
-    public Task StartDosage(IInterfaceLogger logger)
+    public Task StartDosageAsync(IInterfaceLogger logger)
     {
         _startTime = DateTime.Now;
         _status.Active = true;
@@ -82,7 +82,7 @@ public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities 
         return Task.CompletedTask;
     }
 
-    public Task CancelDosage(IInterfaceLogger logger)
+    public Task CancelDosageAsync(IInterfaceLogger logger)
     {
         _status.Active = false;
         _status.Remaining = ActiveEnergy.Zero;
@@ -96,18 +96,18 @@ public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities 
     /// <param name="logger"></param>
     /// <param name="meterConstant"></param>
     /// <returns></returns>
-    public abstract Task<DosageProgress> GetDosageProgress(IInterfaceLogger logger, MeterConstant meterConstant);
+    public abstract Task<DosageProgress> GetDosageProgressAsync(IInterfaceLogger logger, MeterConstant meterConstant);
 
-    public Task<bool> CurrentSwitchedOffForDosage(IInterfaceLogger logger)
+    public Task<bool> CurrentSwitchedOffForDosageAsync(IInterfaceLogger logger)
     {
         _logger?.LogTrace("Mock switches off the current for dosage");
 
         return Task.FromResult(_dosageMode);
     }
 
-    public LoadpointInfo GetActiveLoadpointInfo(IInterfaceLogger interfaceLogger) => _info;
+    public Task<LoadpointInfo> GetActiveLoadpointInfoAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(_info);
 
-    public bool GetAvailable(IInterfaceLogger interfaceLogger) => true;
+    public Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(true);
 
     /// <summary>
     /// 
@@ -122,9 +122,9 @@ public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities 
         return _dosageEnergy;
     }
 
-    public TargetLoadpoint? GetCurrentLoadpoint(IInterfaceLogger logger) => _loadpoint;
+    public Task<TargetLoadpoint?> GetCurrentLoadpointAsync(IInterfaceLogger logger) => Task.FromResult(_loadpoint);
 
-    public virtual Task NoSource(IInterfaceLogger logger)
+    public virtual Task NoSourceAsync(IInterfaceLogger logger)
     {
         UseLoadpoint = false;
 

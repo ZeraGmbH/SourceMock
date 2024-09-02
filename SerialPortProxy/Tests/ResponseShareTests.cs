@@ -10,7 +10,7 @@ public class ResponseShareTests
     {
         var count = 0;
 
-        var cut = new ResponseShare<int, bool>((ctx) => Task.Delay(100).ContinueWith(_ => ++count, TaskScheduler.Default));
+        var cut = new ResponseShare<int, bool>((ctx) => Task.Delay(100).ContinueWith(_ => ++count, TaskScheduler.Current));
 
         var first = await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => cut.ExecuteAsync(true)));
 

@@ -66,6 +66,6 @@ partial class SerialPortFGRefMeter
         /* Send the command to the device. */
         await _device
             .Execute(logger, SerialPortRequest.Create($"MA{supported.Key}", "OKMA"))[0]
-            .ContinueWith((_t) => _measurementMode = mode, TaskScheduler.Default);
+            .ContinueWith((_t) => _measurementMode = mode, TaskScheduler.Current);
     }
 }

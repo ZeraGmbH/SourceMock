@@ -56,7 +56,7 @@ public class ErrorCalculatorMockTest
     }
 
     [Test]
-    public async Task Returns_Correct_Error_Status()
+    public async Task Returns_Correct_Error_Status_Async()
     {
         var cut = Services.GetRequiredService<IErrorCalculatorMock>();
 
@@ -90,7 +90,7 @@ public class ErrorCalculatorMockTest
     }
 
     [Test]
-    public async Task Can_Do_Continuous_Measurement()
+    public async Task Can_Do_Continuous_Measurement_Async()
     {
         var cut = Services.GetRequiredService<IErrorCalculatorMock>();
 

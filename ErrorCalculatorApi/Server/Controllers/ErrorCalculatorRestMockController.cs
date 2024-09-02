@@ -33,7 +33,7 @@ public class ErrorCalculatorRestMockController([FromKeyedServices(ErrorCalculato
     /// <param name="refMeterMeterConstant"></param>
     [HttpPut, AllowAnonymous]
     public Task<ActionResult> SetParameters([ModelFromUri] MeterConstant dutMeterConstant, [ModelFromUri] Impulses impulses, [ModelFromUri] MeterConstant refMeterMeterConstant) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => device.SetErrorMeasurementParameters(interfaceLogger, dutMeterConstant, impulses, refMeterMeterConstant));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.SetErrorMeasurementParameters(interfaceLogger, dutMeterConstant, impulses, refMeterMeterConstant));
 
     /// <summary>
     /// 
@@ -41,7 +41,7 @@ public class ErrorCalculatorRestMockController([FromKeyedServices(ErrorCalculato
     /// <returns></returns>
     [HttpGet("Version"), AllowAnonymous]
     public Task<ActionResult<ErrorCalculatorFirmwareVersion>> GetFirmware() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => device.GetFirmwareVersion(interfaceLogger));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetFirmwareVersion(interfaceLogger));
 
     /// <summary>
     /// 
@@ -49,7 +49,7 @@ public class ErrorCalculatorRestMockController([FromKeyedServices(ErrorCalculato
     /// <returns></returns>
     [HttpGet, AllowAnonymous]
     public Task<ActionResult<ErrorMeasurementStatus>> GetStatus() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => device.GetErrorStatus(interfaceLogger));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetErrorStatus(interfaceLogger));
 
     /// <summary>
     /// 
@@ -57,7 +57,7 @@ public class ErrorCalculatorRestMockController([FromKeyedServices(ErrorCalculato
     /// <param name="connection"></param>
     [HttpPost("StartSingle"), AllowAnonymous]
     public Task<ActionResult> StartSingle(ErrorCalculatorMeterConnections? connection) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => device.StartErrorMeasurement(interfaceLogger, false, connection));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.StartErrorMeasurement(interfaceLogger, false, connection));
 
     /// <summary>
     /// 
@@ -65,7 +65,7 @@ public class ErrorCalculatorRestMockController([FromKeyedServices(ErrorCalculato
     /// <param name="connection"></param>
     [HttpPost("StartContinuous"), AllowAnonymous]
     public Task<ActionResult> StartContinuous(ErrorCalculatorMeterConnections? connection) =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => device.StartErrorMeasurement(interfaceLogger, true, connection));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.StartErrorMeasurement(interfaceLogger, true, connection));
 
     /// <summary>
     /// 
@@ -73,35 +73,35 @@ public class ErrorCalculatorRestMockController([FromKeyedServices(ErrorCalculato
     /// <returns></returns>
     [HttpGet("GetSupportedMeterConnections"), AllowAnonymous]
     public Task<ActionResult<ErrorCalculatorMeterConnections[]>> GetSupportedMeterConnections() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => device.GetSupportedMeterConnections(interfaceLogger));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetSupportedMeterConnections(interfaceLogger));
 
     /// <summary>
     /// 
     /// </summary>
     [HttpPost("Abort"), AllowAnonymous]
     public Task<ActionResult> Abort() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => device.AbortErrorMeasurement(interfaceLogger));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.AbortErrorMeasurement(interfaceLogger));
 
     /// <summary>
     /// 
     /// </summary>
     [HttpPost("AbortAll"), AllowAnonymous]
     public Task<ActionResult> AbortAll() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => device.AbortAllJobs(interfaceLogger));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.AbortAllJobs(interfaceLogger));
 
     /// <summary>
     /// 
     /// </summary>
     [HttpPost("ActivateSource"), AllowAnonymous]
     public Task<ActionResult> ActivateSource() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => device.ActivateSource(interfaceLogger, true));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.ActivateSource(interfaceLogger, true));
 
     /// <summary>
     /// 
     /// </summary>
     [HttpPost("DeactivateSource"), AllowAnonymous]
     public Task<ActionResult> DeactivateSource() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => device.ActivateSource(interfaceLogger, false));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.ActivateSource(interfaceLogger, false));
 
     /// <summary>
     /// 
@@ -117,6 +117,6 @@ public class ErrorCalculatorRestMockController([FromKeyedServices(ErrorCalculato
     /// <returns></returns>
     [HttpGet("DutImpulses"), AllowAnonymous]
     public Task<ActionResult<Impulses?>> GetDeviceUnderTestImpulses() =>
-        ActionResultMapper.SafeExecuteSerialPortCommand(() => device.GetNumberOfDeviceUnderTestImpulses(interfaceLogger));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetNumberOfDeviceUnderTestImpulses(interfaceLogger));
 
 }

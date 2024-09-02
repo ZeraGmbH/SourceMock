@@ -23,7 +23,7 @@ public class BarcodeReaderTests
     [Ignore("requires barcode input")]
     [TestCase(true)]
     [TestCase(false)]
-    public async Task Can_Reopen_After_Dispose(bool waitForBarcode)
+    public async Task Can_Reopen_After_Dispose_Async(bool waitForBarcode)
     {
         var path = Environment.GetEnvironmentVariable("WEBSAM_BarcodeReader__Device");
 
@@ -48,9 +48,9 @@ public class BarcodeReaderTests
                 await task;
             }
 
-            Assert.That(task.Result, Is.Not.Empty);
+            Assert.That(await task, Is.Not.Empty);
         }
 
-        TestContext.Out.WriteLine(string.Join("\n", _logger.Messages));
+        await TestContext.Out.WriteLineAsync(string.Join("\n", _logger.Messages));
     }
 }

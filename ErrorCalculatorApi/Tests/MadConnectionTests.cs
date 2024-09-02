@@ -31,7 +31,7 @@ public class MadConnectionTests
     }
 
     [Test]
-    public async Task Get_Firmware_Version()
+    public async Task Get_Firmware_Version_Async()
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
 
@@ -67,26 +67,26 @@ public class MadConnectionTests
     }
 
     [Test]
-    public async Task Run_Error_Measurement()
+    public async Task Run_Error_Measurement_Async()
     {
-        await ConfigureErrorMeasurement();
+        await ConfigureErrorMeasurement_Async();
 
-        var jobId = await StartErrorMeasurement();
+        var jobId = await StartErrorMeasurement_Async();
 
         for (var i = 3; i-- > 0;)
-            TestContext.Out.WriteLine(await ReadJobStatus(jobId, false));
+            await TestContext.Out.WriteLineAsync($"{await ReadJobStatus_Async(jobId, false)}");
 
         for (var i = 0; ; i = 1)
         {
-            var status = await ReadJobStatus(jobId, i == 0);
+            var status = await ReadJobStatus_Async(jobId, i == 0);
 
-            TestContext.Out.WriteLine(status);
+            await TestContext.Out.WriteLineAsync($"{status}");
 
             if (status.Item1 != "running") break;
         }
     }
 
-    private async Task ConfigureErrorMeasurement()
+    private async Task ConfigureErrorMeasurement_Async()
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
 
@@ -143,7 +143,7 @@ public class MadConnectionTests
         await cut.Execute(new NoopInterfaceLogger(), req, "bindErrorCalculatorsRes");
     }
 
-    private async Task<string> StartErrorMeasurement()
+    private async Task<string> StartErrorMeasurement_Async()
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
 
@@ -208,7 +208,7 @@ public class MadConnectionTests
         return jobId;
     }
 
-    private async Task<Tuple<string, int?, int?, double?>> ReadJobStatus(string jobId, bool abort)
+    private async Task<Tuple<string, int?, int?, double?>> ReadJobStatus_Async(string jobId, bool abort)
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
 

@@ -25,7 +25,7 @@ public class BarcodeReaderController(IBarcodeReader _device) : ControllerBase
     [SwaggerOperation(OperationId = "SimulateBarcode")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<ActionResult> SimulateBarcode([FromBody] string code)
+    public Task<ActionResult> SimulateBarcodeAsync([FromBody] string code)
     {
         if (_device is not BarcodeReaderMock mock) throw new NotImplementedException("barcode reader is not a mock");
 

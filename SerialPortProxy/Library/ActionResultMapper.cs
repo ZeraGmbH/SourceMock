@@ -15,16 +15,16 @@ public class ActionResultMapper
     /// <typeparam name="T">Type of the result.</typeparam>
     /// <param name="method">Method to call.</param>
     /// <returns>Corresponding ActionResult as a task.</returns>
-    public static async Task<ActionResult<T>> SafeExecuteSerialPortCommand<T>(Func<Task<T>> method) =>
-        (ActionResult<T>)await DoSafeExecuteSerialPortCommand(async () => new OkObjectResult(await method()));
+    public static async Task<ActionResult<T>> SafeExecuteSerialPortCommandAsync<T>(Func<Task<T>> method) =>
+        (ActionResult<T>)await DoSafeExecuteSerialPortCommandAsync(async () => new OkObjectResult(await method()));
 
     /// <summary>
     /// Exceute a serial port command which produces no result.
     /// </summary>
     /// <param name="method">Method to call.</param>
     /// <returns>ActionResult as a task.</returns>
-    public static Task<ActionResult> SafeExecuteSerialPortCommand(Func<Task> method) =>
-        DoSafeExecuteSerialPortCommand(async () =>
+    public static Task<ActionResult> SafeExecuteSerialPortCommandAsync(Func<Task> method) =>
+        DoSafeExecuteSerialPortCommandAsync(async () =>
         {
             /* Execute the command and report success. */
             await method();
@@ -37,7 +37,7 @@ public class ActionResultMapper
     /// </summary>
     /// <param name="method">Method to call.</param>
     /// <returns>ActionResult as a task.</returns>
-    private static async Task<ActionResult> DoSafeExecuteSerialPortCommand(Func<Task<ActionResult>> method)
+    private static async Task<ActionResult> DoSafeExecuteSerialPortCommandAsync(Func<Task<ActionResult>> method)
     {
         try
         {

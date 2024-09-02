@@ -131,7 +131,7 @@ public class ErrorConditionTests
     }
 
     [Test]
-    public async Task Can_Get_MT_Error_Conditions_From_Serial_Port()
+    public async Task Can_Get_MT_Error_Conditions_From_Serial_Port_Async()
     {
         using var port = new PortMock("SSM42000002002000000800");
         using var device = SerialPortConnection.FromMockedPortInstance(port, new NullLogger<SerialPortConnection>());
@@ -183,7 +183,7 @@ public class ErrorConditionTests
     }
 
     [Test]
-    public async Task Can_Get_FG_Error_Conditions_From_Serial_Port()
+    public async Task Can_Get_FG_Error_Conditions_From_Serial_Port_Async()
     {
         using var port = new PortMock("SM42000002002000000800");
         using var device = SerialPortConnection.FromMockedPortInstance(port, new NullLogger<SerialPortConnection>());

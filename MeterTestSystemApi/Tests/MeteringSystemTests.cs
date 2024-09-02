@@ -104,7 +104,7 @@ public class MeterTestSystemTests
     }
 
     [Test]
-    public async Task Can_Get_Capabilities_For_FG()
+    public async Task Can_Get_Capabilities_For_FG_Async()
     {
         var caps = await Generator.GetCapabilities(new NoopInterfaceLogger());
 
@@ -112,7 +112,7 @@ public class MeterTestSystemTests
     }
 
     [Test]
-    public async Task Can_Not_Get_Capabilities_For_MT()
+    public async Task Can_Not_Get_Capabilities_For_MT_Async()
     {
         var generator = new SerialPortMTMeterTestSystem(Device,
             new SerialPortMTRefMeter(Device, new NullLogger<SerialPortMTRefMeter>()),
@@ -126,7 +126,7 @@ public class MeterTestSystemTests
     }
 
     [Test]
-    public async Task Can_Get_Firmware_Version_For_MT()
+    public async Task Can_Get_Firmware_Version_For_MT_Async()
     {
         var generator = new SerialPortMTMeterTestSystem(Device,
             new SerialPortMTRefMeter(Device, new NullLogger<SerialPortMTRefMeter>()),
@@ -144,7 +144,7 @@ public class MeterTestSystemTests
     }
 
     [Test]
-    public async Task Can_Get_Firmware_Version_For_FG()
+    public async Task Can_Get_Firmware_Version_For_FG_Async()
     {
         var version = await Generator.GetFirmwareVersion(new NoopInterfaceLogger());
 
@@ -159,7 +159,7 @@ public class MeterTestSystemTests
     [TestCase(VoltageAmplifiers.LABSMP21200, CurrentAmplifiers.VI202x0, ReferenceMeters.COM3003, "voltage")]
     [TestCase(VoltageAmplifiers.VU211x1, CurrentAmplifiers.LABSMP715, ReferenceMeters.COM3003, "current")]
     [TestCase(VoltageAmplifiers.VU211x2, CurrentAmplifiers.VI202x0, ReferenceMeters.RMM303x6, "referenceMeter")]
-    public async Task Can_Set_Amplifiers(VoltageAmplifiers voltage, CurrentAmplifiers current, ReferenceMeters meter, string errorOrResponse)
+    public async Task Can_Set_Amplifiers_Async(VoltageAmplifiers voltage, CurrentAmplifiers current, ReferenceMeters meter, string errorOrResponse)
     {
         if (errorOrResponse.StartsWith("ZP"))
         {
@@ -193,7 +193,7 @@ public class MeterTestSystemTests
     [TestCase(VoltageAuxiliaries.VU211x0, CurrentAuxiliaries.VI202x0, ReferenceMeters.COM3003, "ZP0323303650")]
     [TestCase(VoltageAuxiliaries.SVG150x00, CurrentAuxiliaries.VI202x0, ReferenceMeters.COM3003, "voltageAux")]
     [TestCase(VoltageAuxiliaries.VU211x1, CurrentAuxiliaries.VI200x4, ReferenceMeters.COM3003, "currentAux")]
-    public async Task Can_Set_Auxiliares(VoltageAuxiliaries voltage, CurrentAuxiliaries current, ReferenceMeters meter, string errorOrResponse)
+    public async Task Can_Set_Auxiliares_Async(VoltageAuxiliaries voltage, CurrentAuxiliaries current, ReferenceMeters meter, string errorOrResponse)
     {
         if (errorOrResponse.StartsWith("ZP"))
         {

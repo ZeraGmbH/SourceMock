@@ -81,7 +81,7 @@ public class ErrorMeasurementTests
     }
 
     [Test]
-    public async Task Can_Start_Error_Measure()
+    public async Task Can_Start_Error_Measure_Async()
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
@@ -90,7 +90,7 @@ public class ErrorMeasurementTests
     }
 
     [Test]
-    public async Task Can_Abort_Error_Measure()
+    public async Task Can_Abort_Error_Measure_Async()
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
@@ -98,7 +98,7 @@ public class ErrorMeasurementTests
     }
 
     [Test]
-    public async Task Can_Request_Error_Management_Status()
+    public async Task Can_Request_Error_Management_Status_Async()
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 
@@ -203,7 +203,7 @@ public class ErrorMeasurementTests
     [TestCase(100000.3, 2500050, "100000;05;250005;1")]
     [TestCase(100000.5, 2500050, "100000;05;250005;1")]
     [TestCase(100000.51, 2500050, "100001;05;250005;1")]
-    public async Task Can_Set_Error_Measurement_Parameters(double meterConstant, long impluses, string expected)
+    public async Task Can_Set_Error_Measurement_Parameters_Async(double meterConstant, long impluses, string expected)
     {
         var cut = new SerialPortMTErrorCalculator(Device, _logger);
 

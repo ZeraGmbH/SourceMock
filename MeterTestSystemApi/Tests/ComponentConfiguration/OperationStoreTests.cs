@@ -22,7 +22,7 @@ public abstract class OperationStoreTests : DatabaseTestCore
     }
 
     [Test]
-    public async Task Can_Add_And_Update_A_Probing_Operation()
+    public async Task Can_Add_And_Update_A_Probing_Operation_Async()
     {
         var created = new DateTime(2024, 7, 17, 14, 47, 22);
         var finished = new DateTime(2024, 7, 17, 14, 47, 43);

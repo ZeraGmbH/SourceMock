@@ -280,7 +280,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
         port = ushort.Parse(match.Groups[2].Value);
 
         /* Start task to readout incoming data. */
-        ProcessIncomingAsync();
+        ProcessIncomingAsync().Start();
 
         return Task.CompletedTask;
     }

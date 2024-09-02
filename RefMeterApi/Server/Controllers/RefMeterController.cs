@@ -96,8 +96,8 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [HttpGet("Available"), SamAuthorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [SwaggerOperation(OperationId = "ReferenceMeterIsAvailable")]
-    public ActionResult<bool> IsAvailable() =>
-        Ok(_device.GetAvailableAsync(interfaceLogger));
+    public async Task<ActionResult<bool>> IsAvailableAsync() =>
+        Ok(await _device.GetAvailableAsync(interfaceLogger));
 
     /// <summary>
     /// Get the current meter constant of the reference meter.

@@ -9,11 +9,11 @@ public abstract class OperationStoreTests : DatabaseTestCore
 {
     private IProbingOperationStore Store = null!;
 
-    protected override async Task OnPostSetup()
+    protected override async Task OnPostSetupAsync()
     {
         Store = Services.GetRequiredService<IProbingOperationStore>();
 
-        await ((ProbingOperationStore)Store).Collection.RemoveAll();
+        await ((ProbingOperationStore)Store).Collection.RemoveAllAsync();
     }
 
     protected override void OnSetupServices(IServiceCollection services)

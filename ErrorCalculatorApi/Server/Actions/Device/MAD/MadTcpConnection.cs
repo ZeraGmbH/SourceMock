@@ -6,6 +6,7 @@ using System.Xml;
 using ErrorCalculatorApi.Exceptions;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging;
+using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;
@@ -280,7 +281,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
         port = ushort.Parse(match.Groups[2].Value);
 
         /* Start task to readout incoming data. */
-        ProcessIncomingAsync().Start();
+        ProcessIncomingAsync().Touch();
 
         return Task.CompletedTask;
     }

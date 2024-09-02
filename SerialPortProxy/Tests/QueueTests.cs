@@ -45,7 +45,7 @@ public class QueueTests
     private readonly NullLogger<ISerialPortConnection> _logger = new();
 
     [Test]
-    public async Task Failure_In_Request_Group_Terminates_Group()
+    public async Task Failure_In_Request_Group_Terminates_Group_Async()
     {
         var groups = new GroupMock();
 

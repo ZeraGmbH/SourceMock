@@ -24,7 +24,7 @@ namespace SourceApi.Tests.Actions.Source
         #region PositiveTestCases
         [Test]
         [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.ValidLoadpoints))]
-        public async Task TestValidTurnOn(TargetLoadpoint loadpoint)
+        public async Task TestValidTurnOn_Async(TargetLoadpoint loadpoint)
         {
             // Arrange
             var capabilities = SimulatedSourceTestData.GetSourceCapabilitiesForNumberOfPhases(loadpoint.Phases.Count);
@@ -46,7 +46,7 @@ namespace SourceApi.Tests.Actions.Source
 
         [Test]
         [TestCaseSource(typeof(LoadpointValidatorTestData), nameof(LoadpointValidatorTestData.ValidLoadpoints))]
-        public async Task TestValidTurnOff(TargetLoadpoint loadpoint)
+        public async Task TestValidTurnOff_Async(TargetLoadpoint loadpoint)
         {
             // Arrange
             var capabilities = SimulatedSourceTestData.GetSourceCapabilitiesForNumberOfPhases(loadpoint.Phases.Count);
@@ -71,7 +71,7 @@ namespace SourceApi.Tests.Actions.Source
         #region LoadpointIssues
         [Test]
         [TestCaseSource(typeof(SimulatedSourceTestData), nameof(SimulatedSourceTestData.ValidLoadpointsWithOneOrThreePhases))]
-        public async Task TestTurnOnWithInvalidLoadpoint(TargetLoadpoint loadpoint)
+        public async Task TestTurnOnWithInvalidLoadpoint_Async(TargetLoadpoint loadpoint)
         {
             // Arrange
             var capabilities = SimulatedSourceTestData.DefaultTwoPhaseSourceCapabilities;
@@ -95,7 +95,7 @@ namespace SourceApi.Tests.Actions.Source
 
         #region CapabilityIssues
         [Test]
-        public async Task TestTooHighVoltage()
+        public async Task TestTooHighVoltage_Async()
         {
             // Arrange 
             ISource source = GenerateSimulatedSource();
@@ -113,7 +113,7 @@ namespace SourceApi.Tests.Actions.Source
         }
 
         [Test]
-        public async Task TestTooHighCurrent()
+        public async Task TestTooHighCurrent_Async()
         {
             // Arrange 
             ISource source = GenerateSimulatedSource();
@@ -144,7 +144,7 @@ namespace SourceApi.Tests.Actions.Source
         #endregion
 
         [Test]
-        public async Task Returns_Correct_Dosage_Progress()
+        public async Task Returns_Correct_Dosage_Progress_Async()
         {
             await mock.SetLoadpoint(new NoopInterfaceLogger(), GetLoadpoint());
             await mock.SetDosageEnergy(new NoopInterfaceLogger(), new(20), new(1));
@@ -158,7 +158,7 @@ namespace SourceApi.Tests.Actions.Source
         }
 
         [Test]
-        public async Task Turns_Off_Loadpoint()
+        public async Task Turns_Off_Loadpoint_Async()
         {
             var loadpoint = GetLoadpoint();
             await mock.SetLoadpoint(new NoopInterfaceLogger(), loadpoint);

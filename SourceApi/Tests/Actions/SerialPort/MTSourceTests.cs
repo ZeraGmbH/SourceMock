@@ -61,7 +61,7 @@ public class MTSourceTests
     }
 
     [Test]
-    public async Task Can_Get_Capabilities()
+    public async Task Can_Get_Capabilities_Async()
     {
         var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap(), new SourceCapabilityValidator());
 
@@ -72,7 +72,7 @@ public class MTSourceTests
 
     [TestCase(0.01, "SIPAAR000.010000.00S000.020240.00T000.030120.00")]
     [TestCase(0.5, "SIPAAR000.500000.00S001.000240.00T001.500120.00")]
-    public async Task Can_Set_Valid_Loadpoint(double baseAngle, string current)
+    public async Task Can_Set_Valid_Loadpoint_Async(double baseAngle, string current)
     {
         var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap(), new SourceCapabilityValidator());
 
@@ -116,7 +116,7 @@ public class MTSourceTests
     [TestCase(600, 1, 0, SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID)]
     [TestCase(220, 1000, 0, SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_CURRENT_INVALID)]
     [TestCase(220, 1, 700, SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID)]
-    public async Task Can_Set_Invalid_Loadpoint(int voltage, int current, int angle, SourceApiErrorCodes expectedError)
+    public async Task Can_Set_Invalid_Loadpoint_Async(int voltage, int current, int angle, SourceApiErrorCodes expectedError)
     {
         var sut = new SerialPortMTSource(_portLogger, _device, new CapabilitiesMap(), new SourceCapabilityValidator());
 

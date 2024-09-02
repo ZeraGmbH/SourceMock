@@ -55,7 +55,7 @@ public class ConnectionTests
     private readonly NullLogger<ISerialPortConnection> _logger = new();
 
     [Test]
-    public async Task Can_Read_Firmware_Version()
+    public async Task Can_Read_Firmware_Version_Async()
     {
         using var cut = SerialPortConnection.FromMock<PortMock>(_logger);
 
@@ -71,7 +71,7 @@ public class ConnectionTests
     }
 
     [Test]
-    public async Task Can_Detect_Parameters_On_Response()
+    public async Task Can_Detect_Parameters_On_Response_Async()
     {
         using var cut = SerialPortConnection.FromMock<PortMock>(_logger);
 

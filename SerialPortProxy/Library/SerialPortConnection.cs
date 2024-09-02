@@ -210,7 +210,11 @@ public class SerialPortConnection : ISerialPortConnection
         }
 
         /* Report the task related with the result promise. */
-        return requests.Select(request => request.Result.Task).ToArray();
+        var tasks = new List<Task<string[]>>();
+
+        foreach (var request in requests) tasks.Add(request.Result.Task);
+
+        return [.. tasks];
     }
 
     /// <summary>

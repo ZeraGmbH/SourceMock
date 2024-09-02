@@ -50,7 +50,7 @@ public class FGSourceTests
 
     [TestCase(0.01, "IPAAR000.010000.00S000.020240.00T000.030120.00")]
     [TestCase(0.5, "IPAAR000.500000.00S001.000240.00T001.500120.00")]
-    public async Task Can_Set_Valid_Loadpoint(double baseAngle, string current)
+    public async Task Can_Set_Valid_Loadpoint_Async(double baseAngle, string current)
     {
         Assert.That(_source.GetCurrentLoadpoint(new NoopInterfaceLogger()), Is.Null);
 
@@ -94,7 +94,7 @@ public class FGSourceTests
     }
 
     [Test]
-    public async Task Can_Set_IEC_Loadpoint()
+    public async Task Can_Set_IEC_Loadpoint_Async()
     {
         Assert.That(_source.GetCurrentLoadpoint(new NoopInterfaceLogger()), Is.Null);
 

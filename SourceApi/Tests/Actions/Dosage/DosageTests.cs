@@ -25,25 +25,25 @@ public class DosageTests
     private ISource CreateDevice(params string[] replies) => new SerialPortMTSource(_deviceLogger, SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
     [Test]
-    public async Task Can_Turn_Off_DOS_Mode()
+    public async Task Can_Turn_Off_DOS_Mode_Async()
     {
         await CreateDevice(new[] { "SOK3CM4" }).SetDosageMode(new NoopInterfaceLogger(), false);
     }
 
     [Test]
-    public async Task Can_Turn_On_DOS_Mode()
+    public async Task Can_Turn_On_DOS_Mode_Async()
     {
         await CreateDevice(new[] { "SOK3CM3" }).SetDosageMode(new NoopInterfaceLogger(), true);
     }
 
     [Test]
-    public async Task Can_Start_Dosage()
+    public async Task Can_Start_Dosage_Async()
     {
         await CreateDevice(new[] { "SOK3CM1" }).StartDosage(new NoopInterfaceLogger());
     }
 
     [Test]
-    public async Task Can_Abort_Dosage()
+    public async Task Can_Abort_Dosage_Async()
     {
         await CreateDevice(new[] { "SOK3CM2" }).CancelDosage(new NoopInterfaceLogger());
     }
@@ -54,7 +54,7 @@ public class DosageTests
     [TestCase(2, "0")]
     [TestCase(2, "330E-1")]
     [TestCase(2, "333E2")]
-    public async Task Can_Read_Dosage_Progress(int dosage, string remaining)
+    public async Task Can_Read_Dosage_Progress_Async(int dosage, string remaining)
     {
         /* Warning: knows about internal sequence of requests. */
         var progress = await CreateDevice(new[] {
@@ -78,7 +78,7 @@ public class DosageTests
     [TestCase(1E5)]
     [TestCase(1E-5)]
     [TestCase(3)]
-    public async Task Can_Set_Impules_From_Energy(double energy)
+    public async Task Can_Set_Impules_From_Energy_Async(double energy)
     {
         var mock = new CommandPeekMock(new[] {
             "SOK3PS46"

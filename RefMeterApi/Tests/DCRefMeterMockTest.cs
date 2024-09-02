@@ -38,18 +38,18 @@ public class DCRefMeterMockTest
 
 
     [Test]
-    public void Produces_Actual_Values_If_No_Loadpoint_Switched_On()
+    public async Task Produces_Actual_Values_If_No_Loadpoint_Switched_On_Async()
     {
         DCRefMeterMock refMeterMock = new(Services);
 
-        MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues(new NoopInterfaceLogger()).Result;
+        MeasuredLoadpoint measureOutput = await refMeterMock.GetActualValues(new NoopInterfaceLogger());
 
         Assert.That((double?)measureOutput.Phases[0].Current.DcComponent, Is.InRange(0, 0.01));
     }
 
 
     [Test]
-    public void Produces_Actual_Values_If_Loadpoint_Switched_On()
+    public async Task Produces_Actual_Values_If_Loadpoint_Switched_On_Async()
     {
         double current = 22222222;
         double voltage = 33333333;
@@ -70,7 +70,7 @@ public class DCRefMeterMockTest
         SourceMock.Setup(s => s.CurrentSwitchedOffForDosage(It.IsAny<IInterfaceLogger>())).ReturnsAsync(false);
 
         DCRefMeterMock refMeterMock = new(Services);
-        MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues(new NoopInterfaceLogger()).Result;
+        MeasuredLoadpoint measureOutput = await refMeterMock.GetActualValues(new NoopInterfaceLogger());
 
         Assert.That((double?)measureOutput.Phases[0].Current.DcComponent, Is.InRange(GetMinValue(current, 0.01), GetMaxValue(current, 0.01)));
         Assert.That((double?)measureOutput.Phases[0].Voltage.DcComponent, Is.InRange(GetMinValue(voltage, 0.01), GetMaxValue(voltage, 0.01)));

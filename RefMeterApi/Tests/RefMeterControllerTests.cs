@@ -17,7 +17,7 @@ public class RefMeterControllerTests
     private readonly NullLogger<SerialPortMTRefMeter> _deviceLogger = new();
 
     [Test]
-    public async Task Controller_Will_Decode_AME_Reply()
+    public async Task Controller_Will_Decode_AME_Reply_Async()
     {
         using var port = SerialPortConnection.FromMock<StandardPortMock>(_portLogger);
 

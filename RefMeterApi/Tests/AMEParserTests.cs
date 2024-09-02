@@ -21,7 +21,7 @@ public class AMEParserTests
     private IRefMeter CreateDevice(params string[] replies) => new SerialPortMTRefMeter(SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(replies), _portLogger), _deviceLogger);
 
     [Test]
-    public async Task Can_Parse_AME_Reply()
+    public async Task Can_Parse_AME_Reply_Async()
     {
         var ameResponse = new List<string>(File.ReadAllLines(@"TestData/ameReply.txt"));
 
@@ -49,7 +49,7 @@ public class AMEParserTests
     [TestCase("1;1EA3")]
     [TestCase("12.3;1")]
     [TestCase("xxxx")]
-    public async Task Will_Log_On_Invalid_Reply(string reply)
+    public async Task Will_Log_On_Invalid_Reply_Async(string reply)
     {
         /* Use the regular logger. */
         var device = new SerialPortMTRefMeter(
@@ -65,7 +65,7 @@ public class AMEParserTests
     }
 
     [Test]
-    public async Task Will_Overwrite_Index_Value()
+    public async Task Will_Overwrite_Index_Value_Async()
     {
         var data = await CreateDevice(["ATIACK", "28;1", "28;2", "AMEACK"]).GetActualValues(new NoopInterfaceLogger());
 
@@ -73,7 +73,7 @@ public class AMEParserTests
     }
 
     [Test]
-    public async Task Can_Handle_Empty_Reply()
+    public async Task Can_Handle_Empty_Reply_Async()
     {
         await CreateDevice(["ATIACK", "AMEACK"]).GetActualValues(new NoopInterfaceLogger());
 
@@ -87,7 +87,7 @@ public class AMEParserTests
     }
 
     [Test]
-    public async Task Will_Cache_Request()
+    public async Task Will_Cache_Request_Async()
     {
         var device = new SerialPortMTRefMeter(SerialPortConnection.FromMock<CountingMock>(_portLogger), _deviceLogger);
 

@@ -29,7 +29,7 @@ public class ResponseShare<TResult, TContext>(Func<TContext, Task<TResult>> fact
     /// Create a new request task and reset cache when done.
     /// </summary>
     /// <returns>The new task.</returns>
-    private async Task<TResult> CreateTask(TContext context)
+    private async Task<TResult> CreateTaskAsync(TContext context)
     {
         try
         {
@@ -49,10 +49,10 @@ public class ResponseShare<TResult, TContext>(Func<TContext, Task<TResult>> fact
                 active task to the already completed task which
                 will never be released in the future.
             */
-            ThreadPool.QueueUserWorkItem(async (state) =>
+            ThreadPool.QueueUserWorkItem((state) =>
             {
                 /* Use debounce time. */
-                if (debounceMs > 0) await Task.Delay(debounceMs);
+                if (debounceMs > 0) Thread.Sleep(debounceMs);
 
                 lock (_lock)
                     _task = null;
@@ -64,10 +64,10 @@ public class ResponseShare<TResult, TContext>(Func<TContext, Task<TResult>> fact
     /// Execute some request.
     /// </summary>
     /// <returns>A task related with the request.</returns>
-    public Task<TResult> Execute(TContext context)
+    public Task<TResult> ExecuteAsync(TContext context)
     {
         /* Make sure there is only one request running. */
         lock (_lock)
-            return _task ??= CreateTask(context);
+            return _task ??= CreateTaskAsync(context);
     }
 }

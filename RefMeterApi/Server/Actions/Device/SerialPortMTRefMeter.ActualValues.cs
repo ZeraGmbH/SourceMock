@@ -16,7 +16,7 @@ partial class SerialPortMTRefMeter
 
     /// <inheritdoc/>
     public async Task<MeasuredLoadpoint> GetActualValues(IInterfaceLogger logger, int firstActiveCurrentPhase = -1)
-        => Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValues.Execute(logger)), firstActiveCurrentPhase);
+        => Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValues.ExecuteAsync(logger)), firstActiveCurrentPhase);
 
     /// <summary>
     /// Begin reading the actual values - this may take some time.

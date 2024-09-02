@@ -17,7 +17,7 @@ public class AMLParserTests
     [TestCase("2WA", MeasurementModes.TwoWireActivePower)]
     [TestCase("3WA", MeasurementModes.ThreeWireActivePower)]
     [TestCase("4WA", MeasurementModes.FourWireActivePower)]
-    public async Task Can_Process_Supported_Modes(string modeAsString, MeasurementModes mode)
+    public async Task Can_Process_Supported_Modes_Async(string modeAsString, MeasurementModes mode)
     {
         var device = new SerialPortMTRefMeter(
             SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(new[] { $"01;{modeAsString};xxx", "AMLACK" }), _portLogger),
@@ -34,7 +34,7 @@ public class AMLParserTests
     [TestCase("xxx;2WA;yyy")]
     [TestCase("")]
     [TestCase("01;XXX;ZZZ")]
-    public async Task Will_Discard_Bad_Input(string reply)
+    public async Task Will_Discard_Bad_Input_Async(string reply)
     {
         var device = new SerialPortMTRefMeter(
             SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(new[] {
@@ -54,7 +54,7 @@ public class AMLParserTests
     [TestCase("M=2WA", MeasurementModes.TwoWireActivePower)]
     [TestCase("M=3WA", MeasurementModes.ThreeWireActivePower)]
     [TestCase("M=4WA", MeasurementModes.FourWireActivePower)]
-    public async Task Can_Detect_Active_Mode(string modeAsString, MeasurementModes mode)
+    public async Task Can_Detect_Active_Mode_Async(string modeAsString, MeasurementModes mode)
     {
         var device = new SerialPortMTRefMeter(
             SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(new[] { modeAsString, "ASTACK" }), _portLogger),
@@ -69,7 +69,7 @@ public class AMLParserTests
     [TestCase("XX=12")]
     [TestCase("M=")]
     [TestCase("M=JOJO")]
-    public async Task Will_Detect_Unsupported_Mode(string reply)
+    public async Task Will_Detect_Unsupported_Mode_Async(string reply)
     {
         var device = new SerialPortMTRefMeter(
             SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(new[] {

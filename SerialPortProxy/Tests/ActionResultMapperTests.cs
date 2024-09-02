@@ -11,7 +11,7 @@ public class ActionResultMapperTests
     [TestCase(typeof(InvalidOperationException), SerialPortErrorCodes.SerialPortBadRequest)]
     [TestCase(typeof(OperationCanceledException), SerialPortErrorCodes.SerialPortAborted)]
     [TestCase(typeof(TimeoutException), SerialPortErrorCodes.SerialPortTimeOut)]
-    public async Task Will_Generate_Action_Result(Type exception, SerialPortErrorCodes expected)
+    public async Task Will_Generate_Action_Result_Async(Type exception, SerialPortErrorCodes expected)
     {
         var result = await ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => Task.FromException((Exception)Activator.CreateInstance(exception)!));
 

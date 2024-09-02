@@ -36,17 +36,17 @@ public class RefMeterMockTest
     }
 
     [Test]
-    public void Produces_Actual_Values_If_No_Loadpoint_Switched_On()
+    public async Task Produces_Actual_Values_If_No_Loadpoint_Switched_On_Async()
     {
         ACRefMeterMock refMeterMock = new(Services);
 
-        MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues(new NoopInterfaceLogger()).Result;
+        MeasuredLoadpoint measureOutput = await refMeterMock.GetActualValues(new NoopInterfaceLogger());
 
         Assert.That((double?)measureOutput.Frequency, Is.EqualTo(0));
     }
 
     [Test]
-    public void Produces_Actual_Values_If_Loadpoint_Switched_On()
+    public async Task Produces_Actual_Values_If_Loadpoint_Switched_On_Async()
     {
         double frequencyValue = 99;
         double current = 22222222;
@@ -71,7 +71,7 @@ public class RefMeterMockTest
         SourceMock.Setup(s => s.CurrentSwitchedOffForDosage(It.IsAny<IInterfaceLogger>())).ReturnsAsync(false);
 
         ACRefMeterMock refMeterMock = new(Services);
-        MeasuredLoadpoint measureOutput = refMeterMock.GetActualValues(new NoopInterfaceLogger()).Result;
+        MeasuredLoadpoint measureOutput = await refMeterMock.GetActualValues(new NoopInterfaceLogger());
 
         Assert.That((double?)measureOutput.Frequency, Is.InRange(GetMinValue(frequencyValue, 0.0002), GetMaxValue(frequencyValue, 0.0002)));
         Assert.That((double)measureOutput.Phases[0].Current.AcComponent!.Rms, Is.InRange(GetMinValue(current, 0.0001), GetMaxValue(current, 0.0001)));

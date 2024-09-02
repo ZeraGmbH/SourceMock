@@ -18,7 +18,7 @@ partial class SerialPortFGRefMeter
     {
         TestConfigured(logger);
 
-        return Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValues.Execute(logger)), firstActiveCurrentPhase);
+        return Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValues.ExecuteAsync(logger)), firstActiveCurrentPhase);
     }
 
     /// <summary>

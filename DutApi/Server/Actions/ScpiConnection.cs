@@ -277,7 +277,7 @@ public class ScpiConnection(ILogger<ScpiConnection> logger) : IDeviceUnderTestCo
         /* Extend pure command by status request. */
         if (responseLines == 0)
         {
-            command += "\n*OCP?";
+            command += "\n*OPC?";
 
             responseLines = 1;
         }

@@ -256,7 +256,30 @@ public class SerialPortMTMock : ISerialPort
 
                     break;
                 }
-            /* Read total number of impulses. */
+            /* Start energy measurement. */
+            case "AET1":
+                {
+                    _dosageStart = DateTime.Now;
+
+                    _replies.Enqueue("AETACK");
+
+                    break;
+                }
+            /* Stop energy measurement. */
+            case "AET0":
+                {
+                    _replies.Enqueue("AETACK");
+
+                    break;
+                }
+            /* Read energy. */
+            case "AEV":
+                {
+                    _replies.Enqueue("3.141592");
+                    _replies.Enqueue("AEVACK");
+
+                    break;
+                }/* Read total number of impulses. */
             case "S3SA5":
                 {
                     _replies.Enqueue($"SOK3SA5;{_pulses}");

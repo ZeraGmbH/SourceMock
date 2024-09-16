@@ -58,7 +58,7 @@ public class RestDosage(ILoggingHttpClient httpDosage) : IRestDosage, IDosageMoc
         {
             Endpoint = endpoint.Endpoint,
             Protocol = InterfaceLogProtocolTypes.Http,
-            WebSamType = InterfaceLogSourceTypes.Source,
+            WebSamType = InterfaceLogSourceTypes.Dosage,
         };
 
         _dosageUri = new Uri(endpoint.Endpoint.TrimEnd('/') + "/");

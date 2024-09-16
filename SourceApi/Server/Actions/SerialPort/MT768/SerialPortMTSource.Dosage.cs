@@ -71,12 +71,22 @@ partial class SerialPortMTSource
     }
 
     /// <inheritdoc/>
-    public override Task StartEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+    public override Task StartEnergyAsync(IInterfaceLogger logger)
+       => Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("AET1", "AETACK")));
+
 
     /// <inheritdoc/>
-    public override Task StopEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+    public override Task StopEnergyAsync(IInterfaceLogger logger)
+       => Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("AET0", "AETACK")));
 
     /// <inheritdoc/>
-    public override Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+    public override async Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger)
+    {
+        var reply = await Device.Execute(logger, SerialPortRequest.Create("AEV", "AEVACK"))[0];
 
+        if (reply.Length < 2)
+            throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");
+
+        return new(double.Parse(reply[^2]));
+    }
 }

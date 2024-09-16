@@ -59,4 +59,12 @@ public class DCSourceMock(ILogger<DCSourceMock> logger, ISourceCapabilityValidat
             ]
         };
     }
+
+    public override Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger)
+    {
+        var power = (_loadpoint!.Phases[0].Voltage.DcComponent ?? Voltage.Zero) * (_loadpoint!.Phases[0].Current.DcComponent ?? Current.Zero);
+        var elapsed = new Time((DateTime.Now - _startTime).TotalSeconds);
+
+        return Task.FromResult(power.GetActivePower(Angle.Zero) * elapsed);
+    }
 }

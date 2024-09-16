@@ -85,4 +85,17 @@ public class ACSourceMock(ILogger<ACSourceMock> logger, SourceCapabilities sourc
             ]
         };
     }
+
+    public override Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger)
+    {
+        var power = ActivePower.Zero;
+
+        foreach (var phase in _loadpoint!.Phases)
+            if (phase.Voltage.On && phase.Current.On)
+                power += (phase.Voltage.AcComponent!.Rms * phase.Current.AcComponent!.Rms).GetActivePower(phase.Voltage.AcComponent!.Angle - phase.Current.AcComponent!.Angle);
+
+        var elapsed = new Time((DateTime.Now - _startTime).TotalSeconds);
+
+        return Task.FromResult(power * elapsed);
+    }
 }

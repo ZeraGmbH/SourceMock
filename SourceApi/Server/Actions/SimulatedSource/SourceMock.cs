@@ -132,12 +132,19 @@ public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities 
     }
 
     /// <inheritdoc/>
-    public Task StartEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+    public Task StartEnergyAsync(IInterfaceLogger logger)
+    {
+        if (_status.Active) throw new InvalidOperationException("dosage active");
+
+        _startTime = DateTime.Now;
+
+        return Task.CompletedTask;
+    }
 
     /// <inheritdoc/>
-    public Task StopEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+    public Task StopEnergyAsync(IInterfaceLogger logger) => Task.CompletedTask;
 
     /// <inheritdoc/>
-    public Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+    public virtual Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
 }
 

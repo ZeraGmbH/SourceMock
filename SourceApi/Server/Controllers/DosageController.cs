@@ -42,7 +42,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> StartDosage_Async() =>
+    public Task<ActionResult> StartDosageAsync() =>
         ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.StartDosageAsync(interfaceLogger));
 
     /// <summary>
@@ -56,7 +56,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> CancelDosage_Async() =>
+    public Task<ActionResult> CancelDosageAsync() =>
         ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.CancelDosageAsync(interfaceLogger));
 
     /// <summary>
@@ -71,7 +71,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetDOSMode_Async(bool on) =>
+    public Task<ActionResult> SetDOSModeAsync(bool on) =>
         ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetDosageModeAsync(interfaceLogger, on));
 
     /// <summary>
@@ -86,7 +86,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<DosageProgress>> GetProgress_Async([ModelFromUri] MeterConstant meterConstant) =>
+    public Task<ActionResult<DosageProgress>> GetProgressAsync([ModelFromUri] MeterConstant meterConstant) =>
         ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetDosageProgressAsync(interfaceLogger, meterConstant));
 
     /// <summary>
@@ -102,7 +102,7 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult> SetEnergy_Async([ModelFromUri] ActiveEnergy energy, [ModelFromUri] MeterConstant meterConstant) =>
+    public Task<ActionResult> SetEnergyAsync([ModelFromUri] ActiveEnergy energy, [ModelFromUri] MeterConstant meterConstant) =>
         ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetDosageEnergyAsync(interfaceLogger, energy, meterConstant));
 
     /// <summary>
@@ -118,6 +118,48 @@ public class DosageController(ISource device, IInterfaceLogger interfaceLogger) 
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public Task<ActionResult<bool>> IsDosageCurrentOff_Async() =>
+    public Task<ActionResult<bool>> IsDosageCurrentOffAsync() =>
         ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.CurrentSwitchedOffForDosageAsync(interfaceLogger));
+
+    /// <summary>
+    /// Start an energy meaurement.
+    /// </summary>
+    [HttpPost("StartEnergy"), SamAuthorize(WebSamRole.testcaseexecutor)]
+    [SwaggerOperation(OperationId = "StartEnergy")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult> StartEnergyAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.StartEnergyAsync(interfaceLogger));
+
+    /// <summary>
+    /// End an energy meaurement.
+    /// </summary>
+    [HttpPost("StopEnergy"), SamAuthorize(WebSamRole.testcaseexecutor)]
+    [SwaggerOperation(OperationId = "StopEnergy")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult> StopEnergyAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.StopEnergyAsync(interfaceLogger));
+
+    /// <summary>
+    /// Read the current energy during an error meaurement.
+    /// </summary>
+    [HttpGet("Energy"), SamAuthorize(WebSamRole.testcaseexecutor)]
+    [SwaggerOperation(OperationId = "GetEnergy")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult<ActiveEnergy>> GetEnergyAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetEnergyAsync(interfaceLogger));
 }

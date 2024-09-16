@@ -130,5 +130,14 @@ public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities 
 
         return Task.CompletedTask;
     }
+
+    /// <inheritdoc/>
+    public Task StartEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+
+    /// <inheritdoc/>
+    public Task StopEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+
+    /// <inheritdoc/>
+    public Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
 }
 

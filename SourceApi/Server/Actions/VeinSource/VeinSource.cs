@@ -56,5 +56,15 @@ namespace SourceApi.Actions.VeinSource
 
         public async Task<TargetLoadpoint?> GetCurrentLoadpointAsync(IInterfaceLogger logger)
             => VeinLoadpointMapper.ConvertToLoadpoint((await _veinClient.GetLoadpointAsync()).Value);
+
+        /// <inheritdoc/>
+        public Task StartEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+
+        /// <inheritdoc/>
+        public Task StopEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+
+        /// <inheritdoc/>
+        public Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+
     }
 }

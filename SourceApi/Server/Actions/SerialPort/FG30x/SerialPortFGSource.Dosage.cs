@@ -81,4 +81,14 @@ partial class SerialPortFGSource
         /* Current should be switched off if dosage mode is on mode dosage itself is not yet active. */
         return mode.EndMatch?.Groups[1].Value == "2" && dosage.EndMatch?.Groups[1].Value == "1";
     }
+
+    /// <inheritdoc/>
+    public override Task StartEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+
+    /// <inheritdoc/>
+    public override Task StopEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+
+    /// <inheritdoc/>
+    public override Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+
 }

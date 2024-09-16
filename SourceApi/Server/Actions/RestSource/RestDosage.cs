@@ -123,4 +123,24 @@ public class RestDosage(ILoggingHttpClient httpDosage) : IRestDosage, IDosageMoc
 
         if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
     }
+
+    /// <inheritdoc/>
+    public async Task StopEnergyAsync(IInterfaceLogger logger)
+    {
+        var res = await httpDosage.PostAsync(logger, new Uri(_dosageUri, "StopEnergy"));
+
+        if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
+    }
+
+    /// <inheritdoc/>
+    public async Task StartEnergyAsync(IInterfaceLogger logger)
+    {
+        var res = await httpDosage.PostAsync(logger, new Uri(_dosageUri, "StartEnergy"));
+
+        if (res.StatusCode != HttpStatusCode.OK) throw new InvalidOperationException();
+    }
+
+    /// <inheritdoc/>
+    public Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger)
+        => httpDosage.GetAsync<ActiveEnergy>(logger, new Uri(_dosageUri, "Energy"));
 }

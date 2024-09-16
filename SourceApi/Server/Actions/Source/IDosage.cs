@@ -46,5 +46,20 @@ namespace SourceApi.Actions.Source
         /// If set the dosage mode has been activated but current is switch off.
         /// </summary>
         Task<bool> CurrentSwitchedOffForDosageAsync(IInterfaceLogger logger);
+
+        /// <summary>
+        /// Start a energy measurement.
+        /// </summary>
+        Task StartEnergyAsync(IInterfaceLogger logger);
+
+        /// <summary>
+        /// Terminate a energy measurement.
+        /// </summary>
+        Task StopEnergyAsync(IInterfaceLogger logger);
+
+        /// <summary>
+        /// Get the current value of an energy measurement.
+        /// </summary>
+        Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger);
     }
 }

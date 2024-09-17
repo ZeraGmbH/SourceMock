@@ -4,15 +4,16 @@ using ZERA.WebSam.Shared.Actions;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.Source;
+using SourceApi.Model;
 
-namespace SourceApi.Tests.Actions.SerialPort;
+namespace SourceApiTests.Actions.SerialPort;
 
 [TestFixture]
 public class FGSourceTests
 {
     class LoggingSourceMock : SerialPortFGMock
     {
-        public readonly List<string> Commands = new();
+        public readonly List<string> Commands = [];
 
         public override void WriteLine(string command)
         {
@@ -39,7 +40,7 @@ public class FGSourceTests
         _device = SerialPortConnection.FromMockedPortInstance(_port, _connectionLogger);
         _source = new(_portLogger, _device, new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        await _source.SetAmplifiersAsync(new NoopInterfaceLogger(), Model.VoltageAmplifiers.VU220, Model.CurrentAmplifiers.VI220, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
+        await _source.SetAmplifiersAsync(new NoopInterfaceLogger(), VoltageAmplifiers.VU220, CurrentAmplifiers.VI220, VoltageAuxiliaries.V210, CurrentAuxiliaries.V200);
     }
 
     [TearDown]
@@ -58,10 +59,10 @@ public class FGSourceTests
         {
             Frequency = new()
             {
-                Mode = Model.FrequencyMode.SYNTHETIC,
+                Mode = FrequencyMode.SYNTHETIC,
                 Value = new(50)
             },
-            Phases = new() {
+            Phases = [
                 new()  {
                     Current = new() { AcComponent = new () {Rms=new(1 * baseAngle), Angle=new(0)}, On=true},
                     Voltage = new() { AcComponent = new () {Rms=new(220), Angle=new(0)}, On=true},
@@ -74,7 +75,7 @@ public class FGSourceTests
                     Current = new() { AcComponent = new () {Rms=new(3 * baseAngle), Angle=new(240)}, On=false},
                     Voltage = new() { AcComponent = new () {Rms=new(222), Angle=new(240)}, On=true},
                 },
-            },
+            ],
             VoltageNeutralConnected = true,
         });
 
@@ -98,14 +99,14 @@ public class FGSourceTests
     {
         Assert.That(await _source.GetCurrentLoadpointAsync(new NoopInterfaceLogger()), Is.Null);
 
-        var result = await _source.SetLoadpointAsync(new NoopInterfaceLogger(), new Model.TargetLoadpoint
+        var result = await _source.SetLoadpointAsync(new NoopInterfaceLogger(), new TargetLoadpoint
         {
             Frequency = new()
             {
-                Mode = Model.FrequencyMode.SYNTHETIC,
+                Mode = FrequencyMode.SYNTHETIC,
                 Value = new(50)
             },
-            Phases = new() {
+            Phases = [
                 new()  {
                     Current = new() { AcComponent = new () { Rms=new(10), Angle=new(0)}, On=true},
                     Voltage = new() { AcComponent = new () { Rms=new(120), Angle=new(330)}, On=true},
@@ -118,7 +119,7 @@ public class FGSourceTests
                     Current = new() { AcComponent = new () { Rms=new(10), Angle=new(120)}, On=true},
                     Voltage = new() { AcComponent = new () { Rms=new(120), Angle=new(90)}, On=true},
                 },
-            },
+            ],
             VoltageNeutralConnected = true,
         });
 

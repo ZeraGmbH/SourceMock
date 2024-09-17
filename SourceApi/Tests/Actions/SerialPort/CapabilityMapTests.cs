@@ -1,6 +1,6 @@
 using SourceApi.Actions.SerialPort;
 
-namespace SourceApi.Tests.Actions.SerialPort;
+namespace SourceApiTests.Actions.SerialPort;
 
 [TestFixture]
 public class CapabilitiesMapTests

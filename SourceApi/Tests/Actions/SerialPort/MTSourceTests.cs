@@ -1,13 +1,13 @@
-using Microsoft.Extensions.Logging.Abstractions;
 
+using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
-using ZERA.WebSam.Shared.Actions;
-using ZERA.WebSam.Shared.DomainSpecific;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
+using SourceApi.Model;
+using ZERA.WebSam.Shared.Actions;
 
-namespace SourceApi.Tests.Actions.SerialPort;
+namespace SourceApiTests.Actions.SerialPort;
 
 [TestFixture]
 public class MTSourceTests
@@ -30,7 +30,7 @@ public class MTSourceTests
             base.Dispose();
         }
 
-        private readonly List<string> _commands = new();
+        private readonly List<string> _commands = [];
 
         public static string[] Commands => _current!._commands.ToArray();
 
@@ -78,23 +78,23 @@ public class MTSourceTests
 
         Assert.That(await sut.GetCurrentLoadpointAsync(new NoopInterfaceLogger()), Is.Null);
 
-        var result = await sut.SetLoadpointAsync(new NoopInterfaceLogger(), new Model.TargetLoadpoint
+        var result = await sut.SetLoadpointAsync(new NoopInterfaceLogger(), new TargetLoadpoint
         {
-            Frequency = new Model.GeneratedFrequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = new(50) },
-            Phases = new List<Model.TargetLoadpointPhase>() {
-                new Model.TargetLoadpointPhase {
+            Frequency = new GeneratedFrequency { Mode = FrequencyMode.SYNTHETIC, Value = new(50) },
+            Phases = [
+                new TargetLoadpointPhase {
                     Current = new() { AcComponent = new () { Rms=new(1 * baseAngle), Angle=new(0)}, On=true},
                     Voltage = new() { AcComponent = new () { Rms=new(220), Angle=new(0)}, On=true},
                 },
-                new Model.TargetLoadpointPhase {
+                new TargetLoadpointPhase {
                     Current = new() { AcComponent = new () { Rms=new(2 * baseAngle), Angle=new(120)}, On=true},
                     Voltage = new() { AcComponent = new () { Rms=new(221), Angle=new(120)}, On=false},
                 },
-                new Model.TargetLoadpointPhase {
+                new TargetLoadpointPhase {
                     Current = new() { AcComponent = new () { Rms=new(3 * baseAngle), Angle=new(240)}, On=false},
                     Voltage = new() { AcComponent = new () { Rms=new(222), Angle=new(240)}, On=true},
                 },
-            },
+            ],
             VoltageNeutralConnected = true,
         });
 
@@ -122,23 +122,23 @@ public class MTSourceTests
 
         Assert.That(await sut.GetCurrentLoadpointAsync(new NoopInterfaceLogger()), Is.Null);
 
-        var result = await sut.SetLoadpointAsync(new NoopInterfaceLogger(), new Model.TargetLoadpoint
+        var result = await sut.SetLoadpointAsync(new NoopInterfaceLogger(), new TargetLoadpoint
         {
-            Frequency = new Model.GeneratedFrequency { Mode = Model.FrequencyMode.SYNTHETIC, Value = new(50) },
-            Phases = new List<Model.TargetLoadpointPhase>() {
-                new Model.TargetLoadpointPhase {
+            Frequency = new GeneratedFrequency { Mode = FrequencyMode.SYNTHETIC, Value = new(50) },
+            Phases = [
+                new TargetLoadpointPhase {
                     Current = new() { AcComponent = new () { Rms=new(current), Angle=new(angle)}, On=true},
                     Voltage = new() { AcComponent = new () { Rms=new(voltage), Angle=new(angle)}, On=true},
                 },
-                new Model.TargetLoadpointPhase {
+                new TargetLoadpointPhase {
                     Current = new() { AcComponent = new () { Rms=new(1), Angle=new(120)}, On=true},
                     Voltage = new() { AcComponent = new () { Rms=new(220), Angle=new(120)}, On=true},
                 },
-                new Model.TargetLoadpointPhase {
+                new TargetLoadpointPhase {
                     Current = new() { AcComponent = new () { Rms=new(1), Angle=new(240)}, On=true},
                     Voltage = new() { AcComponent = new () { Rms=new(220), Angle=new(240)}, On=true},
                 },
-            },
+            ],
             VoltageNeutralConnected = true,
         });
 

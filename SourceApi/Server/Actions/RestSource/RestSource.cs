@@ -51,8 +51,7 @@ public class RestSource(ILoggingHttpClient httpSource, ILogger<RestSource> logge
 
     /// <inheritdoc/>
     public Task<bool> CurrentSwitchedOffForDosageAsync(IInterfaceLogger logger)
-        => _dosage?.CurrentSwitchedOffForDosageAsync(logger) ?? throw new NotImplementedException("Dosage");
-
+        => _dosage?.CurrentSwitchedOffForDosageAsync(logger) ?? Task.FromResult(false);
     /// <inheritdoc/>
     public Task<LoadpointInfo> GetActiveLoadpointInfoAsync(IInterfaceLogger interfaceLogger)
         => httpSource.GetAsync<LoadpointInfo>(interfaceLogger, new Uri(_sourceUri, "LoadpointInfo"));

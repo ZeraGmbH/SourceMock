@@ -16,6 +16,13 @@ public interface ISerialPortConnectionExecutor
     /// <exception cref="ArgumentNullException">Parameter must not be null.</exception>
     /// <returns>All lines sent from the device as a task.</returns>
     Task<string[]>[] Execute(IInterfaceLogger logger, params SerialPortRequest[] requests);
+
+    /// <summary>
+    /// Direct and exclusive access to the serial port.
+    /// </summary>
+    /// <param name="logger">Current logging scope.</param>
+    /// <param name="algorithm">What to do with the port.</param>
+    Task<T> RawExecute<T>(IInterfaceLogger logger, Func<ISerialPort, T> algorithm);
 }
 
 /// <summary>
@@ -32,7 +39,7 @@ public interface ISerialPortConnection : IDisposable
     ISerialPortConnectionExecutor CreateExecutor(InterfaceLogSourceTypes type, string id = "");
 
     /// <summary>
-    /// Registeres Out-Of-Band essage handling.
+    /// Registeres Out-Of-Band message handling.
     /// </summary>
     /// <param name="pattern">Pattern to recognize.</param>
     /// <param name="handler">Handler to process the message.</param>

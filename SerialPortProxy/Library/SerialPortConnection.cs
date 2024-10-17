@@ -16,6 +16,9 @@ public class SerialPortConnection : ISerialPortConnection
         /// <inheritdoc/>
         public Task<string[]>[] Execute(IInterfaceLogger logger, params SerialPortRequest[] requests)
             => port.Execute(logger.CreateConnection(connection), requests);
+
+        public Task<T> RawExecute<T>(IInterfaceLogger logger, Func<ISerialPort, T> algorithm)
+            => port.Execute(logger.CreateConnection(connection), algorithm);
     }
 
     /// <summary>
@@ -215,6 +218,13 @@ public class SerialPortConnection : ISerialPortConnection
         foreach (var request in requests) tasks.Add(request.Result.Task);
 
         return [.. tasks];
+    }
+
+    private Task<T> Execute<T>(IInterfaceConnection connection, Func<ISerialPort, T> algorithm)
+    {
+        ArgumentNullException.ThrowIfNull(algorithm, nameof(algorithm));
+
+        throw new NotImplementedException();
     }
 
     /// <summary>

@@ -32,6 +32,10 @@ class GroupMock : ISerialPort
         if (command.StartsWith("R"))
             _replies.Enqueue(command);
     }
+
+    public void RawWrite(byte[] command) => throw new NotImplementedException();
+
+    public byte? RawRead() => throw new NotImplementedException();
 }
 
 [TestFixture]

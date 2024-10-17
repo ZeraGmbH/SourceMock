@@ -60,6 +60,10 @@ public class MeterTestSystemTests
                     break;
             }
         }
+
+        public void RawWrite(byte[] command) => throw new NotImplementedException();
+
+        public byte? RawRead() => throw new NotImplementedException();
     }
 
     private readonly NullLogger<SerialPortFGMeterTestSystem> _meterLogger = new();

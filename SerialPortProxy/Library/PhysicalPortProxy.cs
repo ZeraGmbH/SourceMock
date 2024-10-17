@@ -40,6 +40,17 @@ public class PhysicalPortProxy : ISerialPort
     public void Dispose() => _port.Dispose();
 
     /// <inheritdoc/>
+    public byte? RawRead()
+    {
+        var data = _port.ReadByte();
+
+        return data == -1 ? null : checked((byte)data);
+    }
+
+    /// <inheritdoc/>
+    public void RawWrite(byte[] command) => _port.Write(command, 0, command.Length);
+
+    /// <inheritdoc/>
     public string ReadLine() => _port.ReadLine();
 
     /// <inheritdoc/>

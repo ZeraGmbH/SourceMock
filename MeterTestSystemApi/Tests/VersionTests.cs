@@ -51,6 +51,10 @@ abstract class PortMock : ISerialPort
                 }
         }
     }
+
+    public void RawWrite(byte[] command) => throw new NotImplementedException();
+
+    public byte? RawRead() => throw new NotImplementedException();
 }
 
 /// <summary>

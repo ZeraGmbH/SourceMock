@@ -107,6 +107,10 @@ public class RefMeterTests
                     break;
             }
         }
+
+        public void RawWrite(byte[] command) => throw new NotImplementedException();
+
+        public byte? RawRead() => throw new NotImplementedException();
     }
 
     [Test]

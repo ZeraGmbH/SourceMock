@@ -16,4 +16,15 @@ public interface ISerialPort : IDisposable
     /// </summary>
     /// <returns>The requested string.</returns>
     string ReadLine();
+
+    /// <summary>
+    /// Send raw data to the port.
+    /// </summary>
+    /// <param name="command">Bytes to send</param>
+    void RawWrite(byte[] command);
+
+    /// <summary>
+    /// Read the next byte of data from the port.
+    /// </summary>
+    public byte? RawRead();
 }

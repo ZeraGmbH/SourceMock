@@ -39,6 +39,12 @@ public class SerialPortFGMock : ISerialPort
     }
 
     /// <inheritdoc/>
+    public byte? RawRead() => throw new NotImplementedException();
+
+    /// <inheritdoc/>
+    public void RawWrite(byte[] command) => throw new NotImplementedException();
+
+    /// <inheritdoc/>
     public virtual string ReadLine()
     {
         if (!_replies.TryDequeue(out var info))

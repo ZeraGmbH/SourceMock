@@ -115,6 +115,12 @@ public class SerialPortMTMock : ISerialPort
     {
     }
 
+    /// <inheritdoc/>
+    public byte? RawRead() => throw new NotImplementedException();
+
+    /// <inheritdoc/>
+    public void RawWrite(byte[] command) => throw new NotImplementedException();
+
     /// <summary>
     /// Reset in a unit test environment.
     /// </summary>

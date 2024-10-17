@@ -92,12 +92,25 @@ public class TcpPortProxy : ISerialPort
     }
 
     /// <inheritdoc/>
-    public void WriteLine(string command)
-    {
-        /* Append the line separator and convert string to bytes. */
-        var bytes = Encoding.ASCII.GetBytes($"{command}\r");
+    public void WriteLine(string command) => RawWrite(Encoding.ASCII.GetBytes($"{command}\r"));
 
-        /* Send to connection. */
-        _stream.Write(bytes, 0, bytes.Length);
+    /// <inheritdoc/>
+    public byte? RawRead()
+    {
+        if (_collector.Count < 1)
+        {
+            var data = _stream.ReadByte();
+
+            return data == -1 ? null : checked((byte)data);
+        }
+
+        var next = _collector[0];
+
+        _collector.RemoveAt(0);
+
+        return next;
     }
+
+    /// <inheritdoc/>
+    public void RawWrite(byte[] command) => _stream.Write(command, 0, command.Length);
 }

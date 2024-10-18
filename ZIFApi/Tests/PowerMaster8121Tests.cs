@@ -47,16 +47,26 @@ public class PowerMaster8121Tests
         }
     }
 
-    private IZIFDevice Socket = null!;
+    private IZIFProtocol Socket = null!;
 
     private PortMock Port = null!;
+
+    private ISerialPortConnection Connection = null!;
 
     [SetUp]
     public void Setup()
     {
         Port = new();
 
-        Socket = new PowerMaster8121(SerialPortConnection.FromMockedPortInstance(Port, new NullLogger<ISerialPortConnection>(), false), new NullLogger<PowerMaster8121>());
+        Connection = SerialPortConnection.FromMockedPortInstance(Port, new NullLogger<ISerialPortConnection>(), false);
+
+        Socket = new PowerMaster8121(new NullLogger<PowerMaster8121>());
+    }
+
+    [TearDown]
+    public void Teardown()
+    {
+        Connection?.Dispose();
     }
 
     [Test]
@@ -67,9 +77,13 @@ public class PowerMaster8121Tests
             [0xa5, 0x08, 0x06, 0xc2, 0x02, 0x00, 0x00, 0x00, 0x16, 0x96, 0x5a]
         );
 
-        var version = await Socket.GetVersion(new NoopInterfaceLogger());
+        var version = await Socket.GetVersion(Connection, new NoopInterfaceLogger());
 
-        Assert.That(version.Major, Is.EqualTo(2));
-        Assert.That(version.Minor, Is.EqualTo(22));
+        Assert.Multiple(() =>
+        {
+            Assert.That(version.Major, Is.EqualTo(2));
+            Assert.That(version.Minor, Is.EqualTo(22));
+        });
+
     }
 }

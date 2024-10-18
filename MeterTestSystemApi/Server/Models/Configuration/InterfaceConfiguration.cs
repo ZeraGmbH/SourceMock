@@ -3,6 +3,7 @@ using ErrorCalculatorApi.Models;
 using MongoDB.Bson.Serialization.Attributes;
 using SourceApi.Model.Configuration;
 using ZERA.WebSam.Shared.Models;
+using ZIFApi.Models;
 
 namespace MeterTestSystemApi.Models.Configuration;
 

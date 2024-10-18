@@ -1,8 +1,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using SourceApi.Model.Configuration;
-using ZIFApi.Models;
 
-namespace MeterTestSystemApi.Models.Configuration;
+namespace ZIFApi.Models;
 
 /// <summary>
 /// ZIF socket configuration.
@@ -13,7 +12,7 @@ public class ZIFConfiguration
     /// Protocol used to communicate with a ZIF device.
     /// </summary>
     [BsonElement("type")]
-    public SupportedZIFDevices Type { get; set; }
+    public SupportedZIFProtocols Type { get; set; }
 
     /// <summary>
     /// Configuration of a serial port connection.

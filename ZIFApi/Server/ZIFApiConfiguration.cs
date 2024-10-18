@@ -19,7 +19,14 @@ public static class ZIFApiConfiguration
     public static void UseZIFApi(this IServiceCollection services, IConfiguration configuration)
     {
         // All known ZIF implementations
-        services.AddKeyedSingleton<IZIFDevice, PowerMaster8121>(SupportedZIFDevices.PowerMaster8121);
+        services.AddKeyedTransient<IZIFProtocol, PowerMaster8121>(SupportedZIFProtocols.PowerMaster8121);
+
+        // Used to initialize devices from configuration.
+        services.AddSingleton<IZIFDevicesFactory, ZIFDevicesFactory>();
+
+        // Register all sockets.
+        services.AddTransient(di => di.GetRequiredService<IZIFDevicesFactory>().Devices);
+        services.AddTransient(di => di.GetRequiredService<IZIFDevice[]>().FirstOrDefault()!);
     }
 
     /// <summary>

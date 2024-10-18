@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\SerialPortProxy\Library\SerialPortProxy.csproj" />
+    <ProjectReference Include="..\..\SourceApi\Server\SourceApi.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

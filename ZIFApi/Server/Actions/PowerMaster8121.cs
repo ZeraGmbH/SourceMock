@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
@@ -9,7 +8,7 @@ namespace ZIFApi.Actions;
 /// <summary>
 /// 
 /// </summary>
-public class PowerMaster8121([FromKeyedServices("ZIF")] ISerialPortConnection factory, ILogger<PowerMaster8121> _logger) : IZIFDevice
+public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
 {
     private static readonly byte[] _crcTable =
     [
@@ -43,7 +42,7 @@ public class PowerMaster8121([FromKeyedServices("ZIF")] ISerialPortConnection fa
 
     private enum ReadState { Start, End, Length, Data, Checksum };
 
-    private Task<T> Execute<T>(IInterfaceLogger logger, Func<byte[], T> createResponse, params byte[] command)
+    private Task<T> Execute<T>(ISerialPortConnection factory, IInterfaceLogger logger, Func<byte[], T> createResponse, params byte[] command)
     {
         // - STX and length of command bytes.
         var buffer = new List<byte> { 0xa5, checked((byte)(1 + command.Length)) };
@@ -225,8 +224,9 @@ public class PowerMaster8121([FromKeyedServices("ZIF")] ISerialPortConnection fa
 
     /// <inheritdoc/>
 
-    public Task<VersionInfo> GetVersion(IInterfaceLogger logger)
+    public Task<VersionInfo> GetVersion(ISerialPortConnection factory, IInterfaceLogger logger)
         => Execute(
+            factory,
             logger,
             response => response.Length == 5
                 ? new VersionInfo { Major = BitConverter.ToInt32(response), Minor = response[4] }

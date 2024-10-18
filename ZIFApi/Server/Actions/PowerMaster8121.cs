@@ -12,7 +12,7 @@ namespace ZIFApi.Actions;
 public class PowerMaster8121([FromKeyedServices("ZIF")] ISerialPortConnection factory, ILogger<PowerMaster8121> _logger) : IZIFDevice
 {
     private static readonly byte[] _crcTable =
-    {
+    [
         0,  94, 188, 226,  97,  63, 221, 131, 194, 156, 126,  32, 163, 253,  31,  65,
         157, 195,  33, 127, 252, 162,  64,  30,  95,   1, 227, 189,  62,  96, 130, 220,
         35, 125, 159, 193,  66,  28, 254, 160, 225, 191,  93,   3, 128, 222,  60,  98,
@@ -29,7 +29,7 @@ public class PowerMaster8121([FromKeyedServices("ZIF")] ISerialPortConnection fa
         87,   9, 235, 181,  54, 104, 138, 212, 149, 203,  41, 119, 244, 170,  72,  22,
         233, 183,  85,  11, 136, 214,  52, 106,  43, 117, 151, 201,  74,  20, 246, 168,
         116,  42, 200, 150,  21,  75, 169, 247, 182, 232,  10,  84, 215, 137, 107,  53
-    };
+    ];
 
     private static byte ComputeCRC(IEnumerable<byte> data)
     {
@@ -210,9 +210,9 @@ public class PowerMaster8121([FromKeyedServices("ZIF")] ISerialPortConnection fa
                         0x06 =>
                             /* Current protocol requires to have the incoming command as the second data position - [0] is the length, convienent kept in to easy CRC calculation. */
                             (data.Count >= 3)
-                                ? data[2] == command[2]
+                                ? data[2] == command[0]
                                     ? [.. data.Skip(3)]
-                                    : throw new InvalidOperationException($"Out-Of-Band reply, got 0x{data[2]:x} but expected 0x{command[2]:x}")
+                                    : throw new InvalidOperationException($"Out-Of-Band reply, got 0x{data[2]:x} but expected 0x{command[0]:x}")
                                 : throw new InvalidOperationException("Not enough data in reply"),
                         /* NACK. */
                         0x15 => throw new InvalidOperationException("got NACK"),

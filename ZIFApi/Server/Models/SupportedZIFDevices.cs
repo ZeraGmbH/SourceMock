@@ -6,7 +6,7 @@ namespace ZIFApi.Models;
 /// List of all known ZIF devices.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum SupportedDevices
+public enum SupportedZIFDevices
 {
     /// <summary>
     /// PowerMaster Model 8121 Single Position Test Board.

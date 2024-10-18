@@ -53,4 +53,10 @@ public class InterfaceConfiguration
     /// </summary>
     [BsonElement("errorCalculators")]
     public List<ErrorCalculatorConfiguration> ErrorCalculators { get; set; } = [];
+
+    /// <summary>
+    /// Configuration of optional ZIF sockets per test position.
+    /// </summary>
+    [BsonElement("zif")]
+    public List<ZIFConfiguration> ZIFSockets { get; set; } = [];
 }

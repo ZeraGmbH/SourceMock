@@ -19,7 +19,7 @@ public static class ZIFApiConfiguration
     public static void UseZIFApi(this IServiceCollection services, IConfiguration configuration)
     {
         // All known ZIF implementations
-        services.AddKeyedSingleton<IZIFDevice, PowerMaster8121>(SupportedDevices.PowerMaster8121);
+        services.AddKeyedSingleton<IZIFDevice, PowerMaster8121>(SupportedZIFDevices.PowerMaster8121);
     }
 
     /// <summary>

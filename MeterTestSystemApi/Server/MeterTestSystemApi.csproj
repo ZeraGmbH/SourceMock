@@ -5,6 +5,7 @@
     <ProjectReference Include="..\..\RefMeterApi\Server\RefMeterApi.csproj" />
     <ProjectReference Include="..\..\ErrorCalculatorApi\Server\ErrorCalculatorApi.csproj" />
     <ProjectReference Include="..\..\BarcodeApi\Server\BarcodeApi.csproj" />
+    <ProjectReference Include="..\..\ZIFApi\Server\ZIFApi.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />

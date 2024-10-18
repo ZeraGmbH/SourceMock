@@ -24,8 +24,8 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
             public Task<string[]>[] Execute(IInterfaceLogger logger, params SerialPortRequest[] requests) =>
                 requests.Select(r => Task.FromException<string[]>(new NotSupportedException())).ToArray();
 
-            public Task<T> RawExecute<T>(IInterfaceLogger logger, Func<ISerialPort, T> algorithm) =>
-                throw new NotImplementedException();
+            public Task<T> RawExecute<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, T> algorithm)
+                => Task.FromException<T>(new NotSupportedException());
         }
 
         public void Dispose()

@@ -9,7 +9,7 @@ namespace SerialPortProxy;
 /// <summary>
 /// Class to manage a single serial line connection.
 /// </summary>
-public class SerialPortConnection : ISerialPortConnection
+public partial class SerialPortConnection : ISerialPortConnection
 {
     private class Executor(SerialPortConnection port, InterfaceLogEntryConnection connection) : ISerialPortConnectionExecutor
     {
@@ -17,8 +17,15 @@ public class SerialPortConnection : ISerialPortConnection
         public Task<string[]>[] Execute(IInterfaceLogger logger, params SerialPortRequest[] requests)
             => port.Execute(logger.CreateConnection(connection), requests);
 
-        public Task<T> RawExecute<T>(IInterfaceLogger logger, Func<ISerialPort, T> algorithm)
+        public Task<T> RawExecute<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, T> algorithm)
             => port.Execute(logger.CreateConnection(connection), algorithm);
+    }
+
+    private abstract class QueueItem
+    {
+        public abstract void Execute(SerialPortConnection connection);
+
+        public abstract void Discard(SerialPortConnection connection);
     }
 
     /// <summary>
@@ -35,7 +42,7 @@ public class SerialPortConnection : ISerialPortConnection
     /// <summary>
     /// Non thread-safe queue - may use ConcurrentQueue or Producer/Consumer pattern with integrated locking.
     /// </summary>
-    private readonly Queue<Tuple<SerialPortRequest[], IInterfaceConnection>> _queue = new();
+    private readonly Queue<QueueItem> _queue = new();
 
     /// <summary>
     /// The physical connection to a serial port.
@@ -73,22 +80,19 @@ public class SerialPortConnection : ISerialPortConnection
     /// <param name="port">Serial port proxy - maybe physical or mocked.</param>
     /// <param name="target">Target identification for interface logging.</param>
     /// <param name="logger">Optional logging instance.</param>
+    /// <param name="enableReader">Unset to disable the input reader.</param>
     /// <exception cref="ArgumentNullException">Proxy must not be null.</exception>
-    private SerialPortConnection(ISerialPort port, InterfaceLogEntryTargetConnection target, ILogger<ISerialPortConnection> logger)
+    private SerialPortConnection(ISerialPort port, InterfaceLogEntryTargetConnection target, ILogger<ISerialPortConnection> logger, bool enableReader)
     {
         _logger = logger ?? new NullLogger<SerialPortConnection>();
         _port = port ?? throw new ArgumentNullException(nameof(port));
         _target = target;
 
         /* Create and start a thread handling requests to the serial port. */
-        var executor = new Thread(ProcessFromQueue);
-
-        executor.Start();
+        new Thread(ProcessFromQueue).Start();
 
         /* Create and start a thread handling input from the serial port. */
-        var reader = new Thread(ProcessInput);
-
-        reader.Start();
+        if (enableReader) new Thread(ProcessInput).Start();
     }
 
     /// <summary>
@@ -97,26 +101,30 @@ public class SerialPortConnection : ISerialPortConnection
     /// <param name="port">Name of the serial port, e.g. COM3 for Windows
     /// or /dev/ttyUSB0 for a USB serial adapter on Linux.</param>
     /// <param name="logger">Optional logging instance.</param>
+    /// <param name="enableReader">Unset to disable the input reader.</param>
     /// <returns>The brand new connection.</returns>
-    public static ISerialPortConnection FromSerialPort(string port, ILogger<ISerialPortConnection> logger)
-        => FromPortInstance(new PhysicalPortProxy(port), new() { Protocol = InterfaceLogProtocolTypes.Com, Endpoint = port }, logger);
+    public static ISerialPortConnection FromSerialPort(string port, ILogger<ISerialPortConnection> logger, bool enableReader = true)
+        => FromPortInstance(new PhysicalPortProxy(port), new() { Protocol = InterfaceLogProtocolTypes.Com, Endpoint = port }, logger, enableReader);
 
     /// <summary>
     /// Create a new connection based on a TCP-to-Serial passthrouh connection.
     /// </summary>
     /// <param name="serverAndPort">Name of the server to connect including the port - separated by colons.</param>
     /// <param name="logger">Optional logging instance.</param>
+    /// <param name="enableReader">Unset to disable the input reader.</param>
     /// <returns>The brand new connection.</returns>
-    public static ISerialPortConnection FromNetwork(string serverAndPort, ILogger<ISerialPortConnection> logger)
-        => FromPortInstance(new TcpPortProxy(serverAndPort), new() { Protocol = InterfaceLogProtocolTypes.Com, Endpoint = serverAndPort }, logger);
+    public static ISerialPortConnection FromNetwork(string serverAndPort, ILogger<ISerialPortConnection> logger, bool enableReader = true)
+        => FromPortInstance(new TcpPortProxy(serverAndPort), new() { Protocol = InterfaceLogProtocolTypes.Com, Endpoint = serverAndPort }, logger, enableReader);
 
     /// <summary>
     /// Create a new mocked based connection.
     /// </summary>
     /// <param name="logger">Optional logging instance.</param>
     /// <typeparam name="T">Some mocked class implementing ISerialPort.</typeparam>
+    /// <param name="enableReader">Unset to disable the input reader.</param>
     /// <returns>The new connection.</returns>
-    public static ISerialPortConnection FromMock<T>(ILogger<ISerialPortConnection> logger) where T : class, ISerialPort, new() => FromMock(typeof(T), logger);
+    public static ISerialPortConnection FromMock<T>(ILogger<ISerialPortConnection> logger, bool enableReader = true) where T : class, ISerialPort, new()
+        => FromMock(typeof(T), logger, enableReader);
 
     /// <summary>
     /// Create a new mocked based connection.
@@ -124,27 +132,30 @@ public class SerialPortConnection : ISerialPortConnection
     /// <param name="port">Implementation to use.</param>
     /// <param name="target">Target identification for interface logging.</param>
     /// <param name="logger">Optional logging instance.</param>
+    /// <param name="enableReader">Unset to disable the input reader.</param>
     /// <returns>The new connection.</returns>
-    private static ISerialPortConnection FromPortInstance(ISerialPort port, InterfaceLogEntryTargetConnection target, ILogger<ISerialPortConnection> logger)
-        => new SerialPortConnection(port, target, logger);
+    private static ISerialPortConnection FromPortInstance(ISerialPort port, InterfaceLogEntryTargetConnection target, ILogger<ISerialPortConnection> logger, bool enableReader = true)
+        => new SerialPortConnection(port, target, logger, enableReader);
 
     /// <summary>
     /// Create a new mocked based connection.
     /// </summary>
     /// <param name="mockType">Some mocked class implementing ISerialPort.</param>
     /// <param name="logger">Optional logging instance.</param>
+    /// <param name="enableReader">Unset to disable the input reader.</param>
     /// <returns>The new connection.</returns>
-    public static ISerialPortConnection FromMock(Type mockType, ILogger<ISerialPortConnection> logger)
-        => FromMockedPortInstance((ISerialPort)Activator.CreateInstance(mockType)!, logger);
+    public static ISerialPortConnection FromMock(Type mockType, ILogger<ISerialPortConnection> logger, bool enableReader = true)
+        => FromMockedPortInstance((ISerialPort)Activator.CreateInstance(mockType)!, logger, enableReader);
 
     /// <summary>
     /// Create a new mocked based connection.
     /// </summary>
     /// <param name="port">Implementation to use.</param>
     /// <param name="logger">Optional logging instance.</param>
+    /// <param name="enableReader">Unset to disable the input reader.</param>
     /// <returns>The new connection.</returns>
-    public static ISerialPortConnection FromMockedPortInstance(ISerialPort port, ILogger<ISerialPortConnection> logger)
-        => FromPortInstance(port, new() { Protocol = InterfaceLogProtocolTypes.Mock, Endpoint = "mocked" }, logger);
+    public static ISerialPortConnection FromMockedPortInstance(ISerialPort port, ILogger<ISerialPortConnection> logger, bool enableReader = true)
+        => FromPortInstance(port, new() { Protocol = InterfaceLogProtocolTypes.Mock, Endpoint = "mocked" }, logger, enableReader);
 
     /// <summary>
     /// On dispose the serial connection and the ProcessFromQueue thread are terminated.
@@ -168,7 +179,7 @@ public class SerialPortConnection : ISerialPortConnection
         lock (_queue)
         {
             /* Find all outstanding requests. */
-            var pending = _queue.ToArray();
+            var items = _queue.ToArray();
 
             /* Empty the queue. */
             _queue.Clear();
@@ -177,13 +188,7 @@ public class SerialPortConnection : ISerialPortConnection
             Monitor.Pulse(_queue);
 
             /* If there are any outstand requests notify the corresponding clients - callers of Execute. */
-            foreach (var requests in pending)
-                foreach (var request in requests.Item1)
-                {
-                    _logger.LogWarning("Cancel command {Command}", request.Command);
-
-                    request.Result.SetException(new OperationCanceledException());
-                }
+            foreach (var item in items) item.Discard(this);
         }
     }
 
@@ -196,178 +201,6 @@ public class SerialPortConnection : ISerialPortConnection
             WebSamType = type,
             WebSamId = id
         });
-
-    private Task<string[]>[] Execute(IInterfaceConnection connection, params SerialPortRequest[] requests)
-    {
-        ArgumentNullException.ThrowIfNull(requests, nameof(requests));
-
-        /* Since we are expecting multi-threaded access lock the queue. */
-        lock (_queue)
-        {
-            /* Queue is locked, we have exclusive access and can now safely add the entry. */
-            if (requests.Length > 0)
-                _queue.Enqueue(Tuple.Create(requests, connection));
-
-            /* If queue executer thread is waiting (Monitor.Wait) for new entries wake it up for immediate processing the new entry. */
-            Monitor.Pulse(_queue);
-        }
-
-        /* Report the task related with the result promise. */
-        var tasks = new List<Task<string[]>>();
-
-        foreach (var request in requests) tasks.Add(request.Result.Task);
-
-        return [.. tasks];
-    }
-
-    private Task<T> Execute<T>(IInterfaceConnection connection, Func<ISerialPort, T> algorithm)
-    {
-        ArgumentNullException.ThrowIfNull(algorithm, nameof(algorithm));
-
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// Executes a single command.
-    /// </summary>
-    /// <param name="request">Describes the request.</param>
-    /// <param name="connection"></param>
-    /// <returns>Gesetzt, wenn die Ausführung erfolgreich war.</returns>
-    private bool ExecuteCommand(SerialPortRequest request, IInterfaceConnection connection)
-    {
-        /* Prepare logging. */
-        var requestId = Guid.NewGuid().ToString();
-
-        IPreparedInterfaceLogEntry sendEntry = null!;
-        Exception sendError = null!;
-
-        try
-        {
-            _logger.LogDebug("Sending command {Command}", request.Command);
-
-            /* Start logging. */
-            sendEntry = connection.Prepare(new() { Outgoing = true, RequestId = requestId });
-
-            /* Send the command string to the device - <CR> is automatically added. */
-            _port.WriteLine(request.Command);
-
-            _logger.LogDebug("Command {Command} accepted by device", request.Command);
-        }
-        catch (Exception e)
-        {
-            sendError = e;
-
-            _logger.LogError("Command {Command} rejected: {Exception}", request.Command, e.Message);
-
-            /* Unable to sent the command - report error to caller. */
-            request.Result.SetException(e);
-        }
-
-        /* Finish logging. */
-        if (sendEntry != null)
-            try
-            {
-                sendEntry.Finish(new()
-                {
-                    Encoding = InterfaceLogPayloadEncodings.Raw,
-                    Payload = request.Command,
-                    PayloadType = "",
-                    TransferException = sendError?.Message
-                });
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Unable to create log entry: {Exception}", e.Message);
-            }
-
-        /* Failed - we can stop now. */
-        if (sendError != null) return false;
-
-        /* Collect response strings until expected termination string is detected. */
-        for (var answer = new List<string>(); ;)
-        {
-            IPreparedInterfaceLogEntry receiveEntry = null!;
-            Exception receiveError = null!;
-            var reply = "";
-
-            try
-            {
-                /* Read a single response line from the device. */
-                _logger.LogDebug("Wait for command {Command} reply", request.Command);
-
-                /* Start logging. */
-                receiveEntry = connection.Prepare(new() { Outgoing = false, RequestId = requestId });
-
-                reply = ReadInput();
-
-                _logger.LogDebug("Got reply {Reply} for command {Command}", reply, request.Command);
-
-                /* If a device response ends with NAK there are invalid arguments. */
-                if (reply.EndsWith("NAK"))
-                {
-                    _logger.LogError("Command {Command} reported NAK", request.Command);
-
-                    throw new ArgumentException(request.Command);
-                }
-
-                /* Error handling for ERR commands. */
-                if (reply.Contains("ER-") || reply.Contains("ERR-") || reply.Contains("ERROR"))
-                {
-                    _logger.LogError("Command {Command} reported ERROR {Reply}", request.Command, reply);
-
-                    throw new ArgumentException(request.Command); ;
-                }
-
-                /* Always remember the reply - even the terminating string. */
-                answer.Add(reply);
-
-                /* If the terminating string is detected the reply from the device is complete. */
-                if (request.Match(reply))
-                {
-                    _logger.LogDebug("Command {Command} finished, replies: {ReplyCount}", request.Command, answer.Count);
-
-                    /* Set the task result to all strings collected and therefore finish the task with success. */
-                    request.Result.SetResult([.. answer]);
-
-                    return true;
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Reading command {Command} reply failed: {Exception}", request.Command, e);
-
-                /* 
-                    If it is not possible to read something from the device report exception to caller. 
-                    In case the device does not recognize the command it will not respond anything. Then
-                    the read method call will throw a time exception as configured in the constructor.
-                */
-                receiveError = e;
-
-                return false;
-            }
-            finally
-            {
-                if (receiveError != null) request.Result.SetException(receiveError);
-
-                /* Finish logging. */
-                if (receiveEntry != null)
-                    try
-                    {
-                        receiveEntry.Finish(new()
-                        {
-                            Encoding = InterfaceLogPayloadEncodings.Raw,
-                            Payload = reply,
-                            PayloadType = "",
-                            TransferException = receiveError?.Message
-                        });
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.LogError("Unable to create log entry: {Exception}", e.Message);
-                    }
-            }
-        }
-    }
 
     /// <summary>
     /// Thread method processing all queue entries as long as connection is active (_running).
@@ -382,7 +215,7 @@ public class SerialPortConnection : ISerialPortConnection
                 lock (_incoming)
                     _incoming.Clear();
 
-            Tuple<SerialPortRequest[], IInterfaceConnection>? entry;
+            QueueItem? entry;
 
             /* Must have exclusive access to the queue to avoid data corruption. */
             lock (_queue)
@@ -403,18 +236,8 @@ public class SerialPortConnection : ISerialPortConnection
                 }
             }
 
-            var (requests, connection) = entry;
-
             /* Process the transaction until finished or some request failed - important: ExecuteCommand MUST NOT throw an exception. */
-            _logger.LogDebug("Starting transaction processing, commands: {RequestCount}", requests.Length);
-
-            var failed = false;
-
-            foreach (var request in requests)
-                if (failed)
-                    request.Result.SetException(new OperationCanceledException("previous command failed"));
-                else
-                    failed = !ExecuteCommand(request, connection);
+            entry.Execute(this);
         }
     }
 

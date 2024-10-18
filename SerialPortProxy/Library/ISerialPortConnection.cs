@@ -22,7 +22,7 @@ public interface ISerialPortConnectionExecutor
     /// </summary>
     /// <param name="logger">Current logging scope.</param>
     /// <param name="algorithm">What to do with the port.</param>
-    Task<T> RawExecute<T>(IInterfaceLogger logger, Func<ISerialPort, T> algorithm);
+    Task<T> RawExecute<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, T> algorithm);
 }
 
 /// <summary>

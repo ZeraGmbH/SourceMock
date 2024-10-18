@@ -8,11 +8,9 @@ namespace ZIFApi.Models;
 public interface IZIFDevice
 {
     /// <summary>
-    /// Execute a single command.
+    /// Read the software version.
     /// </summary>
-    /// <param name="cmd">Command to execute.</param>
-    /// <param name="logger"></param>
-    /// <typeparam name="TResponse">Type of the response.</typeparam>
-    /// <returns>Response of the command.</returns>
-    Task<TResponse> Execute<TResponse>(Command<TResponse> cmd, IInterfaceLogger logger) where TResponse : Response;
+    /// <param name="logger">Interface logging to use.</param>
+    /// <returns>Version information.</returns>
+    Task<VersionInfo> GetVersion(IInterfaceLogger logger);
 }

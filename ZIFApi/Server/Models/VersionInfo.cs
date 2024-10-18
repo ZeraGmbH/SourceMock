@@ -3,7 +3,7 @@ namespace ZIFApi.Models;
 /// <summary>
 /// 
 /// </summary>
-public sealed class VersionInfo : Response
+public class VersionInfo
 {
     /// <summary>
     /// 

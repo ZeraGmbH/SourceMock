@@ -12,5 +12,5 @@ public interface IZIFDevice
     /// </summary>
     /// <param name="logger">Interface logging to use.</param>
     /// <returns>Version information.</returns>
-    Task<VersionInfo> GetVersion(IInterfaceLogger logger);
+    Task<ZIFVersionInfo> GetVersion(IInterfaceLogger logger);
 }

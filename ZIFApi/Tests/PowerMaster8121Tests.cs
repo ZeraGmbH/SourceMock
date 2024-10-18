@@ -81,6 +81,7 @@ public class PowerMaster8121Tests
 
         Assert.Multiple(() =>
         {
+            Assert.That(version.Protocol, Is.EqualTo(SupportedZIFProtocols.PowerMaster8121));
             Assert.That(version.Major, Is.EqualTo(2));
             Assert.That(version.Minor, Is.EqualTo(22));
         });

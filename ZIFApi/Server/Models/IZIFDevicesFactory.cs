@@ -3,12 +3,12 @@ namespace ZIFApi.Models;
 /// <summary>
 /// 
 /// </summary>
-public interface IZIFDevicesFactory
+public interface IZIFDevicesFactory : IDisposable
 {
     /// <summary>
     /// 
     /// </summary>
-    void Initialize(IEnumerable<ZIFConfiguration> sockets);
+    void Initialize(List<ZIFConfiguration> sockets);
 
     /// <summary>
     /// 

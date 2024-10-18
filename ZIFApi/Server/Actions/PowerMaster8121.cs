@@ -224,12 +224,12 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
 
     /// <inheritdoc/>
 
-    public Task<VersionInfo> GetVersion(ISerialPortConnection factory, IInterfaceLogger logger)
+    public Task<ZIFVersionInfo> GetVersion(ISerialPortConnection factory, IInterfaceLogger logger)
         => Execute(
             factory,
             logger,
             response => response.Length == 5
-                ? new VersionInfo { Major = BitConverter.ToInt32(response), Minor = response[4] }
+                ? new ZIFVersionInfo { Protocol = SupportedZIFProtocols.PowerMaster8121, Major = BitConverter.ToInt32(response), Minor = response[4] }
                 : throw new ArgumentOutOfRangeException(nameof(response), "Response should have exactly 5 bytes"),
             0xc2
         );

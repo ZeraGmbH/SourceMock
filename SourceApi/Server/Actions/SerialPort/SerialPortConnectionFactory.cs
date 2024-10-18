@@ -75,8 +75,18 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
 
             try
             {
-                if (settings != null && type.HasValue)
-                    if (type == MeterTestSystemTypes.MT786 || type == MeterTestSystemTypes.FG30x)
+                if (settings != null)
+                    if (!type.HasValue)
+                        switch (settings.ConfigurationType)
+                        {
+                            case SerialPortConfigurationTypes.Network:
+                                _connection = SerialPortConnection.FromNetwork(settings.Endpoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
+                                break;
+                            case SerialPortConfigurationTypes.Device:
+                                _connection = SerialPortConnection.FromSerialPort(settings.Endpoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
+                                break;
+                        }
+                    else if (type == MeterTestSystemTypes.MT786 || type == MeterTestSystemTypes.FG30x)
                         switch (settings.ConfigurationType)
                         {
                             case SerialPortConfigurationTypes.Mock:

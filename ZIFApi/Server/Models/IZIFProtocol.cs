@@ -14,5 +14,5 @@ public interface IZIFProtocol
     /// <param name="factory">Serial port factory to use.</param>
     /// <param name="logger">Interface logging to use.</param>
     /// <returns>Version information.</returns>
-    Task<VersionInfo> GetVersion(ISerialPortConnection factory, IInterfaceLogger logger);
+    Task<ZIFVersionInfo> GetVersion(ISerialPortConnection factory, IInterfaceLogger logger);
 }

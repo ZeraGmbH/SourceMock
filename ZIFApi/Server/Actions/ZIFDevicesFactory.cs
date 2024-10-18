@@ -81,7 +81,7 @@ public class ZIFDevicesFactory(IServiceProvider services, ILogger<ZIFDevicesFact
 
                             var port = config.ConfigurationType switch
                             {
-                                SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint, log, false),
+                                SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint, config.SerialPortOptions, log, false),
                                 SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint, log, false),
                                 _ => throw new NotSupportedException($"Unknown serial port configuration type {config.ConfigurationType}"),
                             };

@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using MongoDB.Bson.Serialization.Attributes;
+using SerialPortProxy;
 
 namespace SourceApi.Model.Configuration;
 
@@ -29,4 +30,10 @@ public class SerialPortConfiguration
     /// </summary>
     [BsonElement("authorization")]
     public string? Authorization { get; set; }
+
+    /// <summary>
+    /// Additional options to tweak the connection.
+    /// </summary>
+    [BsonElement("options")]
+    public SerialPortOptions? SerialPortOptions { get; set; }
 }

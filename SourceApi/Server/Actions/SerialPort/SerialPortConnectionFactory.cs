@@ -83,7 +83,7 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
                                 _connection = SerialPortConnection.FromNetwork(settings.Endpoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
                                 break;
                             case SerialPortConfigurationTypes.Device:
-                                _connection = SerialPortConnection.FromSerialPort(settings.Endpoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
+                                _connection = SerialPortConnection.FromSerialPort(settings.Endpoint!, settings.SerialPortOptions, services.GetRequiredService<ILogger<ISerialPortConnection>>());
                                 break;
                         }
                     else if (type == MeterTestSystemTypes.MT786 || type == MeterTestSystemTypes.FG30x)
@@ -104,7 +104,7 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
                                 _connection = SerialPortConnection.FromNetwork(settings.Endpoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
                                 break;
                             case SerialPortConfigurationTypes.Device:
-                                _connection = SerialPortConnection.FromSerialPort(settings.Endpoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
+                                _connection = SerialPortConnection.FromSerialPort(settings.Endpoint!, settings.SerialPortOptions, services.GetRequiredService<ILogger<ISerialPortConnection>>());
                                 break;
                         }
             }

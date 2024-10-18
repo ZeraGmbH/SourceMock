@@ -17,19 +17,20 @@ public class PhysicalPortProxy : ISerialPort
     /// </summary>
     /// <param name="port">Name of the serial port, e.g. COM3 for Windows
     /// or /dev/ttyUSB0 for a USB serial adapter on Linux.</param>
-    public PhysicalPortProxy(string port)
+    /// <param name="options">Additional options.</param>
+    public PhysicalPortProxy(string port, SerialPortOptions? options)
     {
         /* Connected as required in the API documentation. MT3101_RS232_EXT_GB.pdf */
         _port = new SerialPort
         {
-            BaudRate = 9600,
-            DataBits = 8,
-            NewLine = "\r",
-            Parity = Parity.None,
+            BaudRate = options?.BaudRate ?? 9600,
+            DataBits = options?.DataBits ?? 8,
+            NewLine = options?.NewLine ?? "\r",
+            Parity = (Parity?)options?.Parity ?? Parity.None,
             PortName = port,
-            ReadTimeout = 30000,
-            StopBits = StopBits.Two,
-            WriteTimeout = 30000
+            ReadTimeout = options?.ReadTimeout ?? 30000,
+            StopBits = (StopBits?)options?.StopBits ?? StopBits.Two,
+            WriteTimeout = options?.WriteTimeout ?? 30000
         };
 
         /* Always open the connection immediatly. */

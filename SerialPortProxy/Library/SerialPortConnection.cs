@@ -100,11 +100,12 @@ public partial class SerialPortConnection : ISerialPortConnection
     /// </summary>
     /// <param name="port">Name of the serial port, e.g. COM3 for Windows
     /// or /dev/ttyUSB0 for a USB serial adapter on Linux.</param>
+    /// <param name="options">Additional options.</param>
     /// <param name="logger">Optional logging instance.</param>
     /// <param name="enableReader">Unset to disable the input reader.</param>
     /// <returns>The brand new connection.</returns>
-    public static ISerialPortConnection FromSerialPort(string port, ILogger<ISerialPortConnection> logger, bool enableReader = true)
-        => FromPortInstance(new PhysicalPortProxy(port), new() { Protocol = InterfaceLogProtocolTypes.Com, Endpoint = port }, logger, enableReader);
+    public static ISerialPortConnection FromSerialPort(string port, SerialPortOptions? options, ILogger<ISerialPortConnection> logger, bool enableReader = true)
+        => FromPortInstance(new PhysicalPortProxy(port, options), new() { Protocol = InterfaceLogProtocolTypes.Com, Endpoint = port }, logger, enableReader);
 
     /// <summary>
     /// Create a new connection based on a TCP-to-Serial passthrouh connection.

@@ -91,7 +91,7 @@ public class ZIFDevicesFactory(IServiceProvider services, ILogger<ZIFDevicesFact
                         }
                         catch (Exception e)
                         {
-                            logger.LogCritical("Unable to configure ZIF socket {Index} {Exception}", i + 1, e.Message);
+                            logger.LogCritical("Unable to configure ZIF socket {Index}: {Exception}", i + 1, e.Message);
                         }
                 }
             }

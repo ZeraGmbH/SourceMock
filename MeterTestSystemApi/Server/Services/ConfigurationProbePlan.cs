@@ -84,6 +84,13 @@ public class ConfigurationProbePlan(IProbingOperationStore store) : IConfigurati
                             Protocol = SerialProbeProtocols.MT768,
                             Device = new() { Type = type, Index = (uint)i }
                         });
+
+                    if (_request.Configuration.PM8121ZIF != null)
+                        _probes.Add(new SerialProbe()
+                        {
+                            Protocol = SerialProbeProtocols.PM8181,
+                            Device = new() { Type = type, Index = (uint)i }
+                        });
                 }
         }
     }

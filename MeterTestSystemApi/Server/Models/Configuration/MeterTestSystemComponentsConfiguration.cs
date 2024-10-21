@@ -15,9 +15,14 @@ public class MeterTestSystemComponentsConfiguration
     public SerialPortComponentConfiguration? FrequencyGenerator { get; set; }
 
     /// <summary>
-    /// Connection to the a MT786 compatible device.
+    /// Connection to a MT786 compatible device.
     /// </summary>
     public SerialPortComponentConfiguration? MT768 { get; set; }
+
+    /// <summary>
+    /// Connection to a PowerMaster Model 8121 compatible ZIF socket.
+    /// </summary>
+    public SerialPortComponentConfiguration? PM8121ZIF { get; set; }
 
     /// <summary>
     /// Configuration if each test position. Entries must not be 

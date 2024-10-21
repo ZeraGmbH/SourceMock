@@ -14,4 +14,9 @@ internal enum SerialProbeProtocols
     /// MT768 compatible.
     /// </summary>
     MT768,
+
+    /// <summary>
+    /// Power Master Model 8121, ZIF socket.
+    /// </summary>
+    PM8181,
 }

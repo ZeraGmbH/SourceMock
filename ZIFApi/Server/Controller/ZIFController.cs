@@ -42,6 +42,6 @@ public class ZIFController(IZIFDevice[] devices, IInterfaceLogger interfaceLogge
     [HttpGet("Version/{pos?}"), SamAuthorize]
     [SwaggerOperation(OperationId = "GetZIFSocketVersion")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<ZIFVersionInfo>> GetVersion(int pos = 0)
-        => Ok(await devices[pos].GetVersion(interfaceLogger));
+    public Task<ActionResult<ZIFVersionInfo>> GetVersionAsync(int pos = 0)
+        => ActionMapper.SafeExecuteAsync(() => devices[pos].GetVersion(interfaceLogger));
 }

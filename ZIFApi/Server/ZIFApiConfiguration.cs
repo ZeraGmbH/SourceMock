@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using ZERA.WebSam.Shared;
 using ZIFApi.Actions;
 using ZIFApi.Models;
 
@@ -36,5 +37,9 @@ public static class ZIFApiConfiguration
     public static void UseZIFApi(this SwaggerGenOptions options)
     {
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(ZIFApiConfiguration).Assembly.GetName().Name}.xml"), true);
+
+        SwaggerModelExtender
+         .AddType<ZIFErrorCodes>()
+         .Register(options);
     }
 }

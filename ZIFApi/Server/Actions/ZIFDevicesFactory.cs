@@ -18,8 +18,20 @@ public class ZIFDevicesFactory(IServiceProvider services, ILogger<ZIFDevicesFact
 
         private readonly IZIFProtocol Protocol = protocol;
 
-        public Task<ZIFVersionInfo> GetVersion(IInterfaceLogger logger)
-            => Protocol.GetVersion(Port, logger);
+        public Task<bool> GetActiveAsync(IInterfaceLogger logger)
+            => Protocol.GetActiveAsync(Port, logger);
+
+        public Task<bool> GetHasMeterAsync(IInterfaceLogger logger)
+            => Protocol.GetHasMeterAsync(Port, logger);
+
+        public Task<int> GetSerialAsync(IInterfaceLogger logger)
+            => Protocol.GetSerialAsync(Port, logger);
+
+        public Task<ZIFVersionInfo> GetVersionAsync(IInterfaceLogger logger)
+            => Protocol.GetVersionAsync(Port, logger);
+
+        public Task SetActiveAsync(bool active, IInterfaceLogger logger)
+            => Protocol.SetActiveAsync(active, Port, logger);
 
         public void Terminate() => Port.Dispose();
     }

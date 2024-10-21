@@ -77,7 +77,7 @@ public class PowerMaster8121Tests
             [0xa5, 0x08, 0x06, 0xc2, 0x02, 0x00, 0x00, 0x00, 0x16, 0x96, 0x5a]
         );
 
-        var version = await Socket.GetVersion(Connection, new NoopInterfaceLogger());
+        var version = await Socket.GetVersionAsync(Connection, new NoopInterfaceLogger());
 
         Assert.Multiple(() =>
         {

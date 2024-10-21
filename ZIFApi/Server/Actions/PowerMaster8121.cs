@@ -43,13 +43,16 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
 
     private enum ReadState { Start, End, Length, Data, Checksum };
 
-    private Task<T> Execute<T>(ISerialPortConnection factory, IInterfaceLogger logger, Func<byte[], T> createResponse, params byte[] command)
+    private async Task Execute(ISerialPortConnection factory, IInterfaceLogger logger, params int[] command)
+        => await Execute(factory, logger, response => response.Length == 0 ? true : throw new BadLengthException(0), command);
+
+    private Task<T> Execute<T>(ISerialPortConnection factory, IInterfaceLogger logger, Func<byte[], T> createResponse, params int[] command)
     {
         // - STX and length of command bytes.
         var buffer = new List<byte> { 0xa5, checked((byte)(1 + command.Length)) };
 
         // - Command bytes.
-        buffer.AddRange(command);
+        buffer.AddRange(command.Select(b => checked((byte)b)));
 
         // - CRC8(MAXIM) checksum.
         buffer.Add(ComputeCRC(buffer.Skip(1)));
@@ -76,7 +79,7 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
             }
             catch (Exception e)
             {
-                _logger.LogError("Unable to sent {Command} to port: {Exception}", BitConverter.ToString(command), e.Message);
+                _logger.LogError("Unable to sent {Command} to port: {Exception}", BitConverter.ToString([.. command.Select(b => (byte)b)]), e.Message);
 
                 /* Data could not be sent - create a log entry for the issue. */
                 sendError = e;
@@ -117,7 +120,7 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
             }
             catch (Exception e)
             {
-                _logger.LogError("Unable to read reply for {Command} from port: {Exception}", BitConverter.ToString(command), e.Message);
+                _logger.LogError("Unable to read reply for {Command} from port: {Exception}", BitConverter.ToString([.. command.Select(b => (byte)b)]), e.Message);
 
                 /* Reply could not be received - create a log entry for the issue. */
                 receiveError = e;
@@ -147,7 +150,7 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
         });
     }
 
-    private static byte[] ReadResponse(byte[] command, ISerialPort port, List<byte> all)
+    private static byte[] ReadResponse(int[] command, ISerialPort port, List<byte> all)
     {
         var data = new List<byte>();
         int length = 0;
@@ -212,7 +215,7 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
                             (data.Count >= 3)
                                 ? data[2] == command[0]
                                     ? [.. data.Skip(3)]
-                                    : throw new OutOfBandException(data[2], command[0])
+                                    : throw new OutOfBandException(data[2], (byte)command[0])
                                 : throw new ReplyToShortException(),
                         /* NAK. */
                         0x15 => throw new NAKException(),
@@ -225,7 +228,7 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
 
     /// <inheritdoc/>
 
-    public Task<ZIFVersionInfo> GetVersion(ISerialPortConnection factory, IInterfaceLogger logger)
+    public Task<ZIFVersionInfo> GetVersionAsync(ISerialPortConnection factory, IInterfaceLogger logger)
         => Execute(
             factory,
             logger,
@@ -234,4 +237,45 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
                 : throw new BadLengthException(5),
             0xc2
         );
+
+    /// <inheritdoc/>
+    public Task<int> GetSerialAsync(ISerialPortConnection factory, IInterfaceLogger logger)
+        => Execute(
+                factory,
+                logger,
+                response => response.Length == 2
+                    ? response[1] + 256 * response[0]
+                    : throw new BadLengthException(2),
+                0xc1
+            );
+
+    /// <inheritdoc/>
+    public Task<bool> GetActiveAsync(ISerialPortConnection factory, IInterfaceLogger logger)
+        => Execute(
+                factory,
+                logger,
+                response => response.Length == 1
+                    ? (response[0] & 0x01) == 0x01
+                    : throw new BadLengthException(1),
+                0xc4
+            );
+
+    /// <inheritdoc/>
+    public Task<bool> GetHasMeterAsync(ISerialPortConnection factory, IInterfaceLogger logger)
+        => Execute(
+                factory,
+                logger,
+                response => response.Length == 1
+                    ? (response[0] & 0x02) == 0x02
+                    : throw new BadLengthException(1),
+                0xc4
+            );
+
+    /// <inheritdoc/>
+    public Task SetActiveAsync(bool active, ISerialPortConnection factory, IInterfaceLogger logger)
+        => Execute(
+                factory,
+                logger,
+                0x8d, active ? 0x01 : 0x00
+            );
 }

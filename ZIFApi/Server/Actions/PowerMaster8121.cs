@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZIFApi.Exceptions;
 using ZIFApi.Models;
 
 namespace ZIFApi.Actions;
@@ -100,7 +101,7 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
                 }
 
             /* Failed - we can stop now. */
-            if (sendError != null) throw sendError;
+            if (sendError != null) throw new SendException(sendError);
 
             IPreparedInterfaceLogEntry receiveEntry = null!;
             Exception receiveError = null!;
@@ -121,7 +122,7 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
                 /* Reply could not be received - create a log entry for the issue. */
                 receiveError = e;
 
-                throw;
+                throw new ReceiveException(e);
             }
             finally
             {
@@ -153,7 +154,7 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
 
         for (var state = ReadState.Start; ;)
         {
-            var next = port.RawRead() ?? throw new EndOfStreamException("no more data");
+            var next = port.RawRead() ?? throw new NoMoreDataException();
 
             all.Add(next);
 
@@ -211,12 +212,12 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
                             (data.Count >= 3)
                                 ? data[2] == command[0]
                                     ? [.. data.Skip(3)]
-                                    : throw new InvalidOperationException($"Out-Of-Band reply, got 0x{data[2]:x} but expected 0x{command[0]:x}")
-                                : throw new InvalidOperationException("Not enough data in reply"),
-                        /* NACK. */
-                        0x15 => throw new InvalidOperationException("got NACK"),
+                                    : throw new OutOfBandException(data[2], command[0])
+                                : throw new ReplyToShortException(),
+                        /* NAK. */
+                        0x15 => throw new NAKException(),
                         /* Currently unsupported. */
-                        _ => throw new NotSupportedException($"ACK or NACK expected, got 0x{data[1]:x}"),
+                        _ => throw new ACKorNAKException(data[1]),
                     };
             }
         }
@@ -230,7 +231,7 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
             logger,
             response => response.Length == 5
                 ? new ZIFVersionInfo { Protocol = SupportedZIFProtocols.PowerMaster8121, Major = BitConverter.ToInt32(response), Minor = response[4] }
-                : throw new ArgumentOutOfRangeException(nameof(response), "Response should have exactly 5 bytes"),
+                : throw new BadLengthException(5),
             0xc2
         );
 }

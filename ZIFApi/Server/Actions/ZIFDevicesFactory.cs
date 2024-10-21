@@ -21,6 +21,9 @@ public class ZIFDevicesFactory(IServiceProvider services, ILogger<ZIFDevicesFact
         public Task<bool> GetActiveAsync(IInterfaceLogger logger)
             => Protocol.GetActiveAsync(Port, logger);
 
+        public Task<bool> GetHasErrorAsync(IInterfaceLogger logger)
+            => Protocol.GetHasErrorAsync(Port, logger);
+
         public Task<bool> GetHasMeterAsync(IInterfaceLogger logger)
             => Protocol.GetHasMeterAsync(Port, logger);
 
@@ -32,6 +35,9 @@ public class ZIFDevicesFactory(IServiceProvider services, ILogger<ZIFDevicesFact
 
         public Task SetActiveAsync(bool active, IInterfaceLogger logger)
             => Protocol.SetActiveAsync(active, Port, logger);
+
+        public Task SetMeterAsync(string meterForm, string serviceType, IInterfaceLogger logger)
+            => Protocol.SetMeterAsync(meterForm, serviceType, Port, logger);
 
         public void Terminate() => Port.Dispose();
     }

@@ -76,6 +76,16 @@ public class ZIFController(IZIFDevice[] devices, IInterfaceLogger interfaceLogge
         => ActionMapper.SafeExecuteAsync(() => devices[pos].GetHasMeterAsync(interfaceLogger));
 
     /// <summary>
+    /// See a socket is in array - to reset activate or deactivate it
+    /// </summary>
+    /// <param name="pos">Zero-based index of the socket.</param>
+    [HttpGet("HasError/{pos?}"), SamAuthorize]
+    [SwaggerOperation(OperationId = "HasZIFSocketError")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<ActionResult<bool>> GetHasErrorAsync(int pos = 0)
+        => ActionMapper.SafeExecuteAsync(() => devices[pos].GetHasErrorAsync(interfaceLogger));
+
+    /// <summary>
     /// Activate a specific socket so that it can be used for measurements.
     /// </summary>
     /// <param name="pos">Zero-based index of the socket.</param>
@@ -94,4 +104,16 @@ public class ZIFController(IZIFDevice[] devices, IInterfaceLogger interfaceLogge
     [ProducesResponseType(StatusCodes.Status200OK)]
     public Task<ActionResult> DeactivateAsync(int pos = 0)
         => ActionMapper.SafeExecuteAsync(() => devices[pos].SetActiveAsync(false, interfaceLogger));
+
+    /// <summary>
+    /// Switch socket to a given meter form and service type.
+    /// </summary>
+    /// <param name="meterForm">The meterform to use.</param>
+    /// <param name="serviceType">The service type to use.</param>
+    /// <param name="pos">Zero-based index of the socket.</param>
+    [HttpPost("{pos?}"), SamAuthorize(WebSamRole.testcaseeditor)]
+    [SwaggerOperation(OperationId = "SetMeterFormAndServiceType")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<ActionResult> SetMeterAsync(string meterForm, string serviceType, int pos = 0)
+        => ActionMapper.SafeExecuteAsync(() => devices[pos].SetMeterAsync(meterForm, serviceType, interfaceLogger));
 }

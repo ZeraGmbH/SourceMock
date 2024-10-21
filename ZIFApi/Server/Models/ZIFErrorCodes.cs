@@ -48,4 +48,9 @@ public enum ZIFErrorCodes
     /// Error receiving data from the socket.
     /// </summary>
     Read,
+
+    /// <summary>
+    /// Unsupported configuration for pair of meter form and service type.
+    /// </summary>
+    BadMeterServicePair,
 }

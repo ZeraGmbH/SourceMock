@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SerialPortProxy;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using ZERA.WebSam.Shared;
 using ZIFApi.Actions;
@@ -28,6 +29,9 @@ public static class ZIFApiConfiguration
         // Register all sockets.
         services.AddTransient(di => di.GetRequiredService<IZIFDevicesFactory>().Devices);
         services.AddTransient(di => di.GetRequiredService<IZIFDevice[]>().FirstOrDefault()!);
+
+        // Register emulations.
+        services.AddKeyedTransient<ISerialPort, PowerMaster8121SerialPortMock>(SupportedZIFProtocols.PowerMaster8121);
     }
 
     /// <summary>

@@ -1,3 +1,4 @@
+using Castle.Components.DictionaryAdapter;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
@@ -101,6 +102,7 @@ public class ZIFDevicesFactory(IServiceProvider services, ILogger<ZIFDevicesFact
                             {
                                 SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint, config.SerialPortOptions, log, false),
                                 SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint, log, false),
+                                SerialPortConfigurationTypes.Mock => SerialPortConnection.FromMockedPortInstance(services.GetRequiredKeyedService<ISerialPort>(socket.Type), log, false),
                                 _ => throw new NotSupportedException($"Unknown serial port configuration type {config.ConfigurationType}"),
                             };
 

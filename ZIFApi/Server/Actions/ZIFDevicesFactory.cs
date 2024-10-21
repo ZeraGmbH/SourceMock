@@ -87,7 +87,9 @@ public class ZIFDevicesFactory(IServiceProvider services, ILogger<ZIFDevicesFact
                 {
                     var socket = sockets[i];
 
-                    if (socket?.Type == null || string.IsNullOrEmpty(socket.SerialPort?.Endpoint))
+                    if (socket?.Type == null)
+                        _Devices.Add(null);
+                    else if (string.IsNullOrEmpty(socket.SerialPort?.Endpoint) && socket.SerialPort?.ConfigurationType != SerialPortConfigurationTypes.Mock)
                         _Devices.Add(null);
                     else
                         try
@@ -100,8 +102,8 @@ public class ZIFDevicesFactory(IServiceProvider services, ILogger<ZIFDevicesFact
 
                             var port = config.ConfigurationType switch
                             {
-                                SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint, config.SerialPortOptions, log, false),
-                                SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint, log, false),
+                                SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, log, false),
+                                SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint!, log, false),
                                 SerialPortConfigurationTypes.Mock => SerialPortConnection.FromMockedPortInstance(services.GetRequiredKeyedService<ISerialPort>(socket.Type), log, false),
                                 _ => throw new NotSupportedException($"Unknown serial port configuration type {config.ConfigurationType}"),
                             };

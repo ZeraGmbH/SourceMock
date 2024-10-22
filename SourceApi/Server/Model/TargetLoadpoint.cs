@@ -67,10 +67,10 @@ public class TargetLoadpoint : AbstractLoadpoint<TargetLoadpointPhase, Activatab
                     var pfRaw = (vComponent.AcComponent.Angle - cComponent.AcComponent.Angle).Sin();
                     var ind = pfRaw >= 0 ? "ind" : "cap";
 
-                    /* Calculate cos using Pythagoras. */
-                    var pf = Math.Sqrt(1 - pfRaw * pfRaw);
+                    /* Calculate powerfactor. */
+                    var pf = (vComponent.AcComponent.Angle - cComponent.AcComponent.Angle).Cos();
 
-                    powerFactor = $"{Math.Abs(pf):G3} {ind}";
+                    powerFactor = $"{pf:G3} {ind}";
                 }
 
             /* Construct name. */

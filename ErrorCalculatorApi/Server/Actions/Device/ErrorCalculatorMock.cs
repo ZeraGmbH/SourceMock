@@ -77,7 +77,7 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
         var energy = _totalPower * elapsed;
 
         /* Get the number of pulses and from this the progress. */
-        var measuredImpulses = _meterConstant * energy;
+        var measuredImpulses = (_meterConstant * energy).Abs();
 
         if (measuredImpulses > _totalImpulses)
         {

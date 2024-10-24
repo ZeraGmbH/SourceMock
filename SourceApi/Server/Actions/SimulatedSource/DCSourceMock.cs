@@ -28,7 +28,7 @@ public class DCSourceMock(ILogger<DCSourceMock> logger, ISourceCapabilityValidat
     {
         var power = (_loadpoint!.Phases[0].Voltage.DcComponent ?? Voltage.Zero) * (_loadpoint!.Phases[0].Current.DcComponent ?? Current.Zero);
         var elapsed = new Time((DateTime.Now - _startTime).TotalSeconds);
-        var energy = power.GetActivePower(Angle.Zero) * elapsed;
+        var energy = (power.GetActivePower(Angle.Zero) * elapsed).Abs();
 
         if (energy > _dosageEnergy) energy = DosageDone();
 

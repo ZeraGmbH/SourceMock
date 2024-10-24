@@ -45,7 +45,7 @@ public class ACSourceMock(ILogger<ACSourceMock> logger, SourceCapabilities sourc
                 power += (phase.Voltage.AcComponent!.Rms * phase.Current.AcComponent!.Rms).GetActivePower(phase.Voltage.AcComponent!.Angle - phase.Current.AcComponent!.Angle);
 
         var elapsed = new Time((DateTime.Now - _startTime).TotalSeconds);
-        var energy = power * elapsed;
+        var energy = (power * elapsed).Abs();
 
         if (energy > _dosageEnergy) energy = DosageDone();
 

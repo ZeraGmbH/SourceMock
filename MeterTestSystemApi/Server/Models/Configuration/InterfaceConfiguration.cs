@@ -60,4 +60,10 @@ public class InterfaceConfiguration
     /// </summary>
     [BsonElement("zif")]
     public List<ZIFConfiguration> ZIFSockets { get; set; } = [];
+
+    /// <summary>
+    /// Configuration of custom serial port connections.
+    /// </summary>
+    [BsonElement("customSerialPorts")]
+    public Dictionary<string, CustomSerialPortConfiguration> CustomSerialPorts { get; set; } = [];
 }

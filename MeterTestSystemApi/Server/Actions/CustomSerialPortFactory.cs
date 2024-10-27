@@ -14,28 +14,7 @@ namespace MeterTestSystemApi.Actions;
 /// </summary>
 public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSerialPortFactory> logger) : ICustomSerialPortFactory
 {
-    private class CustomSerialPortConnection(ISerialPortConnection port) : ICustomSerialPortConnection
-    {
-        public ISerialPortConnectionExecutor CreateExecutor(InterfaceLogSourceTypes type, string id = "")
-            => port.CreateExecutor(type, id);
-
-        /// <summary>
-        /// Will be called from dependency injection when scope is left and
-        /// must be ignored to allow sharing the port between calls.
-        /// </summary>
-        public void Dispose() { }
-
-        /// <summary>
-        /// Call on cleanup of the factory.
-        /// </summary>
-        public void Terminate()
-            => port.Dispose();
-
-        public void RegisterEvent(Regex pattern, Action<Match> handler)
-            => port.RegisterEvent(pattern, handler);
-    }
-
-    private readonly Dictionary<string, CustomSerialPortConnection> _Connections = [];
+    private readonly Dictionary<string, ISerialPortConnection> _Connections = [];
 
     private readonly object _sync = new();
 
@@ -49,13 +28,13 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
             _initialized = true;
 
             foreach (var connection in _Connections.Values)
-                connection.Terminate();
+                connection.Dispose();
 
             Monitor.PulseAll(_sync);
         }
     }
 
-    private ICustomSerialPortConnection LookupPort(string name)
+    private ISerialPortConnection LookupPort(string name)
     {
         lock (_sync)
         {
@@ -94,7 +73,7 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
                         };
 
                         // Remember
-                        _Connections[customPort.Key] = new(port);
+                        _Connections[customPort.Key] = port;
                     }
                     catch (Exception e)
                     {

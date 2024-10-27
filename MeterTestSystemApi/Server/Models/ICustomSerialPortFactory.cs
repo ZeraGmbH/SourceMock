@@ -1,15 +1,7 @@
 using MeterTestSystemApi.Models.Configuration;
-using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace MeterTestSystemApi.Models;
-
-/// <summary>
-/// 
-/// /// </summary>
-public interface ICustomSerialPortConnection : ISerialPortConnection
-{
-}
 
 /// <summary>
 /// 

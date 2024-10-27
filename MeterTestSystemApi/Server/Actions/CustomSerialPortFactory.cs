@@ -1,8 +1,10 @@
+using System.Text.RegularExpressions;
 using MeterTestSystemApi.Models.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using SourceApi.Model.Configuration;
+using ZERA.WebSam.Shared.Models.Logging;
 
 namespace MeterTestSystemApi.Actions;
 
@@ -11,7 +13,19 @@ namespace MeterTestSystemApi.Actions;
 /// </summary>
 public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSerialPortFactory> logger) : ICustomSerialPortFactory
 {
-    private readonly Dictionary<string, ISerialPortConnection> _Connections = [];
+    private class CustomSerialPortConnection(ISerialPortConnection port) : ICustomSerialPortConnection
+    {
+        public ISerialPortConnectionExecutor CreateExecutor(InterfaceLogSourceTypes type, string id = "")
+            => port.CreateExecutor(type, id);
+
+        public void Dispose()
+            => port.Dispose();
+
+        public void RegisterEvent(Regex pattern, Action<Match> handler)
+            => port.RegisterEvent(pattern, handler);
+    }
+
+    private readonly Dictionary<string, CustomSerialPortConnection> _Connections = [];
 
     private readonly object _sync = new();
 
@@ -32,9 +46,9 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
     }
 
     /// <inheritdoc/>
-    public Func<string, ISerialPortConnection> GetCustomPort => LookupPort;
+    public Func<string, ICustomSerialPortConnection> GetCustomPort => LookupPort;
 
-    private ISerialPortConnection LookupPort(string name)
+    private ICustomSerialPortConnection LookupPort(string name)
     {
         lock (_sync)
         {
@@ -73,7 +87,7 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
                         };
 
                         // Remember
-                        _Connections[customPort.Key] = port;
+                        _Connections[customPort.Key] = new(port);
                     }
                     catch (Exception e)
                     {

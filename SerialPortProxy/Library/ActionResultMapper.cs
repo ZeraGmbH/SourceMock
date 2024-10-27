@@ -41,8 +41,15 @@ public class ActionResultMapper
     {
         try
         {
-            /* Execute the method and report success. */
-            return await method();
+            try
+            {
+                /* Execute the method and report success. */
+                return await method();
+            }
+            catch (AggregateException e)
+            {
+                throw e.InnerExceptions.FirstOrDefault(e);
+            }
         }
         catch (TimeoutException)
         {

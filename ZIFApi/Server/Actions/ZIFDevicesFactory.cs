@@ -1,4 +1,3 @@
-using Castle.Components.DictionaryAdapter;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
@@ -69,7 +68,12 @@ public class ZIFDevicesFactory(IServiceProvider services, ILogger<ZIFDevicesFact
         get
         {
             lock (_sync)
+            {
+                while (!_initialized)
+                    Monitor.Wait(_sync);
+
                 return [.. _Devices];
+            }
         }
     }
 
@@ -79,7 +83,7 @@ public class ZIFDevicesFactory(IServiceProvider services, ILogger<ZIFDevicesFact
         lock (_sync)
         {
             /* Many not be created more than once, */
-            if (_initialized) throw new InvalidOperationException("Meter test system already initialized");
+            if (_initialized) throw new InvalidOperationException("ZIF sockets already initialized");
 
             try
             {

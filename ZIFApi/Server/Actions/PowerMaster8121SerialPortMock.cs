@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-using System.Xml;
 using SerialPortProxy;
 
 namespace ZIFApi.Actions;

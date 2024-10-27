@@ -1,4 +1,3 @@
-using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace ZIFApi.Models;

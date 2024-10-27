@@ -18,7 +18,9 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
         public ISerialPortConnectionExecutor CreateExecutor(InterfaceLogSourceTypes type, string id = "")
             => port.CreateExecutor(type, id);
 
-        public void Dispose()
+        public void Dispose() { }
+
+        public void Terminate()
             => port.Dispose();
 
         public void RegisterEvent(Regex pattern, Action<Match> handler)
@@ -39,7 +41,7 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
             _initialized = true;
 
             foreach (var connection in _Connections.Values)
-                connection.Dispose();
+                connection.Terminate();
 
             Monitor.PulseAll(_sync);
         }

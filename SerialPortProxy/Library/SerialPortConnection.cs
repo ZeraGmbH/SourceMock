@@ -75,15 +75,23 @@ public partial class SerialPortConnection : ISerialPortConnection
     private readonly InterfaceLogEntryTargetConnection _target;
 
     /// <summary>
+    /// Timeout (in Milliseconds) to wait on input after sending a command.
+    /// </summary>
+    private readonly int ReadTimeout;
+
+    /// <summary>
     /// Initialize a serial connection manager.
     /// </summary>
     /// <param name="port">Serial port proxy - maybe physical or mocked.</param>
     /// <param name="target">Target identification for interface logging.</param>
     /// <param name="logger">Optional logging instance.</param>
     /// <param name="enableReader">Unset to disable the input reader.</param>
+    /// <param name="readTimeout">Timeout (in Milliseconds) to wait on input after sending a command.</param>
     /// <exception cref="ArgumentNullException">Proxy must not be null.</exception>
-    private SerialPortConnection(ISerialPort port, InterfaceLogEntryTargetConnection target, ILogger<ISerialPortConnection> logger, bool enableReader)
+    private SerialPortConnection(ISerialPort port, InterfaceLogEntryTargetConnection target, ILogger<ISerialPortConnection> logger, bool enableReader, int? readTimeout)
     {
+        ReadTimeout = readTimeout ?? 30000;
+
         _logger = logger ?? new NullLogger<SerialPortConnection>();
         _port = port ?? throw new ArgumentNullException(nameof(port));
         _target = target;
@@ -105,7 +113,7 @@ public partial class SerialPortConnection : ISerialPortConnection
     /// <param name="enableReader">Unset to disable the input reader.</param>
     /// <returns>The brand new connection.</returns>
     public static ISerialPortConnection FromSerialPort(string port, SerialPortOptions? options, ILogger<ISerialPortConnection> logger, bool enableReader = true)
-        => FromPortInstance(new PhysicalPortProxy(port, options), new() { Protocol = InterfaceLogProtocolTypes.Com, Endpoint = port }, logger, enableReader);
+        => FromPortInstance(new PhysicalPortProxy(port, options), new() { Protocol = InterfaceLogProtocolTypes.Com, Endpoint = port }, logger, enableReader, options?.ReadTimeout);
 
     /// <summary>
     /// Create a new connection based on a TCP-to-Serial passthrouh connection.
@@ -134,9 +142,10 @@ public partial class SerialPortConnection : ISerialPortConnection
     /// <param name="target">Target identification for interface logging.</param>
     /// <param name="logger">Optional logging instance.</param>
     /// <param name="enableReader">Unset to disable the input reader.</param>
+    /// <param name="readTimeout">Timeout (in Milliseconds) to wait on input after sending a command.</param>
     /// <returns>The new connection.</returns>
-    private static ISerialPortConnection FromPortInstance(ISerialPort port, InterfaceLogEntryTargetConnection target, ILogger<ISerialPortConnection> logger, bool enableReader = true)
-        => new SerialPortConnection(port, target, logger, enableReader);
+    private static ISerialPortConnection FromPortInstance(ISerialPort port, InterfaceLogEntryTargetConnection target, ILogger<ISerialPortConnection> logger, bool enableReader = true, int? readTimeout = null)
+        => new SerialPortConnection(port, target, logger, enableReader, readTimeout);
 
     /// <summary>
     /// Create a new mocked based connection.
@@ -256,7 +265,7 @@ public partial class SerialPortConnection : ISerialPortConnection
                     return line;
 
                 /* Wait for new data. */
-                if (!Monitor.Wait(_incoming, UnitTest ?? 30000))
+                if (!Monitor.Wait(_incoming, UnitTest ?? ReadTimeout))
                     throw new TimeoutException("no reply from serial port");
             }
     }

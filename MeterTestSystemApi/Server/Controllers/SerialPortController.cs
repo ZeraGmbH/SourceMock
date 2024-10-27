@@ -34,7 +34,7 @@ public class SerialPortController(IServiceProvider services, IInterfaceLogger in
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<SerialPortReply[]>> ExecuteSerialPortRequestsAsync(string name, [FromBody] SerialPortCommand[] requests)
-        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => Task.Run(async () =>
+        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(async () =>
             {
                 var port = services.GetRequiredKeyedService<ICustomSerialPortConnection>(name);
                 var exec = port.CreateExecutor(InterfaceLogSourceTypes.SerialPort, name);
@@ -61,5 +61,5 @@ public class SerialPortController(IServiceProvider services, IInterfaceLogger in
                             return reply;
                         })
                         .ToArray();
-            }));
+            });
 }

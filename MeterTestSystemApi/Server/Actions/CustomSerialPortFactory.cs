@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using MeterTestSystemApi.Models;
 using MeterTestSystemApi.Models.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -18,8 +19,15 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
         public ISerialPortConnectionExecutor CreateExecutor(InterfaceLogSourceTypes type, string id = "")
             => port.CreateExecutor(type, id);
 
+        /// <summary>
+        /// Will be called from dependency injection when scope is left and
+        /// must be ignored to allow sharing the port between calls.
+        /// </summary>
         public void Dispose() { }
 
+        /// <summary>
+        /// Call on cleanup of the factory.
+        /// </summary>
         public void Terminate()
             => port.Dispose();
 
@@ -46,9 +54,6 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
             Monitor.PulseAll(_sync);
         }
     }
-
-    /// <inheritdoc/>
-    public Func<string, ICustomSerialPortConnection> GetCustomPort => LookupPort;
 
     private ICustomSerialPortConnection LookupPort(string name)
     {
@@ -106,5 +111,35 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
                 Monitor.PulseAll(_sync);
             }
         }
+    }
+
+    /// <inheritdoc/>
+    public async Task<SerialPortReply[]> ExecuteAsync(string name, IEnumerable<SerialPortCommand> requests, IInterfaceLogger logger)
+    {
+        var port = LookupPort(name);
+        var exec = port.CreateExecutor(InterfaceLogSourceTypes.SerialPort, name);
+
+        var commands =
+            requests
+                .Select(r => r.UseRegularExpression ? SerialPortRequest.Create(r.Command, new Regex(r.Reply)) : SerialPortRequest.Create(r.Command, r.Reply))
+                .ToArray();
+
+        await Task.WhenAll(exec.Execute(logger, commands));
+
+        return
+            commands
+                .Select(c =>
+                {
+                    var reply = new SerialPortReply();
+                    var match = c.EndMatch;
+
+                    if (match == null)
+                        reply.Matches.Add(c.Command);
+                    else
+                        reply.Matches.AddRange(match.Groups.Values.Select(g => g.Value));
+
+                    return reply;
+                })
+                .ToArray();
     }
 }

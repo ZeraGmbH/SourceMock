@@ -130,11 +130,6 @@ public static class MeterTestSystemApiConfiguration
             services.AddKeyedSingleton<IMeterTestSystem, FallbackMeteringSystem>(MeterTestSystemRestController.MockKey);
 
         services.AddSingleton<ICustomSerialPortFactory, CustomSerialPortFactory>();
-
-        services.AddKeyedTransient(KeyedService.AnyKey, (di, key) =>
-            key is string name
-                ? di.GetRequiredService<ICustomSerialPortFactory>().GetCustomPort(name)
-                : throw new ArgumentException($"Serial port name must be string but was of type {key?.GetType().Name}", nameof(key)));
     }
 
     /// <summary>

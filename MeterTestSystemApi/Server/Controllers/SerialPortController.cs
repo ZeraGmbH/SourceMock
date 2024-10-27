@@ -1,9 +1,6 @@
-using System.Text.RegularExpressions;
 using MeterTestSystemApi.Models;
-using MeterTestSystemApi.Models.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using SerialPortProxy;
 using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared.Models.Logging;
@@ -17,7 +14,7 @@ namespace MeterTestSystemApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class SerialPortController(IServiceProvider services, IInterfaceLogger interfaceLogger) : ControllerBase
+public class SerialPortController(ICustomSerialPortFactory ports, IInterfaceLogger interfaceLogger) : ControllerBase
 {
     /// <summary>
     /// 
@@ -34,32 +31,5 @@ public class SerialPortController(IServiceProvider services, IInterfaceLogger in
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<SerialPortReply[]>> ExecuteSerialPortRequestsAsync(string name, [FromBody] SerialPortCommand[] requests)
-        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(async () =>
-            {
-                var port = services.GetRequiredKeyedService<ICustomSerialPortConnection>(name);
-                var exec = port.CreateExecutor(InterfaceLogSourceTypes.SerialPort, name);
-
-                var commands =
-                    requests
-                        .Select(r => r.UseRegularExpression ? SerialPortRequest.Create(r.Command, new Regex(r.Reply)) : SerialPortRequest.Create(r.Command, r.Reply))
-                        .ToArray();
-
-                await Task.WhenAll(exec.Execute(interfaceLogger, commands));
-
-                return
-                    commands
-                        .Select(c =>
-                        {
-                            var reply = new SerialPortReply();
-                            var match = c.EndMatch;
-
-                            if (match == null)
-                                reply.Matches.Add(c.Command);
-                            else
-                                reply.Matches.AddRange(match.Groups.Values.Select(g => g.Value));
-
-                            return reply;
-                        })
-                        .ToArray();
-            });
+        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => ports.ExecuteAsync(name, requests, interfaceLogger));
 }

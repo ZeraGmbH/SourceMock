@@ -67,8 +67,8 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
 
                         var port = config.ConfigurationType switch
                         {
-                            SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, log, false),
-                            SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint!, log, false),
+                            SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, log),
+                            SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint!, log),
                             _ => throw new NotSupportedException($"Unknown serial port configuration type {config.ConfigurationType}"),
                         };
 
@@ -113,7 +113,7 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
                     var match = c.EndMatch;
 
                     if (match == null)
-                        reply.Matches.Add(c.Command);
+                        reply.Matches.AddRange(c.Result.Task.Result);
                     else
                         reply.Matches.AddRange(match.Groups.Values.Select(g => g.Value));
 

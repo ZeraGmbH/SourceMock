@@ -103,7 +103,7 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
                 .Select(r => r.UseRegularExpression ? SerialPortRequest.Create(r.Command, new Regex(r.Reply)) : SerialPortRequest.Create(r.Command, r.Reply))
                 .ToArray();
 
-        await Task.WhenAll(exec.Execute(logger, commands));
+        await Task.WhenAll(exec.ExecuteAsync(logger, commands));
 
         return
             commands

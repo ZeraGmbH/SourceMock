@@ -128,7 +128,7 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
         buffer.Add(0x5a);
 
         // It's now time to get exclusive access to the serial port.
-        return factory.CreateExecutor(InterfaceLogSourceTypes.ZIF).RawExecute(logger, (port, connection) =>
+        return factory.CreateExecutor(InterfaceLogSourceTypes.ZIF).RawExecuteAsync(logger, (port, connection) =>
         {
             /* Prepare logging. */
             var requestId = Guid.NewGuid().ToString();

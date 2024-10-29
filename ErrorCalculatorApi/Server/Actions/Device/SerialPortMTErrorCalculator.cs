@@ -57,7 +57,7 @@ public partial class SerialPortMTErrorCalculator([FromKeyedServices("MeterTestSy
     public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger logger)
     {
         /* Execute the request and wait for the information string. */
-        var reply = await _device.Execute(logger, SerialPortRequest.Create("AAV", "AAVACK"))[0];
+        var reply = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
         if (reply.Length < 2)
             throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");

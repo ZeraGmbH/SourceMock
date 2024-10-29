@@ -37,7 +37,7 @@ public partial class SerialPortConnection
         }
     }
 
-    private Task<T> Execute<T>(IInterfaceConnection connection, Func<ISerialPort, IInterfaceConnection, T> algorithm)
+    private Task<T> ExecuteAsync<T>(IInterfaceConnection connection, Func<ISerialPort, IInterfaceConnection, T> algorithm)
     {
         ArgumentNullException.ThrowIfNull(algorithm, nameof(algorithm));
 

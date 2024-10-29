@@ -14,11 +14,11 @@ public partial class SerialPortConnection : ISerialPortConnection
     private class Executor(SerialPortConnection port, InterfaceLogEntryConnection connection) : ISerialPortConnectionExecutor
     {
         /// <inheritdoc/>
-        public Task<string[]>[] Execute(IInterfaceLogger logger, params SerialPortRequest[] requests)
-            => port.Execute(logger.CreateConnection(connection), requests);
+        public Task<string[]>[] ExecuteAsync(IInterfaceLogger logger, params SerialPortRequest[] requests)
+            => port.ExecuteAsync(logger.CreateConnection(connection), requests);
 
-        public Task<T> RawExecute<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, T> algorithm)
-            => port.Execute(logger.CreateConnection(connection), algorithm);
+        public Task<T> RawExecuteAsync<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, T> algorithm)
+            => port.ExecuteAsync(logger.CreateConnection(connection), algorithm);
     }
 
     private abstract class QueueItem

@@ -15,14 +15,14 @@ public interface ISerialPortConnectionExecutor
     /// <param name="requests">The command to send to the device.</param>
     /// <exception cref="ArgumentNullException">Parameter must not be null.</exception>
     /// <returns>All lines sent from the device as a task.</returns>
-    Task<string[]>[] Execute(IInterfaceLogger logger, params SerialPortRequest[] requests);
+    Task<string[]>[] ExecuteAsync(IInterfaceLogger logger, params SerialPortRequest[] requests);
 
     /// <summary>
     /// Direct and exclusive access to the serial port.
     /// </summary>
     /// <param name="logger">Current logging scope.</param>
     /// <param name="algorithm">What to do with the port.</param>
-    Task<T> RawExecute<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, T> algorithm);
+    Task<T> RawExecuteAsync<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, T> algorithm);
 }
 
 /// <summary>

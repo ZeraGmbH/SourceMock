@@ -57,7 +57,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     /// <inheritdoc/>
     public async Task<MeterConstant> GetMeterConstantAsync(IInterfaceLogger logger)
     {
-        var reply = await _device.Execute(logger, SerialPortRequest.Create("AST", "ASTACK"))[0];
+        var reply = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AST", "ASTACK"))[0];
 
         /* We need the range of voltage and current and the measurement mode as well. */
         double? voltage = null, current = null;
@@ -88,7 +88,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     public async Task<ReferenceMeterInformation> GetMeterInformationAsync(IInterfaceLogger logger)
     {
         /* Execute the request and wait for the information string. */
-        var reply = await _device.Execute(logger, SerialPortRequest.Create("AAV", "AAVACK"))[0];
+        var reply = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
         if (reply.Length < 2)
             throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");

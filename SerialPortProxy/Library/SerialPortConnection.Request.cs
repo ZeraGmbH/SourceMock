@@ -38,7 +38,7 @@ public partial class SerialPortConnection
         }
     }
 
-    private Task<string[]>[] Execute(IInterfaceConnection connection, params SerialPortRequest[] requests)
+    private Task<string[]>[] ExecuteAsync(IInterfaceConnection connection, params SerialPortRequest[] requests)
     {
         ArgumentNullException.ThrowIfNull(requests, nameof(requests));
 

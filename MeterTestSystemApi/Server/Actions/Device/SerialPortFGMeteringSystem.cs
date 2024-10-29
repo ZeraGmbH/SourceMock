@@ -224,7 +224,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
             var voltageCode = CodeMappings.Voltage[settings.VoltageAmplifier];
 
             /* Send the combined command to the meter test system. */
-            await _device.Execute(logger, SerialPortRequest.Create($"ZP{voltageCode:00}{currentCode:00}{auxVoltageCode:00}{auxCurrentCode:00}{refMeterCode:00}", "OKZP"))[0];
+            await _device.ExecuteAsync(logger, SerialPortRequest.Create($"ZP{voltageCode:00}{currentCode:00}{auxVoltageCode:00}{auxCurrentCode:00}{refMeterCode:00}", "OKZP"))[0];
         }
         catch (Exception)
         {
@@ -251,7 +251,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("TS", new Regex("^TS(.{8})(.{4})$"));
 
-        await _device.Execute(logger, request)[0];
+        await _device.ExecuteAsync(logger, request)[0];
 
         /* Create response structure. */
         return new()
@@ -267,7 +267,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("SM", _smRegEx);
 
-        await _device.Execute(logger, request)[0];
+        await _device.ExecuteAsync(logger, request)[0];
 
         /* Create response structure. */
         return ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, true);
@@ -277,7 +277,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     /// Enable error condition generation.
     /// </summary>
     /// <param name="logger">Logger to use.</param>
-    public Task ActivateErrorConditionsAsync(IInterfaceLogger logger) => _device.Execute(logger, SerialPortRequest.Create("SE1", "OKSE"))[0];
+    public Task ActivateErrorConditionsAsync(IInterfaceLogger logger) => _device.ExecuteAsync(logger, SerialPortRequest.Create("SE1", "OKSE"))[0];
 
     /// <summary>
     /// Configure the error calculators.

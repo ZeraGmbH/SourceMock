@@ -13,7 +13,7 @@ partial class SerialPortFGSource
     {
         await TestConfiguredAsync(logger);
 
-        await Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("3CM2", "OK3CM2")));
+        await Task.WhenAll(Device.ExecuteAsync(logger, SerialPortRequest.Create("3CM2", "OK3CM2")));
     }
 
     /// <inheritdoc/>
@@ -26,7 +26,7 @@ partial class SerialPortFGSource
         var countdownReq = SerialPortRequest.Create("3MA1", new Regex(@"^OK3MA1;(.+)$"));
         var totalReq = SerialPortRequest.Create("3PA45", new Regex(@"^OK3PA45;(.+)$"));
 
-        await Task.WhenAll(Device.Execute(logger, activeReq, countdownReq, totalReq));
+        await Task.WhenAll(Device.ExecuteAsync(logger, activeReq, countdownReq, totalReq));
 
         /* Scale actual values to energy - in Wh. */
         var remaining = new ActiveEnergy(double.Parse(countdownReq.EndMatch!.Groups[1].Value) * 1000d);
@@ -48,7 +48,7 @@ partial class SerialPortFGSource
 
         if (value < ActiveEnergy.Zero) throw new ArgumentOutOfRangeException(nameof(value));
 
-        await Device.Execute(logger, SerialPortRequest.Create($"3PS45;{(double)value / 1000d}", "OK3PS45"))[0];
+        await Device.ExecuteAsync(logger, SerialPortRequest.Create($"3PS45;{(double)value / 1000d}", "OK3PS45"))[0];
     }
 
     /// <inheritdoc/>
@@ -58,7 +58,7 @@ partial class SerialPortFGSource
 
         var onAsNumber = on ? 3 : 4;
 
-        await Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create($"3CM{onAsNumber}", $"OK3CM{onAsNumber}")));
+        await Task.WhenAll(Device.ExecuteAsync(logger, SerialPortRequest.Create($"3CM{onAsNumber}", $"OK3CM{onAsNumber}")));
     }
 
     /// <inheritdoc/>
@@ -66,7 +66,7 @@ partial class SerialPortFGSource
     {
         await TestConfiguredAsync(logger);
 
-        await Task.WhenAll(Device.Execute(logger, SerialPortRequest.Create("3CM1", "OK3CM1")));
+        await Task.WhenAll(Device.ExecuteAsync(logger, SerialPortRequest.Create("3CM1", "OK3CM1")));
     }
 
     /// <inheritdoc/>
@@ -76,7 +76,7 @@ partial class SerialPortFGSource
         var dosage = SerialPortRequest.Create("3SA1", new Regex(@"^OK3SA1;([0123])$"));
         var mode = SerialPortRequest.Create("3SA3", new Regex(@"^OK3SA3;([012])$"));
 
-        await Task.WhenAll(Device.Execute(logger, dosage, mode));
+        await Task.WhenAll(Device.ExecuteAsync(logger, dosage, mode));
 
         /* Current should be switched off if dosage mode is on mode dosage itself is not yet active. */
         return mode.EndMatch?.Groups[1].Value == "2" && dosage.EndMatch?.Groups[1].Value == "1";

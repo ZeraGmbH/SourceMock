@@ -26,7 +26,7 @@ partial class SerialPortMTRefMeter
     private async Task<MeasuredLoadpoint> CreateActualValueRequestAsync(IInterfaceLogger logger)
     {
         /* Execute the request and get the answer from the device. */
-        var replies = await _device.Execute(
+        var replies = await _device.ExecuteAsync(
             logger,
             SerialPortRequest.Create("ATI01", "ATIACK"),
             SerialPortRequest.Create("AME", "AMEACK")

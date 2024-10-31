@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 COPY BarcodeApi BarcodeApi
+COPY BurdenApi BurdenApi
 COPY DutApi DutApi
 COPY ErrorCalculatorApi ErrorCalculatorApi 
 COPY MeterTestSystemApi MeterTestSystemApi

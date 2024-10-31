@@ -1,4 +1,5 @@
 using BarcodeApi.Models;
+using BurdenApi.Models;
 using ErrorCalculatorApi.Models;
 using MongoDB.Bson.Serialization.Attributes;
 using SourceApi.Model.Configuration;
@@ -66,4 +67,10 @@ public class InterfaceConfiguration
     /// </summary>
     [BsonElement("customSerialPorts")]
     public Dictionary<string, CustomSerialPortConfiguration> CustomSerialPorts { get; set; } = [];
+
+    /// <summary>
+    /// Burden to connect to - either voltage or current.
+    /// </summary>
+    [BsonElement("burden")]
+    public BurdenConfiguration? Burden { get; set; }
 }

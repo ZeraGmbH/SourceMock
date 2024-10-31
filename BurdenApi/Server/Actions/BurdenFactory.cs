@@ -43,14 +43,14 @@ public class BurdenFactory(IServiceProvider services, ILogger<BurdenFactory> log
         {
             _initialized = true;
 
-            _Connection.Dispose();
+            _Connection?.Dispose();
 
             Monitor.PulseAll(_sync);
         }
     }
 
     /// <inheritdoc/>
-    public void Initialize(BurdenConfiguration? configuration)
+    public void Initialize(BurdenConfiguration configuration)
     {
         lock (_sync)
         {

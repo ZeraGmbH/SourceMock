@@ -9,7 +9,7 @@ public interface IBurdenFactory : IDisposable
     /// 
     /// </summary>
     /// <param name="configuration"></param>
-    void Initialize(BurdenConfiguration? configuration);
+    void Initialize(BurdenConfiguration configuration);
 
     /// <summary>
     /// 

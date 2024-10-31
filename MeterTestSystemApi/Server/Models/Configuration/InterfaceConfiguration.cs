@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using BarcodeApi.Models;
 using BurdenApi.Models;
 using ErrorCalculatorApi.Models;
@@ -72,5 +74,6 @@ public class InterfaceConfiguration
     /// Burden to connect to - either voltage or current.
     /// </summary>
     [BsonElement("burden")]
-    public BurdenConfiguration? Burden { get; set; }
+    [NotNull, Required]
+    public BurdenConfiguration Burden { get; set; } = new();
 }

@@ -28,7 +28,9 @@ public class BurdenSerialPortMock : ISerialPort
     /// <inheritdoc/>
     public string ReadLine()
     {
-        throw new NotImplementedException();
+        Thread.Sleep(500);
+
+        throw new TimeoutException();
     }
 
     /// <inheritdoc/>

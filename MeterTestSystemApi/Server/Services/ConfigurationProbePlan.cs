@@ -91,6 +91,13 @@ public class ConfigurationProbePlan(IProbingOperationStore store) : IConfigurati
                             Protocol = SerialProbeProtocols.PM8181,
                             Device = new() { Type = type, Index = (uint)i }
                         });
+
+                    if (_request.Configuration.ESxB != null)
+                        _probes.Add(new SerialProbe()
+                        {
+                            Protocol = SerialProbeProtocols.ESxB,
+                            Device = new() { Type = type, Index = (uint)i }
+                        });
                 }
         }
     }

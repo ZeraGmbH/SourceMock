@@ -2,6 +2,7 @@ using BurdenApi.Actions;
 using BurdenApi.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SerialPortProxy;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace BurdenApi;
@@ -19,8 +20,14 @@ public static class BurdenApiConfiguration
     public static void UseBurdenApi(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSingleton<IBurdenFactory, BurdenFactory>();
+        services.AddSingleton<IBurden, Burden>();
 
-        services.AddTransient((di) => di.GetRequiredService<BurdenFactory>().Burden);
+        services.AddKeyedSingleton("Burden", (ctx, key) =>
+        {
+            if (!"MeterTestSystem".Equals(key)) throw new ArgumentException("wrong service key", nameof(key));
+
+            return ctx.GetRequiredService<BurdenFactory>().Connection;
+        });
     }
 
     /// <summary>

@@ -1,3 +1,5 @@
+using SerialPortProxy;
+
 namespace BurdenApi.Models;
 
 /// <summary>
@@ -14,5 +16,5 @@ public interface IBurdenFactory : IDisposable
     /// <summary>
     /// 
     /// </summary>
-    IBurden Burden { get; }
+    ISerialPortConnection Connection { get; }
 }

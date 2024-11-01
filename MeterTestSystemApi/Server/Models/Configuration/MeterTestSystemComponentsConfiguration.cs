@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
+using BurdenApi.Models;
 
 namespace MeterTestSystemApi.Models.Configuration;
 
@@ -23,6 +24,11 @@ public class MeterTestSystemComponentsConfiguration
     /// Connection to a PowerMaster Model 8121 compatible ZIF socket.
     /// </summary>
     public SerialPortComponentConfiguration? PM8121ZIF { get; set; }
+
+    /// <summary>
+    /// Connection to a ESxB burden.
+    /// </summary>
+    public SerialPortComponentConfiguration? ESxB { get; set; }
 
     /// <summary>
     /// Configuration if each test position. Entries must not be 

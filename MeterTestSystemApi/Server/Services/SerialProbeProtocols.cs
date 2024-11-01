@@ -19,4 +19,9 @@ internal enum SerialProbeProtocols
     /// Power Master Model 8121, ZIF socket.
     /// </summary>
     PM8181,
+
+    /// <summary>
+    /// ESVB/ESCB burden.
+    /// </summary>
+    ESxB,
 }

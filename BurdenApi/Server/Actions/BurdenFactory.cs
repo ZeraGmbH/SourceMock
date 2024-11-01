@@ -11,10 +11,6 @@ namespace BurdenApi.Actions;
 /// </summary>
 public class BurdenFactory(IServiceProvider services, ILogger<BurdenFactory> logger) : IBurdenFactory
 {
-#pragma warning disable CS9113 // Parameter is unread.
-    private class FallbackBurden(ISerialPortConnection port) : IBurden { }
-#pragma warning restore CS9113 // Parameter is unread.
-
     private ISerialPortConnection _Connection = null!;
 
     private readonly object _sync = new();
@@ -22,7 +18,7 @@ public class BurdenFactory(IServiceProvider services, ILogger<BurdenFactory> log
     private bool _initialized = false;
 
     /// <inheritdoc />
-    public IBurden Burden
+    public ISerialPortConnection Connection
     {
         get
         {
@@ -31,7 +27,7 @@ public class BurdenFactory(IServiceProvider services, ILogger<BurdenFactory> log
                 while (!_initialized)
                     Monitor.Wait(_sync);
 
-                return _Connection != null ? new FallbackBurden(_Connection) : null!;
+                return _Connection;
             }
         }
     }

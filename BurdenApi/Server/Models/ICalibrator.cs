@@ -30,6 +30,5 @@ public interface ICalibrator
     /// </summary>
     /// <param name="target">Target to find.</param>
     /// <param name="initial">Initial calibration values.</param>
-    /// <param name="hardware">Hardware to get values from.</param>
-    Task RunAsync(GoalValue target, Calibration initial, ICalibrationHardware hardware);
+    Task RunAsync(GoalValue target, Calibration initial);
 }

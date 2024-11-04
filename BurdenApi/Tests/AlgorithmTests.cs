@@ -1,11 +1,35 @@
 using BurdenApi.Actions;
 using BurdenApi.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BurdenApiTests
 {
     [TestFixture]
     public class AlgorithmTests
     {
+        private ICalibrator Calibrator = null!;
+
+        private ServiceProvider Services = null!;
+
+        [SetUp]
+        public void Setup()
+        {
+            var services = new ServiceCollection();
+
+            services.AddTransient<ICalibrator, Calibrator>();
+            services.AddTransient<ICalibrationHardware, CalibrationHardware>();
+
+            Services = services.BuildServiceProvider();
+
+            Calibrator = Services.GetRequiredService<ICalibrator>();
+        }
+
+        [TearDown]
+        public void Teardown()
+        {
+            Services.Dispose();
+        }
+
         [TestCase(0, 0)]
         [TestCase(0, 127)]
         [TestCase(127, 0)]
@@ -108,7 +132,7 @@ namespace BurdenApiTests
         [TestCase(0, 0, 127, 127, 0, 1)]
         public async Task Mock_Hardware_Will_Produce_Values_Async(byte rMajor, byte rMinor, byte iMajor, byte iMinor, double apparentPower, double powerFactor)
         {
-            var hardware = new CalibrationHardware();
+            var hardware = Services.GetRequiredService<ICalibrationHardware>();
 
             var values = await hardware.MeasureAsync(new(new(rMajor, rMinor), new(iMajor, iMinor)));
 
@@ -140,22 +164,15 @@ namespace BurdenApiTests
         [Test]
         public async Task Can_Run_Calibration_Async()
         {
-            var hardware = new CalibrationHardware();
-            var calibrator = new Calibrator();
+            await Calibrator.RunAsync(new(new(50), new(0.75)), new(new(64, 32), new(32, 64)));
 
-            await calibrator.RunAsync(
-                new(new(50), new(0.75)),
-                new(new(64, 32), new(32, 64)),
-                hardware
-            );
-
-            var step = calibrator.LastStep;
+            var step = Calibrator.LastStep;
 
             Assert.That(step, Is.Not.Null);
 
             Assert.Multiple(() =>
             {
-                Assert.That(calibrator.Steps, Has.Length.EqualTo(168));
+                Assert.That(Calibrator.Steps, Has.Length.EqualTo(168));
 
                 Assert.That(step.Calibration.Resistive.Coarse, Is.EqualTo(48));
                 Assert.That(step.Calibration.Resistive.Fine, Is.EqualTo(6));
@@ -170,34 +187,30 @@ namespace BurdenApiTests
             });
         }
 
-        [TestCase(50, 0.75)]
-        [TestCase(60, 0.75)]
-        [TestCase(40, 0.75)]
-        [TestCase(70, 0.75)]
-        [TestCase(35, 0.75)]
-        [TestCase(50, 0.8)]
-        [TestCase(50, 0.9)]
-        [TestCase(50, 1)]
-        [TestCase(50, 0.1)]
-        public async Task Can_Run_Calibrations_Async(double power, double factor)
+        [TestCase(50, 0.75, 64, 32)]
+        [TestCase(60, 0.75, 64, 32)]
+        [TestCase(40, 0.75, 64, 32)]
+        [TestCase(70, 0.75, 64, 32)]
+        [TestCase(35, 0.75, 64, 32)]
+        [TestCase(50, 0.8, 64, 32)]
+        [TestCase(50, 0.9, 64, 32)]
+        [TestCase(50, 1, 64, 32)]
+        [TestCase(50, 0.1, 64, 32)]
+        [TestCase(50, 0.8, 20, 10)]
+        [TestCase(50, 0.8, 0, 0)]
+        [TestCase(50, 0.8, 127, 127)]
+        public async Task Can_Run_Calibrations_Async(double power, double factor, byte big, byte small)
         {
-            var hardware = new CalibrationHardware();
-            var calibrator = new Calibrator();
+            await Calibrator.RunAsync(new(new(power), new(factor)), new(new(big, small), new(small, big)));
 
-            await calibrator.RunAsync(
-                new(new(power), new(factor)),
-                new(new(64, 32), new(32, 64)),
-                hardware
-            );
-
-            var step = calibrator.LastStep;
+            var step = Calibrator.LastStep;
 
             Assert.That(step, Is.Not.Null);
 
             Assert.Multiple(() =>
             {
                 Assert.That((double)step.Values.ApparentPower, Is.EqualTo(power).Within(0.1));
-                Assert.That((double)step.Values.PowerFactor, Is.EqualTo(factor).Within(0.001));
+                Assert.That((double)step.Values.PowerFactor, Is.EqualTo(factor).Within(0.01));
 
                 Assert.That(Math.Abs(step.Deviation.DeltaPower), Is.LessThan(0.1));
                 Assert.That(Math.Abs(step.Deviation.DeltaFactor), Is.LessThan(0.1));

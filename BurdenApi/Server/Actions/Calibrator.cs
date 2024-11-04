@@ -5,7 +5,7 @@ namespace BurdenApi.Actions;
 /// <summary>
 /// Implements one burden calibration algorithm.
 /// </summary>
-public class Calibrator : ICalibrator
+public class Calibrator(ICalibrationHardware hardware) : ICalibrator
 {
     /// <inheritdoc/>
     public Calibration InitialCalibration { get; private set; } = null!;
@@ -13,9 +13,7 @@ public class Calibrator : ICalibrator
     /// <inheritdoc/>
     public GoalValue Goal { get; private set; } = null!;
 
-    private Calibration _Calibration = null!;
-
-    private ICalibrationHardware _Hardware = null!;
+    private Calibration CurrentCalibration => LastStep?.Calibration ?? InitialCalibration;
 
     private bool _ResistanceCoarseFixed = false;
 
@@ -30,11 +28,9 @@ public class Calibrator : ICalibrator
     public CalibrationStep? LastStep => _Steps.LastOrDefault();
 
     /// <inheritdoc/>
-    public async Task RunAsync(GoalValue target, Calibration initial, ICalibrationHardware hardware)
+    public async Task RunAsync(GoalValue target, Calibration initial)
     {
-        _Hardware = hardware;
-
-        _Calibration = initial;
+        // Reset state - caller is responsible to synchronize access.
         Goal = target;
         InitialCalibration = initial;
 
@@ -43,41 +39,49 @@ public class Calibrator : ICalibrator
 
         _Steps.Clear();
 
-        for (var done = new HashSet<CalibrationStep>(); ;)
+        // Secure bound by a maximum number of steps - we expect a maximum of 4 * 127 steps.
+        for (var done = new HashSet<CalibrationStep>(); _Steps.Count < 1000;)
         {
             // Try to make it better.
             var step = await IterateAsync();
 
+            // We found no way to improve the calibration.
             if (step?.Calibration == null) break;
 
-            // Already did this one
+            // Already did this one?
             if (!done.Add(step))
             {
                 // Already fixed anything - must abort now.
                 if (_ImpedanceCoarseFixed && _ResistanceCoarseFixed) break;
 
-                // Find the best fit.
-                step = _Steps.MinBy(s => s.TotalAbsDelta)!;
-
-                // Simulate as latest.
+                // Add to list.
                 _Steps.Add(step);
+
+                // Find the best fit - will become the latest result.
+                step = _Steps.MinBy(s => s.TotalAbsDelta)!;
 
                 // Only fine tuning for now.
                 _ImpedanceCoarseFixed = true;
                 _ResistanceCoarseFixed = true;
             }
 
-            // Remember new iteration.
-            _Calibration = step.Calibration!;
-
             // Add to list.
             _Steps.Add(step);
         }
     }
 
+    /// <summary>
+    /// Adjust a single part of a single pair.
+    /// </summary>
+    /// <param name="delta">Deviations measured.</param>
+    /// <param name="field">Access the deviation information to use - value is guarenteed not to be zero.</param>
+    /// <param name="changer">Update the calibration for the next step.</param>
+    /// <param name="createCalibration">Create a complete calibration information for value measurement.</param>
+    /// <returns>null if no further processing is possible, elsewhere the Calibration memember will be 
+    /// null as well if the changed calibration moved us further away from the goal.</returns>
     private async Task<CalibrationStep?> AdjustCoarseOrFine(GoalDeviation delta, Func<GoalDeviation, double> field, Func<int, CalibrationPair?> changer, Func<CalibrationPair, Calibration> createCalibration)
     {
-        // Apply correction.
+        // Apply correction - it is expected that the order of calibration values mirrors the order of measured values.
         var nextPair = changer(field(delta) > 0 ? -1 : +1);
 
         // Correction may not be possible - bounds are reached.
@@ -85,7 +89,7 @@ public class Calibrator : ICalibrator
 
         // Re-measure.
         var nextCalibration = createCalibration(nextPair);
-        var newValues = await _Hardware.MeasureAsync(nextCalibration);
+        var newValues = await hardware.MeasureAsync(nextCalibration);
         var newDelta = newValues / Goal;
 
         // There was some improvment - at least it did not get worse.
@@ -102,50 +106,74 @@ public class Calibrator : ICalibrator
         return new() { Calibration = null!, Values = null!, Deviation = null!, TotalAbsDelta = 0 };
     }
 
+    /// <summary>
+    /// Calibrate a pair of values.
+    /// </summary>
+    /// <param name="coarseFixed">Set if the coarse value is already fixed.</param>
+    /// <param name="delta">Measured deviation from the goal.</param>
+    /// <param name="pair">Calibration pair to process.</param>
+    /// <param name="field">Access the deviation to inspect.</param>
+    /// <param name="createCalibration">Method to create a full calibration set to get a new measurement.</param>
+    /// <param name="setAlreadyFixed">Set to fix the coarse calibration.</param>
+    /// <returns>null if no futher processing is possible.</returns>
     private async Task<CalibrationStep?> AdjustCoarseAndFine(bool coarseFixed, GoalDeviation delta, CalibrationPair pair, Func<GoalDeviation, double> field, Func<CalibrationPair, Calibration> createCalibration, Action<bool> setAlreadyFixed)
     {
         // No difference at all.
         if (field(delta) == 0) return null;
 
-        // Adjust coarse corrextion.
+        // Adjust coarse corrextion if not already fixed.
         if (!coarseFixed)
         {
+            // Check if there is a better calibration.
             var coraseStep = await AdjustCoarseOrFine(delta, field, pair.ChangeCoarse, createCalibration);
 
             if (coraseStep != null)
-                if (coraseStep.Calibration != null)
-                    return coraseStep;
-                else
-                    setAlreadyFixed(true);
+            {
+                // We found a better match.
+                if (coraseStep.Calibration != null) return coraseStep;
+
+                // There is no better match in coarse, so fix the calibration value.
+                setAlreadyFixed(true);
+            }
         }
 
         // Adjust fine correction.
         var fineStep = await AdjustCoarseOrFine(delta, field, pair.ChangeFine, createCalibration);
 
-        if (fineStep?.Calibration != null) return fineStep;
-
-        // Nothing found.
-        return null;
+        // If fine correction step makes it worse just skip it.
+        return fineStep?.Calibration != null ? fineStep : null;
     }
 
+    /// <summary>
+    /// Calibrate the resistence pair.
+    /// </summary>
+    /// <param name="delta">Deviation measured.</param>
+    /// <returns>Successfull calibration step or null.</returns>
     private Task<CalibrationStep?> AdjustResistance(GoalDeviation delta)
-        => AdjustCoarseAndFine(_ResistanceCoarseFixed, delta, _Calibration.Resistive, d => d.DeltaPower, resPair => new(resPair, _Calibration.Inductive), f => _ResistanceCoarseFixed = f);
+        => AdjustCoarseAndFine(_ResistanceCoarseFixed, delta, CurrentCalibration.Resistive, d => d.DeltaPower, resPair => new(resPair, CurrentCalibration.Inductive), f => _ResistanceCoarseFixed = f);
 
+    /// <summary>
+    /// Calibrate the impedance pair.
+    /// </summary>
+    /// <param name="delta">Deviation measured.</param>
+    /// <returns>Successfull calibration step or null.</returns>
     private Task<CalibrationStep?> AdjustImpedance(GoalDeviation delta)
-        => AdjustCoarseAndFine(_ImpedanceCoarseFixed, delta, _Calibration.Inductive, d => d.DeltaFactor, impPair => new(_Calibration.Resistive, impPair), f => _ImpedanceCoarseFixed = f);
+        => AdjustCoarseAndFine(_ImpedanceCoarseFixed, delta, CurrentCalibration.Inductive, d => d.DeltaFactor, impPair => new(CurrentCalibration.Resistive, impPair), f => _ImpedanceCoarseFixed = f);
 
+    /// <summary>
+    /// Execute one calibration iteration step.
+    /// </summary>
+    /// <returns>Successfull calibration step or null.</returns>
     private async Task<CalibrationStep?> IterateAsync()
     {
         // Retrieve new values and relativ deviation from goal.
-        var delta = await _Hardware.MeasureAsync(_Calibration) / Goal;
+        var delta = await hardware.MeasureAsync(CurrentCalibration) / Goal;
 
         // Work on the largest deviation first.
         var step =
-            Math.Abs(delta.DeltaPower) > Math.Abs(delta.DeltaFactor)
+            Math.Abs(delta.DeltaPower) >= Math.Abs(delta.DeltaFactor)
             ? await AdjustResistance(delta) ?? await AdjustImpedance(delta)
-            : Math.Abs(delta.DeltaPower) < Math.Abs(delta.DeltaFactor)
-            ? await AdjustImpedance(delta) ?? await AdjustResistance(delta)
-            : null;
+            : await AdjustImpedance(delta) ?? await AdjustResistance(delta);
 
         // See if we did anything.
         return step?.Calibration != null ? step : null;

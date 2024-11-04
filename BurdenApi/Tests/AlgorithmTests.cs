@@ -1,3 +1,5 @@
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace BurdenApiTests;
@@ -143,6 +145,57 @@ public class Calibration(CalibrationPair resistive, CalibrationPair inductive)
     public CalibrationPair Inductive { get; private set; } = inductive;
 }
 
+public class CalibrationHardware
+{
+    private const int CorrelationLimit = 127 * 128 + 127;
+
+    private const double Limit = (CorrelationLimit + CorrelationLimit / 0.01234d) / 12.34d;
+
+    private Calibration _current = null!;
+
+    public Task SetTransientCalibrationAsync(Calibration calibration)
+    {
+        _current = calibration;
+
+        return Task.CompletedTask;
+    }
+
+    public Task<GoalValue> MeasureAsync()
+    {
+        var resistance = _current.Resistive.Major * 128 + _current.Resistive.Minor;
+        var inductive = _current.Inductive.Major * 128 + _current.Inductive.Minor;
+
+        var power = (resistance + inductive / 0.01234d) / 12.34d;
+        var factor = (inductive + resistance / 0.01234d) / 12.34d;
+
+        return Task.FromResult(new GoalValue(new(power), new(factor / Limit * 2 - 1)));
+    }
+}
+
+public class Calibrator
+{
+    public Calibration InitialCalibration { get; private set; } = null!;
+
+    public Calibration Calibration { get; set; } = null!;
+
+    private CalibrationHardware _Hardware = null!;
+
+    public async Task RunAsync(Calibration initial, CalibrationHardware hardware)
+    {
+        _Hardware = hardware;
+
+        InitialCalibration = initial;
+        Calibration = initial;
+
+        await IterateAsync();
+    }
+
+    private async Task IterateAsync()
+    {
+        await _Hardware.SetTransientCalibrationAsync(Calibration);
+    }
+}
+
 [TestFixture]
 public class AlgorithmTests
 {
@@ -202,7 +255,6 @@ public class AlgorithmTests
         var pair = new CalibrationPair(major, minor);
 
         Assert.Throws<ArgumentOutOfRangeException>(() => pair.ChangeMajor(delta));
-
     }
 
     [TestCase(0, 0, 0, false)]
@@ -235,6 +287,56 @@ public class AlgorithmTests
         var pair = new CalibrationPair(major, minor);
 
         Assert.Throws<ArgumentOutOfRangeException>(() => pair.ChangeMinor(delta));
+    }
 
+    [TestCase(0, 0, 0, 0, 0, -1d)]
+    [TestCase(127, 127, 127, 127, 108915, 1d)]
+    [TestCase(64, 64, 64, 64, 54886, 0.0078d)]
+    [TestCase(64, 32, 32, 64, 27985, -0.002d)]
+    [TestCase(64, 0, 64, 0, 54461, 0d)]
+    [TestCase(64, 0, 64, 32, 54671, 0.0001d)]
+    [TestCase(64, 32, 64, 0, 54463, 0.0039d)]
+    public async Task Mock_Hardware_Will_Produce_Values(byte rMajor, byte rMinor, byte iMajor, byte iMinor, double apparentPower, double powerFactor)
+    {
+        var hardware = new CalibrationHardware();
+
+        await hardware.SetTransientCalibrationAsync(new(new(rMajor, rMinor), new(iMajor, iMinor)));
+
+        var values = await hardware.MeasureAsync();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That((double)values.ApparentPower, Is.EqualTo(apparentPower).Within(1));
+            Assert.That((double)values.PowerFactor, Is.EqualTo(powerFactor).Within(0.0001));
+        });
+    }
+
+    [TestCase(0, 0, 100, 0.5, -1, -1)]
+    [TestCase(100, 0.5, 100, 0.5, 0, 0)]
+    [TestCase(120, 0.6, 100, 0.5, 0.2, 0.2)]
+    [TestCase(80, 0.4, 100, 0.5, -0.2, -0.2)]
+    public void Can_Calculate_Relative_Goals(double pow1, double fac1, double pow2, double fac2, double deltaPower, double deltaFactor)
+    {
+        var current = new GoalValue(new(pow1), new(fac1));
+        var goal = new GoalValue(new(pow2), new(fac2));
+
+        var delta = current / goal;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(delta.DeltaPower, Is.EqualTo(deltaPower).Within(0.01));
+            Assert.That(delta.DeltaFactor, Is.EqualTo(deltaFactor).Within(0.01));
+        });
+    }
+
+    [Test, Ignore("not yet")]
+    public async Task Can_Run_Calibration()
+    {
+        var hardware = new CalibrationHardware();
+        var calibrator = new Calibrator();
+
+        await calibrator.RunAsync(new(new(64, 32), new(32, 64)), hardware);
+
+        Assert.That(calibrator, Is.Null);
     }
 }

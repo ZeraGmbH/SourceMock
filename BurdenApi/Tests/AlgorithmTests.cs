@@ -120,6 +120,29 @@ public class CalibrationPair()
         };
 }
 
+/// <summary>
+/// Full calibration information.
+/// </summary>
+/// <param name="resistive">Resistive calibration.</param>
+/// <param name="inductive">Inductive calibration.</param>
+public class Calibration(CalibrationPair resistive, CalibrationPair inductive)
+{
+    /// <summary>
+    /// For serialisation only.
+    /// </summary>
+    public Calibration() : this(new(), new()) { }
+
+    /// <summary>
+    /// Calibration on the resistive load.
+    /// </summary>
+    public CalibrationPair Resistive { get; private set; } = resistive;
+
+    /// <summary>
+    /// Calibration on the inductive load.
+    /// </summary>
+    public CalibrationPair Inductive { get; private set; } = inductive;
+}
+
 [TestFixture]
 public class AlgorithmTests
 {
@@ -146,6 +169,72 @@ public class AlgorithmTests
     [TestCase(255, 255)]
     public void Calibration_Pair_Can_Not_Be_Created(byte major, byte minor)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new CalibrationPair(major, major));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CalibrationPair(major, minor));
+    }
+
+    [TestCase(0, 0, 0, false)]
+    [TestCase(0, 0, -1, false)]
+    [TestCase(0, 0, 1, true)]
+    [TestCase(127, 0, 0, false)]
+    [TestCase(127, 0, -1, true)]
+    [TestCase(127, 0, 1, false)]
+    public void Calibration_Pair_Major_Can_Be_Changed(byte major, byte minor, int delta, bool change)
+    {
+        var pair = new CalibrationPair(major, minor);
+        var newPair = pair.ChangeMajor(delta);
+
+        if (change)
+            Assert.Multiple(() =>
+            {
+                Assert.That(newPair, Is.Not.Null);
+                Assert.That(newPair, Is.Not.SameAs(pair));
+                Assert.That(newPair!.Major, Is.EqualTo(major + delta));
+                Assert.That(newPair.Minor, Is.EqualTo(minor));
+            });
+        else
+            Assert.That(newPair, Is.Null);
+    }
+
+    [TestCase(64, 64, -2)]
+    [TestCase(64, 64, 2)]
+    public void Calibration_Pair_Major_Can_Not_Be_Changed(byte major, byte minor, int delta)
+    {
+        var pair = new CalibrationPair(major, minor);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => pair.ChangeMajor(delta));
+
+    }
+
+    [TestCase(0, 0, 0, false)]
+    [TestCase(0, 0, -1, false)]
+    [TestCase(0, 0, 1, true)]
+    [TestCase(0, 127, 0, false)]
+    [TestCase(0, 127, -1, true)]
+    [TestCase(0, 127, 1, false)]
+    public void Calibration_Pair_Minor_Can_Be_Changed(byte major, byte minor, int delta, bool change)
+    {
+        var pair = new CalibrationPair(major, minor);
+        var newPair = pair.ChangeMinor(delta);
+
+        if (change)
+            Assert.Multiple(() =>
+            {
+                Assert.That(newPair, Is.Not.Null);
+                Assert.That(newPair, Is.Not.SameAs(pair));
+                Assert.That(newPair!.Major, Is.EqualTo(major));
+                Assert.That(newPair.Minor, Is.EqualTo(minor + delta));
+            });
+        else
+            Assert.That(newPair, Is.Null);
+    }
+
+    [TestCase(64, 64, -2)]
+    [TestCase(64, 64, 2)]
+    public void Calibration_Pair_Minor_Can_Not_Be_Changed(byte major, byte minor, int delta)
+    {
+        var pair = new CalibrationPair(major, minor);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => pair.ChangeMinor(delta));
+
     }
 }

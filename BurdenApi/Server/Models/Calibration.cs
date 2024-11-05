@@ -26,7 +26,7 @@ public class Calibration(CalibrationPair resistive, CalibrationPair inductive)
     /// Create a hash code for this calibration.
     /// </summary>
     /// <returns>Hash code for the calibration.</returns>
-    public override int GetHashCode() => Resistive.GetHashCode() ^ Inductive.GetHashCode();
+    public override int GetHashCode() => (Resistive.GetHashCode() << 4) ^ Inductive.GetHashCode();
 
     /// <summary>
     /// Create a descripte string for the calibration.

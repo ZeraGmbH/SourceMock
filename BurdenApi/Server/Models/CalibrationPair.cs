@@ -59,7 +59,7 @@ public class CalibrationPair()
     /// Create a hash code from the elementary values.
     /// </summary>
     /// <returns>Some hash code based on our values.</returns>
-    public override int GetHashCode() => Coarse.GetHashCode() ^ Fine.GetHashCode();
+    public override int GetHashCode() => (Coarse.GetHashCode() << 4) ^ Fine.GetHashCode();
 
     /// <summary>
     /// Create a string describing this value pair.

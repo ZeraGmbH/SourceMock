@@ -71,40 +71,40 @@ public class Calibrator(ICalibrationHardware hardware) : ICalibrator
     }
 
     /// <summary>
-    /// Adjust a single part of a single pair.
+    /// Execute one calibration iteration step.
     /// </summary>
-    /// <param name="delta">Deviations measured.</param>
-    /// <param name="field">Access the deviation information to use - value is guarenteed not to be zero.</param>
-    /// <param name="changer">Update the calibration for the next step.</param>
-    /// <param name="createCalibration">Create a complete calibration information for value measurement.</param>
-    /// <returns>null if no further processing is possible, elsewhere the Calibration memember will be 
-    /// null as well if the changed calibration moved us further away from the goal.</returns>
-    private async Task<CalibrationStep?> AdjustCoarseOrFine(GoalDeviation delta, Func<GoalDeviation, double> field, Func<bool, CalibrationPair?> changer, Func<CalibrationPair, Calibration> createCalibration)
+    /// <returns>Successfull calibration step or null.</returns>
+    private async Task<CalibrationStep?> IterateAsync()
     {
-        // Apply correction - it is expected that the order of calibration values mirrors the order of measured values.
-        var nextPair = changer(field(delta) < 0);
+        // Retrieve new values and relativ deviation from goal.
+        var delta = await hardware.MeasureAsync(CurrentCalibration) / Goal;
 
-        // Correction may not be possible - bounds are reached.
-        if (nextPair == null) return null;
+        // Work on the largest deviation first.
+        var step =
+            Math.Abs(delta.DeltaPower) >= Math.Abs(delta.DeltaFactor)
+            ? await AdjustResistance(delta) ?? await AdjustImpedance(delta)
+            : await AdjustImpedance(delta) ?? await AdjustResistance(delta);
 
-        // Re-measure.
-        var nextCalibration = createCalibration(nextPair);
-        var newValues = await hardware.MeasureAsync(nextCalibration);
-        var newDelta = newValues / Goal;
-
-        // There was some improvment - at least it did not get worse.
-        if (Math.Abs(field(newDelta)) <= Math.Abs(field(delta)))
-            return new()
-            {
-                Calibration = nextCalibration,
-                Deviation = newDelta,
-                TotalAbsDelta = Math.Abs(newDelta.DeltaFactor) + Math.Abs(newDelta.DeltaPower),
-                Values = newValues,
-            };
-
-        // We made it worse.
-        return new() { Calibration = null!, Values = null!, Deviation = null!, TotalAbsDelta = 0 };
+        // See if we did anything.
+        return step?.Calibration != null ? step : null;
     }
+
+
+    /// <summary>
+    /// Calibrate the resistence pair.
+    /// </summary>
+    /// <param name="delta">Deviation measured.</param>
+    /// <returns>Successfull calibration step or null.</returns>
+    private Task<CalibrationStep?> AdjustResistance(GoalDeviation delta)
+        => AdjustCoarseAndFine(_ResistanceCoarseFixed, delta, CurrentCalibration.Resistive, d => d.DeltaPower, resPair => new(resPair, CurrentCalibration.Inductive), f => _ResistanceCoarseFixed = f);
+
+    /// <summary>
+    /// Calibrate the impedance pair.
+    /// </summary>
+    /// <param name="delta">Deviation measured.</param>
+    /// <returns>Successfull calibration step or null.</returns>
+    private Task<CalibrationStep?> AdjustImpedance(GoalDeviation delta)
+        => AdjustCoarseAndFine(_ImpedanceCoarseFixed, delta, CurrentCalibration.Inductive, d => d.DeltaFactor, impPair => new(CurrentCalibration.Resistive, impPair), f => _ImpedanceCoarseFixed = f);
 
     /// <summary>
     /// Calibrate a pair of values.
@@ -145,37 +145,41 @@ public class Calibrator(ICalibrationHardware hardware) : ICalibrator
     }
 
     /// <summary>
-    /// Calibrate the resistence pair.
+    /// Adjust a single part (e.g. GoalValue.ApparentPower) of a single pair (e.g. Calibration.Resistive).
     /// </summary>
-    /// <param name="delta">Deviation measured.</param>
-    /// <returns>Successfull calibration step or null.</returns>
-    private Task<CalibrationStep?> AdjustResistance(GoalDeviation delta)
-        => AdjustCoarseAndFine(_ResistanceCoarseFixed, delta, CurrentCalibration.Resistive, d => d.DeltaPower, resPair => new(resPair, CurrentCalibration.Inductive), f => _ResistanceCoarseFixed = f);
-
-    /// <summary>
-    /// Calibrate the impedance pair.
-    /// </summary>
-    /// <param name="delta">Deviation measured.</param>
-    /// <returns>Successfull calibration step or null.</returns>
-    private Task<CalibrationStep?> AdjustImpedance(GoalDeviation delta)
-        => AdjustCoarseAndFine(_ImpedanceCoarseFixed, delta, CurrentCalibration.Inductive, d => d.DeltaFactor, impPair => new(CurrentCalibration.Resistive, impPair), f => _ImpedanceCoarseFixed = f);
-
-    /// <summary>
-    /// Execute one calibration iteration step.
-    /// </summary>
-    /// <returns>Successfull calibration step or null.</returns>
-    private async Task<CalibrationStep?> IterateAsync()
+    /// <param name="delta">Deviations measured.</param>
+    /// <param name="field">Access the deviation information to use.</param>
+    /// <param name="changer">Update the calibration for the next step.</param>
+    /// <param name="createCalibration">Create a complete calibration information for value measurement.</param>
+    /// <returns>null if no further processing is possible, elsewhere the Calibration memember will be 
+    /// null as well if the changed calibration moved us further away from the goal.</returns>
+    private async Task<CalibrationStep?> AdjustCoarseOrFine(GoalDeviation delta, Func<GoalDeviation, double> field, Func<bool, CalibrationPair?> changer, Func<CalibrationPair, Calibration> createCalibration)
     {
-        // Retrieve new values and relativ deviation from goal.
-        var delta = await hardware.MeasureAsync(CurrentCalibration) / Goal;
+        // No difference at all - access part (e.g. GoalValue.ApparentPower) using accessor method field
+        if (field(delta) == 0) return null;
 
-        // Work on the largest deviation first.
-        var step =
-            Math.Abs(delta.DeltaPower) >= Math.Abs(delta.DeltaFactor)
-            ? await AdjustResistance(delta) ?? await AdjustImpedance(delta)
-            : await AdjustImpedance(delta) ?? await AdjustResistance(delta);
+        // Apply correction - it is expected that the order of calibration values mirrors the order of measured values.
+        var nextPair = changer(field(delta) < 0);
 
-        // See if we did anything.
-        return step?.Calibration != null ? step : null;
+        // Correction may not be possible - bounds are reached.
+        if (nextPair == null) return null;
+
+        // Re-measure - rebuild calibration using pair (e.g Calibration.Resistive) keeping the other part.
+        var nextCalibration = createCalibration(nextPair);
+        var newValues = await hardware.MeasureAsync(nextCalibration);
+        var newDelta = newValues / Goal;
+
+        // There was some improvment - at least it did not get worse.
+        if (Math.Abs(field(newDelta)) <= Math.Abs(field(delta)))
+            return new()
+            {
+                Calibration = nextCalibration,
+                Deviation = newDelta,
+                TotalAbsDelta = Math.Abs(newDelta.DeltaFactor) + Math.Abs(newDelta.DeltaPower),
+                Values = newValues,
+            };
+
+        // We made it worse.
+        return new() { Calibration = null!, Values = null!, Deviation = null!, TotalAbsDelta = 0 };
     }
 }

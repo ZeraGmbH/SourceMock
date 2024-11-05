@@ -56,48 +56,35 @@ namespace BurdenApiTests
             Assert.Throws<ArgumentOutOfRangeException>(() => new CalibrationPair(major, minor));
         }
 
-        [TestCase(0, 0, 0, false)]
-        [TestCase(0, 0, -1, false)]
-        [TestCase(0, 0, 1, true)]
-        [TestCase(127, 0, 0, false)]
-        [TestCase(127, 0, -1, true)]
-        [TestCase(127, 0, 1, false)]
-        public void Calibration_Pair_Major_Can_Be_Changed(byte major, byte minor, int delta, bool change)
+        [TestCase(0, 0, false, false)]
+        [TestCase(0, 0, true, true)]
+        [TestCase(127, 0, false, true)]
+        [TestCase(127, 0, true, false)]
+        public void Calibration_Pair_Major_Can_Be_Changed(byte major, byte minor, bool increment, bool change)
         {
             var pair = new CalibrationPair(major, minor);
-            var newPair = pair.ChangeCoarse(delta);
+            var newPair = pair.ChangeCoarse(increment);
 
             if (change)
                 Assert.Multiple(() =>
                 {
                     Assert.That(newPair, Is.Not.Null);
                     Assert.That(newPair, Is.Not.SameAs(pair));
-                    Assert.That(newPair!.Coarse, Is.EqualTo(major + delta));
+                    Assert.That(newPair!.Coarse, Is.EqualTo(major + (increment ? +1 : -1)));
                     Assert.That(newPair.Fine, Is.EqualTo(minor));
                 });
             else
                 Assert.That(newPair, Is.Null);
         }
 
-        [TestCase(64, 64, -2)]
-        [TestCase(64, 64, 2)]
-        public void Calibration_Pair_Major_Can_Not_Be_Changed(byte major, byte minor, int delta)
+        [TestCase(0, 0, false, false)]
+        [TestCase(0, 0, true, true)]
+        [TestCase(0, 127, false, true)]
+        [TestCase(0, 127, true, false)]
+        public void Calibration_Pair_Minor_Can_Be_Changed(byte major, byte minor, bool increment, bool change)
         {
             var pair = new CalibrationPair(major, minor);
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => pair.ChangeCoarse(delta));
-        }
-
-        [TestCase(0, 0, 0, false)]
-        [TestCase(0, 0, -1, false)]
-        [TestCase(0, 0, 1, true)]
-        [TestCase(0, 127, 0, false)]
-        [TestCase(0, 127, -1, true)]
-        [TestCase(0, 127, 1, false)]
-        public void Calibration_Pair_Minor_Can_Be_Changed(byte major, byte minor, int delta, bool change)
-        {
-            var pair = new CalibrationPair(major, minor);
-            var newPair = pair.ChangeFine(delta);
+            var newPair = pair.ChangeFine(increment);
 
             if (change)
                 Assert.Multiple(() =>
@@ -105,19 +92,10 @@ namespace BurdenApiTests
                     Assert.That(newPair, Is.Not.Null);
                     Assert.That(newPair, Is.Not.SameAs(pair));
                     Assert.That(newPair!.Coarse, Is.EqualTo(major));
-                    Assert.That(newPair.Fine, Is.EqualTo(minor + delta));
+                    Assert.That(newPair.Fine, Is.EqualTo(minor + (increment ? +1 : -1)));
                 });
             else
                 Assert.That(newPair, Is.Null);
-        }
-
-        [TestCase(64, 64, -2)]
-        [TestCase(64, 64, 2)]
-        public void Calibration_Pair_Minor_Can_Not_Be_Changed(byte major, byte minor, int delta)
-        {
-            var pair = new CalibrationPair(major, minor);
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => pair.ChangeFine(delta));
         }
 
         [TestCase(0, 0, 0, 0, 0, 0)]

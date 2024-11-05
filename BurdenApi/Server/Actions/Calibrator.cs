@@ -79,10 +79,10 @@ public class Calibrator(ICalibrationHardware hardware) : ICalibrator
     /// <param name="createCalibration">Create a complete calibration information for value measurement.</param>
     /// <returns>null if no further processing is possible, elsewhere the Calibration memember will be 
     /// null as well if the changed calibration moved us further away from the goal.</returns>
-    private async Task<CalibrationStep?> AdjustCoarseOrFine(GoalDeviation delta, Func<GoalDeviation, double> field, Func<int, CalibrationPair?> changer, Func<CalibrationPair, Calibration> createCalibration)
+    private async Task<CalibrationStep?> AdjustCoarseOrFine(GoalDeviation delta, Func<GoalDeviation, double> field, Func<bool, CalibrationPair?> changer, Func<CalibrationPair, Calibration> createCalibration)
     {
         // Apply correction - it is expected that the order of calibration values mirrors the order of measured values.
-        var nextPair = changer(field(delta) > 0 ? -1 : +1);
+        var nextPair = changer(field(delta) < 0);
 
         // Correction may not be possible - bounds are reached.
         if (nextPair == null) return null;

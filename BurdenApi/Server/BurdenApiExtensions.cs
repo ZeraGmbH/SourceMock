@@ -22,12 +22,9 @@ public static class BurdenApiConfiguration
         services.AddSingleton<IBurdenFactory, BurdenFactory>();
         services.AddSingleton<IBurden, Burden>();
 
-        services.AddKeyedSingleton("Burden", (ctx, key) =>
-        {
-            if (!"MeterTestSystem".Equals(key)) throw new ArgumentException("wrong service key", nameof(key));
+        services.AddTransient<ICalibrator, Calibrator>();
 
-            return ctx.GetRequiredService<BurdenFactory>().Connection;
-        });
+        services.AddKeyedSingleton("Burden", (ctx, key) => ctx.GetRequiredService<BurdenFactory>().Connection);
     }
 
     /// <summary>

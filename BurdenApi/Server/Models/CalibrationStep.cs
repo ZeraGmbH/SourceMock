@@ -11,6 +11,12 @@ public class CalibrationStep
     public required Calibration Calibration { get; set; }
 
     /// <summary>
+    /// See if the current calibration should be kept and 
+    /// the next level should be inspected.
+    /// </summary>
+    public bool CalibrationChanged => Calibration != null;
+
+    /// <summary>
     /// Actual values for the calibration.
     /// </summary>
     public required GoalValue Values { get; set; }

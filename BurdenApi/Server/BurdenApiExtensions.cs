@@ -2,7 +2,6 @@ using BurdenApi.Actions;
 using BurdenApi.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SerialPortProxy;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace BurdenApi;
@@ -22,7 +21,7 @@ public static class BurdenApiConfiguration
         services.AddSingleton<IBurdenFactory, BurdenFactory>();
         services.AddSingleton<IBurden, Burden>();
 
-        services.AddTransient<ICalibrator, Calibrator>();
+        //services.AddTransient<ICalibrator, Calibrator>();
 
         services.AddKeyedSingleton("Burden", (ctx, key) => ctx.GetRequiredService<BurdenFactory>().Connection);
     }

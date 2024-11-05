@@ -190,8 +190,8 @@ namespace BurdenApiTests
                 Assert.That((double)step.Values.ApparentPower, Is.EqualTo(power).Within(0.1));
                 Assert.That((double)step.Values.PowerFactor, Is.EqualTo(factor).Within(0.01));
 
-                Assert.That(Math.Abs(step.Deviation.DeltaPower), Is.LessThan(0.1));
-                Assert.That(Math.Abs(step.Deviation.DeltaFactor), Is.LessThan(0.1));
+                Assert.That(Math.Abs(step.Deviation.DeltaPower), Is.LessThan(0.015));
+                Assert.That(Math.Abs(step.Deviation.DeltaFactor), Is.LessThan(0.015));
             });
         }
     }

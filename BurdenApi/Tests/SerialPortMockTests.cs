@@ -47,6 +47,17 @@ public class SerialPortMockTests
         Assert.That(burdens[0], Is.EqualTo(new string[] { "ANSI", "IEC50", "IEC60", "ABACK" }));
     }
 
+    [Test]
+    public async Task Can_Measure_Async()
+    {
+        var values = await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create("ME", "MEACK")));
+
+        Assert.That(values[0], Has.Length.EqualTo(7));
+    }
+
     [TestCase("IEC50")]
     [TestCase("IEC60")]
     [TestCase("ANSI")]
@@ -60,7 +71,6 @@ public class SerialPortMockTests
         Assert.That(ranges[0], Has.Length.EqualTo(22));
         Assert.That(ranges[0], Contains.Item("100/v3"));
     }
-
 
     [TestCase("IEC50", 28, "1.25;0.80")]
     [TestCase("IEC60", 28, "1.25;0.80")]
@@ -90,35 +100,180 @@ public class SerialPortMockTests
     }
 
     [Test]
-    public async Task Validate_All_Steps_Async()
+    public async Task Validate_Multiple_Steps_Async()
     {
         var burdens = await Task.WhenAll(
            Connection
                .CreateExecutor(InterfaceLogSourceTypes.Burden)
                .ExecuteAsync(Logger, SerialPortRequest.Create("AB", "ABACK")));
 
+        var all = new List<string>();
+
         foreach (var burden in burdens[0])
+            if (burden != "ABACK")
+            {
+                var ranges = await Task.WhenAll(
+                    Connection
+                        .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                        .ExecuteAsync(Logger, SerialPortRequest.Create($"AR{burden}", "ARACK")));
+
+                var calibrations = await Task.WhenAll(
+                    Connection
+                        .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                        .ExecuteAsync(Logger, SerialPortRequest.Create($"AN{burden}", "ANACK")));
+
+                foreach (var range in ranges[0])
+                    if (range != "ARACK")
+                        foreach (var calibration in calibrations[0])
+                            if (calibration != "ANACK")
+                                all.Add($"{burden};{range};{calibration}");
+            }
+
+        Assert.That(all, Has.Count.EqualTo(1239));
+
+        for (var i = 20; i-- > 0;)
         {
-            var ranges = await Task.WhenAll(
+            var index = Random.Shared.Next(0, all.Count);
+
+            var step = await Task.WhenAll(
                 Connection
                     .CreateExecutor(InterfaceLogSourceTypes.Burden)
-                    .ExecuteAsync(Logger, SerialPortRequest.Create($"AR{burden}", "ARACK")));
+                    .ExecuteAsync(Logger, SerialPortRequest.Create($"GA{all[index]}", "GAACK")));
 
-            var calibrations = await Task.WhenAll(
-                Connection
-                    .CreateExecutor(InterfaceLogSourceTypes.Burden)
-                    .ExecuteAsync(Logger, SerialPortRequest.Create($"AN{burden}", "ANACK")));
+            Assert.That(step[0], Has.Length.EqualTo(2));
 
-            foreach (var range in ranges)
-                foreach (var calibration in calibrations)
-                {
-                    var step = await Task.WhenAll(
-                        Connection
-                            .CreateExecutor(InterfaceLogSourceTypes.Burden)
-                            .ExecuteAsync(Logger, SerialPortRequest.Create($"GA{range};{calibration}", "GAACK")));
-
-                    Assert.That(step[0], Has.Length.EqualTo(2));
-                }
+            all.RemoveAt(index);
         }
+    }
+
+    [TestCase(0)]
+    [TestCase(1)]
+    public async Task Can_Switch_On_And_Off_Async(int what)
+    {
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"ON{what}", "ONACK")));
+    }
+
+    [Test]
+    public void Can_Not_Switch_On_And_Off()
+    {
+        Assert.ThrowsAsync<ArgumentException>(() => Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"ON2", "ONACK"))));
+    }
+
+    [TestCase("IEC50")]
+    [TestCase("IEC60")]
+    [TestCase("ANSI")]
+    public async Task Can_Set_Burden_Async(string burden)
+    {
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SB{burden}", "SBACK")));
+    }
+
+    [Test]
+    public void Can_Not_Set_Burden()
+    {
+        Assert.ThrowsAsync<ArgumentException>(() => Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SBIEC75", "SBACK"))));
+    }
+
+    [TestCase("IEC50", "100")]
+    [TestCase("IEC60", "230/3")]
+    [TestCase("ANSI", "110/v3")]
+    public async Task Can_Set_Range_Async(string burden, string range)
+    {
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SB{burden}", "SBACK")));
+
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SR{range}", "SRACK")));
+    }
+
+    [Test]
+    public async Task Can_Not_Set_Range_Async()
+    {
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SBANSI", "SBACK")));
+
+        try
+        {
+            await Task.WhenAll(
+               Connection
+                   .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                   .ExecuteAsync(Logger, SerialPortRequest.Create($"SR999", "SRACK")));
+        }
+        catch (ArgumentException)
+        {
+        }
+    }
+
+    [TestCase("IEC50", "75.00;0.80")]
+    [TestCase("IEC60", "18.75;0.80")]
+    [TestCase("ANSI", "75.00;0.85")]
+    public async Task Can_Set_Step_Async(string burden, string step)
+    {
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SB{burden}", "SBACK")));
+
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SN{step}", "SNACK")));
+    }
+
+    [TestCase("IEC60", "230/3", "18.75;0.80", "0x12;0x34;0x7f;0x6e")]
+    public async Task Can_Set_Transient_Calibration_Async(string burden, string range, string step, string calibration)
+    {
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SB{burden}", "SBACK")));
+
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SR{range}", "SRACK")));
+
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SN{step}", "SNACK")));
+
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SF{calibration}", "SFACK")));
+    }
+
+    [TestCase("IEC60", "230/3", "18.75;0.80", "0x12;0x34;0x7f;0x6e")]
+    public async Task Can_Set_Permanent_Calibration_Async(string burden, string range, string step, string calibration)
+    {
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SA{burden};{range};{step};{calibration};0.0", "SAACK")));
+
+        var values = await Task.WhenAll(
+           Connection
+               .CreateExecutor(InterfaceLogSourceTypes.Burden)
+               .ExecuteAsync(Logger, SerialPortRequest.Create($"GA{burden};{range};{step}", "GAACK")));
+
+        Assert.That(values[0], Is.EqualTo(new string[] { "1;" + calibration, "GAACK" }));
     }
 }

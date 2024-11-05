@@ -1262,6 +1262,12 @@ public class BurdenSerialPortMock : ISerialPort
 
     #endregion
 
+    private string _Burden = "";
+
+    private string _Range = "";
+
+    private string _Step = "";
+
     /// <summary>
     /// Initialize the mock.
     /// </summary>
@@ -1317,12 +1323,78 @@ public class BurdenSerialPortMock : ISerialPort
                 }
             }},
             { "GA(.*)", (m) => {
-                if(_Calibrations.TryGetValue(m.Groups[1].Value, out var reply)){
+                if(_Calibrations.TryGetValue(m.Groups[1].Value, out var reply))
+                {
                     _replies.Enqueue(reply);
                     _replies.Enqueue("GAACK");
                 } else
                     _replies.Enqueue("GANAK");
-            }}
+            }},
+            { "ON(.*)", (m) => {
+                if(m.Groups[1].Value=="0"||m.Groups[1].Value=="1")
+                    _replies.Enqueue("ONACK");
+                else
+                    _replies.Enqueue("ONNAK");
+            }},
+            { "SB(.*)", (m) => {
+                if(burdens.ContainsKey(m.Groups[1].Value))
+                {
+                    _Burden = m.Groups[1].Value;
+
+                    _replies.Enqueue("SBACK");
+                }
+                else
+                    _replies.Enqueue("SBNAK");
+            }},
+            { "SR(.*)", (m) => {
+                if(burdens.TryGetValue(_Burden, out var burden) && burden.Contains($"R{m.Groups[1].Value}"))
+                {
+                    _Range = m.Groups[1].Value;
+
+                    _replies.Enqueue("SRACK");
+                }
+                else
+                    _replies.Enqueue("SRNAK");
+            }},
+            { "SN(.*)", (m) => {
+                if(burdens.TryGetValue(_Burden, out var burden) && burden.Contains($"P{m.Groups[1].Value}"))
+                {
+                    _Step = m.Groups[1].Value;
+
+                    _replies.Enqueue("SNACK");
+                }
+                else
+                    _replies.Enqueue("SNNAK");
+            }},
+            { "ME", (m) => {
+                _replies.Enqueue("0;109.702644");
+                _replies.Enqueue("3;0.009061");
+                _replies.Enqueue("6;0");
+                _replies.Enqueue("9;0.71");
+                _replies.Enqueue("12;0.999924");
+                _replies.Enqueue("21;0.994");
+                _replies.Enqueue("MEACK");
+            }},
+            { "SF((0x[0-7][0-9a-f]);(0x[0-7][0-9a-f]);(0x[0-7][0-9a-f]);(0x[0-7][0-9a-f]))", (m) => {
+                _replies.Enqueue("SFACK");
+            }},
+            { "SF.*", (m) => {
+                _replies.Enqueue("SFNAK");
+            }},
+            { "SA(.*);(.*);((.*);(.*));((0x[0-7][0-9a-f]);(0x[0-7][0-9a-f]);(0x[0-7][0-9a-f]);(0x[0-7][0-9a-f]));(.*)", (m) => {
+                var step = $"{m.Groups[1].Value};{m.Groups[2].Value};{m.Groups[3].Value}";
+
+                if(_Calibrations.ContainsKey(step)){
+                    _Calibrations[step] = $"1;{m.Groups[6].Value}";
+
+                    _replies.Enqueue("SAACK");
+                }
+                else
+                    _replies.Enqueue("SANAK");
+            }},
+            { "SA.*", (m) => {
+                _replies.Enqueue("SANAK");
+            }},
         };
     }
 

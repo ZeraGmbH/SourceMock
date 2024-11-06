@@ -13,7 +13,7 @@ namespace ErrorCalculatorApi.Controllers;
 /// <param name="_device">Serial port connected device to use.</param>
 [ApiVersion("1.0")]
 [ApiController]
-[Route("api/v{version:apiVersion}/BarcodeReader/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class BarcodeReaderController(IBarcodeReader _device) : ControllerBase
 {
     /// <summary>

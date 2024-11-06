@@ -44,47 +44,5 @@ namespace SourceApi.Actions.Source
         /// Reports information on the active loadpoint.
         /// </summary>
         public Task<LoadpointInfo> GetActiveLoadpointInfoAsync(IInterfaceLogger logger);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public Task<Voltage[]> GetVoltageRangesAsync();
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public Task<Current[]> GetCurrentRangesAsync();
-
-        /// <summary>
-        /// Set voltage range - automatic should be disabled
-        /// </summary>
-        /// <param name="voltage"></param>
-        /// <returns></returns>
-        public Task SetVoltageRangeAsync(Voltage voltage);
-
-        /// <summary>
-        /// Set current range - automatic should be disabled
-        /// </summary>
-        /// <param name="current">Upper value of selected range</param>
-        /// <returns></returns>
-        public Task SetCurrentRangeAsync(Current current);
-
-        /// <summary>
-        /// Set wheter the ranges should be set automatic
-        /// </summary>
-        /// <param name="voltageRanges"></param>
-        /// <param name="currentRanges"></param>
-        /// <param name="pll"></param>
-        /// <returns></returns>
-        public Task SetAutomaticAsync(bool voltageRanges=true, bool currentRanges=true, bool pll=true);
-
-        /// <summary>
-        /// Select PLL chanel - automatic should be disabled
-        /// </summary>
-        /// <param name="pll"></param>
-        /// <returns></returns>
-        public Task SelectPllChannelAsync(PllChannel pll);
     }
 }

@@ -108,4 +108,40 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
             SoftwareVersion = request.EndMatch!.Groups[2].Value.Trim()
         };
     }
+    
+    /// <inheritdoc/>
+    public Task<Voltage[]> GetVoltageRangesAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
+    public Task<Current[]> GetCurrentRangesAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
+    public Task SetVoltageRangeAsync(Voltage voltage)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
+    public Task SetCurrentRangeAsync(Current current)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
+    public Task SetAutomaticAsync(bool voltageRanges = true, bool currentRanges = true, bool pll = true)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc/>
+    public Task SelectPllChannelAsync(PllChannel pll)
+    {
+        throw new NotImplementedException();
+    }
 }

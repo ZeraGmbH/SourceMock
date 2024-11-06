@@ -87,4 +87,68 @@ public abstract class RefMeterMock : IMockRefMeter
     /// <returns></returns>
     protected static T GetRandomNumberWithDeviation<T>(T value, double deviation) where T : struct, IDomainSpecificNumber<T>
         => GetRandomNumberWithDeviation(value, value * deviation / 100d);
+
+    
+
+    /// <inheritdoc/>
+    public Task<Voltage[]> GetVoltageRangesAsync()
+    {
+        Voltage[] ranges =  
+        [
+            new Voltage(420),
+            new Voltage(250),
+            new Voltage(125),
+            new Voltage(60),
+            new Voltage(5),
+            new Voltage(0.25),
+        ];
+
+        return Task.FromResult(ranges);
+    }
+
+    /// <inheritdoc/>
+    public Task<Current[]> GetCurrentRangesAsync()
+    {
+        Current[] ranges =  
+        [
+            new Current(100),
+            new Current(50),
+            new Current(20),
+            new Current(10),
+            new Current(5),
+            new Current(2),
+            new Current(1),
+            new Current(0.5),
+            new Current(0.2),
+            new Current(0.1),
+            new Current(0.05),
+            new Current(0.02),
+        ];
+
+        return Task.FromResult(ranges);
+    }
+
+    /// <inheritdoc/>
+    public Task SetVoltageRangeAsync(Voltage voltage)
+    {
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc/>
+    public Task SetCurrentRangeAsync(Current current)
+    {
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc/>
+    public Task SetAutomaticAsync(bool voltageRanges = true, bool currentRanges = true, bool pll = true)
+    {
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc/>
+    public Task SelectPllChannelAsync(PllChannel pll)
+    {
+        return Task.CompletedTask;
+    }
 }

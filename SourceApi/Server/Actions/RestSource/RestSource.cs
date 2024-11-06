@@ -143,40 +143,5 @@ public class RestSource(ILoggingHttpClient httpSource, ILogger<RestSource> logge
     /// <inheritdoc/>
     public Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger)
         => _dosage?.GetEnergyAsync(logger) ?? throw new NotImplementedException("Dosage");
-
-    /// <inheritdoc/>
-    public Task<Voltage[]> GetVoltageRangesAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public Task<Current[]> GetCurrentRangesAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public Task SetVoltageRangeAsync(Voltage voltage)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public Task SetCurrentRangeAsync(Current current)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public Task SetAutomaticAsync(bool voltageRanges = true, bool currentRanges = true, bool pll = true)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public Task SelectPllChannelAsync(PllChannel pll)
-    {
-        throw new NotImplementedException();
-    }
 }
+

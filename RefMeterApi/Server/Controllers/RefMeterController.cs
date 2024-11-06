@@ -128,4 +128,97 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<ReferenceMeterInformation>> GetMeterInformationAsync() =>
         ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetMeterInformationAsync(interfaceLogger));
+
+    
+    
+    /// <summary>
+    /// Get voltage ranges on the reference meter.
+    /// </summary>
+    /// <returns>Voltage ranges.</returns>
+    [HttpGet("VoltageRanges"), SamAuthorize]
+    [SwaggerOperation(OperationId = "GetVoltageRanges")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult<Voltage[]>> GetVoltageRangesAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetVoltageRangesAsync());
+
+    /// <summary>
+    /// Get current ranges on the reference meter.
+    /// </summary>
+    /// <returns>Current ranges.</returns>
+    [HttpGet("CurrentRanges"), SamAuthorize]
+    [SwaggerOperation(OperationId = "GetCurrentRanges")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult<Current[]>> GetCurrentRangesAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetCurrentRangesAsync());
+
+    /// <summary>
+    /// Set voltage range on the reference meter.
+    /// </summary>
+    /// <param name="voltage">Upper limit of range.</param>
+    [HttpPut("VoltageRange"), SamAuthorize]
+    [SwaggerOperation(OperationId = "SetVoltageRange")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult> SetVoltageRangeAsync(Voltage voltage) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetVoltageRangeAsync(voltage));
+
+    /// <summary>
+    /// Set current range on the reference meter.
+    /// </summary>
+    [HttpPut("CurrentRange"), SamAuthorize]
+    [SwaggerOperation(OperationId = "SetCurrentRange")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult> SetCurrentRangeAsync(Current current) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetCurrentRangeAsync(current));
+
+    /// <summary>
+    /// Switch between automatic and manual on the reference meter.
+    /// </summary>
+    /// <param name="voltageRanges"></param>
+    /// <param name="currentRanges"></param>
+    /// <param name="pll"></param>
+    [HttpPut("Automatic"), SamAuthorize]
+    [SwaggerOperation(OperationId = "SetAutomatic")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult> SetAutomaticAsync(bool voltageRanges = true, bool currentRanges = true, bool pll = true) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetAutomaticAsync(voltageRanges, currentRanges, pll));
+
+    /// <summary>
+    /// Select pll channel - only possible if pll automatic is set to false
+    /// </summary>
+    /// <param name="pll"></param>
+    [HttpPut("PllChannel"), SamAuthorize]
+    [SwaggerOperation(OperationId = "SelectPllChannel")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult> SelectPllChannelAsync(PllChannel pll) =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SelectPllChannelAsync(pll));
 }

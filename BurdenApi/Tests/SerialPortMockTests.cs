@@ -276,4 +276,42 @@ public class SerialPortMockTests
 
         Assert.That(values[0], Is.EqualTo(new string[] { "1;" + calibration, "GAACK" }));
     }
+
+    [TestCase("IEC60", "190", "3.75;0.80")]
+    public async Task Can_ReadStatus(string burden, string range, string step)
+    {
+        var status = await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create("ST", "STACK")));
+
+        Assert.That(status[0], Is.EqualTo(new string[] { "B:IEC50", "R:R230", "N:P0.00;0.00", "ON:0", "STACK" }));
+
+        await Task.WhenAll(
+                   Connection
+                       .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                       .ExecuteAsync(Logger, SerialPortRequest.Create($"SB{burden}", "SBACK")));
+
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SR{range}", "SRACK")));
+
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SN{step}", "SNACK")));
+
+        await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"ON1", "ONACK")));
+
+        status = await Task.WhenAll(
+            Connection
+                .CreateExecutor(InterfaceLogSourceTypes.Burden)
+                .ExecuteAsync(Logger, SerialPortRequest.Create("ST", "STACK")));
+
+        Assert.That(status[0], Is.EqualTo(new string[] { $"B:{burden}", $"R:{range}", $"N:{step}", "ON:0", "STACK" }));
+    }
 }

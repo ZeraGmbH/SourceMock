@@ -1,5 +1,4 @@
 using BurdenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace BurdenApi.Actions;
 

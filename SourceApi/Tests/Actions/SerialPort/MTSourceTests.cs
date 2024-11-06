@@ -48,6 +48,8 @@ public class MTSourceTests
 
     private ISerialPortConnection _device;
 
+    private readonly PortMock _portMock = new();
+
     [SetUp]
     public void SetUp()
     {
@@ -145,4 +147,95 @@ public class MTSourceTests
         Assert.That(result, Is.EqualTo(expectedError));
         Assert.That(await sut.GetCurrentLoadpointAsync(new NoopInterfaceLogger()), Is.Null);
     }
+
+    [TestCase("AWR1")]
+    [TestCase("AWR2")]
+    [TestCase("AWR3")]
+    [TestCase("AWR4")]
+    [TestCase("AWR5")]
+    public void Can_Mock_Awr_Command(string command){
+        _portMock.WriteLine(command);
+
+        var actualReply = _portMock.ReadLine();
+
+    Assert.That(actualReply, Is.EqualTo("AWRACK"));
+    }
+
+    [TestCase("AWR6")]
+    [TestCase("AWR7")]
+    [TestCase("AWR11")]
+    [TestCase("AWR")]
+    [TestCase("AWRR")]
+    public void Not_Process_Wrong_Awr_Command(string command){
+        _portMock.WriteLine(command);
+
+        Assert.Throws<TimeoutException>(() => _portMock.ReadLine());    
+    }
+
+    [TestCase("AAMMAA")]
+    [TestCase("AAMAAA")]
+    [TestCase("AAMAMA")]
+    [TestCase("AAMMMM")]
+    [TestCase("AAMMMA")]
+    public void Can_Mock_Aam_Command(string command){
+        _portMock.WriteLine(command);
+
+        var actualReply = _portMock.ReadLine();
+
+        Assert.That(actualReply, Is.EqualTo("AAMACK"));        
+    }
+
+    [TestCase("AAMMMAA")]
+    [TestCase("AAMCBG")]
+    [TestCase("AAM")]
+    [TestCase("AAMMM")]
+    [TestCase("AAMM")]
+    public void Not_Process_Wrong_Aam_Command(string command){
+        _portMock.WriteLine(command);
+
+        Assert.Throws<TimeoutException>(() => _portMock.ReadLine());    
+    }
+
+    [TestCase("AVR0.001")]
+    [TestCase("AVR60")]
+    [TestCase("AVR11111111111111111111")] // max 20 
+    [TestCase("AVR11111111111111111.11")]
+    public void Can_Mock_Avr_Command(string command){
+        _portMock.WriteLine(command);
+
+        var actualReply = _portMock.ReadLine();
+
+        Assert.That(actualReply, Is.EqualTo("AVRACK"));  
+    }
+
+    // [TestCase("AVRX60")]
+    // [TestCase("AVR111111111111111111111")] // max 20 
+    // [TestCase("AVR11111111111111111.111")]
+    // public void Not_Process_Wrong_Avr_Command(string command){
+    //     _portMock.WriteLine(command);
+
+    //     Assert.Throws<TimeoutException>(() => _portMock.ReadLine());  
+    // }
+
+    [TestCase("ACR50")]
+    [TestCase("ACR50.01")]
+    [TestCase("ACR50.1")]
+    [TestCase("ACR0.1")]
+    public void Can_Mock_Acr_Command(string command){
+        _portMock.WriteLine(command);
+
+        var actualReply = _portMock.ReadLine();
+
+        Assert.That(actualReply, Is.EqualTo("ACRACK"));  
+    }
+
+    // [TestCase("ACR50B")]
+    // [TestCase("ACR50..01")]
+    // [TestCase("ACR50.1X")]
+    // [TestCase("ACR.1")]
+    // public void Not_Process_Wrong_Acr_Command(string command){
+    //     _portMock.WriteLine(command);
+
+    //     Assert.Throws<TimeoutException>(() => _portMock.ReadLine());  
+    // }
 }

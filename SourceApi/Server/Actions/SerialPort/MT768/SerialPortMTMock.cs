@@ -87,6 +87,14 @@ public class SerialPortMTMock : ISerialPort
 
     private static readonly Regex AmtCommand = new(@"^AMT(.+)$");
 
+    private static readonly Regex AwrCommand = new(@"^AWR([0-5])$");
+
+    private static readonly Regex AamCommand = new(@"^AAM(A|M)(A|M)(A|M)$");
+
+    private static readonly Regex AvrCommand = new(@"^AVR(.+)$");
+
+    private static readonly Regex AcrCommand = new(@"^ACR(.+)$");
+
     private static readonly Regex S3ps46Command = new(@"^S3PS46;(.+)$");
 
     private static readonly Regex AepCommand = new(@"^AEP([^;]{1,6});((0[0-9])|(10));([^;]{1,6});([0-5])$");
@@ -434,6 +442,14 @@ public class SerialPortMTMock : ISerialPort
                     /* Set error measurement parameters. */
                     else if (AepCommand.IsMatch(command))
                         _replies.Enqueue("AEPACK");
+                    else if(AwrCommand.IsMatch(command))
+                        _replies.Enqueue("AWRACK");
+                    else if(AamCommand.IsMatch(command))
+                        _replies.Enqueue("AAMACK");
+                    else if(AvrCommand.IsMatch(command))
+                        _replies.Enqueue("AVRACK");
+                    else if(AcrCommand.IsMatch(command))
+                        _replies.Enqueue("ACRACK");
                     /* Set dosage energy. */
                     else if ((match = S3ps46Command.Match(command)).Success)
                     {

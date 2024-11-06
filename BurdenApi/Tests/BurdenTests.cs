@@ -52,4 +52,43 @@ public class BurdenTests
             Assert.That(version.Supplement, Is.EqualTo("XB"));
         });
     }
+
+    [TestCase("IEC60", "190", "3.75;0.80", 37, 25, 55, 65)]
+    public async Task Can_Read_Calibration_Async(string burden, string range, string step, byte rCoarse, byte rFine, byte lCoarse, byte lFine)
+    {
+        var calibration = await Burden.GetCalibrationAsync(burden, range, step, Logger);
+
+        Assert.That(calibration, Is.Not.Null);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(calibration.Resistive.Coarse, Is.EqualTo(rCoarse));
+            Assert.That(calibration.Resistive.Fine, Is.EqualTo(rFine));
+            Assert.That(calibration.Inductive.Coarse, Is.EqualTo(lCoarse));
+            Assert.That(calibration.Inductive.Fine, Is.EqualTo(lFine));
+        });
+    }
+
+    [TestCase("IEC50", "230", "0.00;0.00")]
+    public async Task Can_Read_No_Calibration_Async(string burden, string range, string step)
+    {
+        var calibration = await Burden.GetCalibrationAsync(burden, range, step, Logger);
+
+        Assert.That(calibration, Is.Null);
+    }
+
+    [Test]
+    public async Task Can_Get_Burdens_Async()
+    {
+        var version = await Burden.GetBurdensAsync(Logger);
+
+        Assert.That(version, Is.EqualTo(new string[] { "ANSI", "IEC50", "IEC60" }));
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task Can_Set_Burden_Activation_Async(bool on)
+    {
+        await Burden.SetActiveAsync(on, Logger);
+    }
 }

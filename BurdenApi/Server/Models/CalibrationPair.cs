@@ -1,3 +1,7 @@
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+
 namespace BurdenApi.Models;
 
 /// <summary>
@@ -24,12 +28,14 @@ public class CalibrationPair()
     /// <summary>
     /// Major calibration value between 0 and 127.
     /// </summary>
-    public byte Coarse { get; private set; }
+    [NotNull, Required]
+    public byte Coarse { get; set; }
 
     /// <summary>
     /// Minor calibration value between 0 and 127.
     /// </summary>
-    public byte Fine { get; private set; }
+    [NotNull, Required]
+    public byte Fine { get; set; }
 
     /// <summary>
     /// Change the coarse calibration.
@@ -65,4 +71,16 @@ public class CalibrationPair()
     /// Create a string describing this value pair.
     /// </summary>
     public override string ToString() => $"{Coarse}:{Fine}";
+
+    /// <summary>
+    /// Reconstruct a calibration value pair from protocol data.
+    /// </summary>
+    /// <param name="coarse">Coarse value.</param>
+    /// <param name="fine">Fine value.</param>
+    /// <returns>The corresponding pair.</returns>
+    public static CalibrationPair Parse(string coarse, string fine)
+        => new(
+           coarse.Length == 4 && coarse.StartsWith("0x") ? byte.Parse(coarse[2..], NumberStyles.HexNumber) : throw new ArgumentException($"bad calibration value: {coarse}", nameof(coarse)),
+            fine.Length == 4 && fine.StartsWith("0x") ? byte.Parse(fine[2..], NumberStyles.HexNumber) : throw new ArgumentException($"bad calibration value: {fine}", nameof(fine))
+        );
 }

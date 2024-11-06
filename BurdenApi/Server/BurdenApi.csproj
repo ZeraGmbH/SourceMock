@@ -15,5 +15,6 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <WarningsAsErrors>1591;1570;1587</WarningsAsErrors>
+    <NoWarn>AD0001</NoWarn>
   </PropertyGroup>
 </Project>

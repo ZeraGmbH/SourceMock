@@ -23,7 +23,7 @@ public static class BurdenApiConfiguration
 
         //services.AddTransient<ICalibrator, Calibrator>();
 
-        services.AddKeyedSingleton("Burden", (ctx, key) => ctx.GetRequiredService<BurdenFactory>().Connection);
+        services.AddKeyedSingleton("Burden", (ctx, key) => ctx.GetRequiredService<IBurdenFactory>().Connection);
     }
 
     /// <summary>

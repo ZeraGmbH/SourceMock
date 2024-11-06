@@ -28,7 +28,6 @@ public interface ICalibrator
     /// <summary>
     /// Process a calibration.
     /// </summary>
-    /// <param name="target">Target to find.</param>
-    /// <param name="initial">Initial calibration values.</param>
-    Task RunAsync(GoalValue target, Calibration initial);
+    /// <param name="request">Configuration of the calibration algorithm.</param>
+    Task RunAsync(CalibrationRequest request);
 }

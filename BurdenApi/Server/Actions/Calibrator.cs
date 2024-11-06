@@ -1,4 +1,5 @@
 using BurdenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace BurdenApi.Actions;
 
@@ -28,10 +29,10 @@ public class Calibrator(ICalibrationHardware hardware) : ICalibrator
     public CalibrationStep? LastStep => _Steps.LastOrDefault();
 
     /// <inheritdoc/>
-    public async Task RunAsync(GoalValue target, Calibration initial)
+    public async Task RunAsync(CalibrationRequest request)
     {
-        Goal = target;
-        InitialCalibration = initial;
+        Goal = request.Goal;
+        InitialCalibration = request.InitialCalibration;
 
         // Reset state - caller is responsible to synchronize access.
         _ImpedanceCoarseFixed = false;

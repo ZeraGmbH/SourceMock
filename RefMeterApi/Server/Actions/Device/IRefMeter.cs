@@ -51,47 +51,50 @@ public interface IRefMeter
     /// Retrieve information on the reference meter.
     /// </summary>
     Task<ReferenceMeterInformation> GetMeterInformationAsync(IInterfaceLogger logger);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public Task<Voltage[]> GetVoltageRangesAsync(IInterfaceLogger logger);
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public Task<Current[]> GetCurrentRangesAsync(IInterfaceLogger logger);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public Task<Voltage[]> GetVoltageRangesAsync();
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public Task<Current[]> GetCurrentRangesAsync();
+    /// <summary>
+    /// Set voltage range - automatic should be disabled
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="voltage"></param>
+    /// <returns></returns>
+    public Task SetVoltageRangeAsync(IInterfaceLogger logger, Voltage voltage);
 
-        /// <summary>
-        /// Set voltage range - automatic should be disabled
-        /// </summary>
-        /// <param name="voltage"></param>
-        /// <returns></returns>
-        public Task SetVoltageRangeAsync(Voltage voltage);
+    /// <summary>
+    /// Set current range - automatic should be disabled
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="current">Upper value of selected range</param>
+    /// <returns></returns>
+    public Task SetCurrentRangeAsync(IInterfaceLogger logger, Current current);
 
-        /// <summary>
-        /// Set current range - automatic should be disabled
-        /// </summary>
-        /// <param name="current">Upper value of selected range</param>
-        /// <returns></returns>
-        public Task SetCurrentRangeAsync(Current current);
+    /// <summary>
+    /// Set wheter the ranges should be set automatic
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="voltageRanges"></param>
+    /// <param name="currentRanges"></param>
+    /// <param name="pll"></param>
+    /// <returns></returns>
+    public Task SetAutomaticAsync(IInterfaceLogger logger, bool voltageRanges=true, bool currentRanges=true, bool pll=true);
 
-        /// <summary>
-        /// Set wheter the ranges should be set automatic
-        /// </summary>
-        /// <param name="voltageRanges"></param>
-        /// <param name="currentRanges"></param>
-        /// <param name="pll"></param>
-        /// <returns></returns>
-        public Task SetAutomaticAsync(bool voltageRanges=true, bool currentRanges=true, bool pll=true);
-
-        /// <summary>
-        /// Select PLL chanel - automatic should be disabled
-        /// </summary>
-        /// <param name="pll"></param>
-        /// <returns></returns>
-        public Task SelectPllChannelAsync(PllChannel pll);
+    /// <summary>
+    /// Select PLL chanel - automatic should be disabled
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="pll"></param>
+    /// <returns></returns>
+    public Task SelectPllChannelAsync(IInterfaceLogger logger, PllChannel pll);
 }

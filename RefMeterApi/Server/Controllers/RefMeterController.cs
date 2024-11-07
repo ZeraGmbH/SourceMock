@@ -144,7 +144,7 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<Voltage[]>> GetVoltageRangesAsync() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetVoltageRangesAsync());
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetVoltageRangesAsync(interfaceLogger));
 
     /// <summary>
     /// Get current ranges on the reference meter.
@@ -159,7 +159,7 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult<Current[]>> GetCurrentRangesAsync() =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetCurrentRangesAsync());
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetCurrentRangesAsync(interfaceLogger));
 
     /// <summary>
     /// Set voltage range on the reference meter.
@@ -174,7 +174,7 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SetVoltageRangeAsync(Voltage voltage) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetVoltageRangeAsync(voltage));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetVoltageRangeAsync(interfaceLogger, voltage));
 
     /// <summary>
     /// Set current range on the reference meter.
@@ -188,7 +188,7 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SetCurrentRangeAsync(Current current) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetCurrentRangeAsync(current));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetCurrentRangeAsync(interfaceLogger, current));
 
     /// <summary>
     /// Switch between automatic and manual on the reference meter.
@@ -205,7 +205,7 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SetAutomaticAsync(bool voltageRanges = true, bool currentRanges = true, bool pll = true) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetAutomaticAsync(voltageRanges, currentRanges, pll));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetAutomaticAsync(interfaceLogger, voltageRanges, currentRanges, pll));
 
     /// <summary>
     /// Select pll channel - only possible if pll automatic is set to false
@@ -220,5 +220,5 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SelectPllChannelAsync(PllChannel pll) =>
-        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SelectPllChannelAsync(pll));
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SelectPllChannelAsync(interfaceLogger, pll));
 }

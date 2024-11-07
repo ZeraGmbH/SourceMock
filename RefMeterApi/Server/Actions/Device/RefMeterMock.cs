@@ -91,7 +91,7 @@ public abstract class RefMeterMock : IMockRefMeter
     
 
     /// <inheritdoc/>
-    public Task<Voltage[]> GetVoltageRangesAsync()
+    public Task<Voltage[]> GetVoltageRangesAsync(IInterfaceLogger logger)
     {
         Voltage[] ranges =  
         [
@@ -107,7 +107,7 @@ public abstract class RefMeterMock : IMockRefMeter
     }
 
     /// <inheritdoc/>
-    public Task<Current[]> GetCurrentRangesAsync()
+    public Task<Current[]> GetCurrentRangesAsync(IInterfaceLogger logger)
     {
         Current[] ranges =  
         [
@@ -129,25 +129,25 @@ public abstract class RefMeterMock : IMockRefMeter
     }
 
     /// <inheritdoc/>
-    public Task SetVoltageRangeAsync(Voltage voltage)
+    public Task SetVoltageRangeAsync(IInterfaceLogger logger, Voltage voltage)
     {
         return Task.CompletedTask;
     }
 
     /// <inheritdoc/>
-    public Task SetCurrentRangeAsync(Current current)
+    public Task SetCurrentRangeAsync(IInterfaceLogger logger, Current current)
     {
         return Task.CompletedTask;
     }
 
     /// <inheritdoc/>
-    public Task SetAutomaticAsync(bool voltageRanges = true, bool currentRanges = true, bool pll = true)
+    public Task SetAutomaticAsync(IInterfaceLogger logger, bool voltageRanges = true, bool currentRanges = true, bool pll = true)
     {
         return Task.CompletedTask;
     }
 
     /// <inheritdoc/>
-    public Task SelectPllChannelAsync(PllChannel pll)
+    public Task SelectPllChannelAsync(IInterfaceLogger logger, PllChannel pll)
     {
         return Task.CompletedTask;
     }

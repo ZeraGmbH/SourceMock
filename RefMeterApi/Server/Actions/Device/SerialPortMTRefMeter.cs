@@ -108,38 +108,61 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     }
     
     /// <inheritdoc/>
-    public Task<Voltage[]> GetVoltageRangesAsync()
+    public async Task<Voltage[]> GetVoltageRangesAsync(IInterfaceLogger logger)
     {
-        throw new NotImplementedException();
+        /* Execute the request and wait for the information string. */
+        var reply = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AVI", "AVIACK"))[0];
+        
+        return [.. reply.Take(reply.Length - 1).Select(v => new Voltage(double.Parse(v)))];
     }
 
     /// <inheritdoc/>
-    public Task<Current[]> GetCurrentRangesAsync()
+    public async Task<Current[]> GetCurrentRangesAsync(IInterfaceLogger logger)
     {
-        throw new NotImplementedException();
+        /* Execute the request and wait for the information string. */
+        var reply = await _device.ExecuteAsync(logger, SerialPortRequest.Create("ACI", "ACIACK"))[0];
+
+        return [.. reply.Take(reply.Length - 1).Select(c => new Current(double.Parse(c)))];
     }
 
     /// <inheritdoc/>
-    public Task SetVoltageRangeAsync(Voltage voltage)
+    public async Task SetVoltageRangeAsync(IInterfaceLogger logger, Voltage voltage)
     {
-        throw new NotImplementedException();
+        string request = "AVR" + voltage.GetValue().ToString();
+
+        /* Execute the request and wait for the information string. */
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create(request, "AVRACK"))[0];
     }
 
     /// <inheritdoc/>
-    public Task SetCurrentRangeAsync(Current current)
+    public async Task SetCurrentRangeAsync(IInterfaceLogger logger, Current current)
     {
-        throw new NotImplementedException();
+        string request = "ACR" + current.GetValue().ToString();
+        
+        /* Execute the request and wait for the information string. */
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create(request, "ACRACK"))[0];
     }
 
     /// <inheritdoc/>
-    public Task SetAutomaticAsync(bool voltageRanges = true, bool currentRanges = true, bool pll = true)
+    public async Task SetAutomaticAsync(IInterfaceLogger logger, bool voltageRanges = true, bool currentRanges = true, bool pll = true)
     {
-        throw new NotImplementedException();
+        string request = "AAM";
+
+        // A -> automatic; M -> manual
+        if(voltageRanges == true) request += "A"; else request += "M";
+        if(currentRanges == true) request += "A"; else request += "M";
+        if(pll == true) request += "A"; else request += "M";
+        
+        /* Execute the request and wait for the information string. */
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create(request, "AAMACK"))[0];
     }
 
     /// <inheritdoc/>
-    public Task SelectPllChannelAsync(PllChannel pll)
+    public async Task SelectPllChannelAsync(IInterfaceLogger logger, PllChannel pll)
     {
-        throw new NotImplementedException();
+        string request = "AWR" + (int)pll;
+        
+        /* Execute the request and wait for the information string. */
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create(request, "AWRACK"))[0];
     }
 }

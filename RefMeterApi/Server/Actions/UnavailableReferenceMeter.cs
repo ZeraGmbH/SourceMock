@@ -33,37 +33,37 @@ public class UnavailableReferenceMeter : IRefMeter
     public Task<ReferenceMeterInformation> GetMeterInformationAsync(IInterfaceLogger logger) => throw new RefMeterNotReadyException();
 
     /// <inheritdoc/>
-    public Task<Voltage[]> GetVoltageRangesAsync()
+    public Task<Voltage[]> GetVoltageRangesAsync(IInterfaceLogger logger)
     {
         throw new NotImplementedException();
     }
 
     /// <inheritdoc/>
-    public Task<Current[]> GetCurrentRangesAsync()
+    public Task<Current[]> GetCurrentRangesAsync(IInterfaceLogger logger)
     {
         throw new NotImplementedException();
     }
 
     /// <inheritdoc/>
-    public Task SetVoltageRangeAsync(Voltage voltage)
+    public Task SetVoltageRangeAsync(IInterfaceLogger logger, Voltage voltage)
     {
         throw new NotImplementedException();
     }
 
     /// <inheritdoc/>
-    public Task SetCurrentRangeAsync(Current current)
+    public Task SetCurrentRangeAsync(IInterfaceLogger logger, Current current)
     {
         throw new NotImplementedException();
     }
 
     /// <inheritdoc/>
-    public Task SetAutomaticAsync(bool voltageRanges = true, bool currentRanges = true, bool pll = true)
+    public Task SetAutomaticAsync(IInterfaceLogger logger, bool voltageRanges = true, bool currentRanges = true, bool pll = true)
     {
         throw new NotImplementedException();
     }
 
     /// <inheritdoc/>
-    public Task SelectPllChannelAsync(PllChannel pll)
+    public Task SelectPllChannelAsync(IInterfaceLogger logger, PllChannel pll)
     {
         throw new NotImplementedException();
     }

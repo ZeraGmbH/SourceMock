@@ -69,6 +69,7 @@ public class ParserTests
     }
 
     [TestCase("1;0x71;0x2f;0x33;0x00;0.0000", 113, 47, 51, 0)]
+    [TestCase("1;0x17;0x1a;0x22;0x5f;0.0000;5;9", 23, 26, 34, 95)]
     public void Can_Parse_Calibration(string values, byte rCoarse, byte rFine, byte lCoarse, byte lFine)
     {
         var calibration = Calibration.Parse(values);

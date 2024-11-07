@@ -9,6 +9,7 @@ public class ParserTests
     [TestCase("0x7f", "0x00", 127, 0)]
     [TestCase("0x00", "0x7f", 0, 127)]
     [TestCase("0x7f", "0x7f", 127, 127)]
+    [TestCase("0x1A", "0x6C", 26, 108)]
     public void Can_Parse_Calibration_Pair(string coarse, string fine, byte expectedCoarse, byte expectedFine)
     {
         var pair = CalibrationPair.Parse(coarse, fine);
@@ -68,9 +69,9 @@ public class ParserTests
         Assert.Throws<ArgumentException>(() => Calibration.Parse(values));
     }
 
-    [TestCase("1;0x71;0x2f;0x33;0x00;0.0000", 113, 47, 51, 0)]
-    [TestCase("1;0x17;0x1a;0x22;0x5f;0.0000;5;9", 23, 26, 34, 95)]
-    public void Can_Parse_Calibration(string values, byte rCoarse, byte rFine, byte lCoarse, byte lFine)
+    [TestCase("1;0x71;0x2f;0x33;0x00;0.0000", 113, 47, 51, 0, "0.0000")]
+    [TestCase("1;0x17;0x1a;0x22;0x5f;0.0000;5;9", 23, 26, 34, 95, "0.0000;5;9")]
+    public void Can_Parse_Calibration(string values, byte rCoarse, byte rFine, byte lCoarse, byte lFine, string extra)
     {
         var calibration = Calibration.Parse(values);
 
@@ -78,10 +79,11 @@ public class ParserTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(calibration.Resistive.Coarse, Is.EqualTo(rCoarse));
-            Assert.That(calibration.Resistive.Fine, Is.EqualTo(rFine));
-            Assert.That(calibration.Inductive.Coarse, Is.EqualTo(lCoarse));
-            Assert.That(calibration.Inductive.Fine, Is.EqualTo(lFine));
+            Assert.That(calibration.Item1.Resistive.Coarse, Is.EqualTo(rCoarse));
+            Assert.That(calibration.Item1.Resistive.Fine, Is.EqualTo(rFine));
+            Assert.That(calibration.Item1.Inductive.Coarse, Is.EqualTo(lCoarse));
+            Assert.That(calibration.Item1.Inductive.Fine, Is.EqualTo(lFine));
+            Assert.That(calibration.Item2, Is.EqualTo(extra));
         });
     }
 }

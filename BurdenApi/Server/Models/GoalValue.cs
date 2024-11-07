@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace BurdenApi.Models;
@@ -8,19 +10,21 @@ namespace BurdenApi.Models;
 public class GoalValue(ApparentPower power, PowerFactor factor)
 {
     /// <summary>
-    /// Für die Serialisierung.
+    /// To support serialisation.
     /// </summary>
     public GoalValue() : this(new(0), new(1)) { }
 
     /// <summary>
     /// Apparent power in W.
     /// </summary>
-    public ApparentPower ApparentPower { get; private set; } = power;
+    [NotNull, Required]
+    public ApparentPower ApparentPower { get; set; } = power;
 
     /// <summary>
     /// Powerfactor between as cos of angle difference.
     /// </summary>
-    public PowerFactor PowerFactor { get; private set; } = factor;
+    [NotNull, Required]
+    public PowerFactor PowerFactor { get; set; } = factor;
 
     /// <summary>
     /// Calcluate the deviation of a goal value.

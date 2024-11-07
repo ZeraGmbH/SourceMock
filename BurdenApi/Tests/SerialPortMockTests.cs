@@ -285,7 +285,7 @@ public class SerialPortMockTests
                 .CreateExecutor(InterfaceLogSourceTypes.Burden)
                 .ExecuteAsync(Logger, SerialPortRequest.Create("ST", "STACK")));
 
-        Assert.That(status[0], Is.EqualTo(new string[] { "B:IEC50", "R:R230", "N:P0.00;0.00", "ON:0", "STACK" }));
+        Assert.That(status[0], Is.EqualTo(new string[] { "B:IEC50", "R:230", "N:0.00;0.00", "ON:0", "STACK" }));
 
         await Task.WhenAll(
                    Connection
@@ -312,6 +312,6 @@ public class SerialPortMockTests
                 .CreateExecutor(InterfaceLogSourceTypes.Burden)
                 .ExecuteAsync(Logger, SerialPortRequest.Create("ST", "STACK")));
 
-        Assert.That(status[0], Is.EqualTo(new string[] { $"B:{burden}", $"R:{range}", $"N:{step}", "ON:0", "STACK" }));
+        Assert.That(status[0], Is.EqualTo(new string[] { $"B:{burden}", $"R:{range}", $"N:{step}", "ON:1", "STACK" }));
     }
 }

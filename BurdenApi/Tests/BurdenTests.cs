@@ -90,6 +90,10 @@ public class BurdenTests
     public async Task Can_Set_Burden_Activation_Async(bool on)
     {
         await Burden.SetActiveAsync(on, Logger);
+
+        var status = await Burden.GetStatusAsync(Logger);
+
+        Assert.That(status.Active, Is.EqualTo(on));
     }
 
     [TestCase(null)]
@@ -102,8 +106,70 @@ public class BurdenTests
     }
 
     [Test]
-    public void Can_Not_Program_Burden_Async()
+    public void Can_Not_Program_Burden()
     {
         Assert.ThrowsAsync<ArgumentException>(() => Burden.ProgramAsync("IEC75", Logger));
+    }
+
+    [Test]
+    public async Task Can_Get_Status_Async()
+    {
+        var status = await Burden.GetStatusAsync(Logger);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(status.Active, Is.False);
+            Assert.That(status.Burden, Is.EqualTo("IEC50"));
+            Assert.That(status.Range, Is.EqualTo("230"));
+            Assert.That(status.Step, Is.EqualTo("0.00;0.00"));
+        });
+
+        await Burden.SetBurdenAsync("ANSI", Logger);
+
+        status = await Burden.GetStatusAsync(Logger);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(status.Active, Is.False);
+            Assert.That(status.Burden, Is.EqualTo("ANSI"));
+            Assert.That(status.Range, Is.EqualTo("230"));
+            Assert.That(status.Step, Is.EqualTo("12.50;0.10"));
+        });
+
+        await Burden.SetRangeAsync("100/v3", Logger);
+
+        status = await Burden.GetStatusAsync(Logger);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(status.Active, Is.False);
+            Assert.That(status.Burden, Is.EqualTo("ANSI"));
+            Assert.That(status.Range, Is.EqualTo("100/v3"));
+            Assert.That(status.Step, Is.EqualTo("12.50;0.10"));
+        });
+
+        await Burden.SetStepAsync("200.00;0.85", Logger);
+
+        status = await Burden.GetStatusAsync(Logger);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(status.Active, Is.False);
+            Assert.That(status.Burden, Is.EqualTo("ANSI"));
+            Assert.That(status.Range, Is.EqualTo("100/v3"));
+            Assert.That(status.Step, Is.EqualTo("200.00;0.85"));
+        });
+
+        await Burden.SetActiveAsync(true, Logger);
+
+        status = await Burden.GetStatusAsync(Logger);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(status.Active, Is.True);
+            Assert.That(status.Burden, Is.EqualTo("ANSI"));
+            Assert.That(status.Range, Is.EqualTo("100/v3"));
+            Assert.That(status.Step, Is.EqualTo("200.00;0.85"));
+        });
     }
 }

@@ -1309,12 +1309,12 @@ public class BurdenSerialPortMock : ISerialPort
 
         // Initialize state.
         _Burden = burdens.Keys.First();
-        _Range = burdens[_Burden].First(i => i.StartsWith('R'));
-        _Step = burdens[_Burden].First(i => i.StartsWith('P'));
+        _Range = burdens[_Burden].First(i => i.StartsWith('R'))[1..];
+        _Step = burdens[_Burden].First(i => i.StartsWith('P'))[1..];
 
         _Commands = new(){
             // Set the calibration of the FETs - current values.
-            { "SF((0x[0-7][0-9a-f]);(0x[0-7][0-9a-f]);(0x[0-7][0-9a-f]);(0x[0-7][0-9a-f]))", (m) => {
+            { "SF((0x[0-7][0-9a-fA-F]);(0x[0-7][0-9a-fA-F]);(0x[0-7][0-9a-fA-F]);(0x[0-7][0-9a-fA-F]))", (m) => {
                 _replies.Enqueue("SFACK");
             }},
             { "SF.*", (m) => {
@@ -1331,7 +1331,7 @@ public class BurdenSerialPortMock : ISerialPort
                 _replies.Enqueue("MEACK");
             }},
             // Switch current burden on or off.
-            { "ON[01]", (m) => {
+            { "ON([01])", (m) => {
                 _On = m.Groups[1].Value == "1";
 
                 _replies.Enqueue("ONACK");
@@ -1349,7 +1349,7 @@ public class BurdenSerialPortMock : ISerialPort
                     _replies.Enqueue("GANAK");
             }},
             // Update the calibration - in-memory values.
-            { "SA(.*);(.*);((.*);(.*));((0x[0-7][0-9a-f]);(0x[0-7][0-9a-f]);(0x[0-7][0-9a-f]);(0x[0-7][0-9a-f]));(.*)", (m) => {
+            { "SA(.*);(.*);((.*);(.*));((0x[0-7][0-9a-fA-F]);(0x[0-7][0-9a-fA-F]);(0x[0-7][0-9a-fA-F]);(0x[0-7][0-9a-fA-F]));(.*)", (m) => {
                 var step = $"{m.Groups[1].Value};{m.Groups[2].Value};{m.Groups[3].Value}";
 
                 if(_Calibrations.ContainsKey(step)){
@@ -1408,8 +1408,8 @@ public class BurdenSerialPortMock : ISerialPort
                 {
                     _Burden = m.Groups[1].Value;
 
-                    _Range = burden.First(i => i.StartsWith('R'));
-                    _Step = burden.First(i => i.StartsWith('P'));
+                    _Range = burden.First(i => i.StartsWith('R'))[1..];
+                    _Step = burden.First(i => i.StartsWith('P'))[1..];
 
                     _replies.Enqueue("SBACK");
                 }

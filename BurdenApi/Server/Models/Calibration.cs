@@ -43,7 +43,7 @@ public class Calibration(CalibrationPair resistive, CalibrationPair inductive)
     /// </summary>
     /// <param name="values">Full value information.</param>
     /// <returns>null if the calibration has not been done.</returns>
-    public static Calibration? Parse(string values)
+    public static Tuple<Calibration, string>? Parse(string values)
     {
         // Do a core analysis of the string and check for non existing calibrations.
         var split = values.Split(";");
@@ -57,6 +57,9 @@ public class Calibration(CalibrationPair resistive, CalibrationPair inductive)
         if (split[0] != "1") throw new ArgumentException($"bad calibration, wrong activation flag: {values}", nameof(values));
 
         // Got a calibration.
-        return new(CalibrationPair.Parse(split[1], split[2]), CalibrationPair.Parse(split[3], split[4]));
+        return Tuple.Create(
+            new Calibration(CalibrationPair.Parse(split[1], split[2]), CalibrationPair.Parse(split[3], split[4])),
+            string.Join(";", split.Skip(5))
+        );
     }
 }

@@ -132,7 +132,7 @@ public partial class SerialPortConnection
                 /* Start logging. */
                 receiveEntry = connection.Prepare(new() { Outgoing = false, RequestId = requestId });
 
-                reply = ReadInput();
+                reply = ReadInput(request.EstimatedDuration);
 
                 _logger.LogDebug("Got reply {Reply} for command {Command}", reply, request.Command);
 

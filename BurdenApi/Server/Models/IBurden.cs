@@ -1,4 +1,3 @@
-using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace BurdenApi.Models;
@@ -38,4 +37,12 @@ public interface IBurden
     /// <param name="interfaceLogger">Logging helper.</param>
     /// <returns>Calibration values or null if not calibrated.</returns>
     Task<Calibration?> GetCalibrationAsync(string burden, string range, string step, IInterfaceLogger interfaceLogger);
+
+    /// <summary>
+    /// Program burdens.
+    /// </summary>
+    /// <remarks>This call may take a rather long time.</remarks>
+    /// <param name="burden">Burden to program or empty for all burdens.</param>
+    /// <param name="interfaceLogger">Logging helper.</param>
+    Task ProgramAsync(string? burden, IInterfaceLogger interfaceLogger);
 }

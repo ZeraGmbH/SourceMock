@@ -33,15 +33,23 @@ public class SerialPortRequest
     public readonly TaskCompletionSource<string[]> Result = new();
 
     /// <summary>
+    /// Optional estimated duration (in milliseconds) of the command to allow
+    /// long running commands to avoid timeout.
+    /// </summary>
+    public readonly int? EstimatedDuration;
+
+    /// <summary>
     /// Initialize a new request.
     /// </summary>
     /// <param name="command">Command string.</param>
     /// <param name="end">Final string from the device to end the request.</param>
-    private SerialPortRequest(string command, string end)
+    /// <param name="duration">Estimated duration (in milliseconds)</param>
+    private SerialPortRequest(string command, string end, int? duration)
     {
         _StaticEnd = end;
 
         Command = command;
+        EstimatedDuration = duration;
     }
 
     /// <summary>
@@ -49,11 +57,13 @@ public class SerialPortRequest
     /// </summary>
     /// <param name="command">Command string.</param>
     /// <param name="end">Pattern expected to terminate the request.</param>
-    private SerialPortRequest(string command, Regex end)
+    /// <param name="duration">Estimated duration (in milliseconds)</param>
+    private SerialPortRequest(string command, Regex end, int? duration)
     {
         _DynamicEnd = end;
 
         Command = command;
+        EstimatedDuration = duration;
     }
 
     /// <summary>
@@ -61,16 +71,18 @@ public class SerialPortRequest
     /// </summary>
     /// <param name="command">Command string.</param>
     /// <param name="end">Pattern expected to terminate the request.</param>
+    /// <param name="duration">Estimated duration (in milliseconds)</param>
     /// <returns>The new request.</returns>
-    public static SerialPortRequest Create(string command, Regex end) => new(command, end);
+    public static SerialPortRequest Create(string command, Regex end, int? duration = null) => new(command, end, duration);
 
     /// <summary>
     /// Create a new request.
     /// </summary>
     /// <param name="command">Command string.</param>
     /// <param name="end">Final string from the device to end the request.</param>
+    /// <param name="duration">Estimated duration (in milliseconds)</param>
     /// <returns>The new request.</returns>
-    public static SerialPortRequest Create(string command, string end) => new(command, end);
+    public static SerialPortRequest Create(string command, string end, int? duration = null) => new(command, end, duration);
 
     /// <summary>
     /// Match a reply against the termination condition and report result.

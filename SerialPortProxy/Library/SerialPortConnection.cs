@@ -254,8 +254,10 @@ public partial class SerialPortConnection : ISerialPortConnection
     /// <summary>
     /// Get the next line from the input queue.
     /// </summary>
+    /// <remarks>Use timeout with care since it can block the server.</remarks>
+    /// <param name="timeout">Maximum timeout (in milliseconds) to wait for an answer.</param>
     /// <returns>The next line.</returns>
-    private string ReadInput()
+    private string ReadInput(int? timeout)
     {
         lock (_incoming)
             for (; ; )
@@ -265,7 +267,7 @@ public partial class SerialPortConnection : ISerialPortConnection
                     return line;
 
                 /* Wait for new data. */
-                if (!Monitor.Wait(_incoming, UnitTest ?? ReadTimeout))
+                if (!Monitor.Wait(_incoming, timeout ?? UnitTest ?? ReadTimeout))
                     throw new TimeoutException("no reply from serial port");
             }
     }

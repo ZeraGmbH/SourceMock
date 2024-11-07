@@ -1,7 +1,6 @@
 using BurdenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using SerialPortProxy;
-using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace BurdenApi.Actions;
@@ -54,10 +53,15 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection device) 
     }
 
     /// <inheritdoc/>
-    public async Task SetActiveAsync(bool on, IInterfaceLogger log)
-    {
-        await device
+    public Task ProgramAsync(string? burden, IInterfaceLogger log)
+        // Enforce a read timeout of 20 Minutes - in worst case serial line will be blocked for that duration.
+        => device
+            .CreateExecutor(InterfaceLogSourceTypes.Burden)
+            .ExecuteAsync(log, SerialPortRequest.Create($"PR{burden ?? string.Empty}", "PRACK", 1200000))[0];
+
+    /// <inheritdoc/>
+    public Task SetActiveAsync(bool on, IInterfaceLogger log)
+        => device
             .CreateExecutor(InterfaceLogSourceTypes.Burden)
             .ExecuteAsync(log, SerialPortRequest.Create($"ON{(on ? 1 : 0)}", "ONACK"))[0];
-    }
 }

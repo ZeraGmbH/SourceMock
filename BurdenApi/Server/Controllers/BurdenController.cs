@@ -62,4 +62,16 @@ public class BurdenController(IBurden device, IInterfaceLogger logger) : Control
     [SwaggerOperation(OperationId = "GetBurdens")]
     public Task<ActionResult<string[]>> GetBurdensAsync()
         => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetBurdensAsync(logger));
+
+    /// <summary>
+    /// Program burdens.
+    /// </summary>
+    /// <remarks>
+    /// May take a very liong time so change the client
+    /// timeout accordingly.
+    /// </remarks>
+    [HttpPost("program"), SamAuthorize(WebSamRole.testcaseexecutor)]
+    [SwaggerOperation(OperationId = "ProgramBurden")]
+    public Task<ActionResult> ProgramBurdenAsync(string? burden)
+        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.ProgramAsync(burden, logger));
 }

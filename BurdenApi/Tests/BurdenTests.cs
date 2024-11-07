@@ -91,4 +91,19 @@ public class BurdenTests
     {
         await Burden.SetActiveAsync(on, Logger);
     }
+
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase("ANSI")]
+    [Ignore("Takes a minute per test to complete - better run manually only")]
+    public async Task Can_Program_Burden_Async(string? burden)
+    {
+        await Burden.ProgramAsync(burden, Logger);
+    }
+
+    [Test]
+    public void Can_Not_Program_Burden_Async()
+    {
+        Assert.ThrowsAsync<ArgumentException>(() => Burden.ProgramAsync("IEC75", Logger));
+    }
 }

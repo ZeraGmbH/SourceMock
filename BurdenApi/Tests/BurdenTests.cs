@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZstdSharp.Unsafe;
 
 namespace BurdenApiTests;
 
@@ -171,5 +172,38 @@ public class BurdenTests
             Assert.That(status.Range, Is.EqualTo("100/v3"));
             Assert.That(status.Step, Is.EqualTo("200.00;0.85"));
         });
+    }
+
+
+    [TestCase("IEC60", "190", "3.75;0.80", 10, 20, 30, 40)]
+    public async Task Can_Set_Transient_Calibration_Async(string burden, string range, string step, byte rCoarse, byte rFine, byte lCoarse, byte lFine)
+    {
+        var before = await Burden.GetCalibrationAsync(burden, range, step, Logger);
+
+        Assert.That(before, Is.Not.Null);
+
+        await Burden.SetBurdenAsync(burden, Logger);
+        await Burden.SetRangeAsync(range, Logger);
+        await Burden.SetStepAsync(step, Logger);
+
+        var calibration = new Calibration(new(rCoarse, rFine), new(lCoarse, lFine));
+
+        await Burden.SetTransientCalibrationAsync(calibration, Logger);
+
+        var after = await Burden.GetCalibrationAsync(burden, range, step, Logger);
+
+        Assert.That(after, Is.EqualTo(before));
+    }
+
+    [TestCase("IEC60", "190", "3.75;0.80", 10, 20, 30, 40)]
+    public async Task Can_Set_Permanent_Calibration_Async(string burden, string range, string step, byte rCoarse, byte rFine, byte lCoarse, byte lFine)
+    {
+        var calibration = new Calibration(new(rCoarse, rFine), new(lCoarse, lFine));
+
+        await Burden.SetPermanentCalibrationAsync(burden, range, step, calibration, Logger);
+
+        var after = await Burden.GetCalibrationAsync(burden, range, step, Logger);
+
+        Assert.That(after, Is.EqualTo(calibration));
     }
 }

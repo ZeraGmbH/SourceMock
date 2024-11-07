@@ -27,15 +27,13 @@ public class Calibration(CalibrationPair resistive, CalibrationPair inductive)
     [NotNull, Required]
     public CalibrationPair Inductive { get; set; } = inductive;
 
-    /// <summary>
-    /// Create a hash code for this calibration.
-    /// </summary>
-    /// <returns>Hash code for the calibration.</returns>
+    /// <inheritdoc/>
     public override int GetHashCode() => (Resistive.GetHashCode() << 4) ^ Inductive.GetHashCode();
 
-    /// <summary>
-    /// Create a descripte string for the calibration.
-    /// </summary>
+    /// <inheritdoc/>
+    public override bool Equals(object? obj) => obj is Calibration other && other.Resistive.Equals(Resistive) && other.Inductive.Equals(Inductive);
+
+    /// <inheritdoc/>
     public override string ToString() => $"r({Resistive})/i({Inductive})";
 
     /// <summary>

@@ -37,8 +37,6 @@ public class GoalValue(ApparentPower power, PowerFactor factor)
             (actual.ApparentPower - expected.ApparentPower) / expected.ApparentPower,
             (actual.PowerFactor - expected.PowerFactor) / expected.PowerFactor);
 
-    /// <summary>
-    /// Show as string esp. for debugging purposes.
-    /// </summary>
+    /// <inheritdoc/>
     public override string ToString() => $"{ApparentPower}/{PowerFactor}";
 }

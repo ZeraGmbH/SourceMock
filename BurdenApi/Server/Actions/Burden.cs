@@ -25,8 +25,7 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection device) 
         return [.. burdens.Take(burdens.Length - 1)];
     }
 
-    /// <inheritdoc/>
-    public async Task<Calibration?> GetCalibrationAsync(string burden, string range, string step, IInterfaceLogger log)
+    private async Task<Tuple<Calibration, string>?> GetCalibrationInfoAsync(string burden, string range, string step, IInterfaceLogger log)
     {
         // Request values from device.
         var values = await device
@@ -36,8 +35,12 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection device) 
         if (values.Length < 2) throw new InvalidOperationException($"too few response lines");
 
         // Reconstruct the calibration data.
-        return Calibration.Parse(values[^2])?.Item1;
+        return Calibration.Parse(values[^2]);
     }
+
+    /// <inheritdoc/>
+    public async Task<Calibration?> GetCalibrationAsync(string burden, string range, string step, IInterfaceLogger log)
+        => (await GetCalibrationInfoAsync(burden, range, step, log))?.Item1;
 
     /// <inheritdoc/>
     public async Task<BurdenStatus> GetStatusAsync(IInterfaceLogger log)
@@ -117,9 +120,17 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection device) 
             .ExecuteAsync(log, SerialPortRequest.Create($"SB{burden}", "SBACK"))[0];
 
     /// <inheritdoc/>
-    public Task SetPermanentCalibrationAsync(string burden, string range, string step, Calibration calibration, IInterfaceLogger interfaceLogger)
+    public async Task SetPermanentCalibrationAsync(string burden, string range, string step, Calibration calibration, IInterfaceLogger log)
     {
-        throw new NotImplementedException();
+        // Get the full previous setting.
+        var fullName = $"{burden};{range};{step}";
+        var before = await GetCalibrationInfoAsync(burden, range, step, log) ?? throw new ArgumentException($"{fullName} can not be calibrated");
+
+        // Update
+        await device
+            .CreateExecutor(InterfaceLogSourceTypes.Burden)
+            .ExecuteAsync(log, SerialPortRequest.Create(
+                $"SA{fullName};0x{calibration.Resistive.Coarse:x2};0x{calibration.Resistive.Fine:x2};0x{calibration.Inductive.Coarse:x2};0x{calibration.Inductive.Fine:x2};{before.Item2}", "SAACK"))[0];
     }
 
     /// <inheritdoc/>

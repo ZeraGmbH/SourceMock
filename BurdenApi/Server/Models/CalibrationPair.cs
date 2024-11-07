@@ -61,15 +61,16 @@ public class CalibrationPair()
             false => Fine > 0 ? new CalibrationPair(Coarse, (byte)(Fine - 1)) : null,
         };
 
-    /// <summary>
-    /// Create a hash code from the elementary values.
-    /// </summary>
-    /// <returns>Some hash code based on our values.</returns>
+    /// <inheritdoc/>
     public override int GetHashCode() => (Coarse.GetHashCode() << 4) ^ Fine.GetHashCode();
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj) => obj is CalibrationPair other && other.Coarse == Coarse && other.Fine == Fine;
 
     /// <summary>
     /// Create a string describing this value pair.
     /// </summary>
+    /// <inheritdoc/>
     public override string ToString() => $"{Coarse}:{Fine}";
 
     /// <summary>

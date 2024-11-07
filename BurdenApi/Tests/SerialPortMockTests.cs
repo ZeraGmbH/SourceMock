@@ -261,13 +261,13 @@ public class SerialPortMockTests
                 .ExecuteAsync(Logger, SerialPortRequest.Create($"SF{calibration}", "SFACK")));
     }
 
-    [TestCase("IEC60", "230/3", "18.75;0.80", "0x12;0x34;0x7f;0x6e")]
+    [TestCase("IEC60", "230/3", "18.75;0.80", "0x12;0x34;0x7f;0x6e;0.000000")]
     public async Task Can_Set_Permanent_Calibration_Async(string burden, string range, string step, string calibration)
     {
         await Task.WhenAll(
             Connection
                 .CreateExecutor(InterfaceLogSourceTypes.Burden)
-                .ExecuteAsync(Logger, SerialPortRequest.Create($"SA{burden};{range};{step};{calibration};0.0", "SAACK")));
+                .ExecuteAsync(Logger, SerialPortRequest.Create($"SA{burden};{range};{step};{calibration}", "SAACK")));
 
         var values = await Task.WhenAll(
            Connection
@@ -278,7 +278,7 @@ public class SerialPortMockTests
     }
 
     [TestCase("IEC60", "190", "3.75;0.80")]
-    public async Task Can_ReadStatus(string burden, string range, string step)
+    public async Task Can_Read_Status_Async(string burden, string range, string step)
     {
         var status = await Task.WhenAll(
             Connection

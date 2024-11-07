@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using BurdenApi.Models;
 using SerialPortProxy;
 using SourceApi.Actions.SerialPort;
 
@@ -1352,10 +1353,16 @@ public class BurdenSerialPortMock : ISerialPort
             { "SA(.*);(.*);((.*);(.*));((0x[0-7][0-9a-fA-F]);(0x[0-7][0-9a-fA-F]);(0x[0-7][0-9a-fA-F]);(0x[0-7][0-9a-fA-F]));(.*)", (m) => {
                 var step = $"{m.Groups[1].Value};{m.Groups[2].Value};{m.Groups[3].Value}";
 
-                if(_Calibrations.ContainsKey(step)){
-                    _Calibrations[step] = $"1;{m.Groups[6].Value}";
+                if(_Calibrations.TryGetValue(step, out var calibration)){
+                    var existing = Calibration.Parse(calibration);
 
-                    _replies.Enqueue("SAACK");
+                    if(existing != null && existing.Item2 == m.Groups[11].Value){
+                        _Calibrations[step] = $"1;{m.Groups[6].Value};{existing.Item2}";
+
+                        _replies.Enqueue("SAACK");
+                    }
+                    else
+                        _replies.Enqueue("SANAK");
                 }
                 else
                     _replies.Enqueue("SANAK");

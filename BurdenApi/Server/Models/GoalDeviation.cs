@@ -23,8 +23,6 @@ public class GoalDeviation(double power, double factor)
     /// </summary>
     public double DeltaFactor { get; private set; } = factor;
 
-    /// <summary>
-    /// Create a descripte string for the deviation.
-    /// </summary>
+    /// <inheritdoc/>
     public override string ToString() => $"{100 * DeltaPower}%/{100 * DeltaFactor}%";
 }

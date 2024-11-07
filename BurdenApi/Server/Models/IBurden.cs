@@ -1,3 +1,4 @@
+
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace BurdenApi.Models;
@@ -7,6 +8,12 @@ namespace BurdenApi.Models;
 /// </summary>
 public interface IBurden
 {
+    /// <summary>
+    /// Set if a burden has been configured and can be used.
+    /// </summary>
+    /// <value></value>
+    bool IsAvailable { get; }
+
     /// <summary>
     /// Read the version information from the burden.
     /// </summary>

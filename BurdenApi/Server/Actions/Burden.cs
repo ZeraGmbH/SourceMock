@@ -1,5 +1,4 @@
 using BurdenApi.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
@@ -12,6 +11,9 @@ namespace BurdenApi.Actions;
 /// <param name="device">Serial port connection to the hardware.</param>
 public class Burden([FromKeyedServices("Burden")] ISerialPortConnection device) : IBurden
 {
+    /// <inheritdoc/>
+    public bool IsAvailable { get; } = device != null;
+
     /// <inheritdoc/>
     public async Task<string[]> GetBurdensAsync(IInterfaceLogger log)
     {

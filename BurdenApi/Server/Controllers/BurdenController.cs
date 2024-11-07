@@ -18,10 +18,18 @@ namespace BurdenApi.Controllers;
 public class BurdenController(IBurden device, IInterfaceLogger logger) : ControllerBase
 {
     /// <summary>
+    /// Check if a burden is configured.
+    /// </summary>
+    /// <returns>Set if burden is available.</returns>
+    [HttpGet, SamAuthorize]
+    [SwaggerOperation(OperationId = "BurdenAvailable")]
+    public ActionResult<bool> HasBurden() => device.IsAvailable;
+
+    /// <summary>
     /// Get the version of the current version.
     /// </summary>
     /// <returns>The version of the burden.</returns>
-    [HttpGet("version"), SamAuthorize(WebSamRole.testcaseexecutor)]
+    [HttpGet("version"), SamAuthorize]
     [SwaggerOperation(OperationId = "GetBurdenVersion")]
     public Task<ActionResult<BurdenVersion>> GetVersionAsync()
         => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetVersionAsync(logger));

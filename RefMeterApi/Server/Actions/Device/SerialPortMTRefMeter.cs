@@ -115,13 +115,13 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
             SoftwareVersion = versionMatch.Groups[2].Value
         };
     }
-    
+
     /// <inheritdoc/>
     public async Task<Voltage[]> GetVoltageRangesAsync(IInterfaceLogger logger)
     {
         /* Execute the request and wait for the information string. */
         var reply = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AVI", "AVIACK"))[0];
-        
+
         return [.. reply.Take(reply.Length - 1).Select(v => new Voltage(double.Parse(v)))];
     }
 
@@ -147,7 +147,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     public async Task SetCurrentRangeAsync(IInterfaceLogger logger, Current current)
     {
         string request = "ACR" + current.GetValue().ToString();
-        
+
         /* Execute the request and wait for the information string. */
         await _device.ExecuteAsync(logger, SerialPortRequest.Create(request, "ACRACK"))[0];
     }
@@ -158,10 +158,10 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
         string request = "AAM";
 
         // A -> automatic; M -> manual
-        if(voltageRanges == true) request += "A"; else request += "M";
-        if(currentRanges == true) request += "A"; else request += "M";
-        if(pll == true) request += "A"; else request += "M";
-        
+        if (voltageRanges == true) request += "A"; else request += "M";
+        if (currentRanges == true) request += "A"; else request += "M";
+        if (pll == true) request += "A"; else request += "M";
+
         /* Execute the request and wait for the information string. */
         await _device.ExecuteAsync(logger, SerialPortRequest.Create(request, "AAMACK"))[0];
     }
@@ -170,7 +170,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     public async Task SelectPllChannelAsync(IInterfaceLogger logger, PllChannel pll)
     {
         string request = "AWR" + (int)pll;
-        
+
         /* Execute the request and wait for the information string. */
         await _device.ExecuteAsync(logger, SerialPortRequest.Create(request, "AWRACK"))[0];
     }

@@ -30,4 +30,11 @@ public class MeterTestSystemConfiguration
     [NotNull, Required]
     [BsonElement("interfaces")]
     public InterfaceConfiguration Interfaces { get; set; } = new();
+
+    /// <summary>
+    /// Set to do not use the source if possible. Not all meter test
+    /// systems will allow this.
+    /// </summary>
+    [BsonElement("noSource")]
+    public bool? NoSource { get; set; }
 }

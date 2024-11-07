@@ -75,7 +75,7 @@ public class BurdenController(IBurden device, IInterfaceLogger logger) : Control
     /// Program burdens.
     /// </summary>
     /// <remarks>
-    /// May take a very liong time so change the client
+    /// May take a very long time so change the client
     /// timeout accordingly.
     /// </remarks>
     [HttpPost("program"), SamAuthorize(WebSamRole.testcaseexecutor)]

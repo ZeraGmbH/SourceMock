@@ -108,7 +108,7 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
             SoftwareVersion = request.EndMatch!.Groups[2].Value.Trim()
         };
     }
-    
+
     /// <inheritdoc/>
     public Task<Voltage[]> GetVoltageRangesAsync(IInterfaceLogger logger)
     {

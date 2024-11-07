@@ -46,10 +46,10 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     private readonly IServiceProvider _services;
 
     /// <inheritdoc/>
-    public bool HasSource { get; } = true;
+    public bool HasSource { get; private set; } = true;
 
     /// <inheritdoc/>
-    public bool HasDosage { get; } = true;
+    public bool HasDosage { get; private set; } = true;
 
     /// <inheritdoc/>
     private AmplifiersAndReferenceMeter _amplifiersAndReferenceMeter = null!;
@@ -308,5 +308,16 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         /* Use. */
         _errorCalculators.Clear();
         _errorCalculators.AddRange(errorCalculators);
+    }
+
+    /// <summary>
+    /// Disable source.
+    /// </summary>
+    public void NoSource()
+    {
+        Source = new UnavailableSource();
+
+        HasDosage = false;
+        HasSource = false;
     }
 }

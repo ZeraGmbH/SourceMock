@@ -8,6 +8,7 @@ using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
+using SourceApi.Actions;
 
 namespace MeterTestSystemApi.Actions.Device;
 
@@ -48,10 +49,10 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     public IErrorCalculator[] ErrorCalculators => _errorCalculators.ToArray();
 
     /// <inheritdoc/>
-    public bool HasSource { get; } = true;
+    public bool HasSource { get; private set; } = true;
 
     /// <inheritdoc/>
-    public bool HasDosage { get; } = true;
+    public bool HasDosage { get; private set; } = true;
 
     /// <inheritdoc/>
     public Task<AmplifiersAndReferenceMeter> GetAmplifiersAndReferenceMeterAsync(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
@@ -79,6 +80,17 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
 
         /* Register out-of-band processing of error conditions. */
         device.RegisterEvent(_smRegEx, reply => ErrorConditionsChanged?.Invoke(ErrorConditionParser.Parse(reply.Groups[1].Value, true)));
+    }
+
+    /// <summary>
+    /// Disable source.
+    /// </summary>
+    public void NoSource()
+    {
+        Source = new UnavailableSource();
+
+        HasDosage = false;
+        HasSource = false;
     }
 
     /// <inheritdoc/>
@@ -121,6 +133,9 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
     /// <inheritdoc/>
     public async Task<ErrorConditions> GetErrorConditionsAsync(IInterfaceLogger logger)
     {
+        /* No source available - nothing more to do for now. */
+        if (!HasSource) return ErrorConditionParser.Parse("00000000000000000000", false);
+
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("SSM", _smRegEx);
 

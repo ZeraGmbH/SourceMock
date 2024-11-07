@@ -59,6 +59,8 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                         {
                             var meterTestSystem = services.GetRequiredService<SerialPortFGMeterTestSystem>();
 
+                            if (configuration.NoSource == true) meterTestSystem.NoSource();
+
                             _meterTestSystem = meterTestSystem;
 
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
@@ -97,11 +99,25 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                             break;
                         }
                     case MeterTestSystemTypes.MT786:
-                        _meterTestSystem = services.GetRequiredService<SerialPortMTMeterTestSystem>();
-                        break;
+                        {
+                            var meterTestSystem = services.GetRequiredService<SerialPortMTMeterTestSystem>();
+
+                            if (configuration.NoSource == true) meterTestSystem.NoSource();
+
+                            _meterTestSystem = meterTestSystem;
+
+                            break;
+                        }
                     case MeterTestSystemTypes.ACMock:
-                        _meterTestSystem = services.GetRequiredService<MeterTestSystemAcMock>();
-                        break;
+                        {
+                            var meterTestSystem = services.GetRequiredService<MeterTestSystemAcMock>();
+
+                            if (configuration.NoSource == true) meterTestSystem.NoSource();
+
+                            _meterTestSystem = meterTestSystem;
+
+                            break;
+                        }
                     case MeterTestSystemTypes.ACMockNoSource:
                         {
                             var meterTestSystem = services.GetRequiredService<MeterTestSystemAcMock>();
@@ -112,8 +128,15 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                             break;
                         }
                     case MeterTestSystemTypes.DCMock:
-                        _meterTestSystem = services.GetRequiredService<MeterTestSystemDcMock>();
-                        break;
+                        {
+                            var meterTestSystem = services.GetRequiredService<MeterTestSystemDcMock>();
+
+                            meterTestSystem.NoSource();
+
+                            _meterTestSystem = meterTestSystem;
+
+                            break;
+                        }
                     case MeterTestSystemTypes.DCMockNoSource:
                         {
                             var meterTestSystem = services.GetRequiredService<MeterTestSystemDcMock>();
@@ -121,6 +144,7 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                             meterTestSystem.NoSource();
 
                             _meterTestSystem = meterTestSystem;
+
                             break;
                         }
                     default:

@@ -93,6 +93,15 @@ public class BurdenController(IBurden device, IInterfaceLogger logger) : Control
         => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetStatusAsync(logger));
 
     /// <summary>
+    /// Get the current measurement values
+    /// </summary>
+    /// <returns>Current values for the single phase.</returns>
+    [HttpGet("values"), SamAuthorize(WebSamRole.testcaseexecutor)]
+    [SwaggerOperation(OperationId = "MeasureBurden")]
+    public Task<ActionResult<BurdenValues>> MeasureAsync()
+        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.MeasureAsync(logger));
+
+    /// <summary>
     /// Set the active burden.
     /// </summary>
     /// <param name="burden">Burden to make the active one.</param>

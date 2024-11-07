@@ -98,4 +98,11 @@ public interface IBurden
     /// <param name="step">Step to use.</param>
     /// <param name="interfaceLogger">Logging helper.</param>
     Task SetStepAsync(string step, IInterfaceLogger interfaceLogger);
+
+    /// <summary>
+    /// Measure the current values.
+    /// </summary>
+    /// <param name="interfaceLogger">Logging helper.</param>
+    /// <returns>Values of a single phase.</returns>
+    Task<BurdenValues> MeasureAsync(IInterfaceLogger interfaceLogger);
 }

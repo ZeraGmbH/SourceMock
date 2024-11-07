@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using BurdenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using SerialPortProxy;
@@ -8,19 +9,22 @@ namespace BurdenApi.Actions;
 /// <summary>
 /// Implementation of the burden communication interface.
 /// </summary>
-/// <param name="device">Serial port connection to the hardware.</param>
-public class Burden([FromKeyedServices("Burden")] ISerialPortConnection device) : IBurden
+/// <param name="port">Serial port connection to the hardware.</param>
+public class Burden([FromKeyedServices("Burden")] ISerialPortConnection port) : IBurden
 {
+    private static readonly Regex ValueReg = new(@"^(\d{1,3});(.+)$");
+
+    // Port access helper.
+    private readonly ISerialPortConnectionExecutor device = port?.CreateExecutor(InterfaceLogSourceTypes.Burden)!;
+
     /// <inheritdoc/>
-    public bool IsAvailable { get; } = device != null;
+    public bool IsAvailable { get; } = port != null;
 
     /// <inheritdoc/>
     public async Task<string[]> GetBurdensAsync(IInterfaceLogger log)
     {
         // Request burdens from device.
-        var burdens = await device
-            .CreateExecutor(InterfaceLogSourceTypes.Burden)
-            .ExecuteAsync(log, SerialPortRequest.Create("AB", "ABACK"))[0];
+        var burdens = await device.ExecuteAsync(log, SerialPortRequest.Create("AB", "ABACK"))[0];
 
         if (burdens.Length < 1) throw new InvalidOperationException($"too few response lines");
 
@@ -30,9 +34,7 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection device) 
     private async Task<Tuple<Calibration, string>?> GetCalibrationInfoAsync(string burden, string range, string step, IInterfaceLogger log)
     {
         // Request values from device.
-        var values = await device
-            .CreateExecutor(InterfaceLogSourceTypes.Burden)
-            .ExecuteAsync(log, SerialPortRequest.Create($"GA{burden};{range};{step}", "GAACK"))[0];
+        var values = await device.ExecuteAsync(log, SerialPortRequest.Create($"GA{burden};{range};{step}", "GAACK"))[0];
 
         if (values.Length < 2) throw new InvalidOperationException($"too few response lines");
 
@@ -48,9 +50,7 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection device) 
     public async Task<BurdenStatus> GetStatusAsync(IInterfaceLogger log)
     {
         // Request status from device.
-        var status = await device
-            .CreateExecutor(InterfaceLogSourceTypes.Burden)
-            .ExecuteAsync(log, SerialPortRequest.Create("ST", "STACK"))[0];
+        var status = await device.ExecuteAsync(log, SerialPortRequest.Create("ST", "STACK"))[0];
 
         if (status.Length < 5) throw new InvalidOperationException($"too few response lines");
 
@@ -92,9 +92,7 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection device) 
     public async Task<BurdenVersion> GetVersionAsync(IInterfaceLogger log)
     {
         // Request version from device.
-        var version = await device
-            .CreateExecutor(InterfaceLogSourceTypes.Burden)
-            .ExecuteAsync(log, SerialPortRequest.Create("AV", "AVACK"))[0];
+        var version = await device.ExecuteAsync(log, SerialPortRequest.Create("AV", "AVACK"))[0];
 
         if (version.Length < 3) throw new InvalidOperationException($"too few response lines");
 
@@ -105,21 +103,15 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection device) 
     /// <inheritdoc/>
     public Task ProgramAsync(string? burden, IInterfaceLogger log)
         // Enforce a read timeout of 20 Minutes - in worst case serial line will be blocked for that duration.
-        => device
-            .CreateExecutor(InterfaceLogSourceTypes.Burden)
-            .ExecuteAsync(log, SerialPortRequest.Create($"PR{burden ?? string.Empty}", "PRACK", 1200000))[0];
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"PR{burden ?? string.Empty}", "PRACK", 1200000))[0];
 
     /// <inheritdoc/>
     public Task SetActiveAsync(bool on, IInterfaceLogger log)
-        => device
-            .CreateExecutor(InterfaceLogSourceTypes.Burden)
-            .ExecuteAsync(log, SerialPortRequest.Create($"ON{(on ? 1 : 0)}", "ONACK"))[0];
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"ON{(on ? 1 : 0)}", "ONACK"))[0];
 
     /// <inheritdoc/>
     public Task SetBurdenAsync(string burden, IInterfaceLogger log)
-        => device
-            .CreateExecutor(InterfaceLogSourceTypes.Burden)
-            .ExecuteAsync(log, SerialPortRequest.Create($"SB{burden}", "SBACK"))[0];
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"SB{burden}", "SBACK"))[0];
 
     /// <inheritdoc/>
     public async Task SetPermanentCalibrationAsync(string burden, string range, string step, Calibration calibration, IInterfaceLogger log)
@@ -129,27 +121,74 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection device) 
         var before = await GetCalibrationInfoAsync(burden, range, step, log) ?? throw new ArgumentException($"{fullName} can not be calibrated");
 
         // Update
-        await device
-            .CreateExecutor(InterfaceLogSourceTypes.Burden)
-            .ExecuteAsync(log, SerialPortRequest.Create(
-                $"SA{fullName};0x{calibration.Resistive.Coarse:x2};0x{calibration.Resistive.Fine:x2};0x{calibration.Inductive.Coarse:x2};0x{calibration.Inductive.Fine:x2};{before.Item2}", "SAACK"))[0];
+        await device.ExecuteAsync(log, SerialPortRequest.Create(
+            $"SA{fullName};0x{calibration.Resistive.Coarse:x2};0x{calibration.Resistive.Fine:x2};0x{calibration.Inductive.Coarse:x2};0x{calibration.Inductive.Fine:x2};{before.Item2}", "SAACK"))[0];
     }
 
     /// <inheritdoc/>
     public Task SetRangeAsync(string range, IInterfaceLogger log)
-        => device
-            .CreateExecutor(InterfaceLogSourceTypes.Burden)
-            .ExecuteAsync(log, SerialPortRequest.Create($"SR{range}", "SRACK"))[0];
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"SR{range}", "SRACK"))[0];
 
     /// <inheritdoc/>
     public Task SetStepAsync(string step, IInterfaceLogger log)
-        => device
-            .CreateExecutor(InterfaceLogSourceTypes.Burden)
-            .ExecuteAsync(log, SerialPortRequest.Create($"SN{step}", "SNACK"))[0];
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"SN{step}", "SNACK"))[0];
 
     /// <inheritdoc/>
     public Task SetTransientCalibrationAsync(Calibration calibration, IInterfaceLogger log)
-        => device
-            .CreateExecutor(InterfaceLogSourceTypes.Burden)
-            .ExecuteAsync(log, SerialPortRequest.Create($"SF0x{calibration.Resistive.Coarse:x2};0x{calibration.Resistive.Fine:x2};0x{calibration.Inductive.Coarse:x2};0x{calibration.Inductive.Fine:x2}", "SFACK"))[0];
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"SF0x{calibration.Resistive.Coarse:x2};0x{calibration.Resistive.Fine:x2};0x{calibration.Inductive.Coarse:x2};0x{calibration.Inductive.Fine:x2}", "SFACK"))[0];
+
+    /// <inheritdoc/>
+    public async Task<BurdenValues> MeasureAsync(IInterfaceLogger log)
+    {
+        /* Execute the request and get the answer from the device. */
+        var replies = await device.ExecuteAsync(log, SerialPortRequest.Create("ME", "MEACK"))[0];
+
+        /* Prepare response with a single phase. */
+        var response = new BurdenValues();
+
+        for (var i = 0; i < replies.Length - 1; i++)
+        {
+            /* Chck for a value with index. */
+            var reply = replies[i];
+            var match = ValueReg.Match(reply);
+
+            if (!match.Success) continue;
+
+            /* Decode index and value - make sure that parsing is not messed by local operating system regional settings. */
+            int index;
+            double value;
+
+            try
+            {
+                index = int.Parse(match.Groups[1].Value);
+                value = double.Parse(match.Groups[2].Value);
+            }
+            catch (FormatException)
+            {
+                continue;
+            }
+
+            /* Copy value to the appropriate field. */
+            switch (index)
+            {
+                case 0:
+                    response.Voltage = new(value);
+                    break;
+                case 3:
+                    response.Current = new(value);
+                    break;
+                case 9:
+                    response.Angle = new(value);
+                    break;
+                case 12:
+                    response.PowerFactor = new(value);
+                    break;
+                case 21:
+                    response.ApparentPower = new(value);
+                    break;
+            }
+        }
+
+        return response;
+    }
 }

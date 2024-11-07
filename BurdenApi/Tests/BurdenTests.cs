@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZstdSharp.Unsafe;
 
@@ -205,5 +206,20 @@ public class BurdenTests
         var after = await Burden.GetCalibrationAsync(burden, range, step, Logger);
 
         Assert.That(after, Is.EqualTo(calibration));
+    }
+
+    [Test]
+    public async Task Can_Measure_Async()
+    {
+        var values = await Burden.MeasureAsync(Logger);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That((double)values.Voltage, Is.EqualTo(109.70).Within(0.01));
+            Assert.That((double)values.Current, Is.EqualTo(0.009).Within(0.001));
+            Assert.That((double)values.Angle, Is.EqualTo(0.71).Within(0.01));
+            Assert.That((double)values.PowerFactor, Is.EqualTo(0.999924).Within(0.0000001));
+            Assert.That((double)values.ApparentPower, Is.EqualTo(0.994).Within(0.001));
+        });
     }
 }

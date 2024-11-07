@@ -36,6 +36,15 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     /// </summary>
     private readonly ILogger<SerialPortMTRefMeter> _logger;
 
+    private readonly Dictionary<string, PllChannel> _pllChannels = new(){
+        { "U1", PllChannel.U1 },
+        { "U2", PllChannel.U2 },
+        { "U3", PllChannel.U3 },
+        { "I1", PllChannel.I1 },
+        { "I2", PllChannel.I2 },
+        { "I3", PllChannel.I3 },
+    };
+
     /// <summary>
     /// Initialize device manager.
     /// </summary>
@@ -164,5 +173,37 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
         
         /* Execute the request and wait for the information string. */
         await _device.ExecuteAsync(logger, SerialPortRequest.Create(request, "AWRACK"))[0];
+    }
+
+    /// <inheritdoc/>
+    public async Task<RefMeterStatus> GetRefMeterStatusAsync(IInterfaceLogger logger)    {
+        var reply = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AST", "ASTACK"))[0];
+
+        /* We need the range of voltage and current and the measurement mode as well. */
+        double? voltage = null, current = null;
+        string? mode = null;
+        string? pll = null;
+
+        foreach (var value in reply)
+            if (value.StartsWith("UB="))
+                voltage = double.Parse(value[3..]);
+            else if (value.StartsWith("IB="))
+                current = double.Parse(value[3..]);
+            else if (value.StartsWith("M="))
+                mode = value[2..];
+            else if (value.StartsWith("PLL="))
+                pll = value[4..];
+
+        if (!voltage.HasValue || !current.HasValue || string.IsNullOrEmpty(mode))
+            throw new InvalidOperationException("AST status incomplete");
+
+        RefMeterStatus result = new(){
+            CurrentRange = new Current(current.Value),
+            VoltageRange = new Voltage(voltage.Value),
+            MeasurementMode = SerialPortMTRefMeter.SupportedModes[mode],
+            PllChannel = !string.IsNullOrEmpty(pll) ? _pllChannels[pll] : null,
+        };
+
+        return result;
     }
 }

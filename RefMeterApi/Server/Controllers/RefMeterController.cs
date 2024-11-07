@@ -221,4 +221,18 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public Task<ActionResult> SelectPllChannelAsync(PllChannel pll) =>
         ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SelectPllChannelAsync(interfaceLogger, pll));
+
+    /// <summary>
+    /// Select pll channel - only possible if pll automatic is set to false
+    /// </summary>
+    [HttpGet("RefMeterStatus"), SamAuthorize]
+    [SwaggerOperation(OperationId = "GetRefMeterStatus")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+    [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+    [ProducesResponseType(StatusCodes.Status410Gone)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public Task<ActionResult<RefMeterStatus>> GetRefMeterStatusAsync() =>
+        ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetRefMeterStatusAsync(interfaceLogger));
 }

@@ -97,4 +97,11 @@ public interface IRefMeter
     /// <param name="pll"></param>
     /// <returns></returns>
     public Task SelectPllChannelAsync(IInterfaceLogger logger, PllChannel pll);
+
+    /// <summary>
+    /// Returns Ranges and optional MeasurementMode and PLL Channel
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <returns></returns>
+    public Task<RefMeterStatus> GetRefMeterStatusAsync(IInterfaceLogger logger);
 }

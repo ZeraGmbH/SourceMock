@@ -144,4 +144,10 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
     {
         throw new NotImplementedException();
     }
+    
+    /// <inheritdoc/>
+    public Task<RefMeterStatus> GetRefMeterStatusAsync(IInterfaceLogger logger)
+    {
+        throw new NotImplementedException();
+    }
 }

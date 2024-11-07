@@ -12,7 +12,7 @@ partial class SerialPortMTRefMeter
     /// All currently supported measurement modes - the meter test system
     /// may provide additional modes.
     /// </summary>
-    private static readonly Dictionary<string, MeasurementModes> SupportedModes = new() {
+    public static readonly Dictionary<string, MeasurementModes> SupportedModes = new() {
         {"2WA", MeasurementModes.TwoWireActivePower},
         {"2WAP", MeasurementModes.TwoWireApparentPower},
         {"2WR", MeasurementModes.TwoWireReactivePower},

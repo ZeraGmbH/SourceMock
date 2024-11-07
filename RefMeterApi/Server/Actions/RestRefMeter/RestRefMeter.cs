@@ -133,4 +133,10 @@ public class RestRefMeter(ILoggingHttpClient httpClient, ILogger<RestRefMeter> l
     {
         throw new NotImplementedException();
     }
+    
+    /// <inheritdoc/>
+    public Task<RefMeterStatus> GetRefMeterStatusAsync(IInterfaceLogger logger)
+    {
+        throw new NotImplementedException();
+    }
 }

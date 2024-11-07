@@ -67,4 +67,10 @@ public class UnavailableReferenceMeter : IRefMeter
     {
         throw new NotImplementedException();
     }
+
+    /// <inheritdoc/>
+    public Task<RefMeterStatus> GetRefMeterStatusAsync(IInterfaceLogger logger)
+    {
+        throw new NotImplementedException();
+    }
 }

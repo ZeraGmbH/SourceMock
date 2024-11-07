@@ -15,6 +15,8 @@ public abstract class RefMeterMock : IMockRefMeter
     /// </summary>
     protected MeasurementModes _measurementMode = MeasurementModes.FourWireActivePower;
 
+    private RefMeterStatus _refMeterStatus = new();
+
     /// <summary>
     /// 
     /// </summary>
@@ -46,6 +48,7 @@ public abstract class RefMeterMock : IMockRefMeter
     public Task SetActualMeasurementModeAsync(IInterfaceLogger logger, MeasurementModes mode)
     {
         _measurementMode = mode;
+        _refMeterStatus.MeasurementMode = mode;
 
         return Task.CompletedTask;
     }
@@ -131,12 +134,14 @@ public abstract class RefMeterMock : IMockRefMeter
     /// <inheritdoc/>
     public Task SetVoltageRangeAsync(IInterfaceLogger logger, Voltage voltage)
     {
+        _refMeterStatus.VoltageRange = voltage;
         return Task.CompletedTask;
     }
 
     /// <inheritdoc/>
     public Task SetCurrentRangeAsync(IInterfaceLogger logger, Current current)
     {
+        _refMeterStatus.CurrentRange = current;
         return Task.CompletedTask;
     }
 
@@ -149,6 +154,13 @@ public abstract class RefMeterMock : IMockRefMeter
     /// <inheritdoc/>
     public Task SelectPllChannelAsync(IInterfaceLogger logger, PllChannel pll)
     {
+        _refMeterStatus.PllChannel = pll;
         return Task.CompletedTask;
+    }
+    
+    /// <inheritdoc/>
+    public Task<RefMeterStatus> GetRefMeterStatusAsync(IInterfaceLogger logger)
+    {
+        return Task.FromResult(_refMeterStatus);
     }
 }

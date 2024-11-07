@@ -52,7 +52,7 @@ public class Calibration(CalibrationPair resistive, CalibrationPair inductive)
 
         if (split.Length < 2) return split[0] == "0" ? null : throw new ArgumentException($"bad calibration, expected 0: {values}", nameof(values));
 
-        if (split.Length != 6) throw new ArgumentException($"bad calibration, expected exactly six parts: {values}", nameof(values));
+        if (split.Length < 6) throw new ArgumentException($"bad calibration, expected at least six parts: {values}", nameof(values));
 
         if (split[0] != "1") throw new ArgumentException($"bad calibration, wrong activation flag: {values}", nameof(values));
 

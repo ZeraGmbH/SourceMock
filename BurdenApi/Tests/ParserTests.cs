@@ -61,7 +61,7 @@ public class ParserTests
     [TestCase("2")]
     [TestCase("0;")]
     [TestCase("")]
-    [TestCase("1;0x00;0x00;0x00;0x00;0.0000;")]
+    [TestCase("1;0x00;0x00;0x00;0x00")]
     [TestCase("2;0x71;0x2f;0x33;0x00;0.0000")]
     public void Can_Not_Parse_Calibration(string values)
     {

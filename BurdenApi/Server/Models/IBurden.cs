@@ -105,4 +105,17 @@ public interface IBurden
     /// <param name="interfaceLogger">Logging helper.</param>
     /// <returns>Values of a single phase.</returns>
     Task<BurdenValues> MeasureAsync(IInterfaceLogger interfaceLogger);
+
+    /// <summary>
+    /// Cancel the current calibration.
+    /// </summary>
+    /// <param name="interfaceLogger">Logging helper.</param>
+    Task CancelCalibrationAsync(IInterfaceLogger interfaceLogger);
+
+    /// <summary>
+    /// Starts or stops a measurement calibration.
+    /// </summary>
+    /// <param name="on">Set to start the measurement.</param>
+    /// <param name="interfaceLogger">Logging helper.</param>
+    Task StartMeasuringCalibrationAsync(bool on, IInterfaceLogger interfaceLogger);
 }

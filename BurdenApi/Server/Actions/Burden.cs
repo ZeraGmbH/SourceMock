@@ -191,4 +191,13 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection port) : 
 
         return response;
     }
+
+    /// <inheritdoc/>
+    public Task CancelCalibrationAsync(IInterfaceLogger log)
+        => device.ExecuteAsync(log, SerialPortRequest.Create("CC", "CCACK"))[0];
+
+    /// <inheritdoc/>
+    public Task StartMeasuringCalibrationAsync(bool on, IInterfaceLogger log)
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"MR{(on ? 1 : 0)}", "MRACK"))[0];
+
 }

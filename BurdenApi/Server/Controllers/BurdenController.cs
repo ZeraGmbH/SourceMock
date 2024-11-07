@@ -149,4 +149,28 @@ public class BurdenController(IBurden device, IInterfaceLogger logger) : Control
     [SwaggerOperation(OperationId = "SetBurdenCalibration")]
     public Task<ActionResult> SetPermanentAsync(string burden, string range, string step, [FromBody] Calibration calibration)
         => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.SetPermanentCalibrationAsync(burden, range, step, calibration, logger));
+
+    /// <summary>
+    /// Cancel a running calibration.
+    /// </summary>
+    [HttpPut("calibration/cancel"), SamAuthorize(WebSamRole.testcaseexecutor)]
+    [SwaggerOperation(OperationId = "CancelBurdenCalibration")]
+    public Task<ActionResult> CancelCalibrationAsync(string burden)
+        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.CancelCalibrationAsync(logger));
+
+    /// <summary>
+    /// Start measuring calibration.
+    /// </summary>
+    [HttpPost("calibration/start"), SamAuthorize(WebSamRole.testcaseexecutor)]
+    [SwaggerOperation(OperationId = "StartBurdenMeasuringCalibration")]
+    public Task<ActionResult> StarMeasuringCalibrationAsync()
+        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.StartMeasuringCalibrationAsync(true, logger));
+
+    /// <summary>
+    /// Stop measuring calibration.
+    /// </summary>
+    [HttpPost("calibration/stop"), SamAuthorize(WebSamRole.testcaseexecutor)]
+    [SwaggerOperation(OperationId = "StopBurdenMeasuringCalibration")]
+    public Task<ActionResult> StopMeasuringCalibrationAsync()
+        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.StartMeasuringCalibrationAsync(false, logger));
 }

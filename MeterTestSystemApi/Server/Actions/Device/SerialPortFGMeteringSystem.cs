@@ -10,8 +10,10 @@ using RefMeterApi.Models;
 using SerialPortProxy;
 using SourceApi.Actions;
 using SourceApi.Actions.SerialPort.FG30x;
+using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
+using SourceApi.Model.Configuration;
 using System.Text.RegularExpressions;
 using ZERA.WebSam.Shared.Models.Logging;
 
@@ -308,6 +310,51 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         /* Use. */
         _errorCalculators.Clear();
         _errorCalculators.AddRange(errorCalculators);
+    }
+
+    /// <summary>
+    /// See if we want to use another reference meter - only sources are controlled
+    /// using the FG.
+    /// </summary>
+    /// <param name="configuration">Optinal configuration.</param>
+    public IDisposable? ConfigureExternalReferenceMeterAsync(ExternalReferenceMeterConfiguration? configuration)
+    {
+        switch (configuration?.Type)
+        {
+            case ExternalReferenceMeterTypes.MT3000:
+                {
+                    var config = configuration.SerialPort;
+
+                    if (config == null) break;
+
+                    var portLogger = _services.GetRequiredService<ILogger<SerialPortConnection>>();
+                    var connection = config.ConfigurationType switch
+                    {
+                        SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, portLogger),
+                        SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint!, portLogger),
+                        SerialPortConfigurationTypes.Mock => SerialPortConnection.FromMock<SerialPortMTMock>(portLogger),
+                        _ => throw new NotSupportedException($"Unknown serial port configuration type {config.ConfigurationType}"),
+                    };
+
+                    try
+                    {
+                        RefMeter = new SerialPortMTRefMeter(connection, _services.GetRequiredService<ILogger<SerialPortMTRefMeter>>());
+                    }
+                    catch
+                    {
+                        using (connection)
+                            throw;
+                    }
+
+                    return connection;
+                }
+            case null:
+                break;
+            default:
+                throw new ArgumentException($"unsupported external reference meter type '{configuration?.Type}'", nameof(configuration));
+        }
+
+        return null;
     }
 
     /// <summary>

@@ -21,6 +21,8 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
 
     private IMeterTestSystem? _meterTestSystem;
 
+    private readonly List<IDisposable?> _Disposables = [];
+
     /// <inheritdoc/>
     public IMeterTestSystem MeterTestSystem
     {
@@ -39,7 +41,11 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
     public void Dispose()
     {
         lock (_sync)
+        {
+            _Disposables.ForEach(d => d?.Dispose());
+
             _initialized = true;
+        }
     }
 
     /// <inheritdoc/>
@@ -56,97 +62,22 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                 switch (configuration.MeterTestSystemType)
                 {
                     case MeterTestSystemTypes.FG30x:
-                        {
-                            var meterTestSystem = services.GetRequiredService<SerialPortFGMeterTestSystem>();
-
-                            if (configuration.NoSource == true) meterTestSystem.NoSource();
-
-                            _meterTestSystem = meterTestSystem;
-
-#pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
-                            meterTestSystem.ActivateErrorConditionsAsync(new NoopInterfaceLogger()).Wait();
-                            meterTestSystem.ConfigureErrorCalculatorsAsync(configuration.Interfaces.ErrorCalculators, factory).Wait();
-
-                            if (configuration.AmplifiersAndReferenceMeter != null)
-                                try
-                                {
-                                    /* Do all configurations. */
-                                    _meterTestSystem
-                                        .SetAmplifiersAndReferenceMeterAsync(new NoopInterfaceLogger(), configuration.AmplifiersAndReferenceMeter)
-                                        .Wait();
-                                }
-                                catch (Exception e)
-                                {
-                                    /* Just report - let meter test system run. */
-                                    logger.LogError("Unable to restore amplifiers: {Exception}", e.Message);
-                                }
-#pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
-
-                            break;
-                        }
+                        ConfigureFG30x(configuration).Wait();
+                        break;
                     case MeterTestSystemTypes.REST:
-                        {
-                            var meterTestSystem = services.GetRequiredService<RestMeterTestSystem>();
-
-                            _meterTestSystem = meterTestSystem;
-
-#pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
-                            meterTestSystem
-                                .ConfigureAsync(configuration.Interfaces, services, new NoopInterfaceLogger())
-                                .Wait();
-#pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
-
-                            break;
-                        }
+                        ConfigureREST(configuration).Wait();
+                        break;
                     case MeterTestSystemTypes.MT786:
-                        {
-                            var meterTestSystem = services.GetRequiredService<SerialPortMTMeterTestSystem>();
-
-                            if (configuration.NoSource == true) meterTestSystem.NoSource();
-
-                            _meterTestSystem = meterTestSystem;
-
-                            break;
-                        }
+                        ConfigureMT786(configuration);
+                        break;
                     case MeterTestSystemTypes.ACMock:
-                        {
-                            var meterTestSystem = services.GetRequiredService<MeterTestSystemAcMock>();
-
-                            if (configuration.NoSource == true) meterTestSystem.NoSource();
-
-                            _meterTestSystem = meterTestSystem;
-
-                            break;
-                        }
                     case MeterTestSystemTypes.ACMockNoSource:
-                        {
-                            var meterTestSystem = services.GetRequiredService<MeterTestSystemAcMock>();
-
-                            meterTestSystem.NoSource();
-
-                            _meterTestSystem = meterTestSystem;
-                            break;
-                        }
-                    case MeterTestSystemTypes.DCMock:
-                        {
-                            var meterTestSystem = services.GetRequiredService<MeterTestSystemDcMock>();
-
-                            meterTestSystem.NoSource();
-
-                            _meterTestSystem = meterTestSystem;
-
-                            break;
-                        }
+                        ConfigureACMock(configuration);
+                        break;
                     case MeterTestSystemTypes.DCMockNoSource:
-                        {
-                            var meterTestSystem = services.GetRequiredService<MeterTestSystemDcMock>();
-
-                            meterTestSystem.NoSource();
-
-                            _meterTestSystem = meterTestSystem;
-
-                            break;
-                        }
+                    case MeterTestSystemTypes.DCMock:
+                        ConfigureDCMock(configuration);
+                        break;
                     default:
                         _meterTestSystem = services.GetRequiredService<FallbackMeteringSystem>();
                         break;
@@ -168,5 +99,73 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                 Monitor.PulseAll(_sync);
             }
         }
+    }
+
+    private void ConfigureDCMock(MeterTestSystemConfiguration configuration)
+    {
+        var meterTestSystem = services.GetRequiredService<MeterTestSystemDcMock>();
+
+        if (configuration.MeterTestSystemType == MeterTestSystemTypes.DCMockNoSource || configuration.NoSource == true)
+            meterTestSystem.NoSource();
+
+        _meterTestSystem = meterTestSystem;
+    }
+
+    private void ConfigureACMock(MeterTestSystemConfiguration configuration)
+    {
+        var meterTestSystem = services.GetRequiredService<MeterTestSystemAcMock>();
+
+        if (configuration.MeterTestSystemType == MeterTestSystemTypes.ACMockNoSource || configuration.NoSource == true)
+            meterTestSystem.NoSource();
+
+        _meterTestSystem = meterTestSystem;
+    }
+
+    private void ConfigureMT786(MeterTestSystemConfiguration configuration)
+    {
+        var meterTestSystem = services.GetRequiredService<SerialPortMTMeterTestSystem>();
+
+        if (configuration.NoSource == true)
+            meterTestSystem.NoSource();
+
+        _meterTestSystem = meterTestSystem;
+    }
+
+    private async Task ConfigureREST(MeterTestSystemConfiguration configuration)
+    {
+        var meterTestSystem = services.GetRequiredService<RestMeterTestSystem>();
+
+        _meterTestSystem = meterTestSystem;
+
+        await meterTestSystem.ConfigureAsync(configuration.Interfaces, services, new NoopInterfaceLogger());
+    }
+
+    private async Task ConfigureFG30x(MeterTestSystemConfiguration configuration)
+    {
+        var meterTestSystem = services.GetRequiredService<SerialPortFGMeterTestSystem>();
+
+        if (configuration.NoSource == true)
+            meterTestSystem.NoSource();
+
+        _meterTestSystem = meterTestSystem;
+
+        await meterTestSystem.ActivateErrorConditionsAsync(new NoopInterfaceLogger());
+        await meterTestSystem.ConfigureErrorCalculatorsAsync(configuration.Interfaces.ErrorCalculators, factory);
+
+        // May need to preset amplifiers.
+        if (configuration.AmplifiersAndReferenceMeter != null)
+            try
+            {
+                /* Do all configurations. */
+                await _meterTestSystem.SetAmplifiersAndReferenceMeterAsync(new NoopInterfaceLogger(), configuration.AmplifiersAndReferenceMeter);
+            }
+            catch (Exception e)
+            {
+                /* Just report - let meter test system run. */
+                logger.LogError("Unable to restore amplifiers: {Exception}", e.Message);
+            }
+
+        // May want to create an external reference meter.
+        _Disposables.Add(meterTestSystem.ConfigureExternalReferenceMeterAsync(configuration.ExternalReferenceMeter));
     }
 }

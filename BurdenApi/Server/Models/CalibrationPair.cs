@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Microsoft.Extensions.Options;
 
 namespace BurdenApi.Models;
 

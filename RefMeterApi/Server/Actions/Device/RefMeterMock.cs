@@ -91,12 +91,10 @@ public abstract class RefMeterMock : IMockRefMeter
     protected static T GetRandomNumberWithDeviation<T>(T value, double deviation) where T : struct, IDomainSpecificNumber<T>
         => GetRandomNumberWithDeviation(value, value * deviation / 100d);
 
-    
-
     /// <inheritdoc/>
     public Task<Voltage[]> GetVoltageRangesAsync(IInterfaceLogger logger)
     {
-        Voltage[] ranges =  
+        Voltage[] ranges =
         [
             new Voltage(420),
             new Voltage(250),
@@ -112,7 +110,7 @@ public abstract class RefMeterMock : IMockRefMeter
     /// <inheritdoc/>
     public Task<Current[]> GetCurrentRangesAsync(IInterfaceLogger logger)
     {
-        Current[] ranges =  
+        Current[] ranges =
         [
             new Current(100),
             new Current(50),
@@ -157,7 +155,7 @@ public abstract class RefMeterMock : IMockRefMeter
         _refMeterStatus.PllChannel = pll;
         return Task.CompletedTask;
     }
-    
+
     /// <inheritdoc/>
     public Task<RefMeterStatus> GetRefMeterStatusAsync(IInterfaceLogger logger)
     {

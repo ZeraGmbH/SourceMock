@@ -258,9 +258,11 @@ public partial class ACRefMeterMock(IServiceProvider di) : RefMeterMock
         return Task.FromResult(new ReferenceMeterInformation
         {
             Model = "ACRefMeterMock",
-            SerialNumber = "29091963",
             NumberOfPhases = 3,
-            SoftwareVersion = "0.1"
+            SerialNumber = "29091963",
+            SoftwareVersion = "0.1",
+            SupportsManualRanges = true,
+            SupportsPllChannelSelection = true
         });
     }
 }

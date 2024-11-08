@@ -138,9 +138,11 @@ public class DCRefMeterMock(IServiceProvider di) : RefMeterMock, IDCRefMeterMock
         return Task.FromResult(new ReferenceMeterInformation
         {
             Model = "DCRefMeterMock",
-            SerialNumber = "29091963",
             NumberOfPhases = 1,
-            SoftwareVersion = "0.1"
+            SerialNumber = "29091963",
+            SoftwareVersion = "0.1",
+            SupportsManualRanges = true,
+            SupportsPllChannelSelection = true
         });
     }
 }

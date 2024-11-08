@@ -113,6 +113,22 @@ public class SerialPortMTMock : ISerialPort
 
     private bool _dosageActive = false;
 
+    private readonly List<string> _voltageRanges = ["420", "250", "125", "60", "5", "0.25"];
+
+    private string _voltageRange = "420";
+
+    private readonly List<string> _currentRanges = ["100", "50", "20", "10", "5", "2", "1", "0.5", "0.2", "0.1", "0.05", "0.02"];
+
+    private string _currentRange = "100";
+
+    private string _pll = "U1";
+
+    private bool _autoVoltageRange = true;
+
+    private bool _autoCurrentRange = true;
+
+    private bool _autoPllChannel = true;
+
     /// <summary>
     /// Outgoing messages.
     /// </summary>
@@ -208,10 +224,10 @@ public class SerialPortMTMock : ISerialPort
             /* Get the current status, esp. the measurement mode */
             case "AST":
                 {
-                    _replies.Enqueue("UB=420");
-                    _replies.Enqueue("IB=100");
+                    _replies.Enqueue($"UB={_voltageRange}");
+                    _replies.Enqueue($"IB={_currentRange}");
                     _replies.Enqueue($"M={_measurementMode}");
-                    _replies.Enqueue("PLL=U1");
+                    _replies.Enqueue($"PLL={_pll}");
                     _replies.Enqueue("UEB=--");
                     _replies.Enqueue("NIB=0");
                     _replies.Enqueue("RDY=11-");
@@ -391,12 +407,8 @@ public class SerialPortMTMock : ISerialPort
             /* Ranges for voltage. */
             case "AVI":
                 {
-                    _replies.Enqueue("420");
-                    _replies.Enqueue("250");
-                    _replies.Enqueue("125");
-                    _replies.Enqueue("60");
-                    _replies.Enqueue("5");
-                    _replies.Enqueue("0.25");
+                    _voltageRanges.ForEach(v => _replies.Enqueue(v));
+
                     _replies.Enqueue("AVIACK");
 
                     break;
@@ -404,18 +416,8 @@ public class SerialPortMTMock : ISerialPort
             /* Ranges for current. */
             case "ACI":
                 {
-                    _replies.Enqueue("100");
-                    _replies.Enqueue("50");
-                    _replies.Enqueue("20");
-                    _replies.Enqueue("10");
-                    _replies.Enqueue("5");
-                    _replies.Enqueue("2");
-                    _replies.Enqueue("1");
-                    _replies.Enqueue("0.5");
-                    _replies.Enqueue("0.2");
-                    _replies.Enqueue("0.1");
-                    _replies.Enqueue("0.05");
-                    _replies.Enqueue("0.02");
+                    _currentRanges.ForEach(v => _replies.Enqueue(v));
+
                     _replies.Enqueue("ACIACK");
 
                     break;
@@ -442,14 +444,57 @@ public class SerialPortMTMock : ISerialPort
                     /* Set error measurement parameters. */
                     else if (AepCommand.IsMatch(command))
                         _replies.Enqueue("AEPACK");
-                    else if(AwrCommand.IsMatch(command))
-                        _replies.Enqueue("AWRACK");
-                    else if(AamCommand.IsMatch(command))
+                    else if ((match = AwrCommand.Match(command)).Success)
+                    {
+                        if (_autoPllChannel)
+                            _replies.Enqueue("AWRNAK");
+                        else
+                        {
+                            var i = match.Groups[1].Value[0] - '0';
+
+                            _pll = i < 3 ? $"U{i + 1}" : $"I{i - 2}";
+
+                            _replies.Enqueue("AWRACK");
+                        }
+                    }
+                    else if ((match = AamCommand.Match(command)).Success)
+                    {
+                        _autoVoltageRange = match.Groups[1].Value == "A";
+                        _autoCurrentRange = match.Groups[2].Value == "A";
+                        _autoPllChannel = match.Groups[3].Value == "A";
+
+                        if (_autoVoltageRange) _voltageRange = _voltageRanges[0];
+                        if (_autoCurrentRange) _currentRange = _currentRanges[0];
+                        if (_autoPllChannel) _pll = "U1";
+
                         _replies.Enqueue("AAMACK");
-                    else if(AvrCommand.IsMatch(command))
-                        _replies.Enqueue("AVRACK");
-                    else if(AcrCommand.IsMatch(command))
-                        _replies.Enqueue("ACRACK");
+                    }
+                    else if ((match = AvrCommand.Match(command)).Success)
+                    {
+                        var range = match.Groups[1].Value;
+
+                        if (_autoVoltageRange || !_voltageRanges.Contains(range))
+                            _replies.Enqueue("AVRNAK");
+                        else
+                        {
+                            _voltageRange = range;
+
+                            _replies.Enqueue("AVRACK");
+                        }
+                    }
+                    else if ((match = AcrCommand.Match(command)).Success)
+                    {
+                        var range = match.Groups[1].Value;
+
+                        if (_autoCurrentRange || !_currentRanges.Contains(range))
+                            _replies.Enqueue("ACRNAK");
+                        else
+                        {
+                            _currentRange = range;
+
+                            _replies.Enqueue("ACRACK");
+                        }
+                    }
                     /* Set dosage energy. */
                     else if ((match = S3ps46Command.Match(command)).Success)
                     {

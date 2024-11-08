@@ -153,12 +153,13 @@ public class MTSourceTests
     [TestCase("AWR3")]
     [TestCase("AWR4")]
     [TestCase("AWR5")]
-    public void Can_Mock_Awr_Command(string command){
+    public void Can_Mock_Awr_Command(string command)
+    {
         _portMock.WriteLine(command);
 
         var actualReply = _portMock.ReadLine();
 
-    Assert.That(actualReply, Is.EqualTo("AWRACK"));
+        Assert.That(actualReply, Is.EqualTo("AWRACK"));
     }
 
     [TestCase("AWR6")]
@@ -166,10 +167,11 @@ public class MTSourceTests
     [TestCase("AWR11")]
     [TestCase("AWR")]
     [TestCase("AWRR")]
-    public void Not_Process_Wrong_Awr_Command(string command){
+    public void Not_Process_Wrong_Awr_Command(string command)
+    {
         _portMock.WriteLine(command);
 
-        Assert.Throws<TimeoutException>(() => _portMock.ReadLine());    
+        Assert.Throws<TimeoutException>(() => _portMock.ReadLine());
     }
 
     [TestCase("AAMMAA")]
@@ -177,12 +179,13 @@ public class MTSourceTests
     [TestCase("AAMAMA")]
     [TestCase("AAMMMM")]
     [TestCase("AAMMMA")]
-    public void Can_Mock_Aam_Command(string command){
+    public void Can_Mock_Aam_Command(string command)
+    {
         _portMock.WriteLine(command);
 
         var actualReply = _portMock.ReadLine();
 
-        Assert.That(actualReply, Is.EqualTo("AAMACK"));        
+        Assert.That(actualReply, Is.EqualTo("AAMACK"));
     }
 
     [TestCase("AAMMMAA")]
@@ -190,52 +193,72 @@ public class MTSourceTests
     [TestCase("AAM")]
     [TestCase("AAMMM")]
     [TestCase("AAMM")]
-    public void Not_Process_Wrong_Aam_Command(string command){
+    public void Not_Process_Wrong_Aam_Command(string command)
+    {
         _portMock.WriteLine(command);
 
-        Assert.Throws<TimeoutException>(() => _portMock.ReadLine());    
+        Assert.Throws<TimeoutException>(() => _portMock.ReadLine());
     }
 
-    [TestCase("AVR0.001")]
-    [TestCase("AVR60")]
-    [TestCase("AVR11111111111111111111")] // max 20 
-    [TestCase("AVR11111111111111111.11")]
-    public void Can_Mock_Avr_Command(string command){
+    [TestCase("AVR250")]
+    [TestCase("AVR420")]
+    public void Can_Mock_Avr_Command(string command)
+    {
+        _portMock.WriteLine("AAMMMM");
+
+        Assert.That(_portMock.ReadLine(), Is.EqualTo("AAMACK"));
+
         _portMock.WriteLine(command);
 
         var actualReply = _portMock.ReadLine();
 
-        Assert.That(actualReply, Is.EqualTo("AVRACK"));  
+        Assert.That(actualReply, Is.EqualTo("AVRACK"));
     }
 
-    // [TestCase("AVRX60")]
-    // [TestCase("AVR111111111111111111111")] // max 20 
-    // [TestCase("AVR11111111111111111.111")]
-    // public void Not_Process_Wrong_Avr_Command(string command){
-    //     _portMock.WriteLine(command);
+    [TestCase("AVR210")]
+    [TestCase("AVRX60")]
+    [TestCase("AVR111111111111111111111")] // max 20 
+    [TestCase("AVR11111111111111111.111")]
+    public void Not_Process_Wrong_Avr_Command(string command)
+    {
+        _portMock.WriteLine("AAMMMM");
 
-    //     Assert.Throws<TimeoutException>(() => _portMock.ReadLine());  
-    // }
+        Assert.That(_portMock.ReadLine(), Is.EqualTo("AAMACK"));
+
+        _portMock.WriteLine(command);
+
+        Assert.That(_portMock.ReadLine(), Is.EqualTo("AVRNAK"));
+    }
 
     [TestCase("ACR50")]
-    [TestCase("ACR50.01")]
-    [TestCase("ACR50.1")]
-    [TestCase("ACR0.1")]
-    public void Can_Mock_Acr_Command(string command){
+    [TestCase("ACR1")]
+    [TestCase("ACR0.2")]
+    public void Can_Mock_Acr_Command(string command)
+    {
+        _portMock.WriteLine("AAMMMM");
+
+        Assert.That(_portMock.ReadLine(), Is.EqualTo("AAMACK"));
+
         _portMock.WriteLine(command);
 
         var actualReply = _portMock.ReadLine();
 
-        Assert.That(actualReply, Is.EqualTo("ACRACK"));  
+        Assert.That(actualReply, Is.EqualTo("ACRACK"));
     }
 
-    // [TestCase("ACR50B")]
-    // [TestCase("ACR50..01")]
-    // [TestCase("ACR50.1X")]
-    // [TestCase("ACR.1")]
-    // public void Not_Process_Wrong_Acr_Command(string command){
-    //     _portMock.WriteLine(command);
+    [TestCase("ACR50B")]
+    [TestCase("ACR51")]
+    [TestCase("ACR50..01")]
+    [TestCase("ACR50.1X")]
+    [TestCase("ACR.1")]
+    public void Not_Process_Wrong_Acr_Command(string command)
+    {
+        _portMock.WriteLine("AAMMMM");
 
-    //     Assert.Throws<TimeoutException>(() => _portMock.ReadLine());  
-    // }
+        Assert.That(_portMock.ReadLine(), Is.EqualTo("AAMACK"));
+
+        _portMock.WriteLine(command);
+
+        Assert.That(_portMock.ReadLine(), Is.EqualTo("ACRNAK"));
+    }
 }

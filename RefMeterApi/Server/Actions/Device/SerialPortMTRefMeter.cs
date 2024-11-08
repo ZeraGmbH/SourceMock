@@ -36,15 +36,6 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     /// </summary>
     private readonly ILogger<SerialPortMTRefMeter> _logger;
 
-    private readonly Dictionary<string, PllChannel> _pllChannels = new(){
-        { "U1", PllChannel.U1 },
-        { "U2", PllChannel.U2 },
-        { "U3", PllChannel.U3 },
-        { "I1", PllChannel.I1 },
-        { "I2", PllChannel.I2 },
-        { "I3", PllChannel.I3 },
-    };
-
     /// <summary>
     /// Initialize device manager.
     /// </summary>
@@ -108,11 +99,15 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
         if (versionMatch?.Success != true)
             throw new InvalidOperationException($"invalid response {reply[0]} from device");
 
+        var model = versionMatch.Groups[1].Value;
+
         return new()
         {
-            Model = versionMatch.Groups[1].Value,
+            Model = model,
             NumberOfPhases = 3,
-            SoftwareVersion = versionMatch.Groups[2].Value
+            SoftwareVersion = versionMatch.Groups[2].Value,
+            SupportsManualRanges = true,
+            SupportsPllChannelSelection = model.StartsWith("MT3"),
         };
     }
 
@@ -135,48 +130,24 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     }
 
     /// <inheritdoc/>
-    public async Task SetVoltageRangeAsync(IInterfaceLogger logger, Voltage voltage)
-    {
-        string request = "AVR" + voltage.GetValue().ToString();
-
-        /* Execute the request and wait for the information string. */
-        await _device.ExecuteAsync(logger, SerialPortRequest.Create(request, "AVRACK"))[0];
-    }
+    public Task SetVoltageRangeAsync(IInterfaceLogger logger, Voltage voltage)
+        => _device.ExecuteAsync(logger, SerialPortRequest.Create($"AVR{(double)voltage}", "AVRACK"))[0];
 
     /// <inheritdoc/>
-    public async Task SetCurrentRangeAsync(IInterfaceLogger logger, Current current)
-    {
-        string request = "ACR" + current.GetValue().ToString();
-
-        /* Execute the request and wait for the information string. */
-        await _device.ExecuteAsync(logger, SerialPortRequest.Create(request, "ACRACK"))[0];
-    }
+    public Task SetCurrentRangeAsync(IInterfaceLogger logger, Current current)
+        => _device.ExecuteAsync(logger, SerialPortRequest.Create($"ACR{(double)current}", "ACRACK"))[0];
 
     /// <inheritdoc/>
-    public async Task SetAutomaticAsync(IInterfaceLogger logger, bool voltageRanges = true, bool currentRanges = true, bool pll = true)
-    {
-        string request = "AAM";
-
-        // A -> automatic; M -> manual
-        if (voltageRanges == true) request += "A"; else request += "M";
-        if (currentRanges == true) request += "A"; else request += "M";
-        if (pll == true) request += "A"; else request += "M";
-
-        /* Execute the request and wait for the information string. */
-        await _device.ExecuteAsync(logger, SerialPortRequest.Create(request, "AAMACK"))[0];
-    }
+    public Task SetAutomaticAsync(IInterfaceLogger logger, bool voltageRanges = true, bool currentRanges = true, bool pll = true)
+        => _device.ExecuteAsync(logger, SerialPortRequest.Create($"AAM{(voltageRanges ? "A" : "M")}{(currentRanges ? "A" : "M")}{(pll ? "A" : "M")}", "AAMACK"))[0];
 
     /// <inheritdoc/>
-    public async Task SelectPllChannelAsync(IInterfaceLogger logger, PllChannel pll)
-    {
-        string request = "AWR" + (int)pll;
-
-        /* Execute the request and wait for the information string. */
-        await _device.ExecuteAsync(logger, SerialPortRequest.Create(request, "AWRACK"))[0];
-    }
+    public Task SelectPllChannelAsync(IInterfaceLogger logger, PllChannel pll)
+        => _device.ExecuteAsync(logger, SerialPortRequest.Create($"AWR{(int)pll}", "AWRACK"))[0];
 
     /// <inheritdoc/>
-    public async Task<RefMeterStatus> GetRefMeterStatusAsync(IInterfaceLogger logger)    {
+    public async Task<RefMeterStatus> GetRefMeterStatusAsync(IInterfaceLogger logger)
+    {
         var reply = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AST", "ASTACK"))[0];
 
         /* We need the range of voltage and current and the measurement mode as well. */
@@ -197,13 +168,12 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
         if (!voltage.HasValue || !current.HasValue || string.IsNullOrEmpty(mode))
             throw new InvalidOperationException("AST status incomplete");
 
-        RefMeterStatus result = new(){
+        return new()
+        {
             CurrentRange = new Current(current.Value),
+            MeasurementMode = SupportedModes[mode],
+            PllChannel = string.IsNullOrEmpty(pll) ? null : Enum.Parse<PllChannel>(pll),
             VoltageRange = new Voltage(voltage.Value),
-            MeasurementMode = SerialPortMTRefMeter.SupportedModes[mode],
-            PllChannel = !string.IsNullOrEmpty(pll) ? _pllChannels[pll] : null,
         };
-
-        return result;
     }
 }

@@ -57,6 +57,16 @@ public class ReferenceMeterInformation
     /// 
     /// </summary>
     public List<ReferenceMeterEMOBSessions>? SupportedEMOBSessions { get; set; }
+
+    /// <summary>
+    /// Set if the reference meter allows to choose ranges.
+    /// </summary>
+    public bool SupportsManualRanges { get; set; }
+
+    /// <summary>
+    /// Set if the reference meter allows to select a PLL channel.
+    /// </summary>
+    public bool SupportsPllChannelSelection { get; set; }
 }
 
 

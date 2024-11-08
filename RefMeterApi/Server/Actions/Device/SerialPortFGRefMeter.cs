@@ -110,41 +110,23 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
     }
 
     /// <inheritdoc/>
-    public Task<Voltage[]> GetVoltageRangesAsync(IInterfaceLogger logger)
-    {
-        throw new NotImplementedException();
-    }
+    public Task<Voltage[]> GetVoltageRangesAsync(IInterfaceLogger logger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task<Current[]> GetCurrentRangesAsync(IInterfaceLogger logger)
-    {
-        throw new NotImplementedException();
-    }
+    public Task<Current[]> GetCurrentRangesAsync(IInterfaceLogger logger) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task SetVoltageRangeAsync(IInterfaceLogger logger, Voltage voltage)
-    {
-        throw new NotImplementedException();
-    }
+    public Task SetVoltageRangeAsync(IInterfaceLogger logger, Voltage voltage) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task SetCurrentRangeAsync(IInterfaceLogger logger, Current current)
-    {
-        throw new NotImplementedException();
-    }
+    public Task SetCurrentRangeAsync(IInterfaceLogger logger, Current current) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task SetAutomaticAsync(IInterfaceLogger logger, bool voltageRanges = true, bool currentRanges = true, bool pll = true)
-    {
-        throw new NotImplementedException();
-    }
+    public Task SetAutomaticAsync(IInterfaceLogger logger, bool voltageRanges = true, bool currentRanges = true, bool pll = true) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public Task SelectPllChannelAsync(IInterfaceLogger logger, PllChannel pll)
-    {
-        throw new NotImplementedException();
-    }
-    
+    public Task SelectPllChannelAsync(IInterfaceLogger logger, PllChannel pll) => throw new NotImplementedException();
+
     /// <inheritdoc/>
     public Task<RefMeterStatus> GetRefMeterStatusAsync(IInterfaceLogger logger)
     {

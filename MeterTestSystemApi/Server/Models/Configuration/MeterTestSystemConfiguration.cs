@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using MongoDB.Bson.Serialization.Attributes;
+using RefMeterApi.Models;
 using ZERA.WebSam.Shared.Models;
 
 namespace MeterTestSystemApi.Models.Configuration;
@@ -37,4 +38,10 @@ public class MeterTestSystemConfiguration
     /// </summary>
     [BsonElement("noSource")]
     public bool? NoSource { get; set; }
+
+    /// <summary>
+    /// Optional external reference meter to use.
+    /// </summary>
+    [BsonElement("refMeter")]
+    public ExternalReferenceMeterConfiguration? ExternalReferenceMeter { get; set; }
 }

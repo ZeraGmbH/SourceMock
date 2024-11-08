@@ -1,13 +1,17 @@
 using BurdenApi.Models;
 
-namespace BurdenApiTests;
+namespace BurdenApi.Actions;
 
-public class CalibrationHardware : ICalibrationHardware
+/// <summary>
+/// Simulation helper for the calibration of a burden.
+/// </summary>
+public class CalibrationHardwareMock : ICalibrationHardware
 {
     private const int CorrelationLimit = 127 * 128 + 127;
 
     private const double FactorLimit = (CorrelationLimit + CorrelationLimit / 10000d) / 123d;
 
+    /// <inheritdoc/>
     public Task<GoalValue> MeasureAsync(Calibration calibration)
     {
         var resCalibration = calibration.Resistive.Coarse * 128d + calibration.Resistive.Fine;

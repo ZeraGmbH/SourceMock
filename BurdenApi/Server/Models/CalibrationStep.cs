@@ -1,3 +1,7 @@
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
+
 namespace BurdenApi.Models;
 
 /// <summary>
@@ -8,28 +12,32 @@ public class CalibrationStep
     /// <summary>
     /// Calibration settings.
     /// </summary>
-    public required Calibration Calibration { get; set; }
+    public Calibration Calibration { get; set; } = null!;
 
     /// <summary>
     /// See if the current calibration should be kept and 
     /// the next level should be inspected.
     /// </summary>
+    [JsonIgnore]
     public bool CalibrationChanged => Calibration != null;
 
     /// <summary>
     /// Actual values for the calibration.
     /// </summary>
-    public required GoalValue Values { get; set; }
+    [NotNull, Required]
+    public GoalValue Values { get; set; } = new();
 
     /// <summary>
     /// Deviation from the calibration goal.
     /// </summary>
-    public required GoalDeviation Deviation { get; set; }
+    [NotNull, Required]
+    public GoalDeviation Deviation { get; set; } = new();
 
     /// <summary>
     /// Sum of the deviation totals as a mean to find better calibrations.
     /// </summary>
-    public required double TotalAbsDelta { get; set; }
+    [NotNull, Required]
+    public double TotalAbsDelta { get; set; }
 
     /// <summary>
     /// Get a hashcode from the calibration data.

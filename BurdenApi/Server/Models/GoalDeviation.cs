@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+
 namespace BurdenApi.Models;
 
 /// <summary>
@@ -15,13 +18,15 @@ public class GoalDeviation(double power, double factor)
     /// Deviation on apparent power, positive if the 
     /// measure value is too large.
     /// </summary>
-    public double DeltaPower { get; private set; } = power;
+    [NotNull, Required]
+    public double DeltaPower { get; set; } = power;
 
     /// <summary>
     /// Deviation on power factor, positive if the 
     /// measure value is too large.
     /// </summary>
-    public double DeltaFactor { get; private set; } = factor;
+    [NotNull, Required]
+    public double DeltaFactor { get; set; } = factor;
 
     /// <inheritdoc/>
     public override string ToString() => $"{100 * DeltaPower}%/{100 * DeltaFactor}%";

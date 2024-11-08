@@ -1,14 +1,10 @@
 using BurdenApi.Actions;
 using BurdenApi.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;
-using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
-using ZstdSharp.Unsafe;
 
 namespace BurdenApiTests;
 

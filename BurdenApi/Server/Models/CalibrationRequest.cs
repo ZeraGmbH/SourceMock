@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+
 namespace BurdenApi.Models;
 
 /// <summary>
@@ -8,10 +11,12 @@ public class CalibrationRequest
     /// <summary>
     /// Target to find.
     /// </summary>
-    public required GoalValue Goal { get; set; }
+    [NotNull, Required]
+    public GoalValue Goal { get; set; } = new();
 
     /// <summary>
     /// Initial calibration values.
     /// </summary>
-    public required Calibration InitialCalibration { get; set; }
+    [NotNull, Required]
+    public Calibration InitialCalibration { get; set; } = new();
 }

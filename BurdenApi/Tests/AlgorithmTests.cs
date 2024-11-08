@@ -17,7 +17,7 @@ namespace BurdenApiTests
             var services = new ServiceCollection();
 
             services.AddTransient<ICalibrator, Calibrator>();
-            services.AddTransient<ICalibrationHardware, CalibrationHardware>();
+            services.AddTransient<ICalibrationHardware, CalibrationHardwareMock>();
 
             Services = services.BuildServiceProvider();
 

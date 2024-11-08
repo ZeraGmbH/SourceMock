@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using Microsoft.Extensions.Options;
 
 namespace BurdenApi.Models;
 
@@ -17,10 +18,6 @@ public class CalibrationPair()
     /// <param name="fine">Minor calibration between 0 and 127.</param>
     public CalibrationPair(byte coarse, byte fine) : this()
     {
-        // Validate and remember.
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(coarse, 127, nameof(coarse));
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(fine, 127, nameof(fine));
-
         Coarse = coarse;
         Fine = fine;
     }
@@ -29,13 +26,37 @@ public class CalibrationPair()
     /// Major calibration value between 0 and 127.
     /// </summary>
     [NotNull, Required]
-    public byte Coarse { get; set; }
+    public byte Coarse
+    {
+        get { return _Coarse; }
+        set
+        {
+            // Validate and remember.
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(value, 127, nameof(value));
+
+            _Coarse = value;
+        }
+    }
+
+    private byte _Coarse;
 
     /// <summary>
     /// Minor calibration value between 0 and 127.
     /// </summary>
     [NotNull, Required]
-    public byte Fine { get; set; }
+    public byte Fine
+    {
+        get { return _Fine; }
+        set
+        {
+            // Validate and remember.
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(value, 127, nameof(value));
+
+            _Fine = value;
+        }
+    }
+
+    private byte _Fine;
 
     /// <summary>
     /// Change the coarse calibration.

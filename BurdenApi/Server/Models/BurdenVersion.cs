@@ -15,4 +15,9 @@ public class BurdenVersion
     /// Supplementary information.
     /// </summary>
     public string Supplement { get; set; } = null!;
+
+    /// <summary>
+    /// Set if this is a voltage burden (and not a current burden).
+    /// </summary>
+    public bool IsVoltageNotCurrent { get; set; }
 }

@@ -1,6 +1,12 @@
 namespace MeterTestSystemApi.Models.ConfigurationNG;
 
-internal class TcpServerConfiguration
+/// <summary>
+/// 
+/// </summary>
+public class TcpServerConfiguration
 {
-    internal string EndPoint { get; set; } = null!;
+    /// <summary>
+    /// 
+    /// </summary>
+    public string EndPoint { get; set; } = null!;
 }

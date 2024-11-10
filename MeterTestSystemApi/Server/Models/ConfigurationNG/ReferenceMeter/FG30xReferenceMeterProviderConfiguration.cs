@@ -2,7 +2,13 @@ using SourceApi.Model.Configuration;
 
 namespace MeterTestSystemApi.Models.ConfigurationNG.ReferenceMeter;
 
-internal class FG30xReferenceMeterProviderConfiguration : ReferenceMeterProviderConfiguration
+/// <summary>
+/// 
+/// </summary>
+public class FG30xReferenceMeterProviderConfiguration : ReferenceMeterProviderConfiguration
 {
-    internal SerialPortConfiguration? SerialPort { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public SerialPortConfiguration? SerialPort { get; set; }
 }

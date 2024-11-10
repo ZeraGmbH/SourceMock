@@ -1,5 +1,8 @@
 namespace MeterTestSystemApi.Models.ConfigurationNG.Dosage;
 
-internal abstract class DosageProviderConfiguration
+/// <summary>
+/// 
+/// </summary>
+public abstract class DosageProviderConfiguration
 {
 }

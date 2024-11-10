@@ -1,8 +1,17 @@
 namespace MeterTestSystemApi.Models.ConfigurationNG.MeterTestSystem;
 
-internal class MockMeterTestSystemProviderConfiguration : MeterTestSystemProviderConfiguration
+/// <summary>
+/// 
+/// </summary>
+public class MockMeterTestSystemProviderConfiguration : MeterTestSystemProviderConfiguration
 {
-    internal bool AC { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public bool AC { get; set; }
 
-    internal bool DC { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public bool DC { get; set; }
 }

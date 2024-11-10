@@ -1,5 +1,8 @@
 namespace MeterTestSystemApi.Models.ConfigurationNG.ReferenceMeter;
 
-internal abstract class ReferenceMeterProviderConfiguration
+/// <summary>
+/// 
+/// </summary>
+public abstract class ReferenceMeterProviderConfiguration
 {
 }

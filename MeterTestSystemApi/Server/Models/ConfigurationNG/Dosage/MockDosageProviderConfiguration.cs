@@ -1,9 +1,18 @@
 namespace MeterTestSystemApi.Models.ConfigurationNG.Dosage;
 
-internal class MockDosageProviderConfiguration : DosageProviderConfiguration
+/// <summary>
+/// 
+/// </summary>
+public class MockDosageProviderConfiguration : DosageProviderConfiguration
 {
-    internal bool AC { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public bool AC { get; set; }
 
-    internal bool DC { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public bool DC { get; set; }
 }
 

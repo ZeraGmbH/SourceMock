@@ -2,8 +2,14 @@ using ZERA.WebSam.Shared.Models;
 
 namespace MeterTestSystemApi.Models.ConfigurationNG.Dosage;
 
-internal class RestDosageProviderConfiguration : DosageProviderConfiguration
+/// <summary>
+/// 
+/// </summary>
+public class RestDosageProviderConfiguration : DosageProviderConfiguration
 {
-    internal RestConfiguration? EndPoint { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public RestConfiguration? EndPoint { get; set; }
 }
 

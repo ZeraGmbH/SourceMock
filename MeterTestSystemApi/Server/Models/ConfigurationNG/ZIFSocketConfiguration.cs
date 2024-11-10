@@ -1,3 +1,6 @@
 namespace MeterTestSystemApi.Models.ConfigurationNG;
 
-internal class ZIFSocketConfiguration { }
+/// <summary>
+/// 
+/// </summary>
+public class ZIFSocketConfiguration { }

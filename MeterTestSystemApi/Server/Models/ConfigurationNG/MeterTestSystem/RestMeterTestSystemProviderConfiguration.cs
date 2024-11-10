@@ -2,7 +2,13 @@ using ZERA.WebSam.Shared.Models;
 
 namespace MeterTestSystemApi.Models.ConfigurationNG.MeterTestSystem;
 
-internal class RestMeterTestSystemProviderConfiguration : MeterTestSystemProviderConfiguration
+/// <summary>
+/// 
+/// </summary>
+public class RestMeterTestSystemProviderConfiguration : MeterTestSystemProviderConfiguration
 {
-    internal RestConfiguration? EndPoint { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public RestConfiguration? EndPoint { get; set; }
 }

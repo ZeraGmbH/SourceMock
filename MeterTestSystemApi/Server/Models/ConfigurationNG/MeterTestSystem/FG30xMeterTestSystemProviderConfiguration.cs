@@ -2,9 +2,18 @@ using SourceApi.Model.Configuration;
 
 namespace MeterTestSystemApi.Models.ConfigurationNG.MeterTestSystem;
 
-internal class FG30xMeterTestSystemProviderConfiguration : MeterTestSystemProviderConfiguration
+/// <summary>
+/// 
+/// </summary>
+public class FG30xMeterTestSystemProviderConfiguration : MeterTestSystemProviderConfiguration
 {
-    internal SerialPortConfiguration? SerialPort { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public SerialPortConfiguration? SerialPort { get; set; }
 
-    internal AmplifiersAndReferenceMeterConfiguration? AmplifiersAndReferenceMeter { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public AmplifiersAndReferenceMeterConfiguration? AmplifiersAndReferenceMeter { get; set; }
 }

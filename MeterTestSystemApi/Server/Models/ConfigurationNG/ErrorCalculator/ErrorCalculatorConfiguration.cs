@@ -1,3 +1,6 @@
 namespace MeterTestSystemApi.Models.ConfigurationNG.ErrorCalculator;
 
-internal abstract class ErrorCalculatorConfiguration { }
+/// <summary>
+/// 
+/// </summary>
+public abstract class ErrorCalculatorConfiguration { }

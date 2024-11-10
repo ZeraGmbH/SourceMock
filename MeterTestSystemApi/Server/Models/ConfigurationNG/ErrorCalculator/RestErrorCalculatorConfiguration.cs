@@ -2,7 +2,13 @@ using ZERA.WebSam.Shared.Models;
 
 namespace MeterTestSystemApi.Models.ConfigurationNG.ErrorCalculator;
 
-internal class RestErrorCalculatorConfiguration : ErrorCalculatorConfiguration
+/// <summary>
+/// 
+/// </summary>
+public class RestErrorCalculatorConfiguration : ErrorCalculatorConfiguration
 {
-    internal RestConfiguration? EndPoint { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public RestConfiguration? EndPoint { get; set; }
 }

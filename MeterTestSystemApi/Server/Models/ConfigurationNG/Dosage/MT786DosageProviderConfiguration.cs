@@ -2,8 +2,14 @@ using SourceApi.Model.Configuration;
 
 namespace MeterTestSystemApi.Models.ConfigurationNG.Dosage;
 
-internal class MT786DosageProviderConfiguration : DosageProviderConfiguration
+/// <summary>
+/// 
+/// </summary>
+public class MT786DosageProviderConfiguration : DosageProviderConfiguration
 {
-    internal SerialPortConfiguration? SerialPort { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public SerialPortConfiguration? SerialPort { get; set; }
 }
 

@@ -1,3 +1,6 @@
 namespace MeterTestSystemApi.Models.ConfigurationNG;
 
-internal class BarCodeReaderConfiguration { }
+/// <summary>
+/// 
+/// </summary>
+public class BarCodeReaderConfiguration { }

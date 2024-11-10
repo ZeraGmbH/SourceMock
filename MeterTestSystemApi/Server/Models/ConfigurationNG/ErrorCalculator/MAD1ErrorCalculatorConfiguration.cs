@@ -1,6 +1,12 @@
 namespace MeterTestSystemApi.Models.ConfigurationNG.ErrorCalculator;
 
-internal class MAD1ErrorCalculatorConfiguration : ErrorCalculatorConfiguration
+/// <summary>
+/// 
+/// </summary>
+public class MAD1ErrorCalculatorConfiguration : ErrorCalculatorConfiguration
 {
-    internal TcpServerConfiguration? EndPoint { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public TcpServerConfiguration? EndPoint { get; set; }
 }

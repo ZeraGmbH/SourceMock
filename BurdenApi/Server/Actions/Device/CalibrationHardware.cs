@@ -16,6 +16,12 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
     private static readonly Regex _RangePattern = new("^([^/]+)(/(3|v3))?$");
 
     /// <inheritdoc/>
+    public IBurden Burden { get; } = burden;
+
+    /// <inheritdoc/>
+    public IRefMeter ReferenceMeter { get; } = refMeter;
+
+    /// <inheritdoc/>
     public Task<GoalValue> MeasureAsync(Calibration calibration)
     {
         throw new NotImplementedException();
@@ -45,7 +51,7 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         var angle = (Angle)powerFactor;
 
         // Check the type of burden.
-        var burdenInfo = await burden.GetVersionAsync(logger);
+        var burdenInfo = await Burden.GetVersionAsync(logger);
         var isVoltageNotCurrent = burdenInfo.IsVoltageNotCurrent;
 
         // Create the IEC loadpoint.
@@ -78,8 +84,8 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         {
             // Get all the supported ranges.
             var ranges = (isVoltageNotCurrent
-                ? (await refMeter.GetVoltageRangesAsync(logger)).Select(v => (double)v)
-                : (await refMeter.GetCurrentRangesAsync(logger)).Select(c => (double)c)).Order().ToList();
+                ? (await ReferenceMeter.GetVoltageRangesAsync(logger)).Select(v => (double)v)
+                : (await ReferenceMeter.GetCurrentRangesAsync(logger)).Select(c => (double)c)).Order().ToList();
 
             if (ranges.Count < 1) throw new InvalidOperationException("no reference meter ranges found");
 
@@ -89,9 +95,9 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
 
             // Use the range.
             if (isVoltageNotCurrent)
-                await refMeter.SetVoltageRangeAsync(logger, new(refMeterRange));
+                await ReferenceMeter.SetVoltageRangeAsync(logger, new(refMeterRange));
             else
-                await refMeter.SetCurrentRangeAsync(logger, new(refMeterRange));
+                await ReferenceMeter.SetCurrentRangeAsync(logger, new(refMeterRange));
         }
     }
 }

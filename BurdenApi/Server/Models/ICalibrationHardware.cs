@@ -1,3 +1,4 @@
+using RefMeterApi.Actions.Device;
 using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace BurdenApi.Models;
@@ -23,4 +24,14 @@ public interface ICalibrationHardware
     /// <param name="detectRange">Set to automatically detect the best range from the reference meter.</param>
     /// <param name="powerFactor">Power factor to use - cosine of the angle between voltage and current.</param>
     Task SetLoadpointAsync(string range, double percentage, Frequency frequency, bool detectRange, PowerFactor powerFactor);
+
+    /// <summary>
+    /// Report the burden associated with this hardware.
+    /// </summary>
+    IBurden Burden { get; }
+
+    /// <summary>
+    /// Report the reference meter associated with the current hardware.
+    /// </summary>
+    IRefMeter ReferenceMeter { get; }
 }

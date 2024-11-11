@@ -2,6 +2,8 @@ using BurdenApi.Actions;
 using BurdenApi.Actions.Device;
 using BurdenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
+using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.Models.Logging;
 
 namespace BurdenApiTests
 {
@@ -16,6 +18,8 @@ namespace BurdenApiTests
         public void Setup()
         {
             var services = new ServiceCollection();
+
+            services.AddTransient<IInterfaceLogger, NoopInterfaceLogger>();
 
             services.AddTransient<ICalibrator, Calibrator>();
             services.AddTransient<ICalibrationHardware, CalibrationHardwareMock>();

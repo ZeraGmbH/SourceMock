@@ -202,4 +202,19 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection port) : 
     public Task StartMeasuringCalibrationAsync(bool on, IInterfaceLogger log)
         => device.ExecuteAsync(log, SerialPortRequest.Create($"MR{(on ? 1 : 0)}", "MRACK"))[0];
 
+    /// <inheritdoc/>
+    public async Task<string[]> GetRangesAsync(string burden, IInterfaceLogger log)
+    {
+        var ranges = await device.ExecuteAsync(log, SerialPortRequest.Create($"AR{burden}", "ARACK"))[0];
+
+        return [.. ranges.Take(ranges.Length - 1)];
+    }
+
+    /// <inheritdoc/>
+    public async Task<string[]> GetStepsAsync(string burden, IInterfaceLogger log)
+    {
+        var steps = await device.ExecuteAsync(log, SerialPortRequest.Create($"AN{burden}", "ANACK"))[0];
+
+        return [.. steps.Take(steps.Length - 1)];
+    }
 }

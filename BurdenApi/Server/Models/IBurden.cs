@@ -118,4 +118,20 @@ public interface IBurden
     /// <param name="on">Set to start the measurement.</param>
     /// <param name="interfaceLogger">Logging helper.</param>
     Task StartMeasuringCalibrationAsync(bool on, IInterfaceLogger interfaceLogger);
+
+    /// <summary>
+    /// Get the ranges for a single burden.
+    /// </summary>
+    /// <param name="burden">Name of the burden.</param>
+    /// <param name="interfaceLogger">Logging helper.</param>
+    /// <returns>List of names.</returns>
+    Task<string[]> GetRangesAsync(string burden, IInterfaceLogger interfaceLogger);
+
+    /// <summary>
+    /// Get the steps for a single burden.
+    /// </summary>
+    /// <param name="burden">Name of the burden.</param>
+    /// <param name="interfaceLogger">Logging helper.</param>
+    /// <returns>List of names.</returns>
+    Task<string[]> GetStepsAsync(string burden, IInterfaceLogger interfaceLogger);
 }

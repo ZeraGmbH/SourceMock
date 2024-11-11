@@ -79,9 +79,9 @@ public class BurdenTests
     [Test]
     public async Task Can_Get_Burdens_Async()
     {
-        var version = await Burden.GetBurdensAsync(Logger);
+        var burdens = await Burden.GetBurdensAsync(Logger);
 
-        Assert.That(version, Is.EqualTo(new string[] { "ANSI", "IEC50", "IEC60" }));
+        Assert.That(burdens, Is.EqualTo(new string[] { "ANSI", "IEC50", "IEC60" }));
     }
 
     [TestCase(false)]
@@ -218,5 +218,28 @@ public class BurdenTests
             Assert.That((double)values.PowerFactor, Is.EqualTo(0.999924).Within(0.0000001));
             Assert.That((double)values.ApparentPower, Is.EqualTo(0.994).Within(0.001));
         });
+    }
+
+
+    [TestCase("ANSI")]
+    [TestCase("IEC50")]
+    [TestCase("IEC60")]
+    public async Task Can_Get_Burden_Ranges_Async(string burden)
+    {
+        var ranges = await Burden.GetRangesAsync(burden, Logger);
+
+        Assert.That(ranges, Has.Length.EqualTo(21));
+        Assert.That(ranges, Contains.Item("100/v3"));
+    }
+
+    [TestCase("IEC50", 27, "1.25;0.80")]
+    [TestCase("IEC60", 27, "1.25;0.80")]
+    [TestCase("ANSI", 5, "25.00;0.70")]
+    public async Task Can_Get_Burden_Steps_Async(string burden, int count, string sample)
+    {
+        var steps = await Burden.GetStepsAsync(burden, Logger);
+
+        Assert.That(steps, Has.Length.EqualTo(count));
+        Assert.That(steps, Contains.Item(sample));
     }
 }

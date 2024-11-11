@@ -1,7 +1,7 @@
 using BurdenApi.Models;
 using ZERA.WebSam.Shared.DomainSpecific;
 
-namespace BurdenApi.Actions;
+namespace BurdenApi.Actions.Device;
 
 /// <summary>
 /// Simulation helper for the calibration of a burden.

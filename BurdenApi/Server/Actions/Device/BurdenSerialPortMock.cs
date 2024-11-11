@@ -3,7 +3,7 @@ using BurdenApi.Models;
 using SerialPortProxy;
 using SourceApi.Actions.SerialPort;
 
-namespace BurdenApi.Actions;
+namespace BurdenApi.Actions.Device;
 
 /// <summary>
 /// 

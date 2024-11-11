@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 
-namespace BurdenApi.Actions;
+namespace BurdenApi.Actions.Device;
 
 /// <summary>
 /// Implementation of the burden communication interface.

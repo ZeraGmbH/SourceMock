@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using BurdenApi.Actions;
+using BurdenApi.Actions.Device;
 using BurdenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;

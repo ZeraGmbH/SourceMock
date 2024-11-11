@@ -1,4 +1,4 @@
-using BurdenApi.Actions;
+using BurdenApi.Actions.Device;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;

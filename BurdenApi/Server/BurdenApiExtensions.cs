@@ -1,4 +1,5 @@
 using BurdenApi.Actions;
+using BurdenApi.Actions.Device;
 using BurdenApi.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

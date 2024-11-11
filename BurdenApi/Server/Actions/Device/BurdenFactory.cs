@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using SourceApi.Model.Configuration;
 
-namespace BurdenApi.Actions;
+namespace BurdenApi.Actions.Device;
 
 /// <summary>
 /// 

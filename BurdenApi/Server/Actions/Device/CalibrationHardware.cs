@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Text.RegularExpressions;
 using BurdenApi.Models;
 using RefMeterApi.Actions.Device;
@@ -7,7 +6,7 @@ using SourceApi.Model;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 
-namespace BurdenApi.Actions;
+namespace BurdenApi.Actions.Device;
 
 /// <summary>
 /// Implementation of a calibration environment.

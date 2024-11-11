@@ -48,7 +48,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
         _device = device.CreateExecutor(InterfaceLogSourceTypes.ReferenceMeter);
 
         /* Setup caches for shared request results. */
-        _actualValues = new(CreateActualValueRequestAsync, 1000);
+        _actualValues = new((logger) => CreateActualValueRequestAsync(logger), 1000);
     }
 
     /// <inheritdoc/>

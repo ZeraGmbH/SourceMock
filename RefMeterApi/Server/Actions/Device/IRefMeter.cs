@@ -24,6 +24,16 @@ public interface IRefMeter
     Task<MeasuredLoadpoint> GetActualValuesAsync(IInterfaceLogger logger, int firstActiveCurrentPhase = -1);
 
     /// <summary>
+    /// Queries a device connected to the serial port for the current
+    /// measurement results without using any caching.
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="firstActiveCurrentPhase">Index of the first active voltage phase if known.</param>
+    /// <param name="singlePhase">Set if only values for first phase are of interest.</param>
+    /// <returns>All measurement data.</returns>
+    Task<MeasuredLoadpoint> GetActualValuesUncachedAsync(IInterfaceLogger logger, int firstActiveCurrentPhase = -1, bool singlePhase = false);
+
+    /// <summary>
     /// Read all supported measurment modes.
     /// </summary>
     /// <returns></returns>
@@ -57,7 +67,7 @@ public interface IRefMeter
     /// </summary>
     /// <returns></returns>
     public Task<Voltage[]> GetVoltageRangesAsync(IInterfaceLogger logger);
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -88,7 +98,7 @@ public interface IRefMeter
     /// <param name="currentRanges"></param>
     /// <param name="pll"></param>
     /// <returns></returns>
-    public Task SetAutomaticAsync(IInterfaceLogger logger, bool voltageRanges=true, bool currentRanges=true, bool pll=true);
+    public Task SetAutomaticAsync(IInterfaceLogger logger, bool voltageRanges = true, bool currentRanges = true, bool pll = true);
 
     /// <summary>
     /// Select PLL chanel - automatic should be disabled

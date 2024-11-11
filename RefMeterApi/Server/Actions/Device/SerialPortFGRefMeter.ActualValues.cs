@@ -21,6 +21,14 @@ partial class SerialPortFGRefMeter
         return Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValues.ExecuteAsync(logger)), firstActiveCurrentPhase);
     }
 
+    /// <inheritdoc/>
+    public async Task<MeasuredLoadpoint> GetActualValuesUncachedAsync(IInterfaceLogger logger, int firstActiveCurrentPhase = -1, bool singlePhase = false)
+    {
+        await TestConfiguredAsync(logger);
+
+        return Utils.ConvertFromDINtoIEC(await CreateActualValueRequestAsync(logger), firstActiveCurrentPhase);
+    }
+
     /// <summary>
     /// Begin reading the actual values - this may take some time.
     /// </summary>

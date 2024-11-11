@@ -52,11 +52,16 @@ public abstract class RefMeterMock : IMockRefMeter
 
         return Task.CompletedTask;
     }
+
     /// <summary>
     /// 
     /// </summary>
     /// <returns>ActualValues that fluctuate around the set loadpoint</returns>
     public abstract Task<MeasuredLoadpoint> GetActualValuesAsync(IInterfaceLogger logger, int firstActiveVoltagePhase);
+
+    /// <inheritdoc/>
+    public Task<MeasuredLoadpoint> GetActualValuesUncachedAsync(IInterfaceLogger logger, int firstActiveVoltagePhase, bool singlePhase = false)
+        => GetActualValuesAsync(logger, firstActiveVoltagePhase);
 
     /// <inheritdoc/>
     public abstract Task<ReferenceMeterInformation> GetMeterInformationAsync(IInterfaceLogger logger);

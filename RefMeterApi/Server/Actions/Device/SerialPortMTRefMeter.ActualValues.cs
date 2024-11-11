@@ -18,18 +18,25 @@ partial class SerialPortMTRefMeter
     public async Task<MeasuredLoadpoint> GetActualValuesAsync(IInterfaceLogger logger, int firstActiveCurrentPhase = -1)
         => Utils.ConvertFromDINtoIEC(LibUtils.DeepCopy(await _actualValues.ExecuteAsync(logger)), firstActiveCurrentPhase);
 
+    /// <inheritdoc/>
+    public async Task<MeasuredLoadpoint> GetActualValuesUncachedAsync(IInterfaceLogger logger, int firstActiveCurrentPhase = -1, bool singlePhase = false)
+        => Utils.ConvertFromDINtoIEC(await CreateActualValueRequestAsync(logger, singlePhase), firstActiveCurrentPhase);
+
     /// <summary>
     /// Begin reading the actual values - this may take some time.
     /// </summary>
     /// <returns>Task reading the actual values.</returns>
     /// <exception cref="ArgumentException">Reply from the device was not recognized.</exception>
-    private async Task<MeasuredLoadpoint> CreateActualValueRequestAsync(IInterfaceLogger logger)
+    private async Task<MeasuredLoadpoint> CreateActualValueRequestAsync(IInterfaceLogger logger, bool singlePhase = false)
     {
         /* Execute the request and get the answer from the device. */
         var replies = await _device.ExecuteAsync(
             logger,
             SerialPortRequest.Create("ATI01", "ATIACK"),
-            SerialPortRequest.Create("AME", "AMEACK")
+            SerialPortRequest.Create(singlePhase
+                ? "AME0;3;6;9;12;15;18;21"
+                : "AME",
+            "AMEACK")
         )[1];
 
         /* Prepare response with three phases. */

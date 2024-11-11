@@ -56,6 +56,10 @@ public class RestRefMeter(ILoggingHttpClient httpClient, ILogger<RestRefMeter> l
         httpClient.GetAsync<MeasuredLoadpoint>(logger, new Uri(_baseUri, $"ActualValues?firstActiveCurrentPhase={JsonSerializer.Serialize(firstActiveCurrentPhase, LibUtils.JsonSettings)}"));
 
     /// <inheritdoc/>
+    public Task<MeasuredLoadpoint> GetActualValuesUncachedAsync(IInterfaceLogger logger, int firstActiveCurrentPhase = -1, bool singlePhase = false) =>
+        GetActualValuesAsync(logger, firstActiveCurrentPhase);
+
+    /// <inheritdoc/>
     public Task<MeasurementModes[]> GetMeasurementModesAsync(IInterfaceLogger logger) =>
         httpClient.GetAsync<MeasurementModes[]>(logger, new Uri(_baseUri, "MeasurementModes"));
 
@@ -97,7 +101,7 @@ public class RestRefMeter(ILoggingHttpClient httpClient, ILogger<RestRefMeter> l
     /// <inheritdoc/>
     public Task SetActualMeasurementModeAsync(IInterfaceLogger logger, MeasurementModes mode) =>
         httpClient.PutAsync(logger, new Uri(_baseUri, $"MeasurementMode?mode={mode}"));
-        
+
     /// <inheritdoc/>
     public Task<Voltage[]> GetVoltageRangesAsync(IInterfaceLogger logger)
     {
@@ -133,7 +137,7 @@ public class RestRefMeter(ILoggingHttpClient httpClient, ILogger<RestRefMeter> l
     {
         throw new NotImplementedException();
     }
-    
+
     /// <inheritdoc/>
     public Task<RefMeterStatus> GetRefMeterStatusAsync(IInterfaceLogger logger)
     {

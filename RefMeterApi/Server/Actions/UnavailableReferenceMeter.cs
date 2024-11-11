@@ -24,6 +24,9 @@ public class UnavailableReferenceMeter : IRefMeter
     public Task<MeasuredLoadpoint> GetActualValuesAsync(IInterfaceLogger logger, int firstActiveVoltagePhase = -1) => throw new RefMeterNotReadyException();
 
     /// <inheritdoc/>
+    public Task<MeasuredLoadpoint> GetActualValuesUncachedAsync(IInterfaceLogger logger, int firstActiveVoltagePhase = -1, bool singlePhase = false) => throw new RefMeterNotReadyException();
+
+    /// <inheritdoc/>
     public Task<MeasurementModes[]> GetMeasurementModesAsync(IInterfaceLogger logger) => throw new RefMeterNotReadyException();
 
     /// <inheritdoc/>

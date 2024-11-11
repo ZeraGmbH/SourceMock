@@ -54,6 +54,8 @@ public class CalibrationHardwareMock : ICalibrationHardware
 
         public Task<MeasuredLoadpoint> GetActualValuesAsync(IInterfaceLogger logger, int firstActiveCurrentPhase = -1) => throw new NotImplementedException();
 
+        public Task<MeasuredLoadpoint> GetActualValuesUncachedAsync(IInterfaceLogger logger, int firstActiveCurrentPhase = -1, bool singlePhase = false) => throw new NotImplementedException();
+
         public Task<bool> GetAvailableAsync(IInterfaceLogger logger) => throw new NotImplementedException();
 
         public Task<Current[]> GetCurrentRangesAsync(IInterfaceLogger logger) => throw new NotImplementedException();

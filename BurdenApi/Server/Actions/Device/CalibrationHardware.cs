@@ -1,6 +1,5 @@
 using System.Text.RegularExpressions;
 using BurdenApi.Models;
-using NUnit.Framework;
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SourceApi.Actions.Source;
@@ -23,10 +22,46 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
     /// <inheritdoc/>
     public IRefMeter ReferenceMeter { get; } = refMeter;
 
+    private Voltage _VoltageRange;
+
+    private Current _CurrentRange;
+
     /// <inheritdoc/>
-    public Task<GoalValue> MeasureAsync(Calibration calibration)
+    public async Task<GoalValue> MeasureAsync(Calibration calibration)
     {
-        throw new NotImplementedException();
+        for (var retry = 3; retry-- > 0;)
+        {
+            // Ask device for values.
+            var values = await ReferenceMeter.GetActualValuesUncachedAsync(logger, -1, true);
+
+            // Check for keeping the ranges.
+            if ((double)_VoltageRange != 0 && (double)_CurrentRange != 0)
+            {
+                // Ask for current ranges.
+                var status = await ReferenceMeter.GetRefMeterStatusAsync(logger);
+
+                if (status.VoltageRange != _VoltageRange || status.CurrentRange != _CurrentRange)
+                {
+                    if (status.VoltageRange != _VoltageRange)
+                        await ReferenceMeter.SetVoltageRangeAsync(logger, _VoltageRange);
+
+                    if (status.CurrentRange != _CurrentRange)
+                        await ReferenceMeter.SetCurrentRangeAsync(logger, _CurrentRange);
+
+                    continue;
+                }
+            }
+
+            // Report.
+            var power = values.Phases[0].ApparentPower;
+            var factor = values.Phases[0].PowerFactor;
+
+            if (power == null || factor == null) throw new InvalidOperationException("insufficient actual values");
+
+            return new() { ApparentPower = power.Value, PowerFactor = factor.Value };
+        }
+
+        throw new InvalidOperationException("reference meter keeps changing ranges - unable to get reliable actual values");
     }
 
     /// <inheritdoc/>
@@ -107,12 +142,18 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
             var voltageIndex = Array.FindIndex(voltageRanges, r => (double)r >= testVoltage);
 
             // Use the ranges.            
-            await ReferenceMeter.SetVoltageRangeAsync(logger, voltageIndex < 0 ? voltageRanges[^1] : voltageRanges[voltageIndex]);
-            await ReferenceMeter.SetCurrentRangeAsync(logger, currentIndex < 0 ? currentRanges[^1] : currentRanges[currentIndex]);
+            _VoltageRange = voltageIndex < 0 ? voltageRanges[^1] : voltageRanges[voltageIndex];
+            _CurrentRange = currentIndex < 0 ? currentRanges[^1] : currentRanges[currentIndex];
+
+            await ReferenceMeter.SetVoltageRangeAsync(logger, _VoltageRange);
+            await ReferenceMeter.SetCurrentRangeAsync(logger, _CurrentRange);
         }
         else
         {
             // Use automatic.
+            _VoltageRange = Voltage.Zero;
+            _CurrentRange = Current.Zero;
+
             await ReferenceMeter.SetAutomaticAsync(logger, true, true, false);
         }
 

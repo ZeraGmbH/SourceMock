@@ -43,7 +43,6 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
 
         _Steps.Clear();
 
-
         // Correct the goal in ANSI mode.
         EffectiveGoal = request.Burden == "ANSI"
             ? new() { ApparentPower = 1.025 * Goal.ApparentPower, PowerFactor = Goal.PowerFactor }

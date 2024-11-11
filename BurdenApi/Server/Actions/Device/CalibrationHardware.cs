@@ -11,9 +11,10 @@ namespace BurdenApi.Actions.Device;
 /// <summary>
 /// Implementation of a calibration environment.
 /// </summary>
-public class CalibrationHardware(ISource source, IRefMeter refMeter, IInterfaceLogger logger) : ICalibrationHardware
+public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden burden, IInterfaceLogger logger) : ICalibrationHardware
 {
     private static readonly Regex _RangePattern = new("^([^/]+)(/(3|v3))?$");
+
     /// <inheritdoc/>
     public Task<GoalValue> MeasureAsync(Calibration calibration)
     {
@@ -21,7 +22,7 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IInterfaceL
     }
 
     /// <inheritdoc/>
-    public async Task SetLoadpointAsync(bool isVoltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, PowerFactor powerFactor)
+    public async Task SetLoadpointAsync(string range, double percentage, Frequency frequency, bool detectRange, PowerFactor powerFactor)
     {
         // Analyse the range pattern - assume some number optional followed by a scaling.
         var match = _RangePattern.Match(range);
@@ -42,6 +43,10 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IInterfaceL
 
         // Change power factor to angle.
         var angle = (Angle)powerFactor;
+
+        // Check the type of burden.
+        var burdenInfo = await burden.GetVersionAsync(logger);
+        var isVoltageNotCurrent = burdenInfo.IsVoltageNotCurrent;
 
         // Create the IEC loadpoint.
         var lp = new TargetLoadpoint

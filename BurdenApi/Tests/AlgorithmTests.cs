@@ -143,7 +143,7 @@ namespace BurdenApiTests
         [Test]
         public async Task Can_Run_Calibration_Async()
         {
-            await Calibrator.RunAsync(new() { Goal = new(new(50), new(0.75)), InitialCalibration = new(new(64, 32), new(32, 64)) });
+            await Calibrator.RunAsync(new() { Burden = "IEC50", Goal = new(new(50), new(0.75)), InitialCalibration = new(new(64, 32), new(32, 64)) });
 
             var step = Calibrator.LastStep;
 
@@ -180,7 +180,7 @@ namespace BurdenApiTests
         [TestCase(50, 0.8, 127, 127)]
         public async Task Can_Run_Calibrations_Async(double power, double factor, byte big, byte small)
         {
-            await Calibrator.RunAsync(new() { Goal = new(new(power), new(factor)), InitialCalibration = new(new(big, small), new(small, big)) });
+            await Calibrator.RunAsync(new() { Burden = "IEC50", Goal = new(new(power), new(factor)), InitialCalibration = new(new(big, small), new(small, big)) });
 
             var step = Calibrator.LastStep;
 

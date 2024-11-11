@@ -39,6 +39,18 @@ public class Calibrator(ICalibrationHardware hardware) : ICalibrator
 
         _Steps.Clear();
 
+        // Get the frequency from the burden.
+        var frequency =
+            request.Burden switch
+            {
+                "IEC50" => 50,
+                "IEC60" or "ANSI" => 60,
+                _ => throw new ArgumentException($"can not get frequency from burden '{request.Burden}'", nameof(request))
+            };
+
+        // Prepare the loadpoint for this step.
+        await hardware.SetLoadpointAsync(request.Range, request.Percentage, new(frequency), request.ChooseBestRange, Goal.PowerFactor);
+
         // Secure bound by a maximum number of steps - we expect a maximum of 4 * 127 steps.
         for (var done = new HashSet<CalibrationStep>(); _Steps.Count < 1000;)
         {

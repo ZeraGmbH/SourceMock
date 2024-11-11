@@ -28,7 +28,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
     }
 
     /// <inheritdoc/>
-    public Task SetLoadpointAsync(bool isVoltageNotCurrent, string range, bool detectRange, PowerFactor powerFactor)
+    public Task SetLoadpointAsync(bool isVoltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, PowerFactor powerFactor)
     {
         return Task.CompletedTask;
     }

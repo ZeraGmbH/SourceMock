@@ -17,19 +17,31 @@ public class BurdenFactory(IServiceProvider services, ILogger<BurdenFactory> log
 
     private bool _initialized = false;
 
+    private bool _mockHardware = false;
+
     /// <inheritdoc />
     public ISerialPortConnection Connection
     {
         get
         {
             lock (_sync)
-            {
                 while (!_initialized)
                     Monitor.Wait(_sync);
 
-                return _Connection;
-            }
+            return _Connection;
         }
+    }
+
+    /// <inheritdoc />
+    public ICalibrationHardware CreateHardware(IServiceProvider services)
+    {
+        lock (_sync)
+            while (!_initialized)
+                Monitor.Wait(_sync);
+
+        return _mockHardware
+            ? services.GetRequiredService<CalibrationHardwareMock>()
+            : services.GetRequiredService<CalibrationHardware>();
     }
 
     /// <inheritdoc />
@@ -59,6 +71,8 @@ public class BurdenFactory(IServiceProvider services, ILogger<BurdenFactory> log
 
                 if (config == null) return;
 
+                _mockHardware = configuration!.SimulateHardware;
+
                 try
                 {
                     var log = services.GetRequiredService<ILogger<SerialPortConnection>>();
@@ -86,4 +100,5 @@ public class BurdenFactory(IServiceProvider services, ILogger<BurdenFactory> log
             }
         }
     }
+
 }

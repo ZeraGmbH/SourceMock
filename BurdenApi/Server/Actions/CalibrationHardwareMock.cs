@@ -1,4 +1,5 @@
 using BurdenApi.Models;
+using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace BurdenApi.Actions;
 
@@ -24,5 +25,11 @@ public class CalibrationHardwareMock : ICalibrationHardware
         var factor = inductive / 123d;
 
         return Task.FromResult(new GoalValue(new(power), new(factor / FactorLimit)));
+    }
+
+    /// <inheritdoc/>
+    public Task SetLoadpointAsync(bool isVoltageNotCurrent, string range, bool detectRange, PowerFactor powerFactor)
+    {
+        return Task.CompletedTask;
     }
 }

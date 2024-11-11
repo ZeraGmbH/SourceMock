@@ -27,6 +27,12 @@ public class CalibrationRequest
     public string Step { get; set; } = null!;
 
     /// <summary>
+    /// Set to choose the best voltage or current range.
+    /// </summary>
+    [NotNull, Required]
+    public bool ChooseBestRange { get; set; }
+
+    /// <summary>
     /// Target to find.
     /// </summary>
     [NotNull, Required]

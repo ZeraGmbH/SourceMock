@@ -21,10 +21,14 @@ public static class BurdenApiConfiguration
         services.AddSingleton<IBurdenFactory, BurdenFactory>();
         services.AddSingleton<IBurden, Burden>();
 
-        services.AddTransient<ICalibrationHardware, CalibrationHardwareMock>();
         services.AddTransient<ICalibrator, Calibrator>();
 
         services.AddKeyedSingleton("Burden", (ctx, key) => ctx.GetRequiredService<IBurdenFactory>().Connection);
+
+        services.AddTransient<CalibrationHardwareMock>();
+        services.AddTransient<CalibrationHardware>();
+
+        services.AddTransient(ctx => ctx.GetRequiredService<IBurdenFactory>().CreateHardware(ctx));
     }
 
     /// <summary>

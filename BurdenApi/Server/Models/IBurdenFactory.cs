@@ -17,4 +17,10 @@ public interface IBurdenFactory : IDisposable
     /// 
     /// </summary>
     ISerialPortConnection Connection { get; }
+
+    /// <summary>
+    /// Create a hardware accessor.
+    /// </summary>
+    /// <returns>Hardware accessor according to configuration.</returns>
+    ICalibrationHardware CreateHardware(IServiceProvider services);
 }

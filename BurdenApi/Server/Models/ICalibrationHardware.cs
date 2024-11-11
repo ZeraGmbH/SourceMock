@@ -1,3 +1,5 @@
+using ZERA.WebSam.Shared.DomainSpecific;
+
 namespace BurdenApi.Models;
 
 /// <summary>
@@ -11,4 +13,13 @@ public interface ICalibrationHardware
     /// <param name="calibration">Calibration parameters.</param>
     /// <returns>Resulting values.</returns>
     Task<GoalValue> MeasureAsync(Calibration calibration);
+
+    /// <summary>
+    /// Set the current loadpoint.
+    /// </summary>
+    /// <param name="isVoltageNotCurrent">Set if the following parameters describe a voltage and not a current.</param>
+    /// <param name="range">Range to use - optional followed by scaling.</param>
+    /// <param name="detectRange">Set to automatically detect the best range from the reference meter.</param>
+    /// <param name="powerFactor">Power factor to use - cosine of the angle between voltage and current.</param>
+    Task SetLoadpointAsync(bool isVoltageNotCurrent, string range, bool detectRange, PowerFactor powerFactor);
 }

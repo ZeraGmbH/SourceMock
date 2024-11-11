@@ -67,6 +67,9 @@ public class Calibrator(ICalibrationHardware hardware) : ICalibrator
 
             // Add to list.
             _Steps.Add(step);
+
+            // Just to give a hint on how many work we did.
+            step.Iteration = _Steps.Count;
         }
     }
 

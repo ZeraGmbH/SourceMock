@@ -10,8 +10,15 @@ namespace BurdenApi.Models;
 public class CalibrationStep
 {
     /// <summary>
+    /// Current number of iteration.
+    /// </summary>
+    [NotNull, Required]
+    public int Iteration { get; set; }
+
+    /// <summary>
     /// Calibration settings.
     /// </summary>
+    [NotNull, Required]
     public Calibration Calibration { get; set; } = null!;
 
     /// <summary>

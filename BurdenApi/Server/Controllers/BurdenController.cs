@@ -173,4 +173,24 @@ public class BurdenController(IBurden device, IInterfaceLogger logger) : Control
     [SwaggerOperation(OperationId = "StopBurdenMeasuringCalibration")]
     public Task<ActionResult> StopMeasuringCalibrationAsync()
         => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.StartMeasuringCalibrationAsync(false, logger));
+
+    /// <summary>
+    /// Get all steps of a burden.
+    /// </summary>
+    /// <param name="burden">Name of the burden.</param>
+    /// <returns>List of names.</returns>
+    [HttpGet("steps"), SamAuthorize(WebSamRole.testcaseexecutor)]
+    [SwaggerOperation(OperationId = "GetBurdenSteps")]
+    public Task<ActionResult<string[]>> GetStepsAsync(string burden)
+        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetStepsAsync(burden, logger));
+
+    /// <summary>
+    /// Get all ranges of a burden.
+    /// </summary>
+    /// <param name="burden">Name of the burden.</param>
+    /// <returns>List of names.</returns>
+    [HttpGet("ranges"), SamAuthorize(WebSamRole.testcaseexecutor)]
+    [SwaggerOperation(OperationId = "GetBurdenRanges")]
+    public Task<ActionResult<string[]>> GetRangesAsync(string burden)
+        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.GetRangesAsync(burden, logger));
 }

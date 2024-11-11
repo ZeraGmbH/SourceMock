@@ -77,7 +77,7 @@ partial class SerialPortMTRefMeter
                 response.Add(mode);
         }
 
-        return response.ToArray();
+        return [.. response];
     }
 
 

@@ -22,8 +22,8 @@ public interface ICalibrationHardware
     /// <param name="range">Range to use - optional followed by scaling.</param>
     /// <param name="percentage">Percentage of range to use - 1 means take range as is in the loadpoint.</param>
     /// <param name="detectRange">Set to automatically detect the best range from the reference meter.</param>
-    /// <param name="powerFactor">Power factor to use - cosine of the angle between voltage and current.</param>
-    Task SetLoadpointAsync(string range, double percentage, Frequency frequency, bool detectRange, PowerFactor powerFactor);
+    /// <param name="goal">Current step of the calibration, includes apparent power and power factor.</param>
+    Task SetLoadpointAsync(string range, double percentage, Frequency frequency, bool detectRange, GoalValue goal);
 
     /// <summary>
     /// Report the burden associated with this hardware.

@@ -15,6 +15,8 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
     /// <inheritdoc/>
     public GoalValue Goal { get; private set; } = null!;
 
+    private GoalValue EffectiveGoal = null!;
+
     private Calibration CurrentCalibration => LastStep?.Calibration ?? InitialCalibration;
 
     private bool _ResistanceCoarseFixed = false;
@@ -41,6 +43,12 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
 
         _Steps.Clear();
 
+
+        // Correct the goal in ANSI mode.
+        EffectiveGoal = request.Burden == "ANSI"
+            ? new() { ApparentPower = 1.025 * Goal.ApparentPower, PowerFactor = Goal.PowerFactor }
+            : Goal;
+
         // Get the frequency from the burden.
         var frequency =
             request.Burden switch
@@ -56,7 +64,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         await burden.SetActiveAsync(false, logger);
 
         // Prepare the loadpoint for this step.
-        await hardware.SetLoadpointAsync(request.Range, request.Percentage, new(frequency), request.ChooseBestRange, Goal.PowerFactor);
+        await hardware.SetLoadpointAsync(request.Range, request.Percentage, new(frequency), request.ChooseBestRange, Goal);
 
         // Switch burden on.
         await burden.SetBurdenAsync(request.Burden, logger);
@@ -110,7 +118,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
     private async Task<CalibrationStep?> IterateAsync()
     {
         // Retrieve new values and relativ deviation from goal.
-        var deviation = await hardware.MeasureAsync(CurrentCalibration) / Goal;
+        var deviation = await hardware.MeasureAsync(CurrentCalibration) / EffectiveGoal;
 
         // Work on the largest deviation first.
         return
@@ -224,7 +232,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         // Re-measure - rebuild calibration using pair (e.g Calibration.Resistive) keeping the other part.
         var nextCalibration = createCalibration(nextPair);
         var nextValues = await hardware.MeasureAsync(nextCalibration);
-        var nextDelta = nextValues / Goal;
+        var nextDelta = nextValues / EffectiveGoal;
 
         // There was some improvment.
         if (Math.Abs(getDeviationField(nextDelta)) < Math.Abs(deviation))

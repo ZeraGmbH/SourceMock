@@ -1,6 +1,8 @@
 using System.Text.RegularExpressions;
 using BurdenApi.Models;
+using NUnit.Framework;
 using RefMeterApi.Actions.Device;
+using RefMeterApi.Models;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 using ZERA.WebSam.Shared.DomainSpecific;
@@ -28,7 +30,7 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
     }
 
     /// <inheritdoc/>
-    public async Task SetLoadpointAsync(string range, double percentage, Frequency frequency, bool detectRange, PowerFactor powerFactor)
+    public async Task SetLoadpointAsync(string range, double percentage, Frequency frequency, bool detectRange, GoalValue goal)
     {
         // Analyse the range pattern - assume some number optional followed by a scaling.
         var match = _RangePattern.Match(range);
@@ -48,7 +50,7 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         }
 
         // Change power factor to angle.
-        var angle = (Angle)powerFactor;
+        var angle = (Angle)goal.PowerFactor;
 
         // Check the type of burden.
         var burdenInfo = await Burden.GetVersionAsync(logger);
@@ -82,22 +84,39 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         // Get the best fit on reference meter range.
         if (detectRange)
         {
+            // Use manual.
+            await ReferenceMeter.SetAutomaticAsync(logger, false, false, false);
+
             // Get all the supported ranges.
-            var ranges = (isVoltageNotCurrent
-                ? (await ReferenceMeter.GetVoltageRangesAsync(logger)).Select(v => (double)v)
-                : (await ReferenceMeter.GetCurrentRangesAsync(logger)).Select(c => (double)c)).Order().ToList();
+            var currentRanges = await ReferenceMeter.GetCurrentRangesAsync(logger);
+            var voltageRanges = await ReferenceMeter.GetVoltageRangesAsync(logger);
 
-            if (ranges.Count < 1) throw new InvalidOperationException("no reference meter ranges found");
+            if (currentRanges.Length < 1) throw new InvalidOperationException("no reference meter current ranges found");
+            if (voltageRanges.Length < 1) throw new InvalidOperationException("no reference meter voltage ranges found");
 
-            // Find the first bigger one.
-            var index = ranges.FindIndex(r => r >= rangeValue);
-            var refMeterRange = index < 0 ? ranges[^1] : ranges[index];
+            Array.Sort(currentRanges);
+            Array.Sort(voltageRanges);
 
-            // Use the range.
-            if (isVoltageNotCurrent)
-                await ReferenceMeter.SetVoltageRangeAsync(logger, new(refMeterRange));
-            else
-                await ReferenceMeter.SetCurrentRangeAsync(logger, new(refMeterRange));
+            // Calculate the values used.
+            var otherValue = goal.ApparentPower / rangeValue;
+            var testVoltage = isVoltageNotCurrent ? rangeValue : (double)otherValue;
+            var testCurrent = isVoltageNotCurrent ? (double)otherValue : rangeValue;
+
+            // Find the first bigger ones.
+            var currentIndex = Array.FindIndex(currentRanges, r => (double)r >= testCurrent);
+            var voltageIndex = Array.FindIndex(voltageRanges, r => (double)r >= testVoltage);
+
+            // Use the ranges.            
+            await ReferenceMeter.SetVoltageRangeAsync(logger, voltageIndex < 0 ? voltageRanges[^1] : voltageRanges[voltageIndex]);
+            await ReferenceMeter.SetCurrentRangeAsync(logger, currentIndex < 0 ? currentRanges[^1] : currentRanges[currentIndex]);
         }
+        else
+        {
+            // Use automatic.
+            await ReferenceMeter.SetAutomaticAsync(logger, true, true, false);
+        }
+
+        // Choose the PLL channel - put in manual mode before.
+        await ReferenceMeter.SelectPllChannelAsync(logger, isVoltageNotCurrent ? PllChannel.U1 : PllChannel.I1);
     }
 }

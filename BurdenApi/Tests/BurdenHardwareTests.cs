@@ -4,6 +4,7 @@ using BurdenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using RefMeterApi.Actions.Device;
+using RefMeterApi.Models;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 using ZERA.WebSam.Shared.Actions;
@@ -22,6 +23,14 @@ public class BurdenHardwareTests
     protected Voltage? VoltageRange;
 
     protected Current? CurrentRange;
+
+    protected PllChannel? PLL;
+
+    protected bool? AutomaticVoltage;
+
+    protected bool? AutomaticCurrent;
+
+    protected bool? AutomaticPLL;
 
     protected bool IsVoltage;
 
@@ -47,7 +56,11 @@ public class BurdenHardwareTests
 
         var refMeter = new Mock<IRefMeter>();
 
+        AutomaticCurrent = null;
+        AutomaticPLL = null;
+        AutomaticVoltage = null;
         CurrentRange = null;
+        PLL = null;
         VoltageRange = null;
 
         refMeter.Setup(r => r.GetVoltageRangesAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(
@@ -62,6 +75,19 @@ public class BurdenHardwareTests
 
         refMeter.Setup(r => r.SetCurrentRangeAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<Current>())).Callback(
              (IInterfaceLogger logger, Current range) => CurrentRange = range
+        );
+
+        refMeter.Setup(r => r.SetAutomaticAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>())).Callback(
+             (IInterfaceLogger logger, bool voltage, bool current, bool pll) =>
+             {
+                 AutomaticCurrent = current;
+                 AutomaticPLL = pll;
+                 AutomaticVoltage = voltage;
+             }
+        );
+
+        refMeter.Setup(r => r.SelectPllChannelAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<PllChannel>())).Callback(
+             (IInterfaceLogger logger, PllChannel pll) => PLL = pll
         );
 
         services.AddSingleton(refMeter.Object);
@@ -94,14 +120,18 @@ public class BurdenHardwareTests
     {
         IsVoltage = true;
 
-        await Hardware.SetLoadpointAsync(range, 1, new(frequency), false, new(powerFactor));
+        await Hardware.SetLoadpointAsync(range, 1, new(frequency), false, new(new(5), new(powerFactor)));
 
         var lp = await Services.GetRequiredService<ISource>().GetCurrentLoadpointAsync(Logger);
 
         Assert.Multiple(() =>
         {
-            Assert.That(VoltageRange, Is.Null);
+            Assert.That(AutomaticCurrent, Is.True);
+            Assert.That(AutomaticPLL, Is.False);
+            Assert.That(AutomaticVoltage, Is.True);
             Assert.That(CurrentRange, Is.Null);
+            Assert.That(PLL, Is.EqualTo(PllChannel.U1));
+            Assert.That(VoltageRange, Is.Null);
 
             Assert.That(lp, Is.Not.Null);
         });
@@ -134,14 +164,18 @@ public class BurdenHardwareTests
     {
         IsVoltage = false;
 
-        await Hardware.SetLoadpointAsync(range, 1, new(frequency), false, new(powerFactor));
+        await Hardware.SetLoadpointAsync(range, 1, new(frequency), false, new(new(5), new(powerFactor)));
 
         var lp = await Services.GetRequiredService<ISource>().GetCurrentLoadpointAsync(Logger);
 
         Assert.Multiple(() =>
         {
-            Assert.That(VoltageRange, Is.Null);
+            Assert.That(AutomaticCurrent, Is.True);
+            Assert.That(AutomaticPLL, Is.False);
+            Assert.That(AutomaticVoltage, Is.True);
             Assert.That(CurrentRange, Is.Null);
+            Assert.That(PLL, Is.EqualTo(PllChannel.I1));
+            Assert.That(VoltageRange, Is.Null);
 
             Assert.That(lp, Is.Not.Null);
         });
@@ -166,47 +200,57 @@ public class BurdenHardwareTests
         });
     }
 
-    [TestCase("2000000", 500)]
-    [TestCase("200", 250)]
-    [TestCase("100", 100)]
-    [TestCase("99", 100)]
-    [TestCase("51", 100)]
-    [TestCase("50", 50)]
-    [TestCase("1", 1)]
-    [TestCase("0.00001", 0.5)]
-    [TestCase("0", 0.5)]
-    public async Task Can_Calculate_Voltage_Range_Async(string range, double expected)
+    [TestCase("2000000", 500, 0.5)]
+    [TestCase("200", 250, 0.5)]
+    [TestCase("100", 100, 0.5)]
+    [TestCase("99", 100, 0.5)]
+    [TestCase("51", 100, 0.5)]
+    [TestCase("50", 50, 0.5)]
+    [TestCase("1", 1, 50)]
+    [TestCase("0.00001", 0.5, 500)]
+    [TestCase("0", 0.5, 500)]
+    public async Task Can_Calculate_Voltage_Range_Async(string range, double expectedVoltageRange, double expectedCurrentRange)
     {
         IsVoltage = true;
 
-        await Hardware.SetLoadpointAsync(range, 1, new(50), true, new(1));
+        await Hardware.SetLoadpointAsync(range, 1, new(50), true, new(new(5), new(1)));
 
         Assert.Multiple(() =>
         {
-            Assert.That((double?)VoltageRange, Is.EqualTo(expected));
-            Assert.That(CurrentRange, Is.Null);
+            Assert.That(AutomaticVoltage, Is.False);
+            Assert.That(AutomaticCurrent, Is.False);
+            Assert.That(AutomaticPLL, Is.False);
+            Assert.That(PLL, Is.EqualTo(PllChannel.U1));
+
+            Assert.That((double?)VoltageRange, Is.EqualTo(expectedVoltageRange));
+            Assert.That((double?)CurrentRange, Is.EqualTo(expectedCurrentRange));
         });
     }
 
-    [TestCase("2000000", 500)]
-    [TestCase("200", 250)]
-    [TestCase("100", 100)]
-    [TestCase("99", 100)]
-    [TestCase("51", 100)]
-    [TestCase("50", 50)]
-    [TestCase("1", 1)]
-    [TestCase("0.00001", 0.5)]
-    [TestCase("0", 0.5)]
-    public async Task Can_Calculate_Current_Range_Async(string range, double expected)
+    [TestCase("2000000", 500, 0.5)]
+    [TestCase("200", 250, 0.5)]
+    [TestCase("100", 100, 0.5)]
+    [TestCase("99", 100, 0.5)]
+    [TestCase("51", 100, 0.5)]
+    [TestCase("50", 50, 0.5)]
+    [TestCase("1", 1, 50)]
+    [TestCase("0.00001", 0.5, 500)]
+    [TestCase("0", 0.5, 500)]
+    public async Task Can_Calculate_Current_Range_Async(string range, double expectedVoltageRange, double expectedCurrentRange)
     {
         IsVoltage = false;
 
-        await Hardware.SetLoadpointAsync(range, 1, new(50), true, new(1));
+        await Hardware.SetLoadpointAsync(range, 1, new(50), true, new(new(5), new(1)));
 
         Assert.Multiple(() =>
         {
-            Assert.That(VoltageRange, Is.Null);
-            Assert.That((double?)CurrentRange, Is.EqualTo(expected));
+            Assert.That(AutomaticVoltage, Is.False);
+            Assert.That(AutomaticCurrent, Is.False);
+            Assert.That(AutomaticPLL, Is.False);
+            Assert.That(PLL, Is.EqualTo(PllChannel.I1));
+
+            Assert.That((double?)VoltageRange, Is.EqualTo(expectedCurrentRange));
+            Assert.That((double?)CurrentRange, Is.EqualTo(expectedVoltageRange));
         });
     }
 
@@ -215,7 +259,7 @@ public class BurdenHardwareTests
     {
         IsVoltage = true;
 
-        Assert.ThrowsAsync<ArgumentException>(() => Hardware.SetLoadpointAsync(range, 1, new(50), false, new(1)));
+        Assert.ThrowsAsync<ArgumentException>(() => Hardware.SetLoadpointAsync(range, 1, new(50), false, new(new(5), new(1))));
     }
 
     [TestCase(1, 110, 250)]
@@ -225,14 +269,19 @@ public class BurdenHardwareTests
     {
         IsVoltage = true;
 
-        await Hardware.SetLoadpointAsync("110", percentage, new(50), true, new(1));
+        await Hardware.SetLoadpointAsync("110", percentage, new(50), true, new(new(5), new(1)));
 
         var lp = await Services.GetRequiredService<ISource>().GetCurrentLoadpointAsync(Logger);
 
         Assert.Multiple(() =>
         {
+            Assert.That(AutomaticVoltage, Is.False);
+            Assert.That(AutomaticCurrent, Is.False);
+            Assert.That(AutomaticPLL, Is.False);
+            Assert.That(PLL, Is.EqualTo(PllChannel.U1));
+
             Assert.That((double?)VoltageRange, Is.EqualTo(expectedRange));
-            Assert.That(CurrentRange, Is.Null);
+            Assert.That((double?)CurrentRange, Is.EqualTo(0.5));
 
             Assert.That(lp, Is.Not.Null);
         });

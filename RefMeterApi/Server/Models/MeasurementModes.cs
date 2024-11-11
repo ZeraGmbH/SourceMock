@@ -67,4 +67,14 @@ public enum MeasurementModes
     /// 2WAP, 2LS
     /// </summary>
     TwoWireApparentPower = 11,
+
+    /// <summary>
+    /// MQRef
+    /// </summary>
+    MqRef = 12,
+
+    /// <summary>
+    /// MQBase
+    /// </summary>
+    MqBase = 13,
 }

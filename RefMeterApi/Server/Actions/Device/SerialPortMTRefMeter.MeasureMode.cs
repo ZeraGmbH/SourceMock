@@ -25,6 +25,8 @@ partial class SerialPortMTRefMeter
         {"4WAP", MeasurementModes.FourWireApparentPower},
         {"4WR", MeasurementModes.FourWireReactivePower},
         {"4WRC", MeasurementModes.FourWireReactivePowerCrossConnected},
+        {"MQBase", MeasurementModes.MqBase},
+        {"MQRef", MeasurementModes.MqRef},
     };
 
     /// <summary>

@@ -21,6 +21,8 @@ partial class SerialPortFGRefMeter
         {"4LBK", MeasurementModes.FourWireReactivePowerCrossConnected},
         {"4LS", MeasurementModes.FourWireApparentPower},
         {"4LW", MeasurementModes.FourWireActivePower},
+        {"MQBase", MeasurementModes.MqBase},
+        {"MQRef", MeasurementModes.MqRef},
     };
 
     /// <summary>

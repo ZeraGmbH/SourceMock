@@ -199,7 +199,7 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection port) : 
         => device.ExecuteAsync(log, SerialPortRequest.Create("CC", "CCACK"))[0];
 
     /// <inheritdoc/>
-    public Task StartMeasuringCalibrationAsync(bool on, IInterfaceLogger log)
+    public Task SetMeasuringCalibrationAsync(bool on, IInterfaceLogger log)
         => device.ExecuteAsync(log, SerialPortRequest.Create($"MR{(on ? 1 : 0)}", "MRACK"))[0];
 
     /// <inheritdoc/>

@@ -15,7 +15,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
     {
         public bool IsAvailable => throw new NotImplementedException();
 
-        public Task CancelCalibrationAsync(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
+        public Task CancelCalibrationAsync(IInterfaceLogger interfaceLogger) => Task.CompletedTask;
 
         public Task<string[]> GetBurdensAsync(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
@@ -27,7 +27,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
 
         public Task<string[]> GetStepsAsync(string burden, IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
-        public Task<BurdenVersion> GetVersionAsync(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
+        public Task<BurdenVersion> GetVersionAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(new BurdenVersion { IsVoltageNotCurrent = true });
 
         public Task<BurdenValues> MeasureAsync(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
@@ -45,7 +45,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
 
         public Task SetTransientCalibrationAsync(Calibration calibration, IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
-        public Task StartMeasuringCalibrationAsync(bool on, IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
+        public Task SetMeasuringCalibrationAsync(bool on, IInterfaceLogger interfaceLogger) => Task.CompletedTask;
     }
 
     private class RefMeterMock : IRefMeter

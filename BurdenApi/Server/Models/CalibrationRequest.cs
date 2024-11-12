@@ -39,6 +39,13 @@ public class CalibrationRequest
     [NotNull, Required]
     public GoalValue Goal { get; set; } = new();
 
+}
+
+/// <summary>
+/// 
+/// </summary>
+public class StepCalibrationRequest : CalibrationRequest
+{
     /// <summary>
     /// Initial calibration values.
     /// </summary>

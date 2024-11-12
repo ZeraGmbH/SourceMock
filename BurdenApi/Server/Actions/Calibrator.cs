@@ -31,7 +31,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
     public CalibrationStep? LastStep => _Steps.LastOrDefault();
 
     /// <inheritdoc/>
-    public async Task RunAsync(CalibrationRequest request)
+    public async Task RunAsync(StepCalibrationRequest request)
     {
         Goal = request.Goal;
         InitialCalibration = request.InitialCalibration;
@@ -43,9 +43,24 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         _Steps.Clear();
 
         // Correct the goal in ANSI mode.
-        EffectiveGoal = request.Burden == "ANSI"
-            ? new() { ApparentPower = 1.025 * Goal.ApparentPower, PowerFactor = Goal.PowerFactor }
-            : Goal;
+        EffectiveGoal = request.Burden != "ANSI"
+            ? Goal
+            : new()
+            {
+                ApparentPower = 1.025 * Goal.ApparentPower,
+                PowerFactor = Goal.PowerFactor
+            };
+
+        // Correct the goal for current burden.
+        var burden = hardware.Burden;
+        var burdenInfo = await burden.GetVersionAsync(logger);
+
+        if (!burdenInfo.IsVoltageNotCurrent) EffectiveGoal =
+            new()
+            {
+                ApparentPower = EffectiveGoal.ApparentPower / 100d,
+                PowerFactor = EffectiveGoal.PowerFactor
+            };
 
         // Get the frequency from the burden.
         var frequency =
@@ -56,10 +71,10 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
                 _ => throw new ArgumentException($"can not get frequency from burden '{request.Burden}'", nameof(request))
             };
 
-        // Switch off the burden.
-        var burden = hardware.Burden;
-
+        // Initialize and switch off the burden.
         await burden.SetActiveAsync(false, logger);
+        await burden.CancelCalibrationAsync(logger);
+        await burden.SetMeasuringCalibrationAsync(false, logger);
 
         // Prepare the loadpoint for this step.
         await hardware.PrepareAsync(request.Range, 1, new(frequency), request.ChooseBestRange, Goal);
@@ -245,7 +260,19 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
     public async Task<CalibrationStep[]> CalibrateStepAsync(CalibrationRequest request)
     {
         // Single measurement.
-        await RunAsync(request);
+        var initial = await hardware.Burden.GetCalibrationAsync(request.Burden, request.Range, request.Step, logger);
+
+        if (initial == null) throw new ArgumentException("step not enabled to calibrate", nameof(request));
+
+        await RunAsync(new()
+        {
+            Burden = request.Burden,
+            ChooseBestRange = request.ChooseBestRange,
+            Goal = request.Goal,
+            InitialCalibration = initial,
+            Range = request.Range,
+            Step = request.Step
+        });
 
         // See if it worked.
         var result = LastStep;
@@ -264,14 +291,17 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
                 _ => throw new ArgumentException($"can not get frequency from burden '{request.Burden}'", nameof(request))
             };
 
+        // Check mode.
+        var burdenInfo = await hardware.Burden.GetVersionAsync(logger);
+
         // Measure at 80%.
-        await hardware.PrepareAsync(request.Range, 0.8, new(frequency), request.ChooseBestRange, Goal);
+        await hardware.PrepareAsync(request.Range, burdenInfo.IsVoltageNotCurrent ? 0.8 : 0.1, new(frequency), request.ChooseBestRange, Goal);
 
         var lower = await hardware.MeasureAsync(result.Calibration);
         var lowerDeviation = lower / EffectiveGoal;
 
         // Measure at 80%.
-        await hardware.PrepareAsync(request.Range, 1.2, new(frequency), request.ChooseBestRange, Goal);
+        await hardware.PrepareAsync(request.Range, burdenInfo.IsVoltageNotCurrent ? 1.2 : 2, new(frequency), request.ChooseBestRange, Goal);
 
         var upper = await hardware.MeasureAsync(result.Calibration);
         var upperDeviation = upper / EffectiveGoal;

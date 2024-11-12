@@ -117,7 +117,7 @@ public interface IBurden
     /// </summary>
     /// <param name="on">Set to start the measurement.</param>
     /// <param name="interfaceLogger">Logging helper.</param>
-    Task StartMeasuringCalibrationAsync(bool on, IInterfaceLogger interfaceLogger);
+    Task SetMeasuringCalibrationAsync(bool on, IInterfaceLogger interfaceLogger);
 
     /// <summary>
     /// Get the ranges for a single burden.

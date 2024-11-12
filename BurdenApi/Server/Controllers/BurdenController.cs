@@ -164,7 +164,7 @@ public class BurdenController(IBurden device, IInterfaceLogger logger) : Control
     [HttpPost("calibration/start"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "StartBurdenMeasuringCalibration")]
     public Task<ActionResult> StarMeasuringCalibrationAsync()
-        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.StartMeasuringCalibrationAsync(true, logger));
+        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.SetMeasuringCalibrationAsync(true, logger));
 
     /// <summary>
     /// Stop measuring calibration.
@@ -172,7 +172,7 @@ public class BurdenController(IBurden device, IInterfaceLogger logger) : Control
     [HttpPost("calibration/stop"), SamAuthorize(WebSamRole.testcaseexecutor)]
     [SwaggerOperation(OperationId = "StopBurdenMeasuringCalibration")]
     public Task<ActionResult> StopMeasuringCalibrationAsync()
-        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.StartMeasuringCalibrationAsync(false, logger));
+        => ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.SetMeasuringCalibrationAsync(false, logger));
 
     /// <summary>
     /// Get all steps of a burden.

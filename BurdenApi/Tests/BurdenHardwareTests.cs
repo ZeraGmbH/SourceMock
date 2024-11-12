@@ -32,6 +32,8 @@ public class BurdenHardwareTests
 
     protected bool? AutomaticPLL;
 
+    protected MeasurementModes? MeasurementMode;
+
     protected bool IsVoltage;
 
     [SetUp]
@@ -60,6 +62,7 @@ public class BurdenHardwareTests
         AutomaticPLL = null;
         AutomaticVoltage = null;
         CurrentRange = null;
+        MeasurementMode = null;
         PLL = null;
         VoltageRange = null;
 
@@ -88,6 +91,10 @@ public class BurdenHardwareTests
 
         refMeter.Setup(r => r.SelectPllChannelAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<PllChannel>())).Callback(
              (IInterfaceLogger logger, PllChannel pll) => PLL = pll
+        );
+
+        refMeter.Setup(r => r.SetActualMeasurementModeAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<MeasurementModes>())).Callback(
+          (IInterfaceLogger logger, MeasurementModes mode) => MeasurementMode = mode
         );
 
         services.AddSingleton(refMeter.Object);
@@ -130,6 +137,7 @@ public class BurdenHardwareTests
             Assert.That(AutomaticPLL, Is.False);
             Assert.That(AutomaticVoltage, Is.True);
             Assert.That(CurrentRange, Is.Null);
+            Assert.That(MeasurementMode, Is.EqualTo(MeasurementModes.MqBase));
             Assert.That(PLL, Is.EqualTo(PllChannel.U1));
             Assert.That(VoltageRange, Is.Null);
 
@@ -173,6 +181,7 @@ public class BurdenHardwareTests
             Assert.That(AutomaticPLL, Is.False);
             Assert.That(AutomaticVoltage, Is.True);
             Assert.That(CurrentRange, Is.Null);
+            Assert.That(MeasurementMode, Is.EqualTo(MeasurementModes.MqBase));
             Assert.That(PLL, Is.EqualTo(PllChannel.I1));
             Assert.That(VoltageRange, Is.Null);
 

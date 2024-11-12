@@ -112,11 +112,11 @@ public class BurdenHardwareTests
         Services?.Dispose();
     }
 
-    [TestCase("200", 50, 1, 200, 0)]
-    [TestCase("200/3", 50, 1, 66.66667, 0)]
-    [TestCase("200/v3", 50, 1, 115.4700, 0)]
-    [TestCase("200", 50, 0.5, 200, 300)]
-    public async Task Can_Set_Voltage_Loadpoint_Async(string range, double frequency, double powerFactor, double expectedVaue, double expectedAngle)
+    [TestCase("200", 50, 1, 200)]
+    [TestCase("200/3", 50, 1, 66.66667)]
+    [TestCase("200/v3", 50, 1, 115.4700)]
+    [TestCase("200", 50, 0.5, 200)]
+    public async Task Can_Set_Voltage_Loadpoint_Async(string range, double frequency, double powerFactor, double expectedVaue)
     {
         IsVoltage = true;
 
@@ -152,15 +152,14 @@ public class BurdenHardwareTests
             Assert.That(lp.Phases[0].Current.AcComponent, Is.Not.Null);
             Assert.That(lp.Phases[0].Voltage.AcComponent, Is.Not.Null);
             Assert.That((double?)lp.Phases[0].Voltage.AcComponent?.Rms, Is.EqualTo(expectedVaue).Within(0.001));
-            Assert.That((double?)lp.Phases[0].Voltage.AcComponent?.Angle, Is.EqualTo(expectedAngle).Within(0.01));
         });
     }
 
-    [TestCase("200", 50, 1, 200, 0)]
-    [TestCase("200/3", 50, 1, 66.66667, 0)]
-    [TestCase("200/v3", 50, 1, 115.4700, 0)]
-    [TestCase("200", 50, 0.5, 200, 300)]
-    public async Task Can_Set_Current_Loadpoint_Async(string range, double frequency, double powerFactor, double expectedVaue, double expectedAngle)
+    [TestCase("200", 50, 1, 200)]
+    [TestCase("200/3", 50, 1, 66.66667)]
+    [TestCase("200/v3", 50, 1, 115.4700)]
+    [TestCase("200", 50, 0.5, 200)]
+    public async Task Can_Set_Current_Loadpoint_Async(string range, double frequency, double powerFactor, double expectedVaue)
     {
         IsVoltage = false;
 
@@ -196,7 +195,6 @@ public class BurdenHardwareTests
             Assert.That(lp.Phases[0].Current.AcComponent, Is.Not.Null);
             Assert.That(lp.Phases[0].Current.AcComponent, Is.Not.Null);
             Assert.That((double?)lp.Phases[0].Current.AcComponent?.Rms, Is.EqualTo(expectedVaue).Within(0.001));
-            Assert.That((double?)lp.Phases[0].Voltage.AcComponent?.Angle, Is.EqualTo(expectedAngle).Within(0.01));
         });
     }
 

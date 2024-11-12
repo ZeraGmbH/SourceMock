@@ -129,8 +129,8 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
     public Task<ActionResult<ReferenceMeterInformation>> GetMeterInformationAsync() =>
         ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.GetMeterInformationAsync(interfaceLogger));
 
-    
-    
+
+
     /// <summary>
     /// Get voltage ranges on the reference meter.
     /// </summary>
@@ -223,7 +223,7 @@ public class RefMeterController(IRefMeter device, IInterfaceLogger interfaceLogg
         ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SelectPllChannelAsync(interfaceLogger, pll));
 
     /// <summary>
-    /// Select pll channel - only possible if pll automatic is set to false
+    /// Get the reference meter status.
     /// </summary>
     [HttpGet("RefMeterStatus"), SamAuthorize]
     [SwaggerOperation(OperationId = "GetRefMeterStatus")]

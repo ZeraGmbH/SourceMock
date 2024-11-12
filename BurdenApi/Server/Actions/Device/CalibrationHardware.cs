@@ -81,9 +81,6 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
                 break;
         }
 
-        // Change power factor to angle.
-        var angle = (Angle)goal.PowerFactor;
-
         // Check the type of burden.
         var burdenInfo = await Burden.GetVersionAsync(logger);
         var isVoltageNotCurrent = burdenInfo.IsVoltageNotCurrent;
@@ -96,11 +93,11 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
                 new() {
                     Current = new() {
                         On = !isVoltageNotCurrent,
-                        AcComponent = new() { Rms = new(isVoltageNotCurrent ? 0 : rangeValue), Angle = Angle.Zero }
+                        AcComponent = new() { Rms = new(isVoltageNotCurrent ? 0 : rangeValue)}
                     },
                     Voltage = new() {
                         On = isVoltageNotCurrent,
-                        AcComponent =  new() { Rms = new(isVoltageNotCurrent ? rangeValue : 0), Angle = (new Angle(360) - angle).Normalize() }
+                        AcComponent =  new() { Rms = new(isVoltageNotCurrent ? rangeValue : 0)}
                     }
                 },
                 new() { Current = new() { On = false }, Voltage = new() { On = false } },

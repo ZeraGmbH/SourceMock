@@ -27,6 +27,12 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
     /// <inheritdoc/>
     public async Task<GoalValue> MeasureAsync(Calibration calibration)
     {
+        // Apply the calibration to the burden.
+        await Burden.SetTransientCalibrationAsync(calibration, logger);
+
+        // Relax a bit.
+        await Task.Delay(1000);
+
         for (var retry = 3; retry-- > 0;)
         {
             // Ask device for values.
@@ -70,20 +76,23 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
 
         if (!match.Success) throw new ArgumentException(range, nameof(range));
 
-        var voltageRange = percentage * double.Parse(match.Groups[1].Value);
+        var rangeValue = percentage * double.Parse(match.Groups[1].Value);
 
         switch (match.Groups[3].Value)
         {
             case "3":
-                voltageRange /= 3;
+                rangeValue /= 3;
                 break;
             case "v3":
-                voltageRange /= Math.Sqrt(3);
+                rangeValue /= Math.Sqrt(3);
                 break;
         }
 
         // Check the type of burden.
         var burdenInfo = await Burden.GetVersionAsync(logger);
+
+        // Use only 10% on current burden.
+        if (!burdenInfo.IsVoltageNotCurrent) rangeValue /= 10d;
 
         // Create the IEC loadpoint.
         var lp = new TargetLoadpoint
@@ -91,8 +100,8 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
             Frequency = { Mode = FrequencyMode.SYNTHETIC, Value = frequency },
             Phases = {
                 new() {
-                    Current = new() { On = false } ,
-                    Voltage = new() { On = true, AcComponent =  new() { Rms = new(voltageRange)} }
+                    Current = new() { On = !burdenInfo.IsVoltageNotCurrent, AcComponent =  new() { Rms = new(rangeValue)}  } ,
+                    Voltage = new() { On = burdenInfo.IsVoltageNotCurrent, AcComponent =  new() { Rms = new(rangeValue)} }
                 },
                 new() { Current = new() { On = false }, Voltage = new() { On = false } },
                 new() { Current = new() { On = false }, Voltage = new() { On = false } },
@@ -121,7 +130,9 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
             Array.Sort(voltageRanges);
 
             // Calculate the current from the apparent power and the voltage.
-            var currentRange = (double)(goal.ApparentPower / voltageRange);
+            var otherRange = goal.ApparentPower / rangeValue;
+            var voltageRange = burdenInfo.IsVoltageNotCurrent ? rangeValue : (double)otherRange;
+            var currentRange = burdenInfo.IsVoltageNotCurrent ? (double)otherRange : rangeValue;
 
             // Find the first bigger ones.
             var currentIndex = Array.FindIndex(currentRanges, r => (double)r >= currentRange);

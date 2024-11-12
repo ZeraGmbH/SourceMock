@@ -89,6 +89,10 @@ public class BurdenHardwareTests
              }
         );
 
+        refMeter.Setup(r => r.GetActualValuesUncachedAsync(It.IsAny<IInterfaceLogger>(), -1, true)).ReturnsAsync(
+            new MeasuredLoadpoint { Phases = { new() { PowerFactor = new(0.8), ApparentPower = new(3.75) } } }
+        );
+
         refMeter.Setup(r => r.SelectPllChannelAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<PllChannel>())).Callback(
              (IInterfaceLogger logger, PllChannel pll) => PLL = pll
         );
@@ -103,6 +107,9 @@ public class BurdenHardwareTests
 
         burden.Setup(b => b.GetVersionAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(
             (IInterfaceLogger logger) => new BurdenVersion { IsVoltageNotCurrent = IsVoltage });
+
+        burden.Setup(b => b.GetCalibrationAsync("IEC60", "190", "3.75;0.80", It.IsAny<IInterfaceLogger>())).ReturnsAsync(
+            (string burden, string range, string step, IInterfaceLogger logger) => new(new(0, 0), new(0, 0)));
 
         services.AddSingleton(burden.Object);
 
@@ -157,16 +164,16 @@ public class BurdenHardwareTests
             Assert.That(lp.Phases[2].Current.On, Is.False);
             Assert.That(lp.Phases[2].Voltage.On, Is.False);
 
-            Assert.That(lp.Phases[0].Current.AcComponent, Is.Null);
-            Assert.That(lp.Phases[0].Voltage.AcComponent, Is.Not.Null);
+            Assert.That(lp.Phases[0].Current.On, Is.False);
+            Assert.That(lp.Phases[0].Voltage.On, Is.True);
             Assert.That((double?)lp.Phases[0].Voltage.AcComponent?.Rms, Is.EqualTo(expectedVaue).Within(0.001));
         });
     }
 
-    [TestCase("200", 50, 1, 200)]
-    [TestCase("200/3", 50, 1, 66.66667)]
-    [TestCase("200/v3", 50, 1, 115.4700)]
-    [TestCase("200", 50, 0.5, 200)]
+    [TestCase("200", 50, 1, 20)]
+    [TestCase("200/3", 50, 1, 6.666667)]
+    [TestCase("200/v3", 50, 1, 11.54700)]
+    [TestCase("200", 50, 0.5, 20)]
     public async Task Can_Set_Current_Loadpoint_Async(string range, double frequency, double powerFactor, double expectedVaue)
     {
         IsVoltage = false;
@@ -194,16 +201,14 @@ public class BurdenHardwareTests
             Assert.That((double)lp.Frequency.Value, Is.EqualTo(frequency));
 
             Assert.That(lp.Phases, Has.Count.EqualTo(3));
-            Assert.That(lp.Phases[0].Current.On, Is.False);
-            Assert.That(lp.Phases[0].Voltage.On, Is.True);
+            Assert.That(lp.Phases[0].Current.On, Is.True);
+            Assert.That(lp.Phases[0].Voltage.On, Is.False);
             Assert.That(lp.Phases[1].Current.On, Is.False);
             Assert.That(lp.Phases[1].Voltage.On, Is.False);
             Assert.That(lp.Phases[2].Current.On, Is.False);
             Assert.That(lp.Phases[2].Voltage.On, Is.False);
 
-            Assert.That(lp.Phases[0].Voltage.AcComponent, Is.Not.Null);
-            Assert.That(lp.Phases[0].Current.AcComponent, Is.Null);
-            Assert.That((double?)lp.Phases[0].Voltage.AcComponent?.Rms, Is.EqualTo(expectedVaue).Within(0.001));
+            Assert.That((double?)lp.Phases[0].Current.AcComponent?.Rms, Is.EqualTo(expectedVaue).Within(0.001));
         });
     }
 
@@ -234,15 +239,14 @@ public class BurdenHardwareTests
         });
     }
 
-    [TestCase("2000000", 500, 0.5)]
-    [TestCase("200", 250, 0.5)]
-    [TestCase("100", 100, 0.5)]
-    [TestCase("99", 100, 0.5)]
-    [TestCase("51", 100, 0.5)]
-    [TestCase("50", 50, 0.5)]
-    [TestCase("1", 1, 50)]
-    [TestCase("0.00001", 0.5, 500)]
-    [TestCase("0", 0.5, 500)]
+    [TestCase("2000000", 0.5, 500)]
+    [TestCase("200", 0.5, 50)]
+    [TestCase("100", 0.5, 50)]
+    [TestCase("99", 1, 50)]
+    [TestCase("51", 1, 50)]
+    [TestCase("50", 1, 50)]
+    [TestCase("1", 50, 0.5)]
+    [TestCase("0.00001", 500, 0.5)]
     public async Task Can_Calculate_Current_Range_Async(string range, double expectedVoltageRange, double expectedCurrentRange)
     {
         IsVoltage = false;
@@ -298,5 +302,17 @@ public class BurdenHardwareTests
             Assert.That(lp.Phases, Has.Count.EqualTo(3));
             Assert.That((double?)lp.Phases[0].Voltage.AcComponent?.Rms, Is.EqualTo(expectedVaue).Within(0.001));
         });
+    }
+
+    [Test]
+    public async Task Can_Measure_With_Auto_Range_Async()
+    {
+        IsVoltage = true;
+
+        await Hardware.PrepareAsync("190", 1, new(60), false, new(new(3.75), new(0.8)));
+
+        var values = await Hardware.MeasureAsync(new());
+
+        Assert.That((double)values.PowerFactor, Is.EqualTo(0.8));
     }
 }

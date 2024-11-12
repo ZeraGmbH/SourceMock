@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using BurdenApi.Actions.Device;
 using BurdenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -94,11 +93,21 @@ public class BurdenHardwareTests
         );
 
         refMeter.Setup(r => r.SelectPllChannelAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<PllChannel>())).Callback(
-             (IInterfaceLogger logger, PllChannel pll) => PLL = pll
+            (IInterfaceLogger logger, PllChannel pll) => PLL = pll
         );
 
         refMeter.Setup(r => r.SetActualMeasurementModeAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<MeasurementModes>())).Callback(
           (IInterfaceLogger logger, MeasurementModes mode) => MeasurementMode = mode
+        );
+
+        refMeter.Setup(r => r.GetRefMeterStatusAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(
+            (IInterfaceLogger logger) => new()
+            {
+                CurrentRange = CurrentRange ?? Current.Zero,
+                VoltageRange = VoltageRange ?? Voltage.Zero,
+                MeasurementMode = MeasurementMode,
+                PllChannel = PLL,
+            }
         );
 
         services.AddSingleton(refMeter.Object);
@@ -311,7 +320,40 @@ public class BurdenHardwareTests
 
         await Hardware.PrepareAsync("190", 1, new(60), false, new(new(3.75), new(0.8)));
 
+        Assert.Multiple(() =>
+        {
+            Assert.That(VoltageRange, Is.Null);
+            Assert.That(CurrentRange, Is.Null);
+        });
+
         var values = await Hardware.MeasureAsync(new());
+
+        Assert.That((double)values.PowerFactor, Is.EqualTo(0.8));
+    }
+
+    [Test]
+    public async Task Can_Measure_With_Detect_Range_Async()
+    {
+        IsVoltage = true;
+
+        await Hardware.PrepareAsync("190", 1, new(60), true, new(new(3.75), new(0.8)));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That((double?)VoltageRange, Is.EqualTo(250));
+            Assert.That((double?)CurrentRange, Is.EqualTo(0.5));
+        });
+
+        CurrentRange = new(250);
+        VoltageRange = new(50);
+
+        var values = await Hardware.MeasureAsync(new());
+
+        Assert.Multiple(() =>
+        {
+            Assert.That((double?)VoltageRange, Is.EqualTo(250));
+            Assert.That((double?)CurrentRange, Is.EqualTo(0.5));
+        });
 
         Assert.That((double)values.PowerFactor, Is.EqualTo(0.8));
     }

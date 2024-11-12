@@ -44,10 +44,4 @@ public class CalibrationRequest
     /// </summary>
     [NotNull, Required]
     public Calibration InitialCalibration { get; set; } = new();
-
-    /// <summary>
-    /// Set to find the best fit range of the reference meter.
-    /// </summary>
-    [NotNull, Required]
-    public bool FindBestReferenceMeterRange { get; set; }
 }

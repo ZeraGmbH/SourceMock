@@ -157,7 +157,7 @@ public class BurdenHardwareTests
             Assert.That(lp.Phases[2].Current.On, Is.False);
             Assert.That(lp.Phases[2].Voltage.On, Is.False);
 
-            Assert.That(lp.Phases[0].Current.AcComponent, Is.Not.Null);
+            Assert.That(lp.Phases[0].Current.AcComponent, Is.Null);
             Assert.That(lp.Phases[0].Voltage.AcComponent, Is.Not.Null);
             Assert.That((double?)lp.Phases[0].Voltage.AcComponent?.Rms, Is.EqualTo(expectedVaue).Within(0.001));
         });
@@ -194,16 +194,16 @@ public class BurdenHardwareTests
             Assert.That((double)lp.Frequency.Value, Is.EqualTo(frequency));
 
             Assert.That(lp.Phases, Has.Count.EqualTo(3));
-            Assert.That(lp.Phases[0].Current.On, Is.True);
-            Assert.That(lp.Phases[0].Voltage.On, Is.False);
+            Assert.That(lp.Phases[0].Current.On, Is.False);
+            Assert.That(lp.Phases[0].Voltage.On, Is.True);
             Assert.That(lp.Phases[1].Current.On, Is.False);
             Assert.That(lp.Phases[1].Voltage.On, Is.False);
             Assert.That(lp.Phases[2].Current.On, Is.False);
             Assert.That(lp.Phases[2].Voltage.On, Is.False);
 
-            Assert.That(lp.Phases[0].Current.AcComponent, Is.Not.Null);
-            Assert.That(lp.Phases[0].Current.AcComponent, Is.Not.Null);
-            Assert.That((double?)lp.Phases[0].Current.AcComponent?.Rms, Is.EqualTo(expectedVaue).Within(0.001));
+            Assert.That(lp.Phases[0].Voltage.AcComponent, Is.Not.Null);
+            Assert.That(lp.Phases[0].Current.AcComponent, Is.Null);
+            Assert.That((double?)lp.Phases[0].Voltage.AcComponent?.Rms, Is.EqualTo(expectedVaue).Within(0.001));
         });
     }
 
@@ -256,8 +256,8 @@ public class BurdenHardwareTests
             Assert.That(AutomaticPLL, Is.False);
             Assert.That(PLL, Is.EqualTo(PllChannel.I1));
 
-            Assert.That((double?)VoltageRange, Is.EqualTo(expectedCurrentRange));
-            Assert.That((double?)CurrentRange, Is.EqualTo(expectedVoltageRange));
+            Assert.That((double?)VoltageRange, Is.EqualTo(expectedVoltageRange));
+            Assert.That((double?)CurrentRange, Is.EqualTo(expectedCurrentRange));
         });
     }
 

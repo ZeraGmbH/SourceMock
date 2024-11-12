@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using BurdenApi.Models;
+using Castle.Components.DictionaryAdapter;
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SourceApi.Actions.Source;
@@ -69,21 +70,20 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
 
         if (!match.Success) throw new ArgumentException(range, nameof(range));
 
-        var rangeValue = percentage * double.Parse(match.Groups[1].Value);
+        var voltageRange = percentage * double.Parse(match.Groups[1].Value);
 
         switch (match.Groups[3].Value)
         {
             case "3":
-                rangeValue /= 3;
+                voltageRange /= 3;
                 break;
             case "v3":
-                rangeValue /= Math.Sqrt(3);
+                voltageRange /= Math.Sqrt(3);
                 break;
         }
 
         // Check the type of burden.
         var burdenInfo = await Burden.GetVersionAsync(logger);
-        var isVoltageNotCurrent = burdenInfo.IsVoltageNotCurrent;
 
         // Create the IEC loadpoint.
         var lp = new TargetLoadpoint
@@ -91,18 +91,12 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
             Frequency = { Mode = FrequencyMode.SYNTHETIC, Value = frequency },
             Phases = {
                 new() {
-                    Current = new() {
-                        On = !isVoltageNotCurrent,
-                        AcComponent = new() { Rms = new(isVoltageNotCurrent ? 0 : rangeValue)}
-                    },
-                    Voltage = new() {
-                        On = isVoltageNotCurrent,
-                        AcComponent =  new() { Rms = new(isVoltageNotCurrent ? rangeValue : 0)}
-                    }
+                    Current = new() { On = false } ,
+                    Voltage = new() { On = true, AcComponent =  new() { Rms = new(voltageRange)} }
                 },
                 new() { Current = new() { On = false }, Voltage = new() { On = false } },
                 new() { Current = new() { On = false }, Voltage = new() { On = false } },
-            }
+        }
         };
 
         // Set the loadpioint.
@@ -126,14 +120,12 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
             Array.Sort(currentRanges);
             Array.Sort(voltageRanges);
 
-            // Calculate the values used.
-            var otherValue = goal.ApparentPower / rangeValue;
-            var testVoltage = isVoltageNotCurrent ? rangeValue : (double)otherValue;
-            var testCurrent = isVoltageNotCurrent ? (double)otherValue : rangeValue;
+            // Calculate the current from the apparent power and the voltage.
+            var currentRange = (double)(goal.ApparentPower / voltageRange);
 
             // Find the first bigger ones.
-            var currentIndex = Array.FindIndex(currentRanges, r => (double)r >= testCurrent);
-            var voltageIndex = Array.FindIndex(voltageRanges, r => (double)r >= testVoltage);
+            var currentIndex = Array.FindIndex(currentRanges, r => (double)r >= currentRange);
+            var voltageIndex = Array.FindIndex(voltageRanges, r => (double)r >= voltageRange);
 
             // Use the ranges.            
             _VoltageRange = voltageIndex < 0 ? voltageRanges[^1] : voltageRanges[voltageIndex];
@@ -152,7 +144,7 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         }
 
         // Choose the PLL channel - put in manual mode before.
-        await refMeter.SelectPllChannelAsync(logger, isVoltageNotCurrent ? PllChannel.U1 : PllChannel.I1);
+        await refMeter.SelectPllChannelAsync(logger, burdenInfo.IsVoltageNotCurrent ? PllChannel.U1 : PllChannel.I1);
 
         // Configure reference meter.
         await refMeter.SetActualMeasurementModeAsync(logger, MeasurementModes.MqBase);

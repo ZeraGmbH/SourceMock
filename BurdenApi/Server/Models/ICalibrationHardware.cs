@@ -16,22 +16,17 @@ public interface ICalibrationHardware
     Task<GoalValue> MeasureAsync(Calibration calibration);
 
     /// <summary>
-    /// Set the current loadpoint.
+    /// Prepare the measurement.
     /// </summary>
     /// <param name="frequency">Frequency to use.</param>
     /// <param name="range">Range to use - optional followed by scaling.</param>
     /// <param name="percentage">Percentage of range to use - 1 means take range as is in the loadpoint.</param>
     /// <param name="detectRange">Set to automatically detect the best range from the reference meter.</param>
     /// <param name="goal">Current step of the calibration, includes apparent power and power factor.</param>
-    Task SetLoadpointAsync(string range, double percentage, Frequency frequency, bool detectRange, GoalValue goal);
+    Task PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, GoalValue goal);
 
     /// <summary>
     /// Report the burden associated with this hardware.
     /// </summary>
     IBurden Burden { get; }
-
-    /// <summary>
-    /// Report the reference meter associated with the current hardware.
-    /// </summary>
-    IRefMeter ReferenceMeter { get; }
 }

@@ -107,7 +107,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
     }
 
     /// <inheritdoc/>
-    public Task SetLoadpointAsync(string range, double percentage, Frequency frequency, bool detectRange, GoalValue goal)
+    public Task PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, GoalValue goal)
     {
         return Task.CompletedTask;
     }

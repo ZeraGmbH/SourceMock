@@ -120,7 +120,7 @@ public class BurdenHardwareTests
     {
         IsVoltage = true;
 
-        await Hardware.SetLoadpointAsync(range, 1, new(frequency), false, new(new(5), new(powerFactor)));
+        await Hardware.PrepareAsync(range, 1, new(frequency), false, new(new(5), new(powerFactor)));
 
         var lp = await Services.GetRequiredService<ISource>().GetCurrentLoadpointAsync(Logger);
 
@@ -164,7 +164,7 @@ public class BurdenHardwareTests
     {
         IsVoltage = false;
 
-        await Hardware.SetLoadpointAsync(range, 1, new(frequency), false, new(new(5), new(powerFactor)));
+        await Hardware.PrepareAsync(range, 1, new(frequency), false, new(new(5), new(powerFactor)));
 
         var lp = await Services.GetRequiredService<ISource>().GetCurrentLoadpointAsync(Logger);
 
@@ -213,7 +213,7 @@ public class BurdenHardwareTests
     {
         IsVoltage = true;
 
-        await Hardware.SetLoadpointAsync(range, 1, new(50), true, new(new(5), new(1)));
+        await Hardware.PrepareAsync(range, 1, new(50), true, new(new(5), new(1)));
 
         Assert.Multiple(() =>
         {
@@ -240,7 +240,7 @@ public class BurdenHardwareTests
     {
         IsVoltage = false;
 
-        await Hardware.SetLoadpointAsync(range, 1, new(50), true, new(new(5), new(1)));
+        await Hardware.PrepareAsync(range, 1, new(50), true, new(new(5), new(1)));
 
         Assert.Multiple(() =>
         {
@@ -259,7 +259,7 @@ public class BurdenHardwareTests
     {
         IsVoltage = true;
 
-        Assert.ThrowsAsync<ArgumentException>(() => Hardware.SetLoadpointAsync(range, 1, new(50), false, new(new(5), new(1))));
+        Assert.ThrowsAsync<ArgumentException>(() => Hardware.PrepareAsync(range, 1, new(50), false, new(new(5), new(1))));
     }
 
     [TestCase(1, 110, 250)]
@@ -269,7 +269,7 @@ public class BurdenHardwareTests
     {
         IsVoltage = true;
 
-        await Hardware.SetLoadpointAsync("110", percentage, new(50), true, new(new(5), new(1)));
+        await Hardware.PrepareAsync("110", percentage, new(50), true, new(new(5), new(1)));
 
         var lp = await Services.GetRequiredService<ISource>().GetCurrentLoadpointAsync(Logger);
 

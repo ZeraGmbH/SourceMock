@@ -19,9 +19,6 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
     /// <inheritdoc/>
     public IBurden Burden { get; } = burden;
 
-    /// <inheritdoc/>
-    public IRefMeter ReferenceMeter { get; } = refMeter;
-
     private Voltage _VoltageRange;
 
     private Current _CurrentRange;
@@ -32,21 +29,21 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         for (var retry = 3; retry-- > 0;)
         {
             // Ask device for values.
-            var values = await ReferenceMeter.GetActualValuesUncachedAsync(logger, -1, true);
+            var values = await refMeter.GetActualValuesUncachedAsync(logger, -1, true);
 
             // Check for keeping the ranges.
             if ((double)_VoltageRange != 0 && (double)_CurrentRange != 0)
             {
                 // Ask for current ranges.
-                var status = await ReferenceMeter.GetRefMeterStatusAsync(logger);
+                var status = await refMeter.GetRefMeterStatusAsync(logger);
 
                 if (status.VoltageRange != _VoltageRange || status.CurrentRange != _CurrentRange)
                 {
                     if (status.VoltageRange != _VoltageRange)
-                        await ReferenceMeter.SetVoltageRangeAsync(logger, _VoltageRange);
+                        await refMeter.SetVoltageRangeAsync(logger, _VoltageRange);
 
                     if (status.CurrentRange != _CurrentRange)
-                        await ReferenceMeter.SetCurrentRangeAsync(logger, _CurrentRange);
+                        await refMeter.SetCurrentRangeAsync(logger, _CurrentRange);
 
                     continue;
                 }
@@ -65,7 +62,7 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
     }
 
     /// <inheritdoc/>
-    public async Task SetLoadpointAsync(string range, double percentage, Frequency frequency, bool detectRange, GoalValue goal)
+    public async Task PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, GoalValue goal)
     {
         // Analyse the range pattern - assume some number optional followed by a scaling.
         var match = _RangePattern.Match(range);
@@ -120,11 +117,11 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         if (detectRange)
         {
             // Use manual.
-            await ReferenceMeter.SetAutomaticAsync(logger, false, false, false);
+            await refMeter.SetAutomaticAsync(logger, false, false, false);
 
             // Get all the supported ranges.
-            var currentRanges = await ReferenceMeter.GetCurrentRangesAsync(logger);
-            var voltageRanges = await ReferenceMeter.GetVoltageRangesAsync(logger);
+            var currentRanges = await refMeter.GetCurrentRangesAsync(logger);
+            var voltageRanges = await refMeter.GetVoltageRangesAsync(logger);
 
             if (currentRanges.Length < 1) throw new InvalidOperationException("no reference meter current ranges found");
             if (voltageRanges.Length < 1) throw new InvalidOperationException("no reference meter voltage ranges found");
@@ -145,8 +142,8 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
             _VoltageRange = voltageIndex < 0 ? voltageRanges[^1] : voltageRanges[voltageIndex];
             _CurrentRange = currentIndex < 0 ? currentRanges[^1] : currentRanges[currentIndex];
 
-            await ReferenceMeter.SetVoltageRangeAsync(logger, _VoltageRange);
-            await ReferenceMeter.SetCurrentRangeAsync(logger, _CurrentRange);
+            await refMeter.SetVoltageRangeAsync(logger, _VoltageRange);
+            await refMeter.SetCurrentRangeAsync(logger, _CurrentRange);
         }
         else
         {
@@ -154,10 +151,13 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
             _VoltageRange = Voltage.Zero;
             _CurrentRange = Current.Zero;
 
-            await ReferenceMeter.SetAutomaticAsync(logger, true, true, false);
+            await refMeter.SetAutomaticAsync(logger, true, true, false);
         }
 
         // Choose the PLL channel - put in manual mode before.
-        await ReferenceMeter.SelectPllChannelAsync(logger, isVoltageNotCurrent ? PllChannel.U1 : PllChannel.I1);
+        await refMeter.SelectPllChannelAsync(logger, isVoltageNotCurrent ? PllChannel.U1 : PllChannel.I1);
+
+        // Configure reference meter.
+        await refMeter.SetActualMeasurementModeAsync(logger, MeasurementModes.MqBase);
     }
 }

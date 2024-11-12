@@ -1,5 +1,4 @@
 using BurdenApi.Models;
-using RefMeterApi.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace BurdenApi.Actions;
@@ -63,18 +62,13 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         await burden.SetActiveAsync(false, logger);
 
         // Prepare the loadpoint for this step.
-        await hardware.SetLoadpointAsync(request.Range, request.Percentage, new(frequency), request.ChooseBestRange, Goal);
+        await hardware.PrepareAsync(request.Range, request.Percentage, new(frequency), request.ChooseBestRange, Goal);
 
         // Switch burden on.
         await burden.SetBurdenAsync(request.Burden, logger);
         await burden.SetRangeAsync(request.Range, logger);
         await burden.SetStepAsync(request.Step, logger);
         await burden.SetActiveAsync(true, logger);
-
-        // Configure reference meter.
-        var refMeter = hardware.ReferenceMeter;
-
-        await refMeter.SetActualMeasurementModeAsync(logger, MeasurementModes.MqBase);
 
         // Secure bound by a maximum number of steps - we expect a maximum of 4 * 127 steps.
         for (var done = new HashSet<CalibrationStep>(); _Steps.Count < 1000;)

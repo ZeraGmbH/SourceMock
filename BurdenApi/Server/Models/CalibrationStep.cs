@@ -47,6 +47,24 @@ public class CalibrationStep
     public double TotalAbsDelta { get; set; }
 
     /// <summary>
+    /// Get the maximum relative deviation - between 0 and 1.
+    /// </summary>
+    [NotNull, Required]
+    public double Delta => Math.Max(Math.Abs(Deviation.DeltaFactor), Math.Abs(Deviation.DeltaPower));
+
+    /// <summary>
+    /// Set if maximum deviation is at most 1.5%.
+    /// </summary>
+    [NotNull, Required]
+    public bool InSmallRange => Delta <= 0.015d;
+
+    /// <summary>
+    /// Set if maximum deviation is at most 3%.
+    /// </summary>
+    [NotNull, Required]
+    public bool InLargeRange => Delta <= 0.03d;
+
+    /// <summary>
     /// Get a hashcode from the calibration data.
     /// </summary>
     /// <returns>Some hash code.</returns>

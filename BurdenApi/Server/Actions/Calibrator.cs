@@ -62,7 +62,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         await burden.SetActiveAsync(false, logger);
 
         // Prepare the loadpoint for this step.
-        await hardware.PrepareAsync(request.Range, request.Percentage, new(frequency), request.ChooseBestRange, Goal);
+        await hardware.PrepareAsync(request.Range, 1, new(frequency), request.ChooseBestRange, Goal);
 
         // Switch burden on.
         await burden.SetBurdenAsync(request.Burden, logger);
@@ -239,5 +239,60 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
 
         // We made it worse or nothing changed at all - but indicated with Calibration null that we at least gave it a try.
         return new() { Calibration = null!, Values = null!, Deviation = null!, TotalAbsDelta = 0 };
+    }
+
+    /// <inheritdoc/>
+    public async Task<CalibrationStep[]> CalibrateStepAsync(CalibrationRequest request)
+    {
+        // Single measurement.
+        await RunAsync(request);
+
+        // See if it worked.
+        var result = LastStep;
+
+        if (result == null) return [];
+
+        // Write to burden.
+        await hardware.Burden.SetPermanentCalibrationAsync(request.Burden, request.Range, request.Step, result.Calibration, logger);
+
+        // Get the frequency from the burden.
+        var frequency =
+            request.Burden switch
+            {
+                "IEC50" => 50,
+                "IEC60" or "ANSI" => 60,
+                _ => throw new ArgumentException($"can not get frequency from burden '{request.Burden}'", nameof(request))
+            };
+
+        // Measure at 80%.
+        await hardware.PrepareAsync(request.Range, 0.8, new(frequency), request.ChooseBestRange, Goal);
+
+        var lower = await hardware.MeasureAsync(result.Calibration);
+        var lowerDeviation = lower / EffectiveGoal;
+
+        // Measure at 80%.
+        await hardware.PrepareAsync(request.Range, 1.2, new(frequency), request.ChooseBestRange, Goal);
+
+        var upper = await hardware.MeasureAsync(result.Calibration);
+        var upperDeviation = upper / EffectiveGoal;
+
+        // Construct result.
+        return [
+            result,
+            new() {
+                Calibration = result.Calibration,
+                Deviation = lowerDeviation,
+                Iteration = 0,
+                TotalAbsDelta=Math.Abs(lowerDeviation.DeltaFactor) + Math.Abs(lowerDeviation.DeltaPower),
+                Values = lower,
+            },
+            new() {
+                Calibration = result.Calibration,
+                Deviation = upperDeviation,
+                Iteration = 0,
+                TotalAbsDelta=Math.Abs(upperDeviation.DeltaFactor) + Math.Abs(upperDeviation.DeltaPower),
+                Values = upper,
+            }
+        ];
     }
 }

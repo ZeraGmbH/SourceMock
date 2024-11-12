@@ -46,13 +46,6 @@ public class CalibrationRequest
     public Calibration InitialCalibration { get; set; } = new();
 
     /// <summary>
-    /// Percentage of the range to use - a factor with 1 meaing
-    /// to use the exact value of the range in the loadpoint.
-    /// </summary>
-    [NotNull, Required]
-    public double Percentage { get; set; }
-
-    /// <summary>
     /// Set to find the best fit range of the reference meter.
     /// </summary>
     [NotNull, Required]

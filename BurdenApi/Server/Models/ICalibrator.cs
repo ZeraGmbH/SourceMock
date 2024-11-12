@@ -30,4 +30,12 @@ public interface ICalibrator
     /// </summary>
     /// <param name="request">Configuration of the calibration algorithm.</param>
     Task RunAsync(CalibrationRequest request);
+
+    /// <summary>
+    /// Process a calibration, write the result back to the burden and
+    /// validate at 80% and 120%.
+    /// </summary>
+    /// <param name="request">Configuration of the calibration algorithm.</param>
+    /// <returns>Details on the calibration.</returns>
+    Task<CalibrationStep[]> CalibrateStepAsync(CalibrationRequest request);
 }

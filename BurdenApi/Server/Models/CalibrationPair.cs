@@ -101,7 +101,7 @@ public class CalibrationPair()
     /// <returns>The corresponding pair.</returns>
     public static CalibrationPair Parse(string coarse, string fine)
         => new(
-           coarse.Length == 4 && coarse.StartsWith("0x") ? byte.Parse(coarse[2..], NumberStyles.HexNumber) : throw new ArgumentException($"bad calibration value: {coarse}", nameof(coarse)),
-            fine.Length == 4 && fine.StartsWith("0x") ? byte.Parse(fine[2..], NumberStyles.HexNumber) : throw new ArgumentException($"bad calibration value: {fine}", nameof(fine))
+           (coarse.Length == 3 || coarse.Length == 4) && coarse.StartsWith("0x") ? byte.Parse(coarse[2..], NumberStyles.HexNumber) : throw new ArgumentException($"bad calibration value: {coarse}", nameof(coarse)),
+            (fine.Length == 3 || fine.Length == 4) && fine.StartsWith("0x") ? byte.Parse(fine[2..], NumberStyles.HexNumber) : throw new ArgumentException($"bad calibration value: {fine}", nameof(fine))
         );
 }

@@ -197,16 +197,53 @@ namespace BurdenApiTests
 
             var lastStep = Calibrator.LastStep;
 
-            Assert.That(step, Is.Not.Null);
+            Assert.That(lastStep, Is.Not.Null);
 
             Assert.Multiple(() =>
             {
-                Assert.That((double)lastStep!.Values.ApparentPower, Is.EqualTo(power).Within(0.1));
+                Assert.That((double)lastStep.Values.ApparentPower, Is.EqualTo(power).Within(0.1));
                 Assert.That((double)lastStep.Values.PowerFactor, Is.EqualTo(factor).Within(0.01));
 
                 Assert.That(Math.Abs(lastStep.Deviation.DeltaPower), Is.LessThan(0.015));
                 Assert.That(Math.Abs(lastStep.Deviation.DeltaFactor), Is.LessThan(0.015));
             });
+        }
+
+        [TestCase(50, 0.75, 64, 32)]
+        [TestCase(60, 0.75, 64, 32)]
+        [TestCase(40, 0.75, 64, 32)]
+        [TestCase(70, 0.75, 64, 32)]
+        [TestCase(35, 0.75, 64, 32)]
+        [TestCase(50, 0.8, 64, 32)]
+        [TestCase(50, 0.9, 64, 32)]
+        [TestCase(50, 1, 64, 32)]
+        [TestCase(50, 0.1, 64, 32)]
+        [TestCase(50, 0.8, 20, 10)]
+        [TestCase(50, 0.8, 0, 0)]
+        [TestCase(50, 0.8, 127, 127)]
+        public async Task Can_Run_Full_Calibrations_Async(double power, double factor, byte big, byte small)
+        {
+            var step = $"{power};{factor}";
+
+            Hardware.AddCalibration("IEC50", "200", step, new(new(big, small), new(small, big)));
+
+            var result = await Calibrator.CalibrateStepAsync(new() { Burden = "IEC50", Range = "200", Step = step });
+
+            Assert.That(result, Has.Length.EqualTo(3));
+
+            foreach (var oneStep in result)
+            {
+                Assert.That(oneStep, Is.Not.Null);
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That((double)oneStep.Values.ApparentPower, Is.EqualTo(power).Within(0.1));
+                    Assert.That((double)oneStep.Values.PowerFactor, Is.EqualTo(factor).Within(0.01));
+
+                    Assert.That(Math.Abs(oneStep.Deviation.DeltaPower), Is.LessThan(0.015));
+                    Assert.That(Math.Abs(oneStep.Deviation.DeltaFactor), Is.LessThan(0.015));
+                });
+            }
         }
     }
 }

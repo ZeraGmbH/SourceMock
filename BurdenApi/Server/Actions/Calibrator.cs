@@ -1,4 +1,5 @@
 using BurdenApi.Models;
+using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace BurdenApi.Actions;
@@ -29,6 +30,8 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
 
     /// <inheritdoc/>
     public CalibrationStep? LastStep => _Steps.LastOrDefault();
+
+    private Frequency _Frequency;
 
     /// <inheritdoc/>
     public async Task RunAsync(CalibrationRequest request)
@@ -75,13 +78,13 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
             };
 
         // Get the frequency from the burden.
-        var frequency =
+        _Frequency = new(
             request.Burden switch
             {
                 "IEC50" => 50,
                 "IEC60" or "ANSI" => 60,
                 _ => throw new ArgumentException($"can not get frequency from burden '{request.Burden}'", nameof(request))
-            };
+            });
 
         // Initialize and switch off the burden.
         await burden.SetActiveAsync(false, logger);
@@ -89,7 +92,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         await burden.SetMeasuringCalibrationAsync(false, logger);
 
         // Prepare the loadpoint for this step.
-        await hardware.PrepareAsync(request.Range, 1, new(frequency), request.ChooseBestRange, Goal);
+        await hardware.PrepareAsync(request.Range, 1, _Frequency, request.ChooseBestRange, Goal);
 
         // Switch burden on.
         await burden.SetBurdenAsync(request.Burden, logger);
@@ -282,26 +285,17 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         // Write to burden.
         await hardware.Burden.SetPermanentCalibrationAsync(request.Burden, request.Range, request.Step, result.Calibration, logger);
 
-        // Get the frequency from the burden.
-        var frequency =
-            request.Burden switch
-            {
-                "IEC50" => 50,
-                "IEC60" or "ANSI" => 60,
-                _ => throw new ArgumentException($"can not get frequency from burden '{request.Burden}'", nameof(request))
-            };
-
         // Check mode.
         var burdenInfo = await hardware.Burden.GetVersionAsync(logger);
 
         // Measure at 80%.
-        await hardware.PrepareAsync(request.Range, burdenInfo.IsVoltageNotCurrent ? 0.8 : 0.1, new(frequency), request.ChooseBestRange, Goal);
+        await hardware.PrepareAsync(request.Range, burdenInfo.IsVoltageNotCurrent ? 0.8 : 0.1, _Frequency, request.ChooseBestRange, Goal);
 
         var lower = await hardware.MeasureAsync(result.Calibration);
         var lowerDeviation = lower / EffectiveGoal;
 
         // Measure at 80%.
-        await hardware.PrepareAsync(request.Range, burdenInfo.IsVoltageNotCurrent ? 1.2 : 2, new(frequency), request.ChooseBestRange, Goal);
+        await hardware.PrepareAsync(request.Range, burdenInfo.IsVoltageNotCurrent ? 1.2 : 2, _Frequency, request.ChooseBestRange, Goal);
 
         var upper = await hardware.MeasureAsync(result.Calibration);
         var upperDeviation = upper / EffectiveGoal;

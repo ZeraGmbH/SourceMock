@@ -49,7 +49,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
 
         public Task SetBurdenAsync(string burden, IInterfaceLogger interfaceLogger) => Task.CompletedTask;
 
-        public Task SetPermanentCalibrationAsync(string burden, string range, string step, Calibration calibration, IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
+        public Task SetPermanentCalibrationAsync(string burden, string range, string step, Calibration calibration, IInterfaceLogger interfaceLogger) => Task.CompletedTask;
 
         public Task SetRangeAsync(string range, IInterfaceLogger interfaceLogger) => Task.CompletedTask;
 

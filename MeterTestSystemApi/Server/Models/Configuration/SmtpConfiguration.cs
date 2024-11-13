@@ -14,4 +14,9 @@ public class SmtpConfiguration
     /// Port to use when connecting to the server.
     /// </summary>
     public ushort? Port { get; set; }
+
+    /// <summary>
+    /// Sender of all e-mails.
+    /// </summary>
+    public string From { get; set; } = "websam@zera.de";
 }

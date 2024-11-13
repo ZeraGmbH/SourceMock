@@ -83,7 +83,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
 
     private const int CorrelationLimit = 127 * 128 + 127;
 
-    private const double FactorLimit = (CorrelationLimit + CorrelationLimit / 10000d) / 123d;
+    private const double FactorLimit = (CorrelationLimit + CorrelationLimit / 1000d) / 123d;
 
     /// <inheritdoc/>
     public IBurden Burden { get; } = new BurdenMock();

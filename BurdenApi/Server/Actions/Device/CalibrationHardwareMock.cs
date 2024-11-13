@@ -129,8 +129,8 @@ public class CalibrationHardwareMock : ICalibrationHardware
     }
 
     /// <inheritdoc/>
-    public Task PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, GoalValue goal)
-    {
-        return Task.CompletedTask;
-    }
+    public Task PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, GoalValue goal) => Task.CompletedTask;
+
+    /// <inheritdoc/>
+    public Task<GoalValue> MeasureBurdenAsync() => Task.FromResult(new GoalValue());
 }

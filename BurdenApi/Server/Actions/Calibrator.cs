@@ -132,6 +132,16 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
             // Just to give a hint on how many work we did.
             step.Iteration = _Steps.Count;
         }
+
+        // Enrich the final result with the values from the burden.
+        var result = LastStep;
+
+        if (result == null) return;
+
+        var values = await hardware.MeasureBurdenAsync();
+
+        result.BurdenValues = new(values.ApparentPower, values.PowerFactor);
+        result.BurdenDeviation = result.BurdenValues / EffectiveGoal;
     }
 
     /// <summary>
@@ -292,18 +302,22 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         await hardware.PrepareAsync(request.Range, burdenInfo.IsVoltageNotCurrent ? 0.8 : 0.1, _Frequency, request.ChooseBestRange, Goal);
 
         var lower = await hardware.MeasureAsync(result.Calibration);
+        var lowerValues = await hardware.MeasureBurdenAsync();
         var lowerDeviation = lower / EffectiveGoal;
 
         // Measure at 80%.
         await hardware.PrepareAsync(request.Range, burdenInfo.IsVoltageNotCurrent ? 1.2 : 2, _Frequency, request.ChooseBestRange, Goal);
 
         var upper = await hardware.MeasureAsync(result.Calibration);
+        var upperValues = await hardware.MeasureBurdenAsync();
         var upperDeviation = upper / EffectiveGoal;
 
         // Construct result.
         return [
             result,
             new() {
+                BurdenDeviation = lowerValues/EffectiveGoal,
+                BurdenValues = lowerValues,
                 Calibration = result.Calibration,
                 Deviation = lowerDeviation,
                 Iteration = 0,
@@ -311,6 +325,8 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
                 Values = lower,
             },
             new() {
+                BurdenDeviation = upperValues/EffectiveGoal,
+                BurdenValues = upperValues,
                 Calibration = result.Calibration,
                 Deviation = upperDeviation,
                 Iteration = 0,

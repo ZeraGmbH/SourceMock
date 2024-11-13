@@ -1,6 +1,5 @@
 using System.Text.RegularExpressions;
 using BurdenApi.Models;
-using Castle.Components.DictionaryAdapter;
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SourceApi.Actions.Source;
@@ -159,5 +158,13 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
 
         // Configure reference meter.
         await refMeter.SetActualMeasurementModeAsync(logger, MeasurementModes.MqBase);
+    }
+
+    /// <inheritdoc/>
+    public async Task<GoalValue> MeasureBurdenAsync()
+    {
+        var values = await Burden.MeasureAsync(logger);
+
+        return new(values.ApparentPower, values.PowerFactor);
     }
 }

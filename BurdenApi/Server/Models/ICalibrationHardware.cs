@@ -1,4 +1,3 @@
-using RefMeterApi.Actions.Device;
 using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace BurdenApi.Models;
@@ -14,6 +13,12 @@ public interface ICalibrationHardware
     /// <param name="calibration">Calibration parameters.</param>
     /// <returns>Resulting values.</returns>
     Task<GoalValue> MeasureAsync(Calibration calibration);
+
+    /// <summary>
+    /// Get values from the burden.
+    /// </summary>
+    /// <returns>Resulting values.</returns>
+    Task<GoalValue> MeasureBurdenAsync();
 
     /// <summary>
     /// Prepare the measurement.

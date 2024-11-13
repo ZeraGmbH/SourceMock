@@ -44,4 +44,10 @@ public class MeterTestSystemConfiguration
     /// </summary>
     [BsonElement("refMeter")]
     public ExternalReferenceMeterConfiguration? ExternalReferenceMeter { get; set; }
+
+    /// <summary>
+    /// Optional SMTP Mail server configuration.
+    /// </summary>
+    [BsonElement("smtp")]
+    public SmtpConfiguration? Smtp { get; set; }
 }

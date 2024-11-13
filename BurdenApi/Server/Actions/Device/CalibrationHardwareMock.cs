@@ -13,13 +13,25 @@ public class CalibrationHardwareMock : ICalibrationHardware
 {
     private class BurdenMock : IBurden
     {
+        private readonly Dictionary<string, Calibration?> _calibrations = [];
+
+        public void AddCalibration(string burden, string range, string step, Calibration? calibration)
+        {
+            lock (_calibrations)
+                _calibrations[$"{burden};{range};{step}"] = calibration;
+        }
+
         public bool IsAvailable => throw new NotImplementedException();
 
         public Task CancelCalibrationAsync(IInterfaceLogger interfaceLogger) => Task.CompletedTask;
 
         public Task<string[]> GetBurdensAsync(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
-        public Task<Calibration?> GetCalibrationAsync(string burden, string range, string step, IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
+        public Task<Calibration?> GetCalibrationAsync(string burden, string range, string step, IInterfaceLogger interfaceLogger)
+        {
+            lock (_calibrations)
+                return Task.FromResult(_calibrations.TryGetValue($"{burden};{range};{step}", out var calibration) ? calibration : null);
+        }
 
         public Task<string[]> GetRangesAsync(string burden, IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
@@ -90,6 +102,16 @@ public class CalibrationHardwareMock : ICalibrationHardware
 
     /// <inheritdoc/>
     public IRefMeter ReferenceMeter { get; } = new RefMeterMock();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="burden"></param>
+    /// <param name="range"></param>
+    /// <param name="step"></param>
+    /// <param name="calibration"></param>
+    public void AddCalibration(string burden, string range, string step, Calibration? calibration)
+        => ((BurdenMock)Burden).AddCalibration(burden, range, step, calibration);
 
     /// <inheritdoc/>
     public Task<GoalValue> MeasureAsync(Calibration calibration)

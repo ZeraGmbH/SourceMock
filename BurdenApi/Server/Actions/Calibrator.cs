@@ -31,10 +31,23 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
     public CalibrationStep? LastStep => _Steps.LastOrDefault();
 
     /// <inheritdoc/>
-    public async Task RunAsync(StepCalibrationRequest request)
+    public async Task RunAsync(CalibrationRequest request)
     {
-        Goal = request.Goal;
-        InitialCalibration = request.InitialCalibration;
+        // Caluclate the goal from the step.
+        var parts = request.Step.Split(";");
+
+        if (parts.Length != 2) throw new ArgumentException("bad step notation", nameof(request));
+
+        Goal = new()
+        {
+            ApparentPower = new(double.Parse(parts[0])),
+            PowerFactor = new(double.Parse(parts[1]))
+        };
+
+        // Read the initial configuration from the burden.
+        var burden = hardware.Burden;
+
+        InitialCalibration = await burden.GetCalibrationAsync(request.Burden, request.Range, request.Step, logger) ?? throw new ArgumentException("step not enabled to calibrate", nameof(request));
 
         // Reset state - caller is responsible to synchronize access.
         _ImpedanceCoarseFixed = false;
@@ -52,7 +65,6 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
             };
 
         // Correct the goal for current burden.
-        var burden = hardware.Burden;
         var burdenInfo = await burden.GetVersionAsync(logger);
 
         if (!burdenInfo.IsVoltageNotCurrent) EffectiveGoal =
@@ -260,19 +272,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
     public async Task<CalibrationStep[]> CalibrateStepAsync(CalibrationRequest request)
     {
         // Single measurement.
-        var initial = await hardware.Burden.GetCalibrationAsync(request.Burden, request.Range, request.Step, logger);
-
-        if (initial == null) throw new ArgumentException("step not enabled to calibrate", nameof(request));
-
-        await RunAsync(new()
-        {
-            Burden = request.Burden,
-            ChooseBestRange = request.ChooseBestRange,
-            Goal = request.Goal,
-            InitialCalibration = initial,
-            Range = request.Range,
-            Step = request.Step
-        });
+        await RunAsync(request);
 
         // See if it worked.
         var result = LastStep;

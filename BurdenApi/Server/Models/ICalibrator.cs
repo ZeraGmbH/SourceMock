@@ -29,7 +29,7 @@ public interface ICalibrator
     /// Process a calibration.
     /// </summary>
     /// <param name="request">Configuration of the calibration algorithm.</param>
-    Task RunAsync(StepCalibrationRequest request);
+    Task RunAsync(CalibrationRequest request);
 
     /// <summary>
     /// Process a calibration, write the result back to the burden and

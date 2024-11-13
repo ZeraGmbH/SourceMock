@@ -14,6 +14,8 @@ namespace BurdenApiTests
 
         private ServiceProvider Services = null!;
 
+        private CalibrationHardwareMock Hardware = null!;
+
         [SetUp]
         public void Setup()
         {
@@ -22,11 +24,12 @@ namespace BurdenApiTests
             services.AddTransient<IInterfaceLogger, NoopInterfaceLogger>();
 
             services.AddTransient<ICalibrator, Calibrator>();
-            services.AddTransient<ICalibrationHardware, CalibrationHardwareMock>();
+            services.AddSingleton<ICalibrationHardware, CalibrationHardwareMock>();
 
             Services = services.BuildServiceProvider();
 
             Calibrator = Services.GetRequiredService<ICalibrator>();
+            Hardware = (CalibrationHardwareMock)Services.GetRequiredService<ICalibrationHardware>();
         }
 
         [TearDown]
@@ -147,7 +150,9 @@ namespace BurdenApiTests
         [Test]
         public async Task Can_Run_Calibration_Async()
         {
-            await Calibrator.RunAsync(new() { Burden = "IEC50", Goal = new(new(50), new(0.75)), InitialCalibration = new(new(64, 32), new(32, 64)) });
+            Hardware.AddCalibration("IEC50", "200", "50;0.75", new(new(64, 32), new(32, 64)));
+
+            await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = "50;0.75" });
 
             var step = Calibrator.LastStep;
 
@@ -184,19 +189,23 @@ namespace BurdenApiTests
         [TestCase(50, 0.8, 127, 127)]
         public async Task Can_Run_Calibrations_Async(double power, double factor, byte big, byte small)
         {
-            await Calibrator.RunAsync(new() { Burden = "IEC50", Goal = new(new(power), new(factor)), InitialCalibration = new(new(big, small), new(small, big)) });
+            var step = $"{power};{factor}";
 
-            var step = Calibrator.LastStep;
+            Hardware.AddCalibration("IEC50", "200", step, new(new(big, small), new(small, big)));
+
+            await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = step });
+
+            var lastStep = Calibrator.LastStep;
 
             Assert.That(step, Is.Not.Null);
 
             Assert.Multiple(() =>
             {
-                Assert.That((double)step!.Values.ApparentPower, Is.EqualTo(power).Within(0.1));
-                Assert.That((double)step.Values.PowerFactor, Is.EqualTo(factor).Within(0.01));
+                Assert.That((double)lastStep!.Values.ApparentPower, Is.EqualTo(power).Within(0.1));
+                Assert.That((double)lastStep.Values.PowerFactor, Is.EqualTo(factor).Within(0.01));
 
-                Assert.That(Math.Abs(step.Deviation.DeltaPower), Is.LessThan(0.015));
-                Assert.That(Math.Abs(step.Deviation.DeltaFactor), Is.LessThan(0.015));
+                Assert.That(Math.Abs(lastStep.Deviation.DeltaPower), Is.LessThan(0.015));
+                Assert.That(Math.Abs(lastStep.Deviation.DeltaFactor), Is.LessThan(0.015));
             });
         }
     }

@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 
 namespace BurdenApi.Models;
 
@@ -32,23 +31,4 @@ public class CalibrationRequest
     /// </summary>
     [NotNull, Required]
     public bool ChooseBestRange { get; set; }
-
-    /// <summary>
-    /// Target to find.
-    /// </summary>
-    [NotNull, Required]
-    public GoalValue Goal { get; set; } = new();
-
-}
-
-/// <summary>
-/// 
-/// </summary>
-public class StepCalibrationRequest : CalibrationRequest
-{
-    /// <summary>
-    /// Initial calibration values.
-    /// </summary>
-    [NotNull, Required]
-    public Calibration InitialCalibration { get; set; } = new();
 }

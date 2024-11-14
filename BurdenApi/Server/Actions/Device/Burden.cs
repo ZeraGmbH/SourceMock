@@ -104,8 +104,8 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection port) : 
 
     /// <inheritdoc/>
     public Task ProgramAsync(string? burden, IInterfaceLogger log)
-        // Enforce a read timeout of 20 Minutes - in worst case serial line will be blocked for that duration.
-        => device.ExecuteAsync(log, SerialPortRequest.Create($"PR{burden ?? string.Empty}", "PRACK", 1200000))[0];
+        // Enforce a read timeout of 5 Minutes - in worst case serial line will be blocked for that duration.
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"PR{burden ?? string.Empty}", "PRACK", 300000))[0];
 
     /// <inheritdoc/>
     public Task SetActiveAsync(bool on, IInterfaceLogger log)

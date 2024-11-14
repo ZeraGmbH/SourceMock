@@ -1446,7 +1446,7 @@ public class BurdenSerialPortMock : ISerialPort
             // Request all burdens
             { "PR(.*)?", (m) =>{
                 if(string.IsNullOrEmpty(m.Groups[1].Value) || burdens.ContainsKey(m.Groups[1].Value))
-                    _replies.Enqueue(new("PRACK", 60000));
+                    _replies.Enqueue(new("PRACK", 15000));
                 else
                     _replies.Enqueue("PRNAK");
             }},

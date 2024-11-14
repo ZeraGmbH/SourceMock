@@ -132,16 +132,6 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
             // Just to give a hint on how many work we did.
             step.Iteration = _Steps.Count;
         }
-
-        // Enrich the final result with the values from the burden.
-        var result = LastStep;
-
-        if (result == null) return;
-
-        var values = await hardware.MeasureBurdenAsync();
-
-        result.BurdenValues = new(values.ApparentPower, values.PowerFactor);
-        result.BurdenDeviation = result.BurdenValues / EffectiveGoal;
     }
 
     /// <summary>
@@ -267,18 +257,22 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         var nextValues = await hardware.MeasureAsync(nextCalibration);
         var nextDelta = nextValues / EffectiveGoal;
 
-        // There was some improvment.
-        if (Math.Abs(getDeviationField(nextDelta)) < Math.Abs(deviation))
-            return new()
-            {
-                Calibration = nextCalibration,
-                Deviation = nextDelta,
-                TotalAbsDelta = Math.Abs(nextDelta.DeltaFactor) + Math.Abs(nextDelta.DeltaPower),
-                Values = nextValues,
-            };
-
         // We made it worse or nothing changed at all - but indicated with Calibration null that we at least gave it a try.
-        return new() { Calibration = null!, Values = null!, Deviation = null!, TotalAbsDelta = 0 };
+        if (Math.Abs(getDeviationField(nextDelta)) >= Math.Abs(deviation)) return new() { Calibration = null!, Values = null!, Deviation = null!, TotalAbsDelta = 0 };
+
+        // Apply measurement values from the burden as well.
+        var burdenValues = await hardware.MeasureBurdenAsync();
+        var values = new GoalValue { ApparentPower = burdenValues.ApparentPower, PowerFactor = burdenValues.PowerFactor };
+
+        return new()
+        {
+            BurdenDeviation = values / EffectiveGoal,
+            BurdenValues = values,
+            Calibration = nextCalibration,
+            Deviation = nextDelta,
+            TotalAbsDelta = Math.Abs(nextDelta.DeltaFactor) + Math.Abs(nextDelta.DeltaPower),
+            Values = nextValues,
+        };
     }
 
     /// <inheritdoc/>

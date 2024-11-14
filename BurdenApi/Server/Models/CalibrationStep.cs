@@ -29,6 +29,12 @@ public class CalibrationStep
     public bool CalibrationChanged => Calibration != null;
 
     /// <summary>
+    /// The faxtor used to configure the loadpoint.
+    /// </summary>
+    [NotNull, Required]
+    public double Factor { get; set; }
+
+    /// <summary>
     /// Actual values for the calibration.
     /// </summary>
     [NotNull, Required]

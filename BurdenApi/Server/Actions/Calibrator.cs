@@ -143,6 +143,11 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
             // Just to give a hint on how many work we did.
             step.Iteration = _Steps.Count;
         }
+
+        // Finish result.
+        var result = LastStep;
+
+        if (result != null) result.Factor = factor;
     }
 
     /// <summary>
@@ -316,16 +321,16 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         var burdenInfo = await hardware.Burden.GetVersionAsync(logger);
 
         // Measure at 80% (voltage) or 1% (current).
-        var factor = burdenInfo.IsVoltageNotCurrent ? 0.8 : 0.01;
+        var lowerFactor = burdenInfo.IsVoltageNotCurrent ? 0.8 : 0.01;
 
-        await hardware.PrepareAsync(request.Range, factor, _Frequency, request.ChooseBestRange, Goal.ApparentPower);
+        await hardware.PrepareAsync(request.Range, lowerFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower);
 
         var lower = await hardware.MeasureAsync(result.Calibration);
         var lowerValues = await hardware.MeasureBurdenAsync();
-        var lowerDeviation = lower / MakeEffectiveGoal(factor);
+        var lowerDeviation = lower / MakeEffectiveGoal(lowerFactor);
 
         // Measure at 120% (voltage) or 200% (current, voltage limited to 89V).
-        factor = burdenInfo.IsVoltageNotCurrent ? 1.2 : 2;
+        var upperFactor = burdenInfo.IsVoltageNotCurrent ? 1.2 : 2;
 
         // Check for voltage limit.
         if (!burdenInfo.IsVoltageNotCurrent)
@@ -334,29 +339,29 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
             var range = BurdenUtils.ParseRange(request.Range);
 
             // The current of the measurement, e.g. 2 * 0.5A = 1A;
-            var current = factor * range;
+            var current = upperFactor * range;
 
             // Considering the apparent power (e.g. 4 * 25VA = 100VA) the correspoing voltage, e.g. 100V.
-            var voltage = (double)(Goal.ApparentPower * factor * factor) / current;
+            var voltage = (double)(Goal.ApparentPower * upperFactor * upperFactor) / current;
 
             // Choose factor so that maximum apparent power is used, e.g. 1.78 leading to a current of 0.89A and a voltage of 89V giving an apparent power of 79.21VA.  
             if (voltage > CurrentBurdenVoltageLimit)
             {
-                factor = CurrentBurdenVoltageLimit * range / (double)Goal.ApparentPower;
+                upperFactor = CurrentBurdenVoltageLimit * range / (double)Goal.ApparentPower;
 
                 // Find the best match in the supported list - e.g. 1.5 leading to a current of 0.75A and a voltage of 75V giving an apparent power of 56.25VA.  
-                var best = _SupportedCurrentFactors.FindLastIndex(f => f <= factor);
+                var best = _SupportedCurrentFactors.FindLastIndex(f => f <= upperFactor);
 
                 // Very defensive - never expect a factor below 0.01.
-                if (best >= 0) factor = _SupportedCurrentFactors[best];
+                if (best >= 0) upperFactor = _SupportedCurrentFactors[best];
             }
         }
 
-        await hardware.PrepareAsync(request.Range, factor, _Frequency, request.ChooseBestRange, Goal.ApparentPower);
+        await hardware.PrepareAsync(request.Range, upperFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower);
 
         var upper = await hardware.MeasureAsync(result.Calibration);
         var upperValues = await hardware.MeasureBurdenAsync();
-        var upperDeviation = upper / EffectiveGoal;
+        var upperDeviation = upper / MakeEffectiveGoal(upperFactor);
 
         // Construct result.
         return [
@@ -366,6 +371,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
                 BurdenValues = lowerValues,
                 Calibration = result.Calibration,
                 Deviation = lowerDeviation,
+                Factor = lowerFactor,
                 Iteration = 0,
                 TotalAbsDelta=Math.Abs(lowerDeviation.DeltaFactor) + Math.Abs(lowerDeviation.DeltaPower),
                 Values = lower,
@@ -375,6 +381,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
                 BurdenValues = upperValues,
                 Calibration = result.Calibration,
                 Deviation = upperDeviation,
+                Factor = upperFactor,
                 Iteration = 0,
                 TotalAbsDelta=Math.Abs(upperDeviation.DeltaFactor) + Math.Abs(upperDeviation.DeltaPower),
                 Values = upper,

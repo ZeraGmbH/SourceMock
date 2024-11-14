@@ -143,7 +143,7 @@ public class BurdenHardwareTests
     {
         IsVoltage = true;
 
-        await Hardware.PrepareAsync(range, 1, new(frequency), false, new(new(5), new(powerFactor)));
+        await Hardware.PrepareAsync(range, 1, new(frequency), false, new(5));
 
         var lp = await Services.GetRequiredService<ISource>().GetCurrentLoadpointAsync(Logger);
 
@@ -187,7 +187,7 @@ public class BurdenHardwareTests
     {
         IsVoltage = false;
 
-        await Hardware.PrepareAsync(range, 0.1, new(frequency), false, new(new(5), new(powerFactor)));
+        await Hardware.PrepareAsync(range, 0.1, new(frequency), false, new(5));
 
         var lp = await Services.GetRequiredService<ISource>().GetCurrentLoadpointAsync(Logger);
 
@@ -234,7 +234,7 @@ public class BurdenHardwareTests
     {
         IsVoltage = true;
 
-        await Hardware.PrepareAsync(range, 1, new(50), true, new(new(5), new(1)));
+        await Hardware.PrepareAsync(range, 1, new(50), true, new(5));
 
         Assert.Multiple(() =>
         {
@@ -251,16 +251,16 @@ public class BurdenHardwareTests
     [TestCase("2000000", 0.5, 500)]
     [TestCase("200", 0.5, 50)]
     [TestCase("100", 0.5, 50)]
-    [TestCase("99", 1, 50)]
-    [TestCase("51", 1, 50)]
-    [TestCase("50", 1, 50)]
-    [TestCase("1", 50, 0.5)]
+    [TestCase("99", 0.5, 50)]
+    [TestCase("51", 0.5, 50)]
+    [TestCase("50", 0.5, 50)]
+    [TestCase("1", 0.5, 0.5)]
     [TestCase("0.00001", 500, 0.5)]
     public async Task Can_Calculate_Current_Range_Async(string range, double expectedVoltageRange, double expectedCurrentRange)
     {
         IsVoltage = false;
 
-        await Hardware.PrepareAsync(range, 0.1, new(50), true, new(new(5), new(1)));
+        await Hardware.PrepareAsync(range, 0.1, new(50), true, new(5));
 
         Assert.Multiple(() =>
         {
@@ -279,7 +279,7 @@ public class BurdenHardwareTests
     {
         IsVoltage = true;
 
-        Assert.ThrowsAsync<ArgumentException>(() => Hardware.PrepareAsync(range, 1, new(50), false, new(new(5), new(1))));
+        Assert.ThrowsAsync<ArgumentException>(() => Hardware.PrepareAsync(range, 1, new(50), false, new(5)));
     }
 
     [TestCase(1, 110, 250)]
@@ -289,7 +289,7 @@ public class BurdenHardwareTests
     {
         IsVoltage = true;
 
-        await Hardware.PrepareAsync("110", percentage, new(50), true, new(new(5), new(1)));
+        await Hardware.PrepareAsync("110", percentage, new(50), true, new(5));
 
         var lp = await Services.GetRequiredService<ISource>().GetCurrentLoadpointAsync(Logger);
 
@@ -318,7 +318,7 @@ public class BurdenHardwareTests
     {
         IsVoltage = true;
 
-        await Hardware.PrepareAsync("190", 1, new(60), false, new(new(3.75), new(0.8)));
+        await Hardware.PrepareAsync("190", 1, new(60), false, new(3.75));
 
         Assert.Multiple(() =>
         {
@@ -336,7 +336,7 @@ public class BurdenHardwareTests
     {
         IsVoltage = true;
 
-        await Hardware.PrepareAsync("190", 1, new(60), true, new(new(3.75), new(0.8)));
+        await Hardware.PrepareAsync("190", 1, new(60), true, new(3.75));
 
         Assert.Multiple(() =>
         {

@@ -1,5 +1,5 @@
-using System.Text.RegularExpressions;
 using BurdenApi.Models;
+using Microsoft.AspNetCore.Identity.Data;
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SourceApi.Actions.Source;
@@ -14,8 +14,6 @@ namespace BurdenApi.Actions.Device;
 /// </summary>
 public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden burden, IInterfaceLogger logger) : ICalibrationHardware
 {
-    private static readonly Regex _RangePattern = new("^([^/]+)(/(3|v3))?$");
-
     /// <inheritdoc/>
     public IBurden Burden { get; } = burden;
 
@@ -67,25 +65,12 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         throw new InvalidOperationException("reference meter keeps changing ranges - unable to get reliable actual values");
     }
 
+
     /// <inheritdoc/>
-    public async Task PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, GoalValue goal)
+    public async Task PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power)
     {
-        // Analyse the range pattern - assume some number optional followed by a scaling.
-        var match = _RangePattern.Match(range);
-
-        if (!match.Success) throw new ArgumentException(range, nameof(range));
-
-        var rangeValue = percentage * double.Parse(match.Groups[1].Value);
-
-        switch (match.Groups[3].Value)
-        {
-            case "3":
-                rangeValue /= 3;
-                break;
-            case "v3":
-                rangeValue /= Math.Sqrt(3);
-                break;
-        }
+        // Analyse the range pattern.
+        var rangeValue = percentage * BurdenUtils.ParseRange(range);
 
         // Check the type of burden.
         var burdenInfo = await Burden.GetVersionAsync(logger);
@@ -126,9 +111,9 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
             Array.Sort(voltageRanges);
 
             // Calculate the current from the apparent power and the voltage.
-            var otherRange = goal.ApparentPower / rangeValue;
-            var voltageRange = burdenInfo.IsVoltageNotCurrent ? rangeValue : (double)otherRange;
-            var currentRange = burdenInfo.IsVoltageNotCurrent ? (double)otherRange : rangeValue;
+            var otherRange = (double)(power * percentage * percentage) / rangeValue;
+            var voltageRange = burdenInfo.IsVoltageNotCurrent ? rangeValue : otherRange;
+            var currentRange = burdenInfo.IsVoltageNotCurrent ? otherRange : rangeValue;
 
             // Find the first bigger ones.
             var currentIndex = Array.FindIndex(currentRanges, r => (double)r >= currentRange);

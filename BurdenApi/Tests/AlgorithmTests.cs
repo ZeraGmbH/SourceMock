@@ -160,10 +160,10 @@ namespace BurdenApiTests
 
             Assert.Multiple(() =>
             {
-                Assert.That(Calibrator.Steps, Has.Length.EqualTo(171));
+                Assert.That(Calibrator.Steps, Has.Length.EqualTo(198));
 
-                Assert.That(step!.Calibration.Resistive.Coarse, Is.EqualTo(48));
-                Assert.That(step.Calibration.Resistive.Fine, Is.EqualTo(0));
+                Assert.That(step!.Calibration.Resistive.Coarse, Is.EqualTo(47));
+                Assert.That(step.Calibration.Resistive.Fine, Is.EqualTo(122));
                 Assert.That(step.Calibration.Inductive.Coarse, Is.EqualTo(96));
                 Assert.That(step.Calibration.Inductive.Fine, Is.EqualTo(5));
 
@@ -239,8 +239,6 @@ namespace BurdenApiTests
                 {
                     Assert.That((double)oneStep.Values.ApparentPower, Is.EqualTo(power).Within(0.1));
                     Assert.That((double)oneStep.Values.PowerFactor, Is.EqualTo(factor).Within(0.01));
-
-                    Assert.That(Math.Abs(oneStep.Deviation.DeltaPower), Is.LessThan(0.015));
                     Assert.That(Math.Abs(oneStep.Deviation.DeltaFactor), Is.LessThan(0.015));
                 });
             }

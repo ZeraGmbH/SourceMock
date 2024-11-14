@@ -9,6 +9,16 @@ namespace BurdenApi.Actions;
 /// </summary>
 public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) : ICalibrator
 {
+    /// <summary>
+    /// Maximum voltage used when measuring the upper bound of a current burden.
+    /// </summary>
+    private const double CurrentBurdenVoltageLimit = 89d;
+
+    /// <summary>
+    /// Allowed factors when measuring the upper limits for currents.
+    /// </summary>
+    private static readonly List<double> _SupportedCurrentFactors = [0.01, 0.05, 0.1, 0.2, 0.5, 1, 1.5, 2];
+
     /// <inheritdoc/>
     public Calibration InitialCalibration { get; private set; } = null!;
 
@@ -49,8 +59,10 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
 
         // Read the initial configuration from the burden.
         var burden = hardware.Burden;
+        var calibration = await burden.GetCalibrationAsync(request.Burden, request.Range, request.Step, logger) ?? throw new ArgumentException("step not enabled to calibrate", nameof(request));
 
-        InitialCalibration = await burden.GetCalibrationAsync(request.Burden, request.Range, request.Step, logger) ?? throw new ArgumentException("step not enabled to calibrate", nameof(request));
+        // Start just in the middle of the fine range.
+        InitialCalibration = new(new(calibration.Resistive.Coarse, 64), new(calibration.Inductive.Coarse, 64));
 
         // Reset state - caller is responsible to synchronize access.
         _ImpedanceCoarseFixed = false;
@@ -69,13 +81,9 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
 
         // Correct the goal for current burden.
         var burdenInfo = await burden.GetVersionAsync(logger);
+        var factor = burdenInfo.IsVoltageNotCurrent ? 1 : 0.1;
 
-        if (!burdenInfo.IsVoltageNotCurrent) EffectiveGoal =
-            new()
-            {
-                ApparentPower = EffectiveGoal.ApparentPower / 100d,
-                PowerFactor = EffectiveGoal.PowerFactor
-            };
+        EffectiveGoal = MakeEffectiveGoal(factor);
 
         // Get the frequency from the burden.
         _Frequency = new(
@@ -92,7 +100,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         await burden.SetActiveAsync(false, logger);
 
         // Prepare the loadpoint for this step.
-        await hardware.PrepareAsync(request.Range, burdenInfo.IsVoltageNotCurrent ? 1 : 0.1, _Frequency, request.ChooseBestRange, Goal);
+        await hardware.PrepareAsync(request.Range, factor, _Frequency, request.ChooseBestRange, Goal.ApparentPower);
 
         // Switch burden on.
         await burden.SetBurdenAsync(request.Burden, logger);
@@ -278,6 +286,18 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         };
     }
 
+    /// <summary>
+    /// Create a goal value from the step configuration and a scling factor.
+    /// </summary>
+    /// <param name="factor">Some scaling factor - 1 means keep as is.</param>
+    /// <returns>Scaled goal.</returns>
+    private GoalValue MakeEffectiveGoal(double factor)
+        => new()
+        {
+            ApparentPower = EffectiveGoal.ApparentPower * factor * factor,
+            PowerFactor = EffectiveGoal.PowerFactor
+        };
+
     /// <inheritdoc/>
     public async Task<CalibrationStep[]> CalibrateStepAsync(CalibrationRequest request, CancellationToken cancel)
     {
@@ -295,15 +315,44 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         // Check mode.
         var burdenInfo = await hardware.Burden.GetVersionAsync(logger);
 
-        // Measure at 80%.
-        await hardware.PrepareAsync(request.Range, burdenInfo.IsVoltageNotCurrent ? 0.8 : 0.01, _Frequency, request.ChooseBestRange, Goal);
+        // Measure at 80% (voltage) or 1% (current).
+        var factor = burdenInfo.IsVoltageNotCurrent ? 0.8 : 0.01;
+
+        await hardware.PrepareAsync(request.Range, factor, _Frequency, request.ChooseBestRange, Goal.ApparentPower);
 
         var lower = await hardware.MeasureAsync(result.Calibration);
         var lowerValues = await hardware.MeasureBurdenAsync();
-        var lowerDeviation = lower / EffectiveGoal;
+        var lowerDeviation = lower / MakeEffectiveGoal(factor);
 
-        // Measure at 80%.
-        await hardware.PrepareAsync(request.Range, burdenInfo.IsVoltageNotCurrent ? 1.2 : 2, _Frequency, request.ChooseBestRange, Goal);
+        // Measure at 120% (voltage) or 200% (current, voltage limited to 89V).
+        factor = burdenInfo.IsVoltageNotCurrent ? 1.2 : 2;
+
+        // Check for voltage limit.
+        if (!burdenInfo.IsVoltageNotCurrent)
+        {
+            // Nominal current range to use, e.g. 0.5A.
+            var range = BurdenUtils.ParseRange(request.Range);
+
+            // The current of the measurement, e.g. 2 * 0.5A = 1A;
+            var current = factor * range;
+
+            // Considering the apparent power (e.g. 4 * 25VA = 100VA) the correspoing voltage, e.g. 100V.
+            var voltage = (double)(Goal.ApparentPower * factor * factor) / current;
+
+            // Choose factor so that maximum apparent power is used, e.g. 1.78 leading to a current of 0.89A and a voltage of 89V giving an apparent power of 79.21VA.  
+            if (voltage > CurrentBurdenVoltageLimit)
+            {
+                factor = CurrentBurdenVoltageLimit * range / (double)Goal.ApparentPower;
+
+                // Find the best match in the supported list - e.g. 1.5 leading to a current of 0.75A and a voltage of 75V giving an apparent power of 56.25VA.  
+                var best = _SupportedCurrentFactors.FindLastIndex(f => f <= factor);
+
+                // Very defensive - never expect a factor below 0.01.
+                if (best >= 0) factor = _SupportedCurrentFactors[best];
+            }
+        }
+
+        await hardware.PrepareAsync(request.Range, factor, _Frequency, request.ChooseBestRange, Goal.ApparentPower);
 
         var upper = await hardware.MeasureAsync(result.Calibration);
         var upperValues = await hardware.MeasureBurdenAsync();

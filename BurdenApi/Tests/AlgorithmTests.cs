@@ -152,7 +152,7 @@ namespace BurdenApiTests
         {
             Hardware.AddCalibration("IEC50", "200", "50;0.75", new(new(64, 32), new(32, 64)));
 
-            await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = "50;0.75" });
+            await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = "50;0.75" }, CancellationToken.None);
 
             var step = Calibrator.LastStep;
 
@@ -193,7 +193,7 @@ namespace BurdenApiTests
 
             Hardware.AddCalibration("IEC50", "200", step, new(new(big, small), new(small, big)));
 
-            await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = step });
+            await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = step }, CancellationToken.None);
 
             var lastStep = Calibrator.LastStep;
 
@@ -227,7 +227,7 @@ namespace BurdenApiTests
 
             Hardware.AddCalibration("IEC50", "200", step, new(new(big, small), new(small, big)));
 
-            var result = await Calibrator.CalibrateStepAsync(new() { Burden = "IEC50", Range = "200", Step = step });
+            var result = await Calibrator.CalibrateStepAsync(new() { Burden = "IEC50", Range = "200", Step = step }, CancellationToken.None);
 
             Assert.That(result, Has.Length.EqualTo(3));
 

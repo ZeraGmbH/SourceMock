@@ -34,7 +34,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
     private Frequency _Frequency;
 
     /// <inheritdoc/>
-    public async Task RunAsync(CalibrationRequest request)
+    public async Task RunAsync(CalibrationRequest request, CancellationToken cancel)
     {
         // Caluclate the goal from the step.
         var parts = request.Step.Split(";");
@@ -103,6 +103,9 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         // Secure bound by a maximum number of steps - we expect a maximum of 4 * 127 steps.
         for (var done = new HashSet<CalibrationStep>(); _Steps.Count < 1000;)
         {
+            // Check for abort.
+            cancel.ThrowIfCancellationRequested();
+
             // Try to make it better.
             var step = await IterateAsync();
 
@@ -276,10 +279,10 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
     }
 
     /// <inheritdoc/>
-    public async Task<CalibrationStep[]> CalibrateStepAsync(CalibrationRequest request)
+    public async Task<CalibrationStep[]> CalibrateStepAsync(CalibrationRequest request, CancellationToken cancel)
     {
         // Single measurement.
-        await RunAsync(request);
+        await RunAsync(request, cancel);
 
         // See if it worked.
         var result = LastStep;

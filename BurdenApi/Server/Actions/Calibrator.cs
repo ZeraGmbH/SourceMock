@@ -87,9 +87,9 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
             });
 
         // Initialize and switch off the burden.
-        await burden.SetActiveAsync(false, logger);
         await burden.CancelCalibrationAsync(logger);
         await burden.SetMeasuringCalibrationAsync(false, logger);
+        await burden.SetActiveAsync(false, logger);
 
         // Prepare the loadpoint for this step.
         await hardware.PrepareAsync(request.Range, 1, _Frequency, request.ChooseBestRange, Goal);
@@ -296,7 +296,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         var burdenInfo = await hardware.Burden.GetVersionAsync(logger);
 
         // Measure at 80%.
-        await hardware.PrepareAsync(request.Range, burdenInfo.IsVoltageNotCurrent ? 0.8 : 0.1, _Frequency, request.ChooseBestRange, Goal);
+        await hardware.PrepareAsync(request.Range, burdenInfo.IsVoltageNotCurrent ? 0.8 : 0.01, _Frequency, request.ChooseBestRange, Goal);
 
         var lower = await hardware.MeasureAsync(result.Calibration);
         var lowerValues = await hardware.MeasureBurdenAsync();

@@ -30,7 +30,7 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         await Burden.SetTransientCalibrationAsync(calibration, logger);
 
         // Relax a bit.
-        await Task.Delay(1000);
+        await Task.Delay(5000);
 
         for (var retry = 3; retry-- > 0;)
         {

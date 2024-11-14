@@ -19,4 +19,14 @@ public class SmtpConfiguration
     /// Sender of all e-mails.
     /// </summary>
     public string From { get; set; } = "websam@zera.de";
+
+    /// <summary>
+    /// Name of the mailbox.
+    /// </summary>
+    public string? UserName { get; set; }
+
+    /// <summary>
+    /// Password to authorize against mailbox.
+    /// </summary>
+    public string? Password { get; set; }
 }

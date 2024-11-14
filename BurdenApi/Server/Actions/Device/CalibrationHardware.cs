@@ -90,9 +90,6 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         // Check the type of burden.
         var burdenInfo = await Burden.GetVersionAsync(logger);
 
-        // Use only 10% on current burden.
-        if (!burdenInfo.IsVoltageNotCurrent) rangeValue /= 10d;
-
         // Create the IEC loadpoint.
         var lp = new TargetLoadpoint
         {

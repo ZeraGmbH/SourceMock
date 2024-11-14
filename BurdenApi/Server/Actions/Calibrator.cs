@@ -92,7 +92,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger) 
         await burden.SetActiveAsync(false, logger);
 
         // Prepare the loadpoint for this step.
-        await hardware.PrepareAsync(request.Range, 1, _Frequency, request.ChooseBestRange, Goal);
+        await hardware.PrepareAsync(request.Range, burdenInfo.IsVoltageNotCurrent ? 1 : 0.1, _Frequency, request.ChooseBestRange, Goal);
 
         // Switch burden on.
         await burden.SetBurdenAsync(request.Burden, logger);

@@ -173,7 +173,7 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
         await meterTestSystem.InitializeFGAsync(interfaceLogger);
 
         // Requires cleanup.
-        lifetime.AddCleanup(meterTestSystem.DeinitializeFGAsync);
+        lifetime.AddCleanup(meterTestSystem.DeinitializeFGAsync, 100);
 
         // May want to create an external reference meter.
         _Disposables.Add(meterTestSystem.ConfigureExternalReferenceMeterAsync(configuration.ExternalReferenceMeter));

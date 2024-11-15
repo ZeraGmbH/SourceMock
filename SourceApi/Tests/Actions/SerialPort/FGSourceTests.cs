@@ -27,11 +27,11 @@ public class FGSourceTests
 
     private readonly NullLogger<ISerialPortConnection> _connectionLogger = new();
 
-    private ISerialPortConnection _device;
+    private ISerialPortConnection _device = null!;
 
-    private SerialPortFGSource _source;
+    private SerialPortFGSource _source = null!;
 
-    private LoggingSourceMock _port;
+    private LoggingSourceMock _port = null!;
 
     [SetUp]
     public async Task SetUpAsync()
@@ -91,7 +91,7 @@ public class FGSourceTests
         var loadpoint = await _source.GetCurrentLoadpointAsync(new NoopInterfaceLogger());
 
         Assert.That(loadpoint, Is.Not.Null);
-        Assert.That((double)loadpoint.Frequency.Value, Is.EqualTo(50));
+        Assert.That((double)loadpoint!.Frequency.Value, Is.EqualTo(50));
     }
 
     [Test]
@@ -135,6 +135,6 @@ public class FGSourceTests
         var loadpoint = await _source.GetCurrentLoadpointAsync(new NoopInterfaceLogger());
 
         Assert.That(loadpoint, Is.Not.Null);
-        Assert.That((double)loadpoint.Frequency.Value, Is.EqualTo(50));
+        Assert.That((double)loadpoint!.Frequency.Value, Is.EqualTo(50));
     }
 }

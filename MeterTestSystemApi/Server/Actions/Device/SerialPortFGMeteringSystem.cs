@@ -105,11 +105,10 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         await _device.ExecuteAsync(logger, SerialPortRequest.Create("SF0", "OKSF"))[0];
         await _device.ExecuteAsync(logger, SerialPortRequest.Create("HEAAAAAAAAAAAAAAAA", "OKHE"))[0];
         await _device.ExecuteAsync(logger, SerialPortRequest.Create("MI", new Regex(@"^MI([^;]+;)*$")))[0];
-        // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"3CM4", ""))[0];
-        // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2S1xx", ""))[0];
-        // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2X0000", ""))[0];
-        // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2X0200", ""))[0];
-        // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"3CM4", ""))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"3CM4", "OK3CM4"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2S1xx", "2OK"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2X0000", "2OK"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2X0200", "2OK"))[0];
     }
 
     /// <summary>

@@ -29,6 +29,10 @@ public class SerialPortFGMock : ISerialPort
 
     private static readonly Regex HeCommand = new(@"^HE(A|E){16}$");
 
+    private static readonly Regex twoSCommand = new(@"^2S(1|0)(.+)$");
+
+    private static readonly Regex twoXCommand = new(@"^2X(.+)$");
+
     private readonly Queue<QueueEntry> _replies = new();
 
     private DateTime _dosageStart = DateTime.MinValue;
@@ -204,6 +208,10 @@ public class SerialPortFGMock : ISerialPort
                         _replies.Enqueue("OKHP");
                     else if (HeCommand.IsMatch(command))
                         _replies.Enqueue("OKHE");
+                    else if (twoSCommand.IsMatch(command))
+                        _replies.Enqueue("2OK");
+                    else if (twoXCommand.IsMatch(command))
+                        _replies.Enqueue("2OK");
                     /* Set dosage energy. */
                     else if ((match = ThreePs45Command.Match(command)).Success)
                     {

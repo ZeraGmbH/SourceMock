@@ -107,18 +107,20 @@ namespace BurdenApiTests
         }
 
         [TestCase(0, 0, 0, 0, 0, 0)]
-        [TestCase(127, 127, 127, 127, 133.3283, 1)]
-        [TestCase(64, 64, 64, 64, 67.189, 0.5039)]
-        [TestCase(64, 32, 32, 64, 66.8956, 0.25416)]
-        [TestCase(64, 0, 64, 0, 66.6682, 0.50003)]
-        [TestCase(64, 0, 64, 32, 66.6684, 0.50198)]
-        [TestCase(64, 32, 64, 0, 66.9283, 0.50003)]
-        [TestCase(0, 0, 110, 20, 0.1146, 0.8597)]
-        [TestCase(127, 127, 0, 0, 133.1951, 0.001)]
-        [TestCase(0, 0, 127, 127, 0.1331, 0.999)]
+        [TestCase(127, 127, 127, 127, 24.1813, 1)]
+        [TestCase(64, 64, 64, 64, 12.1858, 0.5039)]
+        [TestCase(64, 32, 32, 64, 12.0746, 0.2565)]
+        [TestCase(64, 0, 64, 0, 12.082, 0.4996)]
+        [TestCase(64, 0, 64, 32, 12.0825, 0.50168)]
+        [TestCase(64, 32, 64, 0, 12.1334, 0.4997)]
+        [TestCase(0, 0, 110, 20, 0.2059, 0.8515)]
+        [TestCase(127, 127, 0, 0, 23.9419, 0.0099)]
+        [TestCase(0, 0, 127, 127, 0.2394, 0.99)]
         public async Task Mock_Hardware_Will_Produce_Values_Async(byte rMajor, byte rMinor, byte iMajor, byte iMinor, double apparentPower, double powerFactor)
         {
             var hardware = Services.GetRequiredService<ICalibrationHardware>();
+
+            await hardware.PrepareAsync("200", 1, new(50), false, new(10));
 
             var values = await hardware.MeasureAsync(new(new(rMajor, rMinor), new(iMajor, iMinor)));
 
@@ -160,12 +162,12 @@ namespace BurdenApiTests
 
             Assert.Multiple(() =>
             {
-                Assert.That(Calibrator.Steps, Has.Length.EqualTo(198));
+                Assert.That(Calibrator.Steps, Has.Length.EqualTo(83));
 
-                Assert.That(step!.Calibration.Resistive.Coarse, Is.EqualTo(47));
-                Assert.That(step.Calibration.Resistive.Fine, Is.EqualTo(122));
+                Assert.That(step!.Calibration.Resistive.Coarse, Is.EqualTo(52));
+                Assert.That(step.Calibration.Resistive.Fine, Is.EqualTo(62));
                 Assert.That(step.Calibration.Inductive.Coarse, Is.EqualTo(96));
-                Assert.That(step.Calibration.Inductive.Fine, Is.EqualTo(5));
+                Assert.That(step.Calibration.Inductive.Fine, Is.EqualTo(59));
 
                 Assert.That((double)step.Values.ApparentPower, Is.EqualTo(50).Within(0.1));
                 Assert.That((double)step.Values.PowerFactor, Is.EqualTo(0.75).Within(0.001));
@@ -182,7 +184,7 @@ namespace BurdenApiTests
         [TestCase(35, 0.75, 64, 32)]
         [TestCase(50, 0.8, 64, 32)]
         [TestCase(50, 0.9, 64, 32)]
-        [TestCase(50, 1, 64, 32)]
+        [TestCase(50, 0.9706, 64, 32)]
         [TestCase(50, 0.1, 64, 32)]
         [TestCase(50, 0.8, 20, 10)]
         [TestCase(50, 0.8, 0, 0)]
@@ -237,7 +239,7 @@ namespace BurdenApiTests
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That((double)oneStep.Values.ApparentPower, Is.EqualTo(power).Within(0.1));
+                    Assert.That((double)oneStep.Values.ApparentPower, Is.EqualTo(power * oneStep.Factor * oneStep.Factor).Within(0.1));
                     Assert.That((double)oneStep.Values.PowerFactor, Is.EqualTo(factor).Within(0.01));
                     Assert.That(Math.Abs(oneStep.Deviation.DeltaFactor), Is.LessThan(0.015));
                 });

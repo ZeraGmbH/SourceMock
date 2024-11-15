@@ -7,18 +7,32 @@ using ZERA.WebSam.Shared.Models.Logging;
 namespace BurdenApi.Actions.Device;
 
 /// <summary>
+/// Tag interface to help using the mock in simulation scenarios.
+/// </summary>
+public interface IBurdenMock : IBurden
+{
+    /// <summary>
+    /// Check if the source is simulated.
+    /// </summary>
+    bool HasMockedSource { get; }
+}
+
+/// <summary>
 /// Implementation of the burden communication interface.
 /// </summary>
-/// <param name="port">Serial port connection to the hardware.</param>
-public class Burden([FromKeyedServices("Burden")] ISerialPortConnection port) : IBurden
+/// <param name="connection">Serial port connection to the hardware.</param>
+public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connection) : IBurdenMock
 {
     private static readonly Regex ValueReg = new(@"^(\d{1,3});(.+)$");
 
     // Port access helper.
-    private readonly ISerialPortConnectionExecutor device = port?.CreateExecutor(InterfaceLogSourceTypes.Burden)!;
+    private readonly ISerialPortConnectionExecutor device = connection?.CreateExecutor(InterfaceLogSourceTypes.Burden)!;
 
     /// <inheritdoc/>
-    public bool IsAvailable { get; } = port != null;
+    public bool IsAvailable { get; } = connection != null;
+
+    /// <inheritdoc/>
+    public bool HasMockedSource => connection is ISerialPortConnectionMock mockedConnection && mockedConnection.Port is IBurdenSerialPortMock;
 
     /// <inheritdoc/>
     public async Task<string[]> GetBurdensAsync(IInterfaceLogger log)

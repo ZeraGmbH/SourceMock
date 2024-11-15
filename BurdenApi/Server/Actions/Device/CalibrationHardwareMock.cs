@@ -93,15 +93,17 @@ public class CalibrationHardwareMock : ICalibrationHardware
         public Task SetVoltageRangeAsync(IInterfaceLogger logger, Voltage voltage) => throw new NotImplementedException();
     }
 
-    private const int CorrelationLimit = 127 * 128 + 127;
-
-    private const double FactorLimit = (CorrelationLimit + CorrelationLimit / 1000d) / 123d;
-
     /// <inheritdoc/>
     public IBurden Burden { get; } = new BurdenMock();
 
     /// <inheritdoc/>
     public IRefMeter ReferenceMeter { get; } = new RefMeterMock();
+
+    private double? _CurrentRange;
+
+    private ApparentPower? _CurrentPower;
+
+    private readonly Calibration _Target = new(new(52, 113), new(119, 47));
 
     /// <summary>
     /// 
@@ -116,20 +118,34 @@ public class CalibrationHardwareMock : ICalibrationHardware
     /// <inheritdoc/>
     public Task<GoalValue> MeasureAsync(Calibration calibration)
     {
-        var resCalibration = calibration.Resistive.Coarse * 128d + calibration.Resistive.Fine;
-        var indCalibration = calibration.Inductive.Coarse * 128d + calibration.Inductive.Fine;
+        if (!_CurrentRange.HasValue || !_CurrentPower.HasValue) throw new InvalidOperationException("loadpoint not yet set");
 
-        var resistence = resCalibration + indCalibration / 1000d;
-        var inductive = indCalibration + resCalibration / 1000d;
+        var requestedResistance = CreateRelative(calibration.Resistive);
+        var requestedImpedance = CreateRelative(calibration.Inductive);
 
-        var power = resistence / 123d;
-        var factor = inductive / 123d;
+        var resistence = (requestedResistance + 0.01d * requestedImpedance) / 1.01d;
+        var impedance = (requestedImpedance + 0.01d * requestedResistance) / 1.01d;
 
-        return Task.FromResult(new GoalValue(new(power), new(factor / FactorLimit)));
+        var targetResistance = CreateRelative(_Target.Resistive);
+
+        return Task.FromResult(new GoalValue(resistence / targetResistance * _CurrentPower.Value, new(impedance)));
     }
 
+    private static double RelativeLimit => CreateRelative(127, 127);
+
+    private static double CreateRelative(byte coarse, byte fine) => 128d * coarse + 1.1 * fine;
+
+    private static double CreateRelative(CalibrationPair pair) => CreateRelative(pair.Coarse, pair.Fine) / RelativeLimit;
+
     /// <inheritdoc/>
-    public Task PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power) => Task.CompletedTask;
+    public Task PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power)
+    {
+        // Remember for emulation.
+        _CurrentRange = percentage * BurdenUtils.ParseRange(range);
+        _CurrentPower = power * percentage * percentage;
+
+        return Task.CompletedTask;
+    }
 
     /// <inheritdoc/>
     public Task<GoalValue> MeasureBurdenAsync() => Task.FromResult(new GoalValue());

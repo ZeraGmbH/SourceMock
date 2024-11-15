@@ -6,9 +6,14 @@ using SourceApi.Actions.SerialPort;
 namespace BurdenApi.Actions.Device;
 
 /// <summary>
+/// Tag interface to help using the mock in simulation scenarios.
+/// </summary>
+public interface IBurdenSerialPortMock : ISerialPort { }
+
+/// <summary>
 /// 
 /// </summary>
-public class BurdenSerialPortMock : ISerialPort
+public class BurdenSerialPortMock : IBurdenSerialPortMock
 {
     /// <summary>
     /// All commands with parameters.

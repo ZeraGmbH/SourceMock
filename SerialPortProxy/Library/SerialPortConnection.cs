@@ -7,9 +7,20 @@ using ZERA.WebSam.Shared.Models.Logging;
 namespace SerialPortProxy;
 
 /// <summary>
+/// Use for internal testings,
+/// /// </summary>
+public interface ISerialPortConnectionMock : ISerialPortConnection
+{
+    /// <summary>
+    /// Report the corresponding port.
+    /// </summary>
+    ISerialPort Port { get; }
+}
+
+/// <summary>
 /// Class to manage a single serial line connection.
 /// </summary>
-public partial class SerialPortConnection : ISerialPortConnection
+public partial class SerialPortConnection : ISerialPortConnectionMock
 {
     private class Executor(SerialPortConnection port, InterfaceLogEntryConnection connection) : ISerialPortConnectionExecutor
     {
@@ -78,6 +89,9 @@ public partial class SerialPortConnection : ISerialPortConnection
     /// Timeout (in Milliseconds) to wait on input after sending a command.
     /// </summary>
     private readonly int ReadTimeout;
+
+    /// <inheritdoc/>
+    public ISerialPort Port => _port;
 
     /// <summary>
     /// Initialize a serial connection manager.

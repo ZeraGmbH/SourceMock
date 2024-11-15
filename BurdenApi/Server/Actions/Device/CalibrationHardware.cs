@@ -24,11 +24,14 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
     /// <inheritdoc/>
     public async Task<GoalValue> MeasureAsync(Calibration calibration)
     {
-        // Apply the calibration to the burden.
+        // Apply the calibration to the burden.        
         await Burden.SetTransientCalibrationAsync(calibration, logger);
 
+        // Check for simulation mode to speed up tests.
+        var isMock = Burden is IBurdenMock mockedBurden && mockedBurden.HasMockedSource;
+
         // Relax a bit.
-        await Task.Delay(5000);
+        if (!isMock) await Task.Delay(5000);
 
         for (var retry = 3; retry-- > 0;)
         {

@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models;
+using ZERA.WebSam.Shared.Models.Logging;
 
 namespace MeterTestSystemApi.Actions.Device;
 
@@ -60,29 +61,30 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
             try
             {
                 /* Create it depending on the configuration. */
-                switch (configuration.MeterTestSystemType)
-                {
-                    case MeterTestSystemTypes.FG30x:
-                        ConfigureFG30x(configuration).Wait();
-                        break;
-                    case MeterTestSystemTypes.REST:
-                        ConfigureREST(configuration).Wait();
-                        break;
-                    case MeterTestSystemTypes.MT786:
-                        ConfigureMT786(configuration);
-                        break;
-                    case MeterTestSystemTypes.ACMock:
-                    case MeterTestSystemTypes.ACMockNoSource:
-                        ConfigureACMock(configuration);
-                        break;
-                    case MeterTestSystemTypes.DCMockNoSource:
-                    case MeterTestSystemTypes.DCMock:
-                        ConfigureDCMock(configuration);
-                        break;
-                    default:
-                        _meterTestSystem = services.GetRequiredService<FallbackMeteringSystem>();
-                        break;
-                }
+                using (var scoped = services.CreateScope())
+                    switch (configuration.MeterTestSystemType)
+                    {
+                        case MeterTestSystemTypes.FG30x:
+                            ConfigureFG30x(configuration, scoped.ServiceProvider).Wait();
+                            break;
+                        case MeterTestSystemTypes.REST:
+                            ConfigureREST(configuration, scoped.ServiceProvider).Wait();
+                            break;
+                        case MeterTestSystemTypes.MT786:
+                            ConfigureMT786(configuration);
+                            break;
+                        case MeterTestSystemTypes.ACMock:
+                        case MeterTestSystemTypes.ACMockNoSource:
+                            ConfigureACMock(configuration);
+                            break;
+                        case MeterTestSystemTypes.DCMockNoSource:
+                        case MeterTestSystemTypes.DCMock:
+                            ConfigureDCMock(configuration);
+                            break;
+                        default:
+                            _meterTestSystem = services.GetRequiredService<FallbackMeteringSystem>();
+                            break;
+                    }
             }
             catch (Exception e)
             {
@@ -132,16 +134,16 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
         _meterTestSystem = meterTestSystem;
     }
 
-    private async Task ConfigureREST(MeterTestSystemConfiguration configuration)
+    private async Task ConfigureREST(MeterTestSystemConfiguration configuration, IServiceProvider scoped)
     {
         var meterTestSystem = services.GetRequiredService<RestMeterTestSystem>();
 
         _meterTestSystem = meterTestSystem;
 
-        await meterTestSystem.ConfigureAsync(configuration.Interfaces, services, new NoopInterfaceLogger());
+        await meterTestSystem.ConfigureAsync(configuration.Interfaces, services, scoped.GetRequiredService<IInterfaceLogger>());
     }
 
-    private async Task ConfigureFG30x(MeterTestSystemConfiguration configuration)
+    private async Task ConfigureFG30x(MeterTestSystemConfiguration configuration, IServiceProvider scoped)
     {
         var meterTestSystem = services.GetRequiredService<SerialPortFGMeterTestSystem>();
 
@@ -150,7 +152,9 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
 
         _meterTestSystem = meterTestSystem;
 
-        await meterTestSystem.ActivateErrorConditionsAsync(new NoopInterfaceLogger());
+        var interfaceLogger = scoped.GetRequiredService<IInterfaceLogger>();
+
+        await meterTestSystem.ActivateErrorConditionsAsync(interfaceLogger);
         await meterTestSystem.ConfigureErrorCalculatorsAsync(configuration.Interfaces.ErrorCalculators, factory);
 
         // May need to preset amplifiers.
@@ -158,7 +162,7 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
             try
             {
                 /* Do all configurations. */
-                await _meterTestSystem.SetAmplifiersAndReferenceMeterAsync(new NoopInterfaceLogger(), configuration.AmplifiersAndReferenceMeter);
+                await _meterTestSystem.SetAmplifiersAndReferenceMeterAsync(interfaceLogger, configuration.AmplifiersAndReferenceMeter);
             }
             catch (Exception e)
             {
@@ -166,7 +170,7 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                 logger.LogError("Unable to restore amplifiers: {Exception}", e.Message);
             }
 
-        await meterTestSystem.InitializeFGAsync(new NoopInterfaceLogger());
+        await meterTestSystem.InitializeFGAsync(interfaceLogger);
 
         // Requires cleanup.
         lifetime.AddCleanup(meterTestSystem.DeinitializeFGAsync);

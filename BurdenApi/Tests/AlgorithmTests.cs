@@ -24,7 +24,10 @@ namespace BurdenApiTests
             services.AddTransient<IInterfaceLogger, NoopInterfaceLogger>();
 
             services.AddTransient<ICalibrator, Calibrator>();
+
             services.AddKeyedTransient<ICalibrationAlgorithm, SingleStepCalibrator>(CalibrationAlgorithms.Default);
+            services.AddKeyedTransient<ICalibrationAlgorithm, SingleStepCalibrator>(CalibrationAlgorithms.SingleStep);
+
             services.AddSingleton<ICalibrationHardware, CalibrationHardwareMock>();
 
             Services = services.BuildServiceProvider();
@@ -150,12 +153,17 @@ namespace BurdenApiTests
             });
         }
 
-        [Test]
-        public async Task Can_Run_Calibration_Async()
+        [TestCase(null)]
+        [TestCase(CalibrationAlgorithms.Default)]
+        [TestCase(CalibrationAlgorithms.SingleStep)]
+        public async Task Can_Run_Calibration_Async(CalibrationAlgorithms? algorithm)
         {
             Hardware.AddCalibration("IEC50", "200", "50;0.75", new(new(64, 32), new(32, 64)));
 
-            await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = "50;0.75" }, CancellationToken.None);
+            if (algorithm.HasValue)
+                await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = "50;0.75" }, CancellationToken.None, algorithm.Value);
+            else
+                await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = "50;0.75" }, CancellationToken.None);
 
             var step = Calibrator.LastStep;
 

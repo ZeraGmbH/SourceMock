@@ -1,4 +1,4 @@
-using BurdenApi.Actions;
+using BurdenApi.Actions.Algorithms;
 using BurdenApi.Actions.Device;
 using BurdenApi.Models;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +21,10 @@ public static class BurdenApiConfiguration
     {
         services.AddSingleton<IBurdenFactory, BurdenFactory>();
         services.AddSingleton<IBurden, Burden>();
+
+        services.AddKeyedTransient<ICalibrationAlgorithm, SingleStepCalibrator>(CalibrationAlgorithms.SingleStep);
+
+        services.AddKeyedTransient<ICalibrationAlgorithm, SingleStepCalibrator>(CalibrationAlgorithms.Default);
 
         services.AddScoped<ICalibrator, Calibrator>();
 

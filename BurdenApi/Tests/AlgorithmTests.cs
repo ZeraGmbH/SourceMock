@@ -1,4 +1,4 @@
-using BurdenApi.Actions;
+using BurdenApi.Actions.Algorithms;
 using BurdenApi.Actions.Device;
 using BurdenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +24,7 @@ namespace BurdenApiTests
             services.AddTransient<IInterfaceLogger, NoopInterfaceLogger>();
 
             services.AddTransient<ICalibrator, Calibrator>();
+            services.AddKeyedTransient<ICalibrationAlgorithm, SingleStepCalibrator>(CalibrationAlgorithms.Default);
             services.AddSingleton<ICalibrationHardware, CalibrationHardwareMock>();
 
             Services = services.BuildServiceProvider();

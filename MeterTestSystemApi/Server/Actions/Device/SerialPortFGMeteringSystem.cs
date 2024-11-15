@@ -93,7 +93,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     /// 
     /// </summary>
     /// <returns></returns>
-    public async Task InitializeFG(IInterfaceLogger logger)
+    public async Task InitializeFGAsync(IInterfaceLogger logger)
     {
         _logger.LogInformation("Starting up FG30x hardware");
 
@@ -116,7 +116,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     /// Called before the system shuts down.
     /// </summary>
     /// <param name="logger">Logging helper.</param>
-    public Task DeinitializeFG(IInterfaceLogger logger)
+    public Task DeinitializeFGAsync(IInterfaceLogger logger)
     {
         _logger.LogInformation("Shutting down FG30x hardware");
 

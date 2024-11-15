@@ -115,12 +115,17 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     /// Called before the system shuts down.
     /// </summary>
     /// <param name="logger">Logging helper.</param>
-    public Task DeinitializeFGAsync(IInterfaceLogger logger)
+    public async Task DeinitializeFGAsync(IInterfaceLogger logger)
     {
         _logger.LogInformation("Shutting down FG30x hardware");
 
-        // [TBD]
-        return Task.CompletedTask;
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2S0xx", "2OK"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"OL1111111111111111", "OKOL"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"PL", "OKPL"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"SF0", "OKSF"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"UPAER000.000000.00S000.000120.00T000.000240.00", "OKUP"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"UIAAAAAAAAA", "OKUI"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"HP00", "OKHP"))[0];
     }
 
     /// <inheritdoc/>

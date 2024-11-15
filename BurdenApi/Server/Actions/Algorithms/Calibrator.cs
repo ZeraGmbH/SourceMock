@@ -21,16 +21,13 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
     private static readonly List<double> _SupportedCurrentFactors = [0.01, 0.05, 0.1, 0.2, 0.5, 1, 1.5, 2];
 
     /// <inheritdoc/>
-    public Calibration InitialCalibration { get; private set; } = null!;
-
-    /// <inheritdoc/>
     public GoalValue Goal { get; private set; } = null!;
 
     /// <inheritdoc/>
     public GoalValue EffectiveGoal { get; private set; } = null!;
 
     /// <inheritdoc/>
-    public Calibration CurrentCalibration => LastStep?.Calibration ?? InitialCalibration;
+    public Calibration CurrentCalibration => LastStep.Calibration;
 
     private readonly List<CalibrationStep> _Steps = [];
 
@@ -38,7 +35,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
     public CalibrationStep[] Steps => [.. _Steps];
 
     /// <inheritdoc/>
-    public CalibrationStep? LastStep => _Steps.LastOrDefault();
+    public CalibrationStep LastStep => _Steps.Last();
 
     private Frequency _Frequency;
 
@@ -66,13 +63,11 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
 
         // Read the initial configuration from the burden.
         var burden = hardware.Burden;
-        var calibration = await burden.GetCalibrationAsync(request.Burden, request.Range, request.Step, logger) ?? throw new ArgumentException("step not enabled to calibrate", nameof(request));
-
-        // Start just in the middle of the fine range.
-        InitialCalibration = new(new(calibration.Resistive.Coarse, 64), new(calibration.Inductive.Coarse, 64));
 
         // Reset state - caller is responsible to synchronize access.
         _Algorithm = services.GetRequiredKeyedService<ICalibrationAlgorithm>(algorithm);
+
+        _Algorithm.InitialCalibration = await burden.GetCalibrationAsync(request.Burden, request.Range, request.Step, logger) ?? throw new ArgumentException("step not enabled to calibrate", nameof(request));
 
         _Steps.Clear();
 
@@ -114,6 +109,23 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         await burden.SetStepAsync(request.Step, logger);
         await burden.SetActiveAsync(true, logger);
 
+        // Create initial step.
+        var values = await MeasureAsync(_Algorithm.InitialCalibration);
+        var deviation = values / EffectiveGoal;
+        var burdenValues = await MeasureBurdenAsync();
+
+        _Steps.Add(new()
+        {
+            BurdenDeviation = burdenValues / EffectiveGoal,
+            BurdenValues = burdenValues,
+            Calibration = _Algorithm.InitialCalibration,
+            Deviation = deviation,
+            Factor = factor,
+            Iteration = 0,
+            TotalAbsDelta = Math.Abs(deviation.DeltaFactor) + Math.Abs(deviation.DeltaPower),
+            Values = values
+        });
+
         // Secure bound by a maximum number of steps - we expect a maximum of 4 * 127 steps.
         for (var done = new HashSet<CalibrationStep>(); _Steps.Count < 1000;)
         {
@@ -147,9 +159,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         }
 
         // Finish result.
-        var result = LastStep;
-
-        if (result != null) result.Factor = factor;
+        LastStep.Factor = factor;
     }
 
     /// <summary>

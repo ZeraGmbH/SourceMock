@@ -49,11 +49,13 @@ public class CalibrationStep
     /// <summary>
     /// Actual values from the burden.
     /// </summary>
+    [NotNull, Required]
     public GoalValue BurdenValues { get; set; } = new();
 
     /// <summary>
     /// Deviation of burden values from the calibration goal.
     /// </summary>
+    [NotNull, Required]
     public GoalDeviation BurdenDeviation { get; set; } = new();
 
     /// <summary>
@@ -61,12 +63,6 @@ public class CalibrationStep
     /// </summary>
     [NotNull, Required]
     public double TotalAbsDelta { get; set; }
-
-    /// <summary>
-    /// Get the maximum relative deviation - between 0 and 1.
-    /// </summary>
-    [NotNull, Required]
-    public double MaxAbsDelta => Math.Max(Math.Abs(Deviation.DeltaFactor), Math.Abs(Deviation.DeltaPower));
 
     /// <summary>
     /// Get a hashcode from the calibration data.

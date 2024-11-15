@@ -12,11 +12,16 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
 
     private bool _ImpedanceCoarseFixed = false;
 
-    /// <summary>
-    /// Execute one calibration iteration step.
-    /// </summary>
-    /// <param name="context">Current calibration environment.</param>
-    /// <returns>Successfull calibration step or null.</returns>
+    private Calibration _InitialCalibration = null!;
+
+    /// <inheritdoc/>
+    public Calibration InitialCalibration
+    {
+        get => _InitialCalibration;
+        set => _InitialCalibration = new(new(value.Resistive.Coarse, 64), new(value.Inductive.Coarse, 64));
+    }
+
+    /// <inheritdoc/>
     public async Task<CalibrationStep?> IterateAsync(ICalibrationContext context)
     {
         // Retrieve new values and relativ deviation from goal.

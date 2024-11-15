@@ -7,6 +7,9 @@ namespace BurdenApi.Actions.Algorithms;
 /// </summary>
 public interface ICalibrationAlgorithm
 {
+    /// <inheritdoc/>
+    Calibration InitialCalibration { get; set; }
+
     /// <summary>
     /// Execute one calibration iteration step.
     /// </summary>

@@ -163,7 +163,7 @@ namespace BurdenApiTests
 
             Assert.Multiple(() =>
             {
-                Assert.That(Calibrator.Steps, Has.Length.EqualTo(83));
+                Assert.That(Calibrator.Steps, Has.Length.EqualTo(84));
 
                 Assert.That(step!.Calibration.Resistive.Coarse, Is.EqualTo(52));
                 Assert.That(step.Calibration.Resistive.Fine, Is.EqualTo(62));

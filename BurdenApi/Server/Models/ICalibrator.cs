@@ -8,11 +8,6 @@ namespace BurdenApi.Models;
 public interface ICalibrator
 {
     /// <summary>
-    /// Initial calibration used to calibrate.
-    /// </summary>
-    Calibration InitialCalibration { get; }
-
-    /// <summary>
     /// Target of the calibration.
     /// </summary>
     GoalValue Goal { get; }

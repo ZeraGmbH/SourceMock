@@ -23,7 +23,7 @@ public class SerialPortFGMock : ISerialPort
 
     private static readonly Regex ThreePs45Command = new(@"^3PS45;(.+)$");
 
-    private static readonly Regex OlCommand = new(@"^OL(0|1){12}$");
+    private static readonly Regex OlCommand = new(@"^OL(0|1){16}$");
 
     private static readonly Regex HpCommand = new(@"^HP(0|1){2}$");
 

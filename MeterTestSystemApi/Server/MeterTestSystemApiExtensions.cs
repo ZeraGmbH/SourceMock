@@ -69,13 +69,11 @@ public static class MeterTestSystemApiConfiguration
         services.AddTransient<SerialPortMTMeterTestSystem>();
 
         /* Configure the factory. */
+        services.AddTransient<MeterTestSystemFactory>();
+
         services.AddSingleton<IMeterTestSystemFactory>((ctx) =>
         {
-            var factory = new MeterTestSystemFactory(
-                ctx,
-                ctx.GetRequiredService<IErrorCalculatorFactory>(),
-                ctx.GetRequiredService<ILogger<MeterTestSystemFactory>>()
-            );
+            var factory = ctx.GetRequiredService<MeterTestSystemFactory>();
 
             if (configuration["UseDatabaseConfiguration"] == "yes") return factory;
 

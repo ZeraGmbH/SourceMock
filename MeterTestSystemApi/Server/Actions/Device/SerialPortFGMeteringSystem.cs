@@ -93,21 +93,35 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
     /// 
     /// </summary>
     /// <returns></returns>
-    public async Task InitializeFG(IInterfaceLogger logger){
+    public async Task InitializeFG(IInterfaceLogger logger)
+    {
+        _logger.LogInformation("Starting up FG30x hardware");
 
-        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"TS", "OKZP"))[0];
-        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"RE1", "OKRE"))[0];
-        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"SE1", "OKSE"))[0];
-        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"HP11", "OKHP"))[0];
-        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"OL1111111111111111", "OKHP"))[0];
-        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"SF0", "OKSF"))[0];
-        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"HEAAAAAAAAAAAAAAAA", "OKHE"))[0];
-        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"MI", "OKMI"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("TS", new Regex("^TS(.{8})(.{4})$")))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("RE1", "OKRE"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("SE1", "OKSE"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("HP11", "OKHP"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("OL1111111111111111", "OKOL"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("SF0", "OKSF"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("HEAAAAAAAAAAAAAAAA", "OKHE"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("MI", new Regex(@"^MI([^;]+;)*$")))[0];
         // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"3CM4", ""))[0];
         // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2S1xx", ""))[0];
         // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2X0000", ""))[0];
         // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2X0200", ""))[0];
         // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"3CM4", ""))[0];
+    }
+
+    /// <summary>
+    /// Called before the system shuts down.
+    /// </summary>
+    /// <param name="logger">Logging helper.</param>
+    public Task DeinitializeFG(IInterfaceLogger logger)
+    {
+        _logger.LogInformation("Shutting down FG30x hardware");
+
+        // [TBD]
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc/>

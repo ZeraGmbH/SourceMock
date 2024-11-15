@@ -13,7 +13,8 @@ namespace MeterTestSystemApi.Actions.Device;
 /// <param name="services">Dependency injection to use.</param>
 /// <param name="factory">Factory to create error calculators.</param>
 /// <param name="logger">Logging helper.</param>
-public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorFactory factory, ILogger<MeterTestSystemFactory> logger) : IMeterTestSystemFactory, IDisposable
+/// <param name="lifetime">Lifetime control.</param>
+public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorFactory factory, ILogger<MeterTestSystemFactory> logger, IServerLifetime lifetime) : IMeterTestSystemFactory, IDisposable
 {
     private readonly object _sync = new();
 
@@ -164,8 +165,11 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                 /* Just report - let meter test system run. */
                 logger.LogError("Unable to restore amplifiers: {Exception}", e.Message);
             }
-        
+
         await meterTestSystem.InitializeFG(new NoopInterfaceLogger());
+
+        // Requires cleanup.
+        lifetime.AddCleanup(meterTestSystem.DeinitializeFG);
 
         // May want to create an external reference meter.
         _Disposables.Add(meterTestSystem.ConfigureExternalReferenceMeterAsync(configuration.ExternalReferenceMeter));

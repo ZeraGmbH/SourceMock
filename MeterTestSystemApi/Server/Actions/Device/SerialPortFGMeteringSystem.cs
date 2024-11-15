@@ -89,6 +89,27 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         device.RegisterEvent(_smRegEx, reply => ErrorConditionsChanged?.Invoke(ErrorConditionParser.Parse(reply.Groups[1].Value, true)));
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public async Task InitializeFG(IInterfaceLogger logger){
+
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"TS", "OKZP"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"RE1", "OKRE"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"SE1", "OKSE"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"HP11", "OKHP"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"OL1111111111111111", "OKHP"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"SF0", "OKSF"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"HEAAAAAAAAAAAAAAAA", "OKHE"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"MI", "OKMI"))[0];
+        // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"3CM4", ""))[0];
+        // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2S1xx", ""))[0];
+        // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2X0000", ""))[0];
+        // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2X0200", ""))[0];
+        // await _device.ExecuteAsync(logger, SerialPortRequest.Create($"3CM4", ""))[0];
+    }
+
     /// <inheritdoc/>
     public Task<MeterTestSystemCapabilities> GetCapabilitiesAsync(IInterfaceLogger interfaceLogger) =>
         Task.FromResult(new MeterTestSystemCapabilities

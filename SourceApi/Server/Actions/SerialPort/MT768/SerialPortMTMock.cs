@@ -89,7 +89,7 @@ public class SerialPortMTMock : ISerialPort
 
     private static readonly Regex AwrCommand = new(@"^AWR([0-5])$");
 
-    private static readonly Regex AamCommand = new(@"^AAM(A|M)(A|M)(A|M)$");
+    private static readonly Regex AamCommand = new(@"^AAM(A|M){3}$");
 
     private static readonly Regex AvrCommand = new(@"^AVR(.+)$");
 

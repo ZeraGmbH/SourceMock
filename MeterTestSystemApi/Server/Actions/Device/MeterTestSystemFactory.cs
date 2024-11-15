@@ -164,6 +164,8 @@ public class MeterTestSystemFactory(IServiceProvider services, IErrorCalculatorF
                 /* Just report - let meter test system run. */
                 logger.LogError("Unable to restore amplifiers: {Exception}", e.Message);
             }
+        
+        await meterTestSystem.InitializeFG(new NoopInterfaceLogger());
 
         // May want to create an external reference meter.
         _Disposables.Add(meterTestSystem.ConfigureExternalReferenceMeterAsync(configuration.ExternalReferenceMeter));

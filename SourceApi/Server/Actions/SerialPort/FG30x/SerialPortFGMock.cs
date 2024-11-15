@@ -23,6 +23,12 @@ public class SerialPortFGMock : ISerialPort
 
     private static readonly Regex ThreePs45Command = new(@"^3PS45;(.+)$");
 
+    private static readonly Regex OlCommand = new(@"^OL(0|1){12}$");
+
+    private static readonly Regex HpCommand = new(@"^HP(0|1){2}$");
+
+    private static readonly Regex HeCommand = new(@"^HE(A|E){16}$");
+
     private readonly Queue<QueueEntry> _replies = new();
 
     private DateTime _dosageStart = DateTime.MinValue;
@@ -156,6 +162,20 @@ public class SerialPortFGMock : ISerialPort
             case "FI":
                 _replies.Enqueue("FI 60000");
                 break;
+            case "RE0":
+            case "RE1":
+                _replies.Enqueue("OKRE");
+                break;
+            case "PL":
+                _replies.Enqueue("OKPL");
+                break;
+            case "SF0":
+            case "SF1":
+                _replies.Enqueue("OKSF");
+                break;
+            case "HEAAAAAAAAAAAAAAAA":
+                _replies.Enqueue("OKHE");
+                break;
             default:
                 {
                     Match? match;
@@ -178,6 +198,12 @@ public class SerialPortFGMock : ISerialPort
                     /** Set the measuring mode. */
                     else if (MaCommand.IsMatch(command))
                         _replies.Enqueue("OKMA");
+                    else if (OlCommand.IsMatch(command))
+                        _replies.Enqueue("OKOL");
+                    else if (HpCommand.IsMatch(command))
+                        _replies.Enqueue("OKHP");
+                    else if (HeCommand.IsMatch(command))
+                        _replies.Enqueue("OKHE");
                     /* Set dosage energy. */
                     else if ((match = ThreePs45Command.Match(command)).Success)
                     {

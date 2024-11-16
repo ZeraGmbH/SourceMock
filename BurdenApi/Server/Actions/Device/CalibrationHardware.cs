@@ -1,5 +1,4 @@
 using BurdenApi.Models;
-using Microsoft.AspNetCore.Identity.Data;
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SourceApi.Actions.Source;

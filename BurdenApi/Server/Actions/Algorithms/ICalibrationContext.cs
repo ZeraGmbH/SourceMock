@@ -18,6 +18,11 @@ public interface ICalibrationContext
     GoalValue EffectiveGoal { get; }
 
     /// <summary>
+    /// Last calibration step executed.
+    /// </summary>
+    CalibrationStep LastStep { get; }
+
+    /// <summary>
     /// Get the current values from the reference meter.
     /// </summary>
     /// <param name="calibration">Calibration to apply to the burden before measuring.</param>

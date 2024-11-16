@@ -1,4 +1,3 @@
-using System.IO.Pipelines;
 using BurdenApi.Models;
 
 namespace BurdenApi.Actions.Algorithms;
@@ -12,20 +11,15 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
 
     private bool _ImpedanceCoarseFixed = false;
 
-    private Calibration _InitialCalibration = null!;
-
     /// <inheritdoc/>
-    public Calibration InitialCalibration
-    {
-        get => _InitialCalibration;
-        set => _InitialCalibration = new(new(value.Resistive.Coarse, 64), new(value.Inductive.Coarse, 64));
-    }
+    public Calibration CreateInitialCalibration(Calibration calibration)
+        => new(new(calibration.Resistive.Coarse, 64), new(calibration.Inductive.Coarse, 64));
 
     /// <inheritdoc/>
     public async Task<CalibrationStep?> IterateAsync(ICalibrationContext context)
     {
         // Retrieve new values and relativ deviation from goal.
-        var deviation = await context.MeasureAsync(context.CurrentCalibration) / context.EffectiveGoal;
+        var deviation = context.LastStep.Deviation;
 
         // Work on the largest deviation first.
         return
@@ -150,7 +144,7 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
         var nextDelta = nextValues / context.EffectiveGoal;
 
         // We made it worse or nothing changed at all - but indicated with Calibration null that we at least gave it a try.
-        if (Math.Abs(getDeviationField(nextDelta)) >= Math.Abs(deviation)) return new() { Calibration = null!, Values = null!, Deviation = null!, TotalAbsDelta = 0 };
+        if (Math.Abs(getDeviationField(nextDelta)) >= Math.Abs(deviation)) return new() { Calibration = null! };
 
         // Apply measurement values from the burden as well.
         var burdenValues = await context.MeasureBurdenAsync();
@@ -162,7 +156,6 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
             BurdenValues = values,
             Calibration = nextCalibration,
             Deviation = nextDelta,
-            TotalAbsDelta = Math.Abs(nextDelta.DeltaFactor) + Math.Abs(nextDelta.DeltaPower),
             Values = nextValues,
         };
     }

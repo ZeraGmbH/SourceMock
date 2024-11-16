@@ -67,7 +67,8 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         // Reset state - caller is responsible to synchronize access.
         _Algorithm = services.GetRequiredKeyedService<ICalibrationAlgorithm>(algorithm);
 
-        _Algorithm.InitialCalibration = await burden.GetCalibrationAsync(request.Burden, request.Range, request.Step, logger) ?? throw new ArgumentException("step not enabled to calibrate", nameof(request));
+        var initialCalibration = _Algorithm.CreateInitialCalibration(
+            await burden.GetCalibrationAsync(request.Burden, request.Range, request.Step, logger) ?? throw new ArgumentException("step not enabled to calibrate", nameof(request)));
 
         _Steps.Clear();
 
@@ -110,7 +111,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         await burden.SetActiveAsync(true, logger);
 
         // Create initial step.
-        var values = await MeasureAsync(_Algorithm.InitialCalibration);
+        var values = await MeasureAsync(initialCalibration);
         var deviation = values / EffectiveGoal;
         var burdenValues = await MeasureBurdenAsync();
 
@@ -118,11 +119,9 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         {
             BurdenDeviation = burdenValues / EffectiveGoal,
             BurdenValues = burdenValues,
-            Calibration = _Algorithm.InitialCalibration,
+            Calibration = initialCalibration,
             Deviation = deviation,
             Factor = factor,
-            Iteration = 0,
-            TotalAbsDelta = Math.Abs(deviation.DeltaFactor) + Math.Abs(deviation.DeltaPower),
             Values = values
         });
 
@@ -243,8 +242,6 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
                 Calibration = result.Calibration,
                 Deviation = lowerDeviation,
                 Factor = lowerFactor,
-                Iteration = 0,
-                TotalAbsDelta=Math.Abs(lowerDeviation.DeltaFactor) + Math.Abs(lowerDeviation.DeltaPower),
                 Values = lower,
             },
             new() {
@@ -253,8 +250,6 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
                 Calibration = result.Calibration,
                 Deviation = upperDeviation,
                 Factor = upperFactor,
-                Iteration = 0,
-                TotalAbsDelta=Math.Abs(upperDeviation.DeltaFactor) + Math.Abs(upperDeviation.DeltaPower),
                 Values = upper,
             }
         ];

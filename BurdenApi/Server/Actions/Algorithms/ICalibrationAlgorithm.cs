@@ -7,8 +7,12 @@ namespace BurdenApi.Actions.Algorithms;
 /// </summary>
 public interface ICalibrationAlgorithm
 {
-    /// <inheritdoc/>
-    Calibration InitialCalibration { get; set; }
+    /// <summary>
+    /// Create the initial calibration.
+    /// </summary>
+    /// <param name="calibration">Calibration as reported by the burden.</param>
+    /// <returns>Calibration to use as startup.</returns>
+    Calibration CreateInitialCalibration(Calibration calibration);
 
     /// <summary>
     /// Execute one calibration iteration step.

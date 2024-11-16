@@ -44,7 +44,22 @@ public class CalibrationStep
     /// Deviation from the calibration goal.
     /// </summary>
     [NotNull, Required]
-    public GoalDeviation Deviation { get; set; } = new();
+    public GoalDeviation Deviation
+    {
+        get
+        {
+            return _Deviation;
+        }
+        set
+        {
+            _Deviation = value;
+
+            // Set redundant value for sorting results.
+            TotalAbsDelta = Math.Abs(value.DeltaPower) + Math.Abs(value.DeltaFactor);
+        }
+    }
+
+    private GoalDeviation _Deviation = new();
 
     /// <summary>
     /// Actual values from the burden.
@@ -62,7 +77,7 @@ public class CalibrationStep
     /// Sum of the deviation totals as a mean to find better calibrations.
     /// </summary>
     [NotNull, Required]
-    public double TotalAbsDelta { get; set; }
+    public double TotalAbsDelta { get; private set; }
 
     /// <summary>
     /// Get a hashcode from the calibration data.

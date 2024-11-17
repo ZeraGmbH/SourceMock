@@ -27,8 +27,7 @@ public interface ICalibrator
     /// </summary>
     /// <param name="request">Configuration of the calibration algorithm.</param>
     /// <param name="cancel">Allows to cancel the algorithm as soon as possible.</param>
-    /// <param name="algorithm">Algorithm to use.</param>
-    Task RunAsync(CalibrationRequest request, CancellationToken cancel, CalibrationAlgorithms algorithm = CalibrationAlgorithms.Default);
+    Task RunAsync(CalibrationRequest request, CancellationToken cancel);
 
     /// <summary>
     /// Process a calibration, write the result back to the burden and
@@ -36,7 +35,6 @@ public interface ICalibrator
     /// </summary>
     /// <param name="request">Configuration of the calibration algorithm.</param>
     /// <param name="cancel">Allows to cancel the algorithm as soon as possible.</param>
-    /// <param name="algorithm">Algorithm to use.</param>
     /// <returns>Details on the calibration.</returns>
-    Task<CalibrationStep[]> CalibrateStepAsync(CalibrationRequest request, CancellationToken cancel, CalibrationAlgorithms algorithm = CalibrationAlgorithms.Default);
+    Task<CalibrationStep[]> CalibrateStepAsync(CalibrationRequest request, CancellationToken cancel);
 }

@@ -124,7 +124,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
         var requestedImpedance = CreateRelative(calibration.Inductive);
 
         var resistence = (requestedResistance + 0.01d * requestedImpedance) / 1.01d;
-        var impedance = (requestedImpedance + 0.01d * requestedResistance) / 1.01d;
+        var impedance = 1 - (requestedImpedance + 0.01d * requestedResistance) / 1.01d;
 
         var targetResistance = CreateRelative(_Target.Resistive);
 

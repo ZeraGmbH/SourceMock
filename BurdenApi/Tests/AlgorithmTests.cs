@@ -110,16 +110,16 @@ namespace BurdenApiTests
                 Assert.That(newPair, Is.Null);
         }
 
-        [TestCase(0, 0, 0, 0, 0, 0)]
-        [TestCase(127, 127, 127, 127, 24.1813, 1)]
-        [TestCase(64, 64, 64, 64, 12.1858, 0.5039)]
-        [TestCase(64, 32, 32, 64, 12.0746, 0.2565)]
-        [TestCase(64, 0, 64, 0, 12.082, 0.4996)]
-        [TestCase(64, 0, 64, 32, 12.0825, 0.50168)]
-        [TestCase(64, 32, 64, 0, 12.1334, 0.4997)]
-        [TestCase(0, 0, 110, 20, 0.2059, 0.8515)]
-        [TestCase(127, 127, 0, 0, 23.9419, 0.0099)]
-        [TestCase(0, 0, 127, 127, 0.2394, 0.99)]
+        [TestCase(0, 0, 0, 0, 0, 1)]
+        [TestCase(127, 127, 127, 127, 24.1813, 0)]
+        [TestCase(64, 64, 64, 64, 12.1858, 0.496)]
+        [TestCase(64, 32, 32, 64, 12.0746, 0.7434)]
+        [TestCase(64, 0, 64, 0, 12.082, 0.5003)]
+        [TestCase(64, 0, 64, 32, 12.0825, 0.4982)]
+        [TestCase(64, 32, 64, 0, 12.1334, 0.5003)]
+        [TestCase(0, 0, 110, 20, 0.2059, 0.1484)]
+        [TestCase(127, 127, 0, 0, 23.9419, 0.99)]
+        [TestCase(0, 0, 127, 127, 0.2394, 0.0099)]
         public async Task Mock_Hardware_Will_Produce_Values_Async(byte rMajor, byte rMinor, byte iMajor, byte iMinor, double apparentPower, double powerFactor)
         {
             var hardware = Services.GetRequiredService<ICalibrationHardware>();
@@ -161,7 +161,7 @@ namespace BurdenApiTests
             Hardware.AddCalibration("IEC50", "200", "50;0.75", new(new(64, 32), new(32, 64)));
 
             if (algorithm.HasValue)
-                await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = "50;0.75" }, CancellationToken.None, algorithm.Value);
+                await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = "50;0.75", Algorithm = algorithm.Value }, CancellationToken.None);
             else
                 await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = "50;0.75" }, CancellationToken.None);
 
@@ -171,12 +171,12 @@ namespace BurdenApiTests
 
             Assert.Multiple(() =>
             {
-                Assert.That(Calibrator.Steps, Has.Length.EqualTo(84));
+                Assert.That(Calibrator.Steps, Has.Length.EqualTo(86));
 
-                Assert.That(step!.Calibration.Resistive.Coarse, Is.EqualTo(52));
-                Assert.That(step.Calibration.Resistive.Fine, Is.EqualTo(62));
-                Assert.That(step.Calibration.Inductive.Coarse, Is.EqualTo(96));
-                Assert.That(step.Calibration.Inductive.Fine, Is.EqualTo(59));
+                Assert.That(step!.Calibration.Resistive.Coarse, Is.EqualTo(53));
+                Assert.That(step.Calibration.Resistive.Fine, Is.EqualTo(21));
+                Assert.That(step.Calibration.Inductive.Coarse, Is.EqualTo(31));
+                Assert.That(step.Calibration.Inductive.Fine, Is.EqualTo(94));
 
                 Assert.That((double)step.Values.ApparentPower, Is.EqualTo(50).Within(0.1));
                 Assert.That((double)step.Values.PowerFactor, Is.EqualTo(0.75).Within(0.001));

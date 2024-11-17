@@ -36,13 +36,10 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
     /// <returns>Successfull calibration step or null.</returns>
     private Task<CalibrationStep?> AdjustResistance(GoalDeviation valueDeviation, ICalibrationContext context)
         => AdjustCoarseAndFine(
-            _ResistanceCoarseFixed,
+            true,
             valueDeviation,
-            context.CurrentCalibration.Resistive,
             context,
-            deviation => deviation.DeltaPower,
-            calibrationPair => new(calibrationPair, context.CurrentCalibration.Inductive),
-            () => _ResistanceCoarseFixed = true
+            deviation => deviation.DeltaPower
         );
 
     /// <summary>
@@ -53,44 +50,44 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
     /// <returns>Successfull calibration step or null.</returns>
     private Task<CalibrationStep?> AdjustImpedance(GoalDeviation valueDeviation, ICalibrationContext context)
         => AdjustCoarseAndFine(
-            _ImpedanceCoarseFixed,
+            false,
             valueDeviation,
-            context.CurrentCalibration.Inductive,
             context,
-            deviation => deviation.DeltaFactor,
-            calibrationPair => new(context.CurrentCalibration.Resistive, calibrationPair),
-            () => _ImpedanceCoarseFixed = true
+            deviation => deviation.DeltaFactor
         );
 
     /// <summary>
     /// Calibrate a pair of values.
     /// </summary>
-    /// <param name="coarseAlreadyFixed">Set if the coarse value is already fixed.</param>
+    /// <param name="resistiveNotImpedance">Set if working on resistive pair.</param>
     /// <param name="valueDeviation">Measured deviation from the goal.</param>
-    /// <param name="calibration">Calibration pair to process.</param>
     /// <param name="context">Current calibration environment.</param>
     /// <param name="getDeviationField">Access the deviation to inspect.</param>
-    /// <param name="createCalibration">Method to create a full calibration set to get a new measurement.</param>
-    /// <param name="setCoarseAlreadyFixed">Set to fix the coarse calibration.</param>
     /// <returns>null if no futher processing is possible.</returns>
     private async Task<CalibrationStep?> AdjustCoarseAndFine(
-        bool coarseAlreadyFixed,
+        bool resistiveNotImpedance,
         GoalDeviation valueDeviation,
-        CalibrationPair calibration,
         ICalibrationContext context,
-        Func<GoalDeviation, double> getDeviationField,
-        Func<CalibrationPair, Calibration> createCalibration,
-        Action setCoarseAlreadyFixed
+        Func<GoalDeviation, double> getDeviationField
     )
     {
         // No difference at all.
         if (getDeviationField(valueDeviation) == 0) return null;
 
+        // What part are we working of.
+        var calibration = resistiveNotImpedance ? context.CurrentCalibration.Resistive : context.CurrentCalibration.Inductive;
+
         // Adjust coarse corrextion if not already fixed.
-        if (!coarseAlreadyFixed)
+        if (!(resistiveNotImpedance ? _ResistanceCoarseFixed : _ImpedanceCoarseFixed))
         {
             // Check if there is a better calibration.
-            var coraseStep = await AdjustCoarseOrFine(valueDeviation, context, getDeviationField, calibration.ChangeCoarse, createCalibration);
+            var coraseStep = await AdjustCoarseOrFine(
+                resistiveNotImpedance,
+                valueDeviation,
+                context,
+                getDeviationField,
+                calibration.ChangeCoarse
+            );
 
             if (coraseStep != null)
             {
@@ -98,12 +95,18 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
                 if (coraseStep.CalibrationChanged) return coraseStep;
 
                 // There is no better match in coarse, so fix the calibration value and try the fine value.
-                setCoarseAlreadyFixed();
+                if (resistiveNotImpedance) _ResistanceCoarseFixed = true; else _ImpedanceCoarseFixed = true;
             }
         }
 
         // Adjust fine correction.
-        var fineStep = await AdjustCoarseOrFine(valueDeviation, context, getDeviationField, calibration.ChangeFine, createCalibration);
+        var fineStep = await AdjustCoarseOrFine(
+            resistiveNotImpedance,
+            valueDeviation,
+            context,
+            getDeviationField,
+            calibration.ChangeFine
+        );
 
         // If fine correction step makes it worse just skip it.
         return fineStep?.CalibrationChanged == true ? fineStep : null;
@@ -112,19 +115,19 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
     /// <summary>
     /// Adjust a single part (e.g. GoalValue.ApparentPower) of a single pair (e.g. Calibration.Resistive).
     /// </summary>
+    /// <param name="resistiveNotImpedance">Set if working on resistive pair.</param>
     /// <param name="valueDeviation">Deviations measured.</param>
     /// <param name="context">Current calibration environment.</param>
     /// <param name="getDeviationField">Access the deviation information to use.</param>
     /// <param name="updateCalibrationValue">Update the calibration for the next step.</param>
-    /// <param name="createCalibration">Create a complete calibration information for value measurement.</param>
     /// <returns>null if no further processing is possible, elsewhere the Calibration memember will be 
     /// null as well if the changed calibration moved us further away from the goal.</returns>
     private async Task<CalibrationStep?> AdjustCoarseOrFine(
+        bool resistiveNotImpedance,
         GoalDeviation valueDeviation,
         ICalibrationContext context,
         Func<GoalDeviation, double> getDeviationField,
-        Func<bool, CalibrationPair?> updateCalibrationValue,
-        Func<CalibrationPair, Calibration> createCalibration
+        Func<bool, CalibrationPair?> updateCalibrationValue
     )
     {
         var deviation = getDeviationField(valueDeviation);
@@ -132,14 +135,17 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
         // No difference at all - access part (e.g. GoalValue.ApparentPower) using accessor method field
         if (deviation == 0) return null;
 
-        // Apply correction (true means increment, false decrement) - it is expected that the order of calibration values mirrors the order of measured values.
-        var nextPair = updateCalibrationValue(deviation < 0);
+        // Apply correction (true means increment, false decrement, impedance is 1 at calibration 0) - it is expected that the order of calibration values mirrors the order of measured values.
+        var nextPair = updateCalibrationValue((deviation < 0) == resistiveNotImpedance);
 
         // Correction may not be possible - bounds are reached.
         if (nextPair == null) return null;
 
         // Re-measure - rebuild calibration using pair (e.g Calibration.Resistive) keeping the other part.
-        var nextCalibration = createCalibration(nextPair);
+        var nextCalibration = resistiveNotImpedance
+            ? new Calibration(nextPair, context.CurrentCalibration.Inductive)
+            : new Calibration(context.CurrentCalibration.Resistive, nextPair);
+
         var nextValues = await context.MeasureAsync(nextCalibration);
         var nextDelta = nextValues / context.EffectiveGoal;
 

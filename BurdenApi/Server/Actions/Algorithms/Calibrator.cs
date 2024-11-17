@@ -48,7 +48,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
     private ICalibrationAlgorithm _Algorithm = null!;
 
     /// <inheritdoc/>
-    public async Task RunAsync(CalibrationRequest request, CancellationToken cancel, CalibrationAlgorithms algorithm)
+    public async Task RunAsync(CalibrationRequest request, CancellationToken cancel)
     {
         // Caluclate the goal from the step.
         var parts = request.Step.Split(";");
@@ -65,7 +65,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         var burden = hardware.Burden;
 
         // Reset state - caller is responsible to synchronize access.
-        _Algorithm = services.GetRequiredKeyedService<ICalibrationAlgorithm>(algorithm);
+        _Algorithm = services.GetRequiredKeyedService<ICalibrationAlgorithm>(request.Algorithm);
 
         var initialCalibration = _Algorithm.CreateInitialCalibration(
             await burden.GetCalibrationAsync(request.Burden, request.Range, request.Step, logger) ?? throw new ArgumentException("step not enabled to calibrate", nameof(request)));
@@ -174,10 +174,10 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         };
 
     /// <inheritdoc/>
-    public async Task<CalibrationStep[]> CalibrateStepAsync(CalibrationRequest request, CancellationToken cancel, CalibrationAlgorithms algorithm)
+    public async Task<CalibrationStep[]> CalibrateStepAsync(CalibrationRequest request, CancellationToken cancel)
     {
         // Single measurement.
-        await RunAsync(request, cancel, algorithm);
+        await RunAsync(request, cancel);
 
         // See if it worked.
         var result = LastStep;

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using BurdenApi.Actions.Algorithms;
 
 namespace BurdenApi.Models;
 
@@ -31,4 +32,10 @@ public class CalibrationRequest
     /// </summary>
     [NotNull, Required]
     public bool ChooseBestRange { get; set; }
+
+    /// <summary>
+    /// Algorithm to use to calibrate burden steps.
+    /// </summary>
+    [NotNull, Required]
+    public CalibrationAlgorithms Algorithm { get; set; } = CalibrationAlgorithms.Default;
 }

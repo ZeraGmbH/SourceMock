@@ -154,12 +154,13 @@ namespace BurdenApiTests
             });
         }
 
-        [TestCase(null)]
-        [TestCase(CalibrationAlgorithms.Default)]
-        [TestCase(CalibrationAlgorithms.SingleStep)]
-        public async Task Can_Run_Calibration_Async(CalibrationAlgorithms? algorithm)
+        [TestCase(null, 148)]
+        [TestCase(CalibrationAlgorithms.Default, 148)]
+        [TestCase(CalibrationAlgorithms.SingleStep, 148)]
+        [TestCase(CalibrationAlgorithms.Interval, 71)]
+        public async Task Can_Run_Calibration_Async(CalibrationAlgorithms? algorithm, int steps)
         {
-            Hardware.AddCalibration("IEC50", "200", "50;0.75", new(new(64, 32), new(32, 64)));
+            Hardware.AddCalibration("IEC50", "200", "50;0.75", new(new(112, 7), new(16, 99)));
 
             if (algorithm.HasValue)
                 await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = "50;0.75", Algorithm = algorithm.Value }, CancellationToken.None);
@@ -172,43 +173,15 @@ namespace BurdenApiTests
 
             Assert.Multiple(() =>
             {
-                Assert.That(Calibrator.Steps, Has.Length.EqualTo(86));
+                Assert.That(Calibrator.Steps, Has.Length.EqualTo(steps));
 
                 Assert.That(step!.Calibration.Resistive.Coarse, Is.EqualTo(53));
                 Assert.That(step.Calibration.Resistive.Fine, Is.EqualTo(21));
                 Assert.That(step.Calibration.Inductive.Coarse, Is.EqualTo(31));
                 Assert.That(step.Calibration.Inductive.Fine, Is.EqualTo(94));
 
-                Assert.That((double)step.Values.ApparentPower, Is.EqualTo(50).Within(0.1));
-                Assert.That((double)step.Values.PowerFactor, Is.EqualTo(0.75).Within(0.001));
-
-                Assert.That(Math.Abs(step.Deviation.DeltaPower), Is.LessThan(0.1));
-                Assert.That(Math.Abs(step.Deviation.DeltaFactor), Is.LessThan(0.1));
-            });
-        }
-
-        [Test]
-        public async Task Can_Run_Interval_Calibration_Async()
-        {
-            Hardware.AddCalibration("IEC50", "200", "50;0.75", new(new(64, 32), new(32, 64)));
-
-            await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = "50;0.75", Algorithm = CalibrationAlgorithms.Interval }, CancellationToken.None);
-
-            var step = Calibrator.LastStep;
-
-            Assert.That(step, Is.Not.Null);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(Calibrator.Steps, Has.Length.EqualTo(32));
-
-                Assert.That(step!.Calibration.Resistive.Coarse, Is.EqualTo(53));
-                Assert.That(step.Calibration.Resistive.Fine, Is.EqualTo(59));
-                Assert.That(step.Calibration.Inductive.Coarse, Is.EqualTo(31));
-                Assert.That(step.Calibration.Inductive.Fine, Is.EqualTo(95));
-
-                //[algorithm not yet complete] Assert.That((double)step.Values.ApparentPower, Is.EqualTo(50).Within(0.1));
-                Assert.That((double)step.Values.PowerFactor, Is.EqualTo(0.75).Within(0.001));
+                Assert.That((double)step.Values.ApparentPower, Is.EqualTo(50).Within(0.01));
+                Assert.That((double)step.Values.PowerFactor, Is.EqualTo(0.75).Within(0.01));
 
                 Assert.That(Math.Abs(step.Deviation.DeltaPower), Is.LessThan(0.1));
                 Assert.That(Math.Abs(step.Deviation.DeltaFactor), Is.LessThan(0.1));

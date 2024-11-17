@@ -24,55 +24,37 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
         // Work on the largest deviation first.
         return
             Math.Abs(deviation.DeltaPower) >= Math.Abs(deviation.DeltaFactor)
-            ? await AdjustResistance(deviation, context) ?? await AdjustImpedance(deviation, context)
-            : await AdjustImpedance(deviation, context) ?? await AdjustResistance(deviation, context);
+                ? await AdjustResistance(context) ?? await AdjustImpedance(context)
+                : await AdjustImpedance(context) ?? await AdjustResistance(context);
     }
 
     /// <summary>
     /// Calibrate the resistance pair.
     /// </summary>
-    /// <param name="valueDeviation">Deviation measured.</param>
     /// <param name="context">Current calibration environment.</param>
     /// <returns>Successfull calibration step or null.</returns>
-    private Task<CalibrationStep?> AdjustResistance(GoalDeviation valueDeviation, ICalibrationContext context)
-        => AdjustCoarseAndFine(
-            true,
-            valueDeviation,
-            context,
-            deviation => deviation.DeltaPower
-        );
+    private Task<CalibrationStep?> AdjustResistance(ICalibrationContext context) => AdjustCoarseAndFine(true, context);
 
     /// <summary>
     /// Calibrate the impedance pair.
     /// </summary>
-    /// <param name="valueDeviation">Deviation measured.</param>
     /// <param name="context">Current calibration environment.</param>
     /// <returns>Successfull calibration step or null.</returns>
-    private Task<CalibrationStep?> AdjustImpedance(GoalDeviation valueDeviation, ICalibrationContext context)
-        => AdjustCoarseAndFine(
-            false,
-            valueDeviation,
-            context,
-            deviation => deviation.DeltaFactor
-        );
+    private Task<CalibrationStep?> AdjustImpedance(ICalibrationContext context) => AdjustCoarseAndFine(false, context);
 
     /// <summary>
     /// Calibrate a pair of values.
     /// </summary>
     /// <param name="resistiveNotImpedance">Set if working on resistive pair.</param>
-    /// <param name="valueDeviation">Measured deviation from the goal.</param>
     /// <param name="context">Current calibration environment.</param>
-    /// <param name="getDeviationField">Access the deviation to inspect.</param>
     /// <returns>null if no futher processing is possible.</returns>
     private async Task<CalibrationStep?> AdjustCoarseAndFine(
         bool resistiveNotImpedance,
-        GoalDeviation valueDeviation,
-        ICalibrationContext context,
-        Func<GoalDeviation, double> getDeviationField
+        ICalibrationContext context
     )
     {
         // No difference at all.
-        if (getDeviationField(valueDeviation) == 0) return null;
+        if ((resistiveNotImpedance ? context.LastStep.Deviation.DeltaPower : context.LastStep.Deviation.DeltaFactor) == 0) return null;
 
         // What part are we working of.
         var calibration = resistiveNotImpedance ? context.CurrentCalibration.Resistive : context.CurrentCalibration.Inductive;
@@ -81,13 +63,7 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
         if (!(resistiveNotImpedance ? _ResistanceCoarseFixed : _ImpedanceCoarseFixed))
         {
             // Check if there is a better calibration.
-            var coraseStep = await AdjustCoarseOrFine(
-                resistiveNotImpedance,
-                valueDeviation,
-                context,
-                getDeviationField,
-                calibration.ChangeCoarse
-            );
+            var coraseStep = await AdjustCoarseOrFine(resistiveNotImpedance, context, calibration.ChangeCoarse);
 
             if (coraseStep != null)
             {
@@ -100,13 +76,7 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
         }
 
         // Adjust fine correction.
-        var fineStep = await AdjustCoarseOrFine(
-            resistiveNotImpedance,
-            valueDeviation,
-            context,
-            getDeviationField,
-            calibration.ChangeFine
-        );
+        var fineStep = await AdjustCoarseOrFine(resistiveNotImpedance, context, calibration.ChangeFine);
 
         // If fine correction step makes it worse just skip it.
         return fineStep?.CalibrationChanged == true ? fineStep : null;
@@ -116,21 +86,17 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
     /// Adjust a single part (e.g. GoalValue.ApparentPower) of a single pair (e.g. Calibration.Resistive).
     /// </summary>
     /// <param name="resistiveNotImpedance">Set if working on resistive pair.</param>
-    /// <param name="valueDeviation">Deviations measured.</param>
     /// <param name="context">Current calibration environment.</param>
-    /// <param name="getDeviationField">Access the deviation information to use.</param>
     /// <param name="updateCalibrationValue">Update the calibration for the next step.</param>
     /// <returns>null if no further processing is possible, elsewhere the Calibration memember will be 
     /// null as well if the changed calibration moved us further away from the goal.</returns>
     private async Task<CalibrationStep?> AdjustCoarseOrFine(
         bool resistiveNotImpedance,
-        GoalDeviation valueDeviation,
         ICalibrationContext context,
-        Func<GoalDeviation, double> getDeviationField,
         Func<int, CalibrationPair?> updateCalibrationValue
     )
     {
-        var deviation = getDeviationField(valueDeviation);
+        var deviation = resistiveNotImpedance ? context.LastStep.Deviation.DeltaPower : context.LastStep.Deviation.DeltaFactor;
 
         // No difference at all - access part (e.g. GoalValue.ApparentPower) using accessor method field
         if (deviation == 0) return null;
@@ -150,7 +116,7 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
         var nextDelta = nextValues / context.EffectiveGoal;
 
         // We made it worse or nothing changed at all - but indicated with Calibration null that we at least gave it a try.
-        if (Math.Abs(getDeviationField(nextDelta)) >= Math.Abs(deviation)) return new() { Calibration = null! };
+        if (Math.Abs(resistiveNotImpedance ? nextDelta.DeltaPower : nextDelta.DeltaFactor) >= Math.Abs(deviation)) return new() { Calibration = null! };
 
         // Apply measurement values from the burden as well.
         var burdenValues = await context.MeasureBurdenAsync();

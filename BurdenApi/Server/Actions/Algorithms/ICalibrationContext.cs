@@ -34,4 +34,9 @@ public interface ICalibrationContext
     /// </summary>
     /// <returns>Values as measured by the burden.</returns>
     Task<GoalValue> MeasureBurdenAsync();
+
+    /// <summary>
+    /// Reset the cycle tester.
+    /// </summary>
+    void ClearCycleTester();
 }

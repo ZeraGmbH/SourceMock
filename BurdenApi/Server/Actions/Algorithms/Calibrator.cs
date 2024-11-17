@@ -47,6 +47,8 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
 
     private ICalibrationAlgorithm _Algorithm = null!;
 
+    private readonly HashSet<CalibrationStep> _CycleTester = [];
+
     /// <inheritdoc/>
     public async Task RunAsync(CalibrationRequest request, CancellationToken cancel)
     {
@@ -71,6 +73,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
             await burden.GetCalibrationAsync(request.Burden, request.Range, request.Step, logger) ?? throw new ArgumentException("step not enabled to calibrate", nameof(request)));
 
         _Steps.Clear();
+        _CycleTester.Clear();
 
         // Correct the goal in ANSI mode.
         EffectiveGoal = request.Burden != "ANSI"
@@ -126,7 +129,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         });
 
         // Secure bound by a maximum number of steps - we expect a maximum of 4 * 127 steps.
-        for (var done = new HashSet<CalibrationStep>(); _Steps.Count < 1000;)
+        while (_Steps.Count < 1000)
         {
             // Check for abort.
             cancel.ThrowIfCancellationRequested();
@@ -138,7 +141,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
             if (step == null) break;
 
             // Already did this one?
-            if (!done.Add(step))
+            if (!_CycleTester.Add(step))
             {
                 // Already fixed anything - must abort now.
                 if (!_Algorithm.ContinueAfterCycleDetection()) break;
@@ -254,4 +257,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
             }
         ];
     }
+
+    /// <inheritdoc/>
+    public void ClearCycleTester() => _CycleTester.Clear();
 }

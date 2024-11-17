@@ -49,14 +49,14 @@ public class IntervalCalibrator : ICalibrationAlgorithm
             if (_Width >= 0)
             {
                 // Interval will not reach calibration value 0 without a little tweak.
-                var deviation = ResistancePhase ? context.LastStep.Deviation.DeltaPower : context.LastStep.Deviation.DeltaFactor;
+                var partDeviation = ResistancePhase ? context.LastStep.Deviation.DeltaPower : context.LastStep.Deviation.DeltaFactor;
                 var alreadyDone = _Width == 0;
 
                 // Regular interval step.
                 _Width = alreadyDone ? -1 : _Width / 2;
 
                 // Calculate difference.
-                var delta = alreadyDone ? 1 : deviation > 0 ? -_Width : +_Width;
+                var delta = alreadyDone ? 1 : partDeviation >= 0 ? -_Width : +_Width;
                 var appliedDelta = ResistancePhase ? +delta : -delta;
 
                 if (!alreadyDone || (GetActiveCalibration(context) == 1 && appliedDelta == -1))
@@ -75,7 +75,7 @@ public class IntervalCalibrator : ICalibrationAlgorithm
             _Phase++;
 
             // Measure the initial calibration.
-            var initialStep = await MeasureAsync(context,
+            var initialStep = await MeasureAsync(ResistancePhase, context,
                 _Phase switch
                 {
                     Phases.ResistanceFine => new CalibrationPair(context.LastStep.Calibration.Resistive.Coarse, 64),
@@ -85,27 +85,56 @@ public class IntervalCalibrator : ICalibrationAlgorithm
                 });
 
             if (initialStep != null) return initialStep;
+
+            // Will no enter adjustment mode.
+            context.ClearCycleTester();
         }
 
-        return null;
+        // Retrieve new values and relativ deviation from goal.
+        var deviation = context.LastStep.Deviation;
+
+        // Work on the largest deviation first.
+        return
+            Math.Abs(deviation.DeltaPower) >= Math.Abs(deviation.DeltaFactor)
+            ? await AdjustResistance(context) ?? await AdjustImpedance(context)
+            : await AdjustImpedance(context) ?? await AdjustResistance(context);
     }
+
+    /// <summary>
+    /// Calibrate the resistance pair.
+    /// </summary>
+    /// <param name="context">Current calibration environment.</param>
+    /// <returns>Successfull calibration step or null.</returns>
+    private Task<CalibrationStep?> AdjustResistance(ICalibrationContext context) => AdjustFine(true, context);
+
+    /// <summary>
+    /// Calibrate the impedance pair.
+    /// </summary>
+    /// <param name="context">Current calibration environment.</param>
+    /// <returns>Successfull calibration step or null.</returns>
+    private Task<CalibrationStep?> AdjustImpedance(ICalibrationContext context) => AdjustFine(false, context);
 
     /// <summary>
     /// Get current values.
     /// </summary>
+    /// <param name="resistiveNotImpedance">Set if working on resistive pair.</param>
     /// <param name="context">Optation context.</param>
     /// <param name="nextPair">Calibration pair to apply.</param>
+    /// <param name="isAcceptable">Optional test if the new values are acceptabble.</param>
     /// <returns>Measured values.</returns>
-    private async Task<CalibrationStep?> MeasureAsync(ICalibrationContext context, CalibrationPair? nextPair)
+    private async Task<CalibrationStep?> MeasureAsync(bool resistiveNotImpedance, ICalibrationContext context, CalibrationPair? nextPair, Func<GoalDeviation, bool>? isAcceptable = null)
     {
         // Nothing to do.
         if (nextPair == null) return null;
 
         // Re-measure.
         var calibration = context.CurrentCalibration;
-        var nextCalibration = new Calibration(ResistancePhase ? nextPair : calibration.Resistive, ResistancePhase ? calibration.Inductive : nextPair);
+        var nextCalibration = new Calibration(resistiveNotImpedance ? nextPair : calibration.Resistive, resistiveNotImpedance ? calibration.Inductive : nextPair);
         var nextValues = await context.MeasureAsync(nextCalibration);
         var nextDelta = nextValues / context.EffectiveGoal;
+
+        // See if we made it better.
+        if (isAcceptable != null && !isAcceptable(nextDelta)) return null;
 
         // Apply measurement values from the burden as well.
         var burdenValues = await context.MeasureBurdenAsync();
@@ -143,7 +172,7 @@ public class IntervalCalibrator : ICalibrationAlgorithm
     /// <param name="delta">Calibratioin change to apply.</param>
     /// <returns>The result of the measurement.</returns>
     private async Task<CalibrationStep?> IntervalStep(ICalibrationContext context, int delta)
-        => await MeasureAsync(context,
+        => await MeasureAsync(ResistancePhase, context,
             _Phase switch
             {
                 Phases.RestistanceCoarse => context.LastStep.Calibration.Resistive.ChangeCoarse(delta),
@@ -154,8 +183,43 @@ public class IntervalCalibrator : ICalibrationAlgorithm
             });
 
     /// <inheritdoc/>
-    public bool ContinueAfterCycleDetection()
+    public bool ContinueAfterCycleDetection() => false;
+
+    /// <summary>
+    /// Calibrate a pair of values.
+    /// </summary>
+    /// <param name="resistiveNotImpedance">Set if working on resistive pair.</param>
+    /// <param name="context">Current calibration environment.</param>
+    /// <returns>null if no futher processing is possible.</returns>
+    private Task<CalibrationStep?> AdjustFine(bool resistiveNotImpedance, ICalibrationContext context)
     {
-        return true;
+        var deviation = resistiveNotImpedance ? context.LastStep.Deviation.DeltaPower : context.LastStep.Deviation.DeltaFactor;
+
+        // No difference at all - access part (e.g. GoalValue.ApparentPower) using accessor method field
+        if (deviation == 0) return Task.FromResult<CalibrationStep?>(null);
+
+        // What part are we working of.
+        var calibration = resistiveNotImpedance ? context.CurrentCalibration.Resistive : context.CurrentCalibration.Inductive;
+
+        // Try to adjust fine value.
+        var delta = (deviation < 0) == resistiveNotImpedance ? +1 : -1;
+        var nextPair = calibration.ChangeFine(delta);
+
+        if (nextPair == null)
+        {
+            // Try to adjust coarse value.
+            nextPair = calibration.ChangeCoarse(delta);
+
+            // Set fine value to center.
+            if (nextPair != null) nextPair = new(nextPair.Coarse, 64);
+        }
+
+        // Measure but only accept the new value if we made it some better.
+        return MeasureAsync(
+            resistiveNotImpedance,
+            context,
+            nextPair,
+            nextDelta => Math.Abs(resistiveNotImpedance ? nextDelta.DeltaPower : nextDelta.DeltaFactor) < Math.Abs(deviation)
+        );
     }
 }

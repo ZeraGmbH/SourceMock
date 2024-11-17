@@ -29,7 +29,7 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
     }
 
     /// <summary>
-    /// Calibrate the resistence pair.
+    /// Calibrate the resistance pair.
     /// </summary>
     /// <param name="valueDeviation">Deviation measured.</param>
     /// <param name="context">Current calibration environment.</param>
@@ -127,7 +127,7 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
         GoalDeviation valueDeviation,
         ICalibrationContext context,
         Func<GoalDeviation, double> getDeviationField,
-        Func<bool, CalibrationPair?> updateCalibrationValue
+        Func<int, CalibrationPair?> updateCalibrationValue
     )
     {
         var deviation = getDeviationField(valueDeviation);
@@ -136,7 +136,7 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
         if (deviation == 0) return null;
 
         // Apply correction (true means increment, false decrement, impedance is 1 at calibration 0) - it is expected that the order of calibration values mirrors the order of measured values.
-        var nextPair = updateCalibrationValue((deviation < 0) == resistiveNotImpedance);
+        var nextPair = updateCalibrationValue(((deviation < 0) == resistiveNotImpedance) ? +1 : -1);
 
         // Correction may not be possible - bounds are reached.
         if (nextPair == null) return null;

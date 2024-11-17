@@ -27,6 +27,7 @@ namespace BurdenApiTests
 
             services.AddKeyedTransient<ICalibrationAlgorithm, SingleStepCalibrator>(CalibrationAlgorithms.Default);
             services.AddKeyedTransient<ICalibrationAlgorithm, SingleStepCalibrator>(CalibrationAlgorithms.SingleStep);
+            services.AddKeyedTransient<ICalibrationAlgorithm, IntervalCalibrator>(CalibrationAlgorithms.Interval);
 
             services.AddSingleton<ICalibrationHardware, CalibrationHardwareMock>();
 
@@ -68,11 +69,11 @@ namespace BurdenApiTests
             Assert.Throws<ArgumentOutOfRangeException>(() => new CalibrationPair(major, minor));
         }
 
-        [TestCase(0, 0, false, false)]
-        [TestCase(0, 0, true, true)]
-        [TestCase(127, 0, false, true)]
-        [TestCase(127, 0, true, false)]
-        public void Calibration_Pair_Major_Can_Be_Changed(byte major, byte minor, bool increment, bool change)
+        [TestCase(0, 0, -1, false)]
+        [TestCase(0, 0, +1, true)]
+        [TestCase(127, 0, -1, true)]
+        [TestCase(127, 0, +1, false)]
+        public void Calibration_Pair_Major_Can_Be_Changed(byte major, byte minor, int increment, bool change)
         {
             var pair = new CalibrationPair(major, minor);
             var newPair = pair.ChangeCoarse(increment);
@@ -82,18 +83,18 @@ namespace BurdenApiTests
                 {
                     Assert.That(newPair, Is.Not.Null);
                     Assert.That(newPair, Is.Not.SameAs(pair));
-                    Assert.That(newPair!.Coarse, Is.EqualTo(major + (increment ? +1 : -1)));
+                    Assert.That(newPair!.Coarse, Is.EqualTo(major + increment));
                     Assert.That(newPair.Fine, Is.EqualTo(minor));
                 });
             else
                 Assert.That(newPair, Is.Null);
         }
 
-        [TestCase(0, 0, false, false)]
-        [TestCase(0, 0, true, true)]
-        [TestCase(0, 127, false, true)]
-        [TestCase(0, 127, true, false)]
-        public void Calibration_Pair_Minor_Can_Be_Changed(byte major, byte minor, bool increment, bool change)
+        [TestCase(0, 0, -1, false)]
+        [TestCase(0, 0, +1, true)]
+        [TestCase(0, 127, -1, true)]
+        [TestCase(0, 127, +1, false)]
+        public void Calibration_Pair_Minor_Can_Be_Changed(byte major, byte minor, int increment, bool change)
         {
             var pair = new CalibrationPair(major, minor);
             var newPair = pair.ChangeFine(increment);
@@ -104,7 +105,7 @@ namespace BurdenApiTests
                     Assert.That(newPair, Is.Not.Null);
                     Assert.That(newPair, Is.Not.SameAs(pair));
                     Assert.That(newPair!.Coarse, Is.EqualTo(major));
-                    Assert.That(newPair.Fine, Is.EqualTo(minor + (increment ? +1 : -1)));
+                    Assert.That(newPair.Fine, Is.EqualTo(minor + increment));
                 });
             else
                 Assert.That(newPair, Is.Null);
@@ -179,6 +180,34 @@ namespace BurdenApiTests
                 Assert.That(step.Calibration.Inductive.Fine, Is.EqualTo(94));
 
                 Assert.That((double)step.Values.ApparentPower, Is.EqualTo(50).Within(0.1));
+                Assert.That((double)step.Values.PowerFactor, Is.EqualTo(0.75).Within(0.001));
+
+                Assert.That(Math.Abs(step.Deviation.DeltaPower), Is.LessThan(0.1));
+                Assert.That(Math.Abs(step.Deviation.DeltaFactor), Is.LessThan(0.1));
+            });
+        }
+
+        [Test]
+        public async Task Can_Run_Interval_Calibration_Async()
+        {
+            Hardware.AddCalibration("IEC50", "200", "50;0.75", new(new(64, 32), new(32, 64)));
+
+            await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = "50;0.75", Algorithm = CalibrationAlgorithms.Interval }, CancellationToken.None);
+
+            var step = Calibrator.LastStep;
+
+            Assert.That(step, Is.Not.Null);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(Calibrator.Steps, Has.Length.EqualTo(32));
+
+                Assert.That(step!.Calibration.Resistive.Coarse, Is.EqualTo(53));
+                Assert.That(step.Calibration.Resistive.Fine, Is.EqualTo(59));
+                Assert.That(step.Calibration.Inductive.Coarse, Is.EqualTo(31));
+                Assert.That(step.Calibration.Inductive.Fine, Is.EqualTo(95));
+
+                //[algorithm not yet complete] Assert.That((double)step.Values.ApparentPower, Is.EqualTo(50).Within(0.1));
                 Assert.That((double)step.Values.PowerFactor, Is.EqualTo(0.75).Within(0.001));
 
                 Assert.That(Math.Abs(step.Deviation.DeltaPower), Is.LessThan(0.1));

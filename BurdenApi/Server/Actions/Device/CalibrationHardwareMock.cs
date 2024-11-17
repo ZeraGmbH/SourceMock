@@ -123,12 +123,12 @@ public class CalibrationHardwareMock : ICalibrationHardware
         var requestedResistance = CreateRelative(calibration.Resistive);
         var requestedImpedance = CreateRelative(calibration.Inductive);
 
-        var resistence = (requestedResistance + 0.01d * requestedImpedance) / 1.01d;
+        var resistance = (requestedResistance + 0.01d * requestedImpedance) / 1.01d;
         var impedance = 1 - (requestedImpedance + 0.01d * requestedResistance) / 1.01d;
 
         var targetResistance = CreateRelative(_Target.Resistive);
 
-        return Task.FromResult(new GoalValue(resistence / targetResistance * _CurrentPower.Value, new(impedance)));
+        return Task.FromResult(new GoalValue(resistance / targetResistance * _CurrentPower.Value, new(impedance)));
     }
 
     private static double RelativeLimit => CreateRelative(127, 127);

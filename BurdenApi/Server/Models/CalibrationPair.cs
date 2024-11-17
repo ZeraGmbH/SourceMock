@@ -60,26 +60,30 @@ public class CalibrationPair()
     /// <summary>
     /// Change the coarse calibration.
     /// </summary>
-    /// <param name="increment">Set to increment calibration value.</param>
+    /// <param name="delta">Set to increment calibration value.</param>
     /// <returns>New calibration pair if changes are applied or null if nothing changed.</returns>
-    public CalibrationPair? ChangeCoarse(bool increment)
-        => increment switch
-        {
-            true => Coarse < 127 ? new CalibrationPair((byte)(Coarse + 1), Fine) : null,
-            false => Coarse > 0 ? new CalibrationPair((byte)(Coarse - 1), Fine) : null,
-        };
+    public CalibrationPair? ChangeCoarse(int delta)
+    {
+        var coarse = delta + Coarse;
+
+        if (coarse < 0 || coarse > 127) return null;
+
+        return new CalibrationPair((byte)coarse, Fine);
+    }
 
     /// <summary>
     /// Change the fine calibration.
     /// </summary>
-    /// <param name="increment">Set to increment calibration value.</param>
+    /// <param name="delta">Set to increment calibration value.</param>
     /// <returns>New calibration pair if changes are applied or null if nothing changed.</returns>
-    public CalibrationPair? ChangeFine(bool increment)
-        => increment switch
-        {
-            true => Fine < 127 ? new CalibrationPair(Coarse, (byte)(Fine + 1)) : null,
-            false => Fine > 0 ? new CalibrationPair(Coarse, (byte)(Fine - 1)) : null,
-        };
+    public CalibrationPair? ChangeFine(int delta)
+    {
+        var fine = delta + Fine;
+
+        if (fine < 0 || fine > 127) return null;
+
+        return new CalibrationPair(Coarse, (byte)fine);
+    }
 
     /// <inheritdoc/>
     public override int GetHashCode() => (Coarse.GetHashCode() << 4) ^ Fine.GetHashCode();

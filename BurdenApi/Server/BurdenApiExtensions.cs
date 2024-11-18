@@ -4,6 +4,7 @@ using BurdenApi.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using ZERA.WebSam.Shared;
 
 namespace BurdenApi;
 
@@ -44,5 +45,9 @@ public static class BurdenApiConfiguration
     public static void UseBurdenApi(this SwaggerGenOptions options)
     {
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(BurdenApiConfiguration).Assembly.GetName().Name}.xml"), true);
+
+        SwaggerModelExtender
+            .AddType<CalibrationAlgorithms>()
+            .Register(options);
     }
 }

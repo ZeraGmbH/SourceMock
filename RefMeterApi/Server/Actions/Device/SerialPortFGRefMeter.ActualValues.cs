@@ -38,8 +38,8 @@ partial class SerialPortFGRefMeter
     {
         /* Request raw data from device. */
         var afRequest = SerialPortRequest.Create("AF", new Regex(@"^AF(.+)$"));
-        var aiRequest = SerialPortRequest.Create("AI", new Regex(@"^AIR(.{5})S(.{5})T(.{5})$"));
-        var auRequest = SerialPortRequest.Create("AU", new Regex(@"^AUR(.{5})S(.{5})T(.{5})$"));
+        var aiRequest = SerialPortRequest.Create("AI", new Regex(@"^AIR(.+)S(.+)T(.+)$"));
+        var auRequest = SerialPortRequest.Create("AU", new Regex(@"^AUR(.+)S(.+)T(.+)$"));
         var awRequest = SerialPortRequest.Create("AW", new Regex(@"^AWR(.{5})(.{5})S(.{5})(.{5})T(.{5})(.{5})$"));
         var biRequest = SerialPortRequest.Create("BI", new Regex(@"^BI(.+)$"));
         var buRequest = SerialPortRequest.Create("BU", new Regex(@"^BU(.+)$"));

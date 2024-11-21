@@ -16,7 +16,7 @@ public enum FrequencyMode
     /// <summary>
     /// The frequency is specified by the power supply.
     /// </summary>
-    GRID_SYNCRONOUS = 1,
+    GRID_SYNCHRONOUS = 1,
 
     // <summary>
     // This is a DC-Loadpoint

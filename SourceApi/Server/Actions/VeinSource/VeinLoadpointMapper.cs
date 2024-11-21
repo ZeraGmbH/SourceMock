@@ -73,7 +73,7 @@ namespace SourceApi.Actions.VeinSource
             => mode switch
             {
                 FrequencyMode.SYNTHETIC => "var",
-                FrequencyMode.GRID_SYNCRONOUS => "sync",
+                FrequencyMode.GRID_SYNCHRONOUS => "sync",
                 _ => throw new NotImplementedException($"Unrecognized frequency mode: {mode}"),
             };
 
@@ -81,7 +81,7 @@ namespace SourceApi.Actions.VeinSource
             => type switch
             {
                 "var" => FrequencyMode.SYNTHETIC,
-                "sync" => FrequencyMode.GRID_SYNCRONOUS,
+                "sync" => FrequencyMode.GRID_SYNCHRONOUS,
                 _ => throw new NotImplementedException($"Unrecognized type: {type}"),
             };
     }

@@ -13,7 +13,7 @@ namespace ZIFApi.Controller;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class ZIFController(IZIFDevice[] devices, IInterfaceLogger interfaceLogger) : ControllerBase
+public class ZIFController(IZIFDevice[] devices, IZIFServiceTypeLookup typeLookup, IInterfaceLogger interfaceLogger) : ControllerBase
 {
     /// <summary>
     /// Get the number of configured ZIF sockets. This will include
@@ -114,6 +114,16 @@ public class ZIFController(IZIFDevice[] devices, IInterfaceLogger interfaceLogge
     [HttpPost("{pos?}"), SamAuthorize(WebSamRole.testcaseeditor)]
     [SwaggerOperation(OperationId = "SetMeterFormAndServiceType")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<ActionResult> SetMeterAsync(string meterForm, string serviceType, int pos = 0)
-        => ActionMapper.SafeExecuteAsync(() => devices[pos].SetMeterAsync(meterForm, serviceType, interfaceLogger));
+    public async Task<ActionResult> SetMeterAsync(string meterForm, string? serviceType, int pos = 0)
+    {
+        // May auto-detect service type.
+        if (string.IsNullOrEmpty(serviceType))
+        {
+            var serviceTypes = await typeLookup.GetServiceTypesOfMeterForm(meterForm);
+
+            serviceType = serviceTypes.Single();
+        }
+
+        return await ActionMapper.SafeExecuteAsync(() => devices[pos].SetMeterAsync(meterForm, serviceType, interfaceLogger));
+    }
 }

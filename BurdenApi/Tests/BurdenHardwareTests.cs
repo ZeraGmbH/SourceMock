@@ -53,6 +53,9 @@ public class BurdenHardwareTests
         source.Setup(s => s.SetLoadpointAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<TargetLoadpoint>())).ReturnsAsync(
             (IInterfaceLogger logger, TargetLoadpoint loadpoint) => { lp = loadpoint; return SourceApiErrorCodes.SUCCESS; });
 
+        source.Setup(s => s.GetCapabilitiesAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(
+            new SourceCapabilities { Phases = { new() { AcCurrent = new() { PrecisionStepSize = new(0.0001) }, AcVoltage = new() { PrecisionStepSize = new(0.001) } } } });
+
         services.AddSingleton(source.Object);
 
         var refMeter = new Mock<IRefMeter>();

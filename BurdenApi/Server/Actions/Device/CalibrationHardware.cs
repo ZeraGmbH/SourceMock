@@ -77,6 +77,21 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         // Check the type of burden.
         var burdenInfo = await Burden.GetVersionAsync(logger);
 
+        // Get the capabilities from the source.
+        var caps = await source.GetCapabilitiesAsync(logger);
+
+        // Get the scaling factors and use the best fit value in the allowed precision range.
+        var stepSize = caps.Phases.Count < 1
+            ? null
+            : burdenInfo.IsVoltageNotCurrent
+            ? (double?)caps.Phases[0].AcVoltage?.PrecisionStepSize
+            : (double?)caps.Phases[0].AcCurrent?.PrecisionStepSize;
+
+        var stepFactor = stepSize ?? 0;
+
+        if (stepFactor > 0)
+            rangeValue = stepFactor * Math.Round(rangeValue / stepFactor);
+
         // Create the IEC loadpoint.
         var lp = new TargetLoadpoint
         {

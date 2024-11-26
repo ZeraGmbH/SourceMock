@@ -25,6 +25,8 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connecti
 {
     private static readonly Regex ValueReg = new(@"^(\d{1,3});(.+)$");
 
+    private static readonly Regex ExtraReg = new(@"^(.*)\.0+$");
+
     // Port access helper.
     private readonly ISerialPortConnectionExecutor device = connection?.CreateExecutor(InterfaceLogSourceTypes.Burden)!;
 
@@ -136,9 +138,13 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connecti
         var fullName = $"{burden};{range};{step}";
         var before = await GetCalibrationInfoAsync(burden, range, step, log) ?? throw new ArgumentException($"{fullName} can not be calibrated");
 
+        // Clip extra data
+        var match = ExtraReg.Match(before.Item2);
+        var extra = match.Success ? $"{match.Groups[1].Value}.0" : before.Item2;
+
         // Update
         await device.ExecuteAsync(log, SerialPortRequest.Create(
-            $"SA{fullName};0x{calibration.Resistive.Coarse:x2};0x{calibration.Resistive.Fine:x2};0x{calibration.Inductive.Coarse:x2};0x{calibration.Inductive.Fine:x2};{before.Item2}", "SAACK"))[0];
+            $"SA{fullName};0x{calibration.Resistive.Coarse:x2};0x{calibration.Resistive.Fine:x2};0x{calibration.Inductive.Coarse:x2};0x{calibration.Inductive.Fine:x2};{extra}", "SAACK"))[0];
     }
 
     /// <inheritdoc/>

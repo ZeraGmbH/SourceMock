@@ -1361,7 +1361,7 @@ public class BurdenSerialPortMock : IBurdenSerialPortMock
                 if(_Calibrations.TryGetValue(step, out var calibration)){
                     var existing = Calibration.Parse(calibration);
 
-                    if(existing != null && existing.Item2 == m.Groups[11].Value){
+                    if(existing != null){
                         _Calibrations[step] = $"1;{m.Groups[6].Value};{existing.Item2}";
 
                         _replies.Enqueue("SAACK");

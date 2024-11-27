@@ -98,8 +98,8 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
             Frequency = { Mode = FrequencyMode.SYNTHETIC, Value = frequency },
             Phases = {
                 new() {
-                    Current = new() { On = !burdenInfo.IsVoltageNotCurrent, AcComponent = new() { Rms = new(rangeValue)}  } ,
-                    Voltage = new() { On = burdenInfo.IsVoltageNotCurrent, AcComponent = new() { Rms = new(rangeValue)} }
+                    Current = new() { On = !burdenInfo.IsVoltageNotCurrent, AcComponent = new() { Rms = new(burdenInfo.IsVoltageNotCurrent ? 0 : rangeValue)}  } ,
+                    Voltage = new() { On = burdenInfo.IsVoltageNotCurrent, AcComponent = new() { Rms = new(burdenInfo.IsVoltageNotCurrent ? rangeValue: 0)} }
                 },
                 new() { Current = new() { On = false, AcComponent = new() }, Voltage = new() { On = false, AcComponent = new() } },
                 new() { Current = new() { On = false, AcComponent = new() }, Voltage = new() { On = false, AcComponent = new() } },

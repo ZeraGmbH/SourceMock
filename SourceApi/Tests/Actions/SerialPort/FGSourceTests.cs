@@ -82,6 +82,7 @@ public class FGSourceTests
         Assert.That(result, Is.EqualTo(SourceApiErrorCodes.SUCCESS));
 
         Assert.That(_port.Commands, Is.EqualTo(new string[] {
+            "DS1",
             "FR50.00",
             "UPAER220.000000.00S221.000240.00T222.000120.00",
             current,

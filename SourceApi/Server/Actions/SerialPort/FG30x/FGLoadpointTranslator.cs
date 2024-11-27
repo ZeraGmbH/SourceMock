@@ -17,7 +17,11 @@ public class FGLoadpointTranslator : LoadpointTranslator
     public override SerialPortRequest[] ToSerialPortRequests(TargetLoadpoint loadpoint)
     {
         var DINloadpoint = ConvertFromIECtoDin(loadpoint);
-        var requests = new List<SerialPortRequest>();
+        var requests = new List<SerialPortRequest>
+        {
+            // Switch off DC subtraction
+            SerialPortRequest.Create("DS1", "OKDS")
+        };
 
         CreateFrequencyRequests("FR", "OKFR", DINloadpoint, requests);
 

@@ -33,6 +33,8 @@ public class SerialPortFGMock : ISerialPort
 
     private static readonly Regex twoXCommand = new(@"^2X(.+)$");
 
+    private static readonly Regex ofCommand = new(@"^OF(0|1){8}(\+|-)(.+){3}\.(.+){3}$");
+
     private readonly Queue<QueueEntry> _replies = new();
 
     private DateTime _dosageStart = DateTime.MinValue;
@@ -180,6 +182,12 @@ public class SerialPortFGMock : ISerialPort
             case "HEAAAAAAAAAAAAAAAA":
                 _replies.Enqueue("OKHE");
                 break;
+            case "DS0":
+                _replies.Enqueue("OKDS");
+                break;
+            case "DS1":
+                _replies.Enqueue("OKDS");
+                break;
             default:
                 {
                     Match? match;
@@ -212,6 +220,8 @@ public class SerialPortFGMock : ISerialPort
                         _replies.Enqueue("2OK");
                     else if (twoXCommand.IsMatch(command))
                         _replies.Enqueue("2OK");
+                    else if (ofCommand.IsMatch(command))
+                        _replies.Enqueue("OKOF");
                     /* Set dosage energy. */
                     else if ((match = ThreePs45Command.Match(command)).Success)
                     {

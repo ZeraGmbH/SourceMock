@@ -107,6 +107,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
         await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2S1xx", "2OK"))[0];
         await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2X0000", "2OK"))[0];
         await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2X0200", "2OK"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("OF11111111+000.000", "OKOF"))[0];
     }
 
     /// <summary>

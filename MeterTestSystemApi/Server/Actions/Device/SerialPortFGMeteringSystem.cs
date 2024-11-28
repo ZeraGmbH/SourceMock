@@ -23,7 +23,7 @@ namespace MeterTestSystemApi.Actions.Device;
 /// Implementation of a meter test system implementation using the
 /// serial port protocol against a frequency generator.
 /// </summary>
-public class SerialPortFGMeterTestSystem : IMeterTestSystem
+public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
 {
     /// <summary>
     /// Pattern for error conditions.
@@ -404,5 +404,21 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem
 
         HasDosage = false;
         HasSource = false;
+    }
+
+    /// <inheritdoc/>
+    public async Task<SerialPortReply[]> ExecuteAsync(IEnumerable<SerialPortCommand> requests, IInterfaceLogger logger)
+    {
+        var commands =
+            requests
+                .Select(r =>
+                    r.UseRegularExpression
+                        ? SerialPortRequest.Create(r.Command, new Regex(r.Reply))
+                        : SerialPortRequest.Create(r.Command, r.Reply))
+                .ToArray();
+
+        await Task.WhenAll(_device.ExecuteAsync(logger, commands));
+
+        return [.. commands.Select(SerialPortReply.FromRequest)];
     }
 }

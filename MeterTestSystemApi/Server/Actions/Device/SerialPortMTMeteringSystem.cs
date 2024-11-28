@@ -15,7 +15,7 @@ namespace MeterTestSystemApi.Actions.Device;
 /// <summary>
 /// Representation of a movable meter test system connected through a serial port line.
 /// </summary>
-public class SerialPortMTMeterTestSystem : IMeterTestSystem
+public class SerialPortMTMeterTestSystem : IMeterTestSystem, ISerialPortOwner
 {
     /// <summary>
     /// Detect model name and version number.
@@ -143,5 +143,21 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem
 
         /* Create response structure. */
         return ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, false);
+    }
+
+    /// <inheritdoc/>
+    public async Task<SerialPortReply[]> ExecuteAsync(IEnumerable<SerialPortCommand> requests, IInterfaceLogger logger)
+    {
+        var commands =
+            requests
+                .Select(r =>
+                    r.UseRegularExpression
+                        ? SerialPortRequest.Create(r.Command, new Regex(r.Reply))
+                        : SerialPortRequest.Create(r.Command, r.Reply))
+                .ToArray();
+
+        await Task.WhenAll(_device.ExecuteAsync(logger, commands));
+
+        return [.. commands.Select(SerialPortReply.FromRequest)];
     }
 }

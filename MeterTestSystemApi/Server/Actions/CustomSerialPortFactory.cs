@@ -95,30 +95,19 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
     /// <inheritdoc/>
     public async Task<SerialPortReply[]> ExecuteAsync(string name, IEnumerable<SerialPortCommand> requests, IInterfaceLogger logger)
     {
-        var port = LookupPort(name);
-        var exec = port.CreateExecutor(InterfaceLogSourceTypes.SerialPort, name);
-
         var commands =
             requests
-                .Select(r => r.UseRegularExpression ? SerialPortRequest.Create(r.Command, new Regex(r.Reply)) : SerialPortRequest.Create(r.Command, r.Reply))
+                .Select(r =>
+                    r.UseRegularExpression
+                        ? SerialPortRequest.Create(r.Command, new Regex(r.Reply))
+                        : SerialPortRequest.Create(r.Command, r.Reply))
                 .ToArray();
 
-        await Task.WhenAll(exec.ExecuteAsync(logger, commands));
+        await Task.WhenAll(
+            LookupPort(name)
+                .CreateExecutor(InterfaceLogSourceTypes.SerialPort, name)
+                .ExecuteAsync(logger, commands));
 
-        return
-            commands
-                .Select(c =>
-                {
-                    var reply = new SerialPortReply();
-                    var match = c.EndMatch;
-
-                    if (match == null)
-                        reply.Matches.AddRange(c.Result.Task.Result);
-                    else
-                        reply.Matches.AddRange(match.Groups.Values.Select(g => g.Value));
-
-                    return reply;
-                })
-                .ToArray();
+        return [.. commands.Select(SerialPortReply.FromRequest)];
     }
 }

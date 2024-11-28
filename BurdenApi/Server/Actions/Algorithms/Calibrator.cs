@@ -196,7 +196,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         // Measure at 80% (voltage) or 1% (current).
         var lowerFactor = burdenInfo.IsVoltageNotCurrent ? 0.8 : 0.01;
 
-        await hardware.PrepareAsync(request.Range, lowerFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower);
+        lowerFactor = await hardware.PrepareAsync(request.Range, lowerFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower, false);
 
         var lower = await MeasureAsync(result.Calibration);
         var lowerValues = await MeasureBurdenAsync();
@@ -230,7 +230,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
             }
         }
 
-        await hardware.PrepareAsync(request.Range, upperFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower);
+        upperFactor = await hardware.PrepareAsync(request.Range, upperFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower, false);
 
         var upper = await MeasureAsync(result.Calibration);
         var upperValues = await MeasureBurdenAsync();

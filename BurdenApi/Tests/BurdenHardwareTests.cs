@@ -54,7 +54,13 @@ public class BurdenHardwareTests
             (IInterfaceLogger logger, TargetLoadpoint loadpoint) => { lp = loadpoint; return SourceApiErrorCodes.SUCCESS; });
 
         source.Setup(s => s.GetCapabilitiesAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(
-            new SourceCapabilities { Phases = { new() { AcCurrent = new() { PrecisionStepSize = new(0.0001) }, AcVoltage = new() { PrecisionStepSize = new(0.001) } } } });
+            new SourceCapabilities
+            {
+                Phases = { new() {
+                    AcCurrent = new() { PrecisionStepSize = new(0.0001), Min = new(1), Max = new(120) },
+                    AcVoltage = new() { PrecisionStepSize = new(0.001), Min = new(10), Max = new(250) }
+                } }
+            });
 
         services.AddSingleton(source.Object);
 
@@ -180,6 +186,37 @@ public class BurdenHardwareTests
             Assert.That(lp.Phases[0].Voltage.On, Is.True);
             Assert.That((double?)lp.Phases[0].Voltage.AcComponent?.Rms, Is.EqualTo(expectedVaue).Within(0.001));
         });
+    }
+
+    [TestCase("200", 1, 1)]
+    [TestCase("200/3", 1, 1)]
+    [TestCase("200/v3", 1, 1)]
+    [TestCase("200/3", 0.1, 0.15)]
+    [TestCase("200", 1.5, 1.25)]
+    public async Task Can_Adapt_Voltage_Percentage_Async(string range, double percentage, double expected)
+    {
+        IsVoltage = true;
+
+        for (var adjust = 2; adjust-- > 0;)
+            Assert.That(
+                await Hardware.PrepareAsync(range, percentage, new(50), false, new(5), adjust != 1),
+                Is.EqualTo(adjust == 1 ? expected : percentage).Within(0.001)
+            );
+    }
+
+    [TestCase("200", 1, 0.6)]
+    [TestCase("200/3", 1, 1)]
+    [TestCase("200/v3", 1, 1)]
+    [TestCase("5/3", 0.1, 0.6)]
+    public async Task Can_Adapt_Current_Percentage_Async(string range, double percentage, double expected)
+    {
+        IsVoltage = false;
+
+        for (var adjust = 2; adjust-- > 0;)
+            Assert.That(
+                await Hardware.PrepareAsync(range, percentage, new(50), false, new(5), adjust != 1),
+                Is.EqualTo(adjust == 1 ? expected : percentage).Within(0.001)
+            );
     }
 
     [TestCase("200", 50, 1, 20)]

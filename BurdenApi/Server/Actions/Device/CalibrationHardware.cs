@@ -69,16 +69,32 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
 
 
     /// <inheritdoc/>
-    public async Task PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power)
+    public async Task<double> PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true)
     {
-        // Analyse the range pattern.
-        var rangeValue = percentage * BurdenUtils.ParseRange(range);
-
         // Check the type of burden.
         var burdenInfo = await Burden.GetVersionAsync(logger);
 
         // Get the capabilities from the source.
         var caps = await source.GetCapabilitiesAsync(logger);
+
+        var minRange = burdenInfo.IsVoltageNotCurrent ? (double?)caps.Phases[0].AcVoltage?.Min : (double?)caps.Phases[0].AcCurrent?.Min;
+        var maxRange = burdenInfo.IsVoltageNotCurrent ? (double?)caps.Phases[0].AcVoltage?.Max : (double?)caps.Phases[0].AcCurrent?.Max;
+
+        // Analyse the range pattern.
+        var rawValue = BurdenUtils.ParseRange(range);
+        var rangeValue = percentage * rawValue;
+
+        if (!fixedPercentage && minRange.HasValue && maxRange.HasValue)
+            if (rangeValue < minRange.Value)
+            {
+                rangeValue = minRange.Value;
+                percentage = rangeValue / rawValue;
+            }
+            else if (rangeValue > maxRange.Value)
+            {
+                rangeValue = maxRange.Value;
+                percentage = rangeValue / rawValue;
+            }
 
         // Get the scaling factors and use the best fit value in the allowed precision range.
         var stepSize = caps.Phases.Count < 1
@@ -157,6 +173,9 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
 
         // Configure reference meter.
         await refMeter.SetActualMeasurementModeAsync(logger, MeasurementModes.MqBase);
+
+        // Report new pecentage
+        return percentage;
     }
 
     /// <inheritdoc/>

@@ -138,13 +138,13 @@ public class CalibrationHardwareMock : ICalibrationHardware
     private static double CreateRelative(CalibrationPair pair) => CreateRelative(pair.Coarse, pair.Fine) / RelativeLimit;
 
     /// <inheritdoc/>
-    public Task PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power)
+    public Task<double> PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true)
     {
         // Remember for emulation.
         _CurrentRange = percentage * BurdenUtils.ParseRange(range);
         _CurrentPower = power * percentage * percentage;
 
-        return Task.CompletedTask;
+        return Task.FromResult(percentage);
     }
 
     /// <inheritdoc/>

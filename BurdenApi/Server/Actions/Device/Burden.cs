@@ -21,7 +21,7 @@ public interface IBurdenMock : IBurden
 /// Implementation of the burden communication interface.
 /// </summary>
 /// <param name="connection">Serial port connection to the hardware.</param>
-public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connection) : IBurdenMock
+public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connection) : IBurdenMock, ISerialPortOwner
 {
     private static readonly Regex ValueReg = new(@"^(\d{1,3});(.+)$");
 
@@ -236,5 +236,21 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connecti
         var steps = await device.ExecuteAsync(log, SerialPortRequest.Create($"AN{burden}", "ANACK"))[0];
 
         return [.. steps.Take(steps.Length - 1)];
+    }
+
+    /// <inheritdoc/>
+    public async Task<SerialPortReply[]> ExecuteAsync(IEnumerable<SerialPortCommand> requests, IInterfaceLogger logger)
+    {
+        var commands =
+            requests
+                .Select(r =>
+                    r.UseRegularExpression
+                        ? SerialPortRequest.Create(r.Command, new Regex(r.Reply))
+                        : SerialPortRequest.Create(r.Command, r.Reply))
+                .ToArray();
+
+        await Task.WhenAll(device.ExecuteAsync(logger, commands));
+
+        return [.. commands.Select(SerialPortReply.FromRequest)];
     }
 }

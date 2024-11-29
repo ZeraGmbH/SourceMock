@@ -1,7 +1,6 @@
-using MeterTestSystemApi.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
-namespace MeterTestSystemApi.Actions.Device;
+namespace SerialPortProxy;
 
 /// <summary>
 /// A service which is connected through a serial port.

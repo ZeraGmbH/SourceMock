@@ -121,7 +121,7 @@ public class BurdenHardwareTests
 
         services.AddSingleton(refMeter.Object);
 
-        var burden = new Mock<IBurden>();
+        var burden = new Mock<IBurdenMock>();
 
         burden.Setup(b => b.GetVersionAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(
             (IInterfaceLogger logger) => new BurdenVersion { IsVoltageNotCurrent = IsVoltage });
@@ -129,7 +129,9 @@ public class BurdenHardwareTests
         burden.Setup(b => b.GetCalibrationAsync("IEC60", "190", "3.75;0.80", It.IsAny<IInterfaceLogger>())).ReturnsAsync(
             (string burden, string range, string step, IInterfaceLogger logger) => new(new(0, 0), new(0, 0)));
 
-        services.AddSingleton(burden.Object);
+        burden.SetupGet(b => b.HasMockedSource).Returns(true);
+
+        services.AddSingleton<IBurden>(burden.Object);
 
         Services = services.BuildServiceProvider();
 

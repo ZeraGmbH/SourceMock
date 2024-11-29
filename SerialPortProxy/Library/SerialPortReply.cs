@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using SerialPortProxy;
 
-namespace MeterTestSystemApi.Models;
+namespace SerialPortProxy;
 
 /// <summary>
 /// 

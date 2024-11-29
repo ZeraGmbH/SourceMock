@@ -11,7 +11,7 @@ namespace BurdenApi.Actions.Device;
 /// </summary>
 public class CalibrationHardwareMock : ICalibrationHardware
 {
-    private class BurdenMock : IBurden
+    private class BurdenMock : IBurdenMock
     {
         private readonly Dictionary<string, Calibration?> _calibrations = [];
 
@@ -22,6 +22,8 @@ public class CalibrationHardwareMock : ICalibrationHardware
         }
 
         public bool IsAvailable => throw new NotImplementedException();
+
+        public bool HasMockedSource => true;
 
         public Task CancelCalibrationAsync(IInterfaceLogger interfaceLogger) => Task.CompletedTask;
 

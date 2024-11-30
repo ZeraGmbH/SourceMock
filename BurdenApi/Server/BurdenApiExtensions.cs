@@ -48,6 +48,7 @@ public static class BurdenApiConfiguration
 
         SwaggerModelExtender
             .AddType<CalibrationAlgorithms>()
+            .AddType<CalibrationResult>()
             .Register(options);
     }
 }

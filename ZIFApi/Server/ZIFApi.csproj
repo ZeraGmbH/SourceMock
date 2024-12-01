@@ -6,7 +6,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -14,7 +14,7 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <WarningsAsErrors>1591;1570;1587</WarningsAsErrors>
-    <NoWarn>AD0001</NoWarn>
+    <NoWarn>AD0001;NU1902;NU1903;NU1904</NoWarn>
   </PropertyGroup>
 
 </Project>

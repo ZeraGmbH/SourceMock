@@ -163,6 +163,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
                 ReferenceMeters.COM3003x1x2,
                 ReferenceMeters.COM5003x0x1,
                 ReferenceMeters.COM5003x1,
+                ReferenceMeters.EPZ103,
                 ReferenceMeters.EPZ303x1,
                 ReferenceMeters.EPZ303x10,
                 ReferenceMeters.EPZ303x10x1,

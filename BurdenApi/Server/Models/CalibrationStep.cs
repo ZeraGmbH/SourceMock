@@ -80,12 +80,6 @@ public class CalibrationStep
     public double TotalAbsDelta { get; private set; }
 
     /// <summary>
-    /// Get a hashcode from the calibration data.
-    /// </summary>
-    /// <returns>Some hash code.</returns>
-    public override int GetHashCode() => Calibration?.GetHashCode() ?? 0;
-
-    /// <summary>
     /// Create a description for this step.
     /// </summary>
     public override string ToString() => $"{Calibration}: {Values} ({Deviation})";

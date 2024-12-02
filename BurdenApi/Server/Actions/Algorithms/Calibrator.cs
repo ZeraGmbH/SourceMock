@@ -47,7 +47,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
 
     private ICalibrationAlgorithm _Algorithm = null!;
 
-    private readonly HashSet<CalibrationStep> _CycleTester = [];
+    private readonly HashSet<Calibration> _CycleTester = [];
 
     /// <inheritdoc/>
     public async Task RunAsync(CalibrationRequest request, CancellationToken cancel)
@@ -141,7 +141,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
             if (step == null) break;
 
             // Already did this one?
-            if (!_CycleTester.Add(step))
+            if (!_CycleTester.Add(step.Calibration))
             {
                 // Already fixed anything - must abort now.
                 if (!_Algorithm.ContinueAfterCycleDetection()) break;

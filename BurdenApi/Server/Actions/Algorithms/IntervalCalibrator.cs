@@ -58,13 +58,14 @@ public class IntervalCalibrator : ICalibrationAlgorithm
                 var delta = alreadyDone ? 1 : partDeviation >= 0 ? -_Width : +_Width;
                 var appliedDelta = ResistancePhase ? +delta : -delta;
 
-                if (!alreadyDone || (GetActiveCalibration(context) == 1 && appliedDelta == -1))
-                {
-                    // If measure value is larger than expected value step back a bit.
-                    var nextStep = await IntervalStep(context, appliedDelta);
+                if (delta != 0)
+                    if (!alreadyDone || (GetActiveCalibration(context) == 1 && appliedDelta == -1))
+                    {
+                        // If measure value is larger than expected value step back a bit.
+                        var nextStep = await IntervalStep(context, appliedDelta);
 
-                    if (nextStep != null) return nextStep;
-                }
+                        if (nextStep != null) return nextStep;
+                    }
             }
 
             // Reset interval.

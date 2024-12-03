@@ -212,7 +212,6 @@ public partial class ACRefMeterMock(IServiceProvider di) : RefMeterMock
     private static void CalculateDeviations(MeasuredLoadpoint mo)
     {
         MeasureOutputNullCheck(mo);
-
         mo.Frequency = GetRandomNumberWithDeviation(mo.Frequency!.Value, 0.02);
         mo.ActivePower = GetRandomNumberWithDeviation(mo.ActivePower!.Value, (ActivePower)new(0.02));
         mo.ApparentPower = GetRandomNumberWithDeviation(mo.ApparentPower!.Value, (ApparentPower)new(0.02));

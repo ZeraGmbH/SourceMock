@@ -31,6 +31,8 @@ public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities 
     /// <inheritdoc/>
     public Task<SourceApiErrorCodes> SetLoadpointAsync(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
+        CorrectFrequencyValue(loadpoint);
+        
         var isValid = _validator.IsValid(loadpoint, _sourceCapabilities);
 
         if (isValid == SourceApiErrorCodes.SUCCESS)
@@ -146,5 +148,12 @@ public abstract class SourceMock(ILogger<SourceMock> logger, SourceCapabilities 
 
     /// <inheritdoc/>
     public virtual Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger) => throw new NotImplementedException();
+
+    private static void CorrectFrequencyValue(TargetLoadpoint loadPoint){
+        if(loadPoint.Frequency.Mode == FrequencyMode.GRID_SYNCHRONOUS)
+            loadPoint.Frequency.Value = new Frequency(50);
+        else if(loadPoint.Frequency.Mode == FrequencyMode.DIRECT_CURRENT)
+            loadPoint.Frequency.Value = new Frequency(50/3);
+    }
 }
 

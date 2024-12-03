@@ -30,6 +30,8 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
         /* Only set the frequency if syncthetic mode is requested - else use 00.00. */
         if (frequency.Mode == FrequencyMode.SYNTHETIC)
             request.Append(frequency.Value.Format("00.00", withUnit: false));
+        else if (frequency.Mode == FrequencyMode.DIRECT_CURRENT)
+            request.Append("00.16");
         else
             request.Append("00.00");
 

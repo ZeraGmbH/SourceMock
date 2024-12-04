@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using NUnit.Compatibility;
 using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace BurdenApi.Models;
@@ -33,9 +34,15 @@ public class GoalValue(ApparentPower power, PowerFactor factor)
     /// <param name="expected">Expected value.</param>
     /// <returns>Relative deviation.</returns>
     public static GoalDeviation operator /(GoalValue actual, GoalValue expected)
-        => new(
-            (actual.ApparentPower - expected.ApparentPower) / expected.ApparentPower,
-            (actual.PowerFactor - expected.PowerFactor) / expected.PowerFactor);
+    {
+        var deltaPower = (actual.ApparentPower - expected.ApparentPower) / expected.ApparentPower;
+        var deltaFactor = (actual.PowerFactor - expected.PowerFactor) / expected.PowerFactor;
+
+        var actualAngle = Math.Acos((double)actual.PowerFactor);
+        var expectedAngle = Math.Acos((double)expected.PowerFactor);
+
+        return new(deltaPower, deltaFactor, 100d * (actualAngle - expectedAngle));
+    }
 
     /// <inheritdoc/>
     public override string ToString() => $"{ApparentPower}/{PowerFactor}";

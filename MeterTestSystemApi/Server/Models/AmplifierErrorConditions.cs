@@ -76,4 +76,21 @@ public class AmplifierErrorConditions
        ShortOrOpen ||
        Temperature ||
        UndefinedError;
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        var all = new List<string>();
+
+        if (ConnectionMissing) all.Add("ConnectionMissing");
+        if (DataTransmission) all.Add("DataTransmission");
+        if (GroupError) all.Add("GroupError");
+        if (Overload) all.Add("Overload");
+        if (PowerSupply) all.Add("PowerSupply");
+        if (ShortOrOpen) all.Add("ShortOrOpen");
+        if (Temperature) all.Add("Temperature");
+        if (UndefinedError) all.Add("UndefinedError");
+
+        return all.Count > 0 ? string.Join("|", all) : HasError ? "error" : "ok";
+    }
 }

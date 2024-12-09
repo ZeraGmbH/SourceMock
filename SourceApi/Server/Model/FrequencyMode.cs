@@ -14,12 +14,12 @@ public enum FrequencyMode
     SYNTHETIC = 0,
 
     /// <summary>
-    /// The frequency is specified by the power supply.
+    /// The frequency is specified by the power supply, e.g. 50Hz.
     /// </summary>
     GRID_SYNCHRONOUS = 1,
 
     // <summary>
-    // This is a DC-Loadpoint
+    // One third of frequency is specified by the power supply, e.g. 16 2/3Hz.
     // </summary>
-    DIRECT_CURRENT = 2
+    THIRD_OF_GRID_SYNCHRONOUS = 2
 }

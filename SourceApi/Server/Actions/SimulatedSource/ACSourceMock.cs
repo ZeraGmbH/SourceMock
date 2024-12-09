@@ -33,10 +33,10 @@ public class ACSourceMock(ILogger<ACSourceMock> logger, SourceCapabilities sourc
             new() { AcVoltage = new(new(10), new(300), new(0.01)), AcCurrent = new(new(0), new(60), new(0.01)) }
         ],
         FrequencyRanges = [
-                new(new(40), new(60), new(0.1), FrequencyMode.SYNTHETIC), 
-                new(new(15), new(20), new(0.1), FrequencyMode.SYNTHETIC), 
-                new(new(0), new(0), new(0), FrequencyMode.DIRECT_CURRENT), 
-                new(new(0), new(0), new(1), FrequencyMode.GRID_SYNCHRONOUS)
+                new(new(40), new(60), new(0.1), FrequencyMode.SYNTHETIC),
+                new(new(15), new(20), new(0.1), FrequencyMode.SYNTHETIC),
+                new(new(0), new(0), new(1), FrequencyMode.GRID_SYNCHRONOUS),
+                new(new(0), new(0), new(0), FrequencyMode.THIRD_OF_GRID_SYNCHRONOUS),
             ]
     }, validator)
     { }

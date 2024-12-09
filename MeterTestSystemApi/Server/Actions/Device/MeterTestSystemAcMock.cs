@@ -66,7 +66,10 @@ public class MeterTestSystemAcMock(IACSourceMock source, IMockRefMeter refMeter,
     /// <inheritdoc/>
     public Task<ErrorConditions> GetErrorConditionsAsync(IInterfaceLogger logger)
     {
-        var errors = new ErrorConditions { HasFuseError = DateTime.Now.Minute % 2 == 0 };
+        var errors = new ErrorConditions();
+
+        errors.Amplifiers[Amplifiers.Current2].Overload = DateTime.Now.Minute % 2 == 0;
+        errors.HasFuseError = DateTime.Now.Minute % 3 == 0;
 
         ErrorConditionsChanged?.Invoke(errors);
 

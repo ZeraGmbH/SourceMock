@@ -158,13 +158,17 @@ public class CapabilitiesMap : ICapabilitiesMap
         if (current.FrequencyRanges[0].Mode != voltage.FrequencyRanges[0].Mode)
             throw new InvalidOperationException("data mismatch - expected same frequency mode");
 
-        capabilties.FrequencyRanges = [new()
-        {
-            Max = current.FrequencyRanges[0].Max.Smallest(voltage.FrequencyRanges[0].Max),
-            Min = current.FrequencyRanges[0].Min.Largest(voltage.FrequencyRanges[0].Min),
-            Mode = current.FrequencyRanges[0].Mode,
-            PrecisionStepSize = current.FrequencyRanges[0].PrecisionStepSize.Largest(voltage.FrequencyRanges[0].PrecisionStepSize),
-        }];
+        capabilties.FrequencyRanges = [
+            new()
+            {
+                Max = current.FrequencyRanges[0].Max.Smallest(voltage.FrequencyRanges[0].Max),
+                Min = current.FrequencyRanges[0].Min.Largest(voltage.FrequencyRanges[0].Min),
+                Mode = current.FrequencyRanges[0].Mode,
+                PrecisionStepSize = current.FrequencyRanges[0].PrecisionStepSize.Largest(voltage.FrequencyRanges[0].PrecisionStepSize),
+            },
+            new() { Mode = FrequencyMode.GRID_SYNCHRONOUS },
+            new() { Mode = FrequencyMode.THIRD_OF_GRID_SYNCHRONOUS }
+        ];
 
         return capabilties;
     }
@@ -188,7 +192,7 @@ public class CapabilitiesMap : ICapabilitiesMap
         if (!CurrentByAmplifier.TryGetValue(modelName, out var currentInfo))
             throw new ArgumentException($"unknown current amplifier {modelName}", nameof(modelName));
 
-        return currentInfo.Item2.Order().ToArray();
+        return [.. currentInfo.Item2.Order()];
     }
 
     private static readonly Dictionary<string, Tuple<SourceCapabilities, Voltage[]>> VoltageByAmplifier = new() {

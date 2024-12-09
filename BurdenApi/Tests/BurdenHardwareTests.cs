@@ -399,4 +399,72 @@ public class BurdenHardwareTests
 
         Assert.That((double)values.PowerFactor, Is.EqualTo(0.8));
     }
+
+    [Test]
+    public async Task Problem_With_Current_Burden_Async()
+    {
+        var source = new Mock<ISource>();
+
+        var capabilities = new SourceCapabilities
+        {
+            Phases = [
+                    new() {
+                        AcVoltage = new() { Min = new(30), Max = new(480), PrecisionStepSize = new(0.001) },
+                        AcCurrent = new() { Min = new(0.0005), Max = new(160), PrecisionStepSize = new(0.0001), },
+                        DcVoltage = null,
+                        DcCurrent = null
+                    },
+                    new() {
+                        AcVoltage = new() { Min = new(30), Max = new(480), PrecisionStepSize = new(0.001) },
+                        AcCurrent = new() { Min = new(0.0005), Max = new(160), PrecisionStepSize = new(0.0001), },
+                        DcVoltage = null,
+                        DcCurrent = null
+                    },
+                    new() {
+                        AcVoltage = new() { Min = new(30), Max = new(480), PrecisionStepSize = new(0.001) },
+                        AcCurrent = new() { Min = new(0.0005), Max = new(160), PrecisionStepSize = new(0.0001), },
+                        DcVoltage = null,
+                        DcCurrent = null
+                    },
+                ],
+            FrequencyRanges = [
+                    new() { Mode = FrequencyMode.SYNTHETIC, Min = new(40), Max = new(70), PrecisionStepSize = new(0.01) }
+                ]
+        };
+
+        source
+            .Setup(s => s.GetCapabilitiesAsync(It.IsAny<IInterfaceLogger>()))
+            .ReturnsAsync(capabilities);
+
+        source
+            .Setup(s => s.SetLoadpointAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<TargetLoadpoint>()))
+            .ReturnsAsync((IInterfaceLogger logger, TargetLoadpoint loadpoint) =>
+            {
+                var validator = new SourceCapabilityValidator();
+
+                Assert.That(validator.IsValid(loadpoint, capabilities), Is.EqualTo(SourceApiErrorCodes.SUCCESS));
+
+                return SourceApiErrorCodes.SUCCESS;
+            });
+
+        var refMeter = new Mock<IRefMeter>();
+
+        var burden = new Mock<IBurden>();
+
+        burden
+            .Setup(b => b.GetVersionAsync(It.IsAny<IInterfaceLogger>()))
+            .ReturnsAsync(new BurdenVersion { IsVoltageNotCurrent = false });
+
+        var hardware = new CalibrationHardware(source.Object, refMeter.Object, burden.Object, new NoopInterfaceLogger());
+
+        var factor = await hardware.PrepareAsync(
+            "5",
+            0.1,
+            new(50),
+            false,
+            new(0.01)
+        );
+
+        Assert.That(factor, Is.EqualTo(0.1));
+    }
 }

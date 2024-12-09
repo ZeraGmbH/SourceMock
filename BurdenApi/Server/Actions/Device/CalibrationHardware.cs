@@ -125,7 +125,7 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         // Set the loadpioint.
         var status = await source.SetLoadpointAsync(logger, lp);
 
-        if (status != SourceApiErrorCodes.SUCCESS) throw new InvalidOperationException("bad loadpoint");
+        if (status != SourceApiErrorCodes.SUCCESS) throw new InvalidOperationException($"bad loadpoint: {status}");
 
         // Check for simulation mode to speed up tests.
         var isMock = Burden is IBurdenMock mockedBurden && mockedBurden.HasMockedSource;

@@ -462,7 +462,7 @@ public class BurdenHardwareTests
             0.1,
             new(50),
             false,
-            new(0.01)
+            new(1)
         );
 
         Assert.That(factor, Is.EqualTo(0.1));

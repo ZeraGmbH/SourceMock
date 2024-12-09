@@ -51,7 +51,10 @@ namespace SourceApi.Actions.Source
                 {
                     if (capabilities.Phases[i].AcCurrent == null)
                         return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_AC;
-                    return CheckAcCurrents(loadpoint, capabilities, i, acCurrent);
+
+                    var acResult = CheckAcCurrents(loadpoint, capabilities, i, acCurrent);
+
+                    if (acResult != SourceApiErrorCodes.SUCCESS) return acResult;
                 }
 
                 var dcCurrent = loadpoint.Phases[i].Current.DcComponent;
@@ -60,7 +63,10 @@ namespace SourceApi.Actions.Source
                 {
                     if (capabilities.Phases[i].DcCurrent == null)
                         return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_DC;
-                    return CheckDcCurrents(capabilities, i, dcCurrent.Value);
+
+                    var dcResult = CheckDcCurrents(capabilities, i, dcCurrent.Value);
+
+                    if (dcResult != SourceApiErrorCodes.SUCCESS) return dcResult;
                 }
             }
 
@@ -110,7 +116,10 @@ namespace SourceApi.Actions.Source
                 {
                     if (capabilities.Phases[i].AcVoltage == null)
                         return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_AC;
-                    return CheckAcVoltage(capabilities, i, acVoltage);
+
+                    var acResult = CheckAcVoltage(capabilities, i, acVoltage);
+
+                    if (acResult != SourceApiErrorCodes.SUCCESS) return acResult;
                 }
 
                 var dcVoltage = loadpoint.Phases[i].Voltage.DcComponent;
@@ -119,7 +128,10 @@ namespace SourceApi.Actions.Source
                 {
                     if (capabilities.Phases[i].DcVoltage == null)
                         return SourceApiErrorCodes.SOURCE_NOT_COMPATIBLE_TO_AC;
-                    return CheckDcVoltage(capabilities, i, dcVoltage.Value);
+
+                    var dcResult = CheckDcVoltage(capabilities, i, dcVoltage.Value);
+
+                    if (dcResult != SourceApiErrorCodes.SUCCESS) return dcResult;
                 }
             }
 

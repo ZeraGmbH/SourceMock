@@ -16,10 +16,5 @@ public enum CalibrationAlgorithms
     /// <summary>
     /// Adjust one calibration at a time.
     /// </summary>
-    SingleStep = 1,
-
-    /// <summary>
-    /// Do a interval reduction on all four calibration values.
-    /// </summary>
-    Interval = 2
+    SingleStep = 1
 }

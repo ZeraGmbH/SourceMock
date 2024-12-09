@@ -16,6 +16,11 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
     private const double CurrentBurdenVoltageLimit = 89d;
 
     /// <summary>
+    /// Currents are measured in 1% of the range value.
+    /// </summary>
+    private const double CurrentBaseFactor = 0.1;
+
+    /// <summary>
     /// Allowed factors when measuring the upper limits for currents.
     /// </summary>
     private static readonly List<double> _SupportedCurrentFactors = [0.01, 0.05, 0.1, 0.2, 0.5, 1, 1.5, 2];
@@ -85,7 +90,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
             };
 
         // Correct the goal for current burden.
-        var factor = voltageNotCurrent ? 1 : 0.1;
+        var factor = voltageNotCurrent ? 1 : CurrentBaseFactor;
 
         EffectiveGoal = MakeEffectiveGoal(factor);
 
@@ -190,13 +195,14 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         await hardware.Burden.SetPermanentCalibrationAsync(request.Burden, request.Range, request.Step, result.Calibration, logger);
 
         // Measure at 80% (voltage) or 1% (current).
+        var goalCorrection = voltageNotCurrent ? 1 : CurrentBaseFactor;
         var lowerFactor = voltageNotCurrent ? 0.8 : 0.01;
 
         lowerFactor = await hardware.PrepareAsync(voltageNotCurrent, request.Range, lowerFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower, false);
 
         var lower = await MeasureAsync(result.Calibration);
         var lowerValues = await MeasureBurdenAsync();
-        var lowerGoal = MakeEffectiveGoal(lowerFactor);
+        var lowerGoal = MakeEffectiveGoal(lowerFactor / CurrentBaseFactor);
         var lowerDeviation = lower / lowerGoal;
 
         // Measure at 120% (voltage) or 200% (current, voltage limited to 89V).
@@ -231,7 +237,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
 
         var upper = await MeasureAsync(result.Calibration);
         var upperValues = await MeasureBurdenAsync();
-        var upperGoal = MakeEffectiveGoal(upperFactor);
+        var upperGoal = MakeEffectiveGoal(upperFactor / CurrentBaseFactor);
         var upperDeviation = upper / upperGoal;
 
         // Construct result.

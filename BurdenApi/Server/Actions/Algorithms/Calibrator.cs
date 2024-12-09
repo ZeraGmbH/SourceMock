@@ -50,7 +50,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
     private readonly HashSet<Calibration> _CycleTester = [];
 
     /// <inheritdoc/>
-    public async Task RunAsync(CalibrationRequest request, CancellationToken cancel)
+    public async Task RunAsync(bool voltageNotCurrent, CalibrationRequest request, CancellationToken cancel)
     {
         // Caluclate the goal from the step.
         var parts = request.Step.Split(";");
@@ -85,8 +85,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
             };
 
         // Correct the goal for current burden.
-        var burdenInfo = await burden.GetVersionAsync(logger);
-        var factor = burdenInfo.IsVoltageNotCurrent ? 1 : 0.1;
+        var factor = voltageNotCurrent ? 1 : 0.1;
 
         EffectiveGoal = MakeEffectiveGoal(factor);
 
@@ -105,7 +104,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         await burden.SetActiveAsync(false, logger);
 
         // Prepare the loadpoint for this step.
-        await hardware.PrepareAsync(request.Range, factor, _Frequency, request.ChooseBestRange, Goal.ApparentPower);
+        await hardware.PrepareAsync(voltageNotCurrent, request.Range, factor, _Frequency, request.ChooseBestRange, Goal.ApparentPower);
 
         // Switch burden on.
         await burden.SetBurdenAsync(request.Burden, logger);
@@ -177,10 +176,10 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         };
 
     /// <inheritdoc/>
-    public async Task<CalibrationStep[]> CalibrateStepAsync(CalibrationRequest request, CancellationToken cancel)
+    public async Task<CalibrationStep[]> CalibrateStepAsync(bool voltageNotCurrent, CalibrationRequest request, CancellationToken cancel)
     {
         // Single measurement.
-        await RunAsync(request, cancel);
+        await RunAsync(voltageNotCurrent, request, cancel);
 
         // See if it worked.
         var result = LastStep;
@@ -190,13 +189,10 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         // Write to burden.
         await hardware.Burden.SetPermanentCalibrationAsync(request.Burden, request.Range, request.Step, result.Calibration, logger);
 
-        // Check mode.
-        var burdenInfo = await hardware.Burden.GetVersionAsync(logger);
-
         // Measure at 80% (voltage) or 1% (current).
-        var lowerFactor = burdenInfo.IsVoltageNotCurrent ? 0.8 : 0.01;
+        var lowerFactor = voltageNotCurrent ? 0.8 : 0.01;
 
-        lowerFactor = await hardware.PrepareAsync(request.Range, lowerFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower, false);
+        lowerFactor = await hardware.PrepareAsync(voltageNotCurrent, request.Range, lowerFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower, false);
 
         var lower = await MeasureAsync(result.Calibration);
         var lowerValues = await MeasureBurdenAsync();
@@ -204,10 +200,10 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         var lowerDeviation = lower / lowerGoal;
 
         // Measure at 120% (voltage) or 200% (current, voltage limited to 89V).
-        var upperFactor = burdenInfo.IsVoltageNotCurrent ? 1.2 : 2;
+        var upperFactor = voltageNotCurrent ? 1.2 : 2;
 
         // Check for voltage limit.
-        if (!burdenInfo.IsVoltageNotCurrent)
+        if (!voltageNotCurrent)
         {
             // Nominal current range to use, e.g. 0.5A.
             var range = BurdenUtils.ParseRange(request.Range);
@@ -231,7 +227,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
             }
         }
 
-        upperFactor = await hardware.PrepareAsync(request.Range, upperFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower, false);
+        upperFactor = await hardware.PrepareAsync(voltageNotCurrent, request.Range, upperFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower, false);
 
         var upper = await MeasureAsync(result.Calibration);
         var upperValues = await MeasureBurdenAsync();

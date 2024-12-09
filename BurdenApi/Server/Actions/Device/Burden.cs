@@ -113,9 +113,7 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connecti
         if (version.Length < 3) throw new InvalidOperationException($"too few response lines");
 
         // Create reply.
-        var typeAndVersion = version[^3];
-
-        return new() { Version = typeAndVersion, Supplement = version[^2], IsVoltageNotCurrent = typeAndVersion[2] == 'V' };
+        return new() { Version = version[^3], Supplement = version[^2] };
     }
 
     /// <inheritdoc/>

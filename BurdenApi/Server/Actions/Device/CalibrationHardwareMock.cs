@@ -41,7 +41,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
 
         public Task<string[]> GetStepsAsync(string burden, IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
-        public Task<BurdenVersion> GetVersionAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(new BurdenVersion { IsVoltageNotCurrent = true });
+        public Task<BurdenVersion> GetVersionAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(new BurdenVersion());
 
         public Task<BurdenValues> MeasureAsync(IInterfaceLogger interfaceLogger) => throw new NotImplementedException();
 
@@ -140,7 +140,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
     private static double CreateRelative(CalibrationPair pair) => CreateRelative(pair.Coarse, pair.Fine) / RelativeLimit;
 
     /// <inheritdoc/>
-    public Task<double> PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true)
+    public Task<double> PrepareAsync(bool voltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true)
     {
         // Remember for emulation.
         _CurrentRange = percentage * BurdenUtils.ParseRange(range);

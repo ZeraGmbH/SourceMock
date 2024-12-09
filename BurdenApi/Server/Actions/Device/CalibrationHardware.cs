@@ -69,16 +69,13 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
 
 
     /// <inheritdoc/>
-    public async Task<double> PrepareAsync(string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true)
+    public async Task<double> PrepareAsync(bool voltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true)
     {
-        // Check the type of burden.
-        var burdenInfo = await Burden.GetVersionAsync(logger);
-
         // Get the capabilities from the source.
         var caps = await source.GetCapabilitiesAsync(logger);
 
-        var minRange = burdenInfo.IsVoltageNotCurrent ? (double?)caps.Phases[0].AcVoltage?.Min : (double?)caps.Phases[0].AcCurrent?.Min;
-        var maxRange = burdenInfo.IsVoltageNotCurrent ? (double?)caps.Phases[0].AcVoltage?.Max : (double?)caps.Phases[0].AcCurrent?.Max;
+        var minRange = voltageNotCurrent ? (double?)caps.Phases[0].AcVoltage?.Min : (double?)caps.Phases[0].AcCurrent?.Min;
+        var maxRange = voltageNotCurrent ? (double?)caps.Phases[0].AcVoltage?.Max : (double?)caps.Phases[0].AcCurrent?.Max;
 
         // Analyse the range pattern.
         var rawValue = BurdenUtils.ParseRange(range);
@@ -99,7 +96,7 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         // Get the scaling factors and use the best fit value in the allowed precision range.
         var stepSize = caps.Phases.Count < 1
             ? null
-            : burdenInfo.IsVoltageNotCurrent
+            : voltageNotCurrent
             ? (double?)caps.Phases[0].AcVoltage?.PrecisionStepSize
             : (double?)caps.Phases[0].AcCurrent?.PrecisionStepSize;
 
@@ -114,8 +111,8 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
             Frequency = { Mode = FrequencyMode.SYNTHETIC, Value = frequency },
             Phases = {
                 new() {
-                    Current = new() { On = !burdenInfo.IsVoltageNotCurrent, AcComponent = new() { Rms = new(burdenInfo.IsVoltageNotCurrent ? 0 : rangeValue)}  } ,
-                    Voltage = new() { On = burdenInfo.IsVoltageNotCurrent, AcComponent = new() { Rms = new(burdenInfo.IsVoltageNotCurrent ? rangeValue: 0)} }
+                    Current = new() { On = !voltageNotCurrent, AcComponent = new() { Rms = new(voltageNotCurrent ? 0 : rangeValue)}  } ,
+                    Voltage = new() { On = voltageNotCurrent, AcComponent = new() { Rms = new(voltageNotCurrent ? rangeValue: 0)} }
                 },
                 new() { Current = new() { On = false, AcComponent = new() }, Voltage = new() { On = false, AcComponent = new() } },
                 new() { Current = new() { On = false, AcComponent = new() }, Voltage = new() { On = false, AcComponent = new() } },
@@ -151,8 +148,8 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
 
             // Calculate the current from the apparent power and the voltage.
             var otherRange = (double)(power * percentage * percentage) / rangeValue;
-            var voltageRange = burdenInfo.IsVoltageNotCurrent ? rangeValue : otherRange;
-            var currentRange = burdenInfo.IsVoltageNotCurrent ? otherRange : rangeValue;
+            var voltageRange = voltageNotCurrent ? rangeValue : otherRange;
+            var currentRange = voltageNotCurrent ? otherRange : rangeValue;
 
             // Find the first bigger ones.
             var currentIndex = Array.FindIndex(currentRanges, r => (double)r >= currentRange);
@@ -175,7 +172,7 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         }
 
         // Choose the PLL channel - put in manual mode before.
-        await refMeter.SelectPllChannelAsync(logger, burdenInfo.IsVoltageNotCurrent ? PllChannel.U1 : PllChannel.I1);
+        await refMeter.SelectPllChannelAsync(logger, voltageNotCurrent ? PllChannel.U1 : PllChannel.I1);
 
         // Configure reference meter.
         await refMeter.SetActualMeasurementModeAsync(logger, MeasurementModes.MqBase);

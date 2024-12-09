@@ -33,8 +33,6 @@ public class BurdenHardwareTests
 
     protected MeasurementModes? MeasurementMode;
 
-    protected bool IsVoltage;
-
     [SetUp]
     public void Setup()
     {
@@ -123,9 +121,6 @@ public class BurdenHardwareTests
 
         var burden = new Mock<IBurdenMock>();
 
-        burden.Setup(b => b.GetVersionAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(
-            (IInterfaceLogger logger) => new BurdenVersion { IsVoltageNotCurrent = IsVoltage });
-
         burden.Setup(b => b.GetCalibrationAsync("IEC60", "190", "3.75;0.80", It.IsAny<IInterfaceLogger>())).ReturnsAsync(
             (string burden, string range, string step, IInterfaceLogger logger) => new(new(0, 0), new(0, 0)));
 
@@ -152,9 +147,7 @@ public class BurdenHardwareTests
     [TestCase("200", 50, 0.5, 200)]
     public async Task Can_Set_Voltage_Loadpoint_Async(string range, double frequency, double powerFactor, double expectedVaue)
     {
-        IsVoltage = true;
-
-        await Hardware.PrepareAsync(range, 1, new(frequency), false, new(5));
+        await Hardware.PrepareAsync(true, range, 1, new(frequency), false, new(5));
 
         var lp = await Services.GetRequiredService<ISource>().GetCurrentLoadpointAsync(Logger);
 
@@ -197,11 +190,9 @@ public class BurdenHardwareTests
     [TestCase("200", 1.5, 1.25)]
     public async Task Can_Adapt_Voltage_Percentage_Async(string range, double percentage, double expected)
     {
-        IsVoltage = true;
-
         for (var adjust = 2; adjust-- > 0;)
             Assert.That(
-                await Hardware.PrepareAsync(range, percentage, new(50), false, new(5), adjust != 1),
+                await Hardware.PrepareAsync(true, range, percentage, new(50), false, new(5), adjust != 1),
                 Is.EqualTo(adjust == 1 ? expected : percentage).Within(0.001)
             );
     }
@@ -212,11 +203,9 @@ public class BurdenHardwareTests
     [TestCase("5/3", 0.1, 0.6)]
     public async Task Can_Adapt_Current_Percentage_Async(string range, double percentage, double expected)
     {
-        IsVoltage = false;
-
         for (var adjust = 2; adjust-- > 0;)
             Assert.That(
-                await Hardware.PrepareAsync(range, percentage, new(50), false, new(5), adjust != 1),
+                await Hardware.PrepareAsync(false, range, percentage, new(50), false, new(5), adjust != 1),
                 Is.EqualTo(adjust == 1 ? expected : percentage).Within(0.001)
             );
     }
@@ -227,9 +216,7 @@ public class BurdenHardwareTests
     [TestCase("200", 50, 0.5, 20)]
     public async Task Can_Set_Current_Loadpoint_Async(string range, double frequency, double powerFactor, double expectedVaue)
     {
-        IsVoltage = false;
-
-        await Hardware.PrepareAsync(range, 0.1, new(frequency), false, new(5));
+        await Hardware.PrepareAsync(false, range, 0.1, new(frequency), false, new(5));
 
         var lp = await Services.GetRequiredService<ISource>().GetCurrentLoadpointAsync(Logger);
 
@@ -274,9 +261,7 @@ public class BurdenHardwareTests
     [TestCase("0", 0.5, 500)]
     public async Task Can_Calculate_Voltage_Range_Async(string range, double expectedVoltageRange, double expectedCurrentRange)
     {
-        IsVoltage = true;
-
-        await Hardware.PrepareAsync(range, 1, new(50), true, new(5));
+        await Hardware.PrepareAsync(true, range, 1, new(50), true, new(5));
 
         Assert.Multiple(() =>
         {
@@ -300,9 +285,7 @@ public class BurdenHardwareTests
     [TestCase("0.00001", 500, 0.5)]
     public async Task Can_Calculate_Current_Range_Async(string range, double expectedVoltageRange, double expectedCurrentRange)
     {
-        IsVoltage = false;
-
-        await Hardware.PrepareAsync(range, 0.1, new(50), true, new(5));
+        await Hardware.PrepareAsync(false, range, 0.1, new(50), true, new(5));
 
         Assert.Multiple(() =>
         {
@@ -319,9 +302,7 @@ public class BurdenHardwareTests
     [TestCase("200/")]
     public void Can_Not_Set_Loadpoint_Async(string range)
     {
-        IsVoltage = true;
-
-        Assert.ThrowsAsync<ArgumentException>(() => Hardware.PrepareAsync(range, 1, new(50), false, new(5)));
+        Assert.ThrowsAsync<ArgumentException>(() => Hardware.PrepareAsync(true, range, 1, new(50), false, new(5)));
     }
 
     [TestCase(1, 110, 250)]
@@ -329,9 +310,7 @@ public class BurdenHardwareTests
     [TestCase(0.8, 88, 100)]
     public async Task Can_Set_Relative_Voltage_Loadpoint_Async(double percentage, double expectedVaue, double expectedRange)
     {
-        IsVoltage = true;
-
-        await Hardware.PrepareAsync("110", percentage, new(50), true, new(5));
+        await Hardware.PrepareAsync(true, "110", percentage, new(50), true, new(5));
 
         var lp = await Services.GetRequiredService<ISource>().GetCurrentLoadpointAsync(Logger);
 
@@ -358,9 +337,7 @@ public class BurdenHardwareTests
     [Test]
     public async Task Can_Measure_With_Auto_Range_Async()
     {
-        IsVoltage = true;
-
-        await Hardware.PrepareAsync("190", 1, new(60), false, new(3.75));
+        await Hardware.PrepareAsync(true, "190", 1, new(60), false, new(3.75));
 
         Assert.Multiple(() =>
         {
@@ -376,9 +353,7 @@ public class BurdenHardwareTests
     [Test]
     public async Task Can_Measure_With_Detect_Range_Async()
     {
-        IsVoltage = true;
-
-        await Hardware.PrepareAsync("190", 1, new(60), true, new(3.75));
+        await Hardware.PrepareAsync(true, "190", 1, new(60), true, new(3.75));
 
         Assert.Multiple(() =>
         {
@@ -451,13 +426,10 @@ public class BurdenHardwareTests
 
         var burden = new Mock<IBurden>();
 
-        burden
-            .Setup(b => b.GetVersionAsync(It.IsAny<IInterfaceLogger>()))
-            .ReturnsAsync(new BurdenVersion { IsVoltageNotCurrent = false });
-
         var hardware = new CalibrationHardware(source.Object, refMeter.Object, burden.Object, new NoopInterfaceLogger());
 
         var factor = await hardware.PrepareAsync(
+            false,
             "5",
             0.1,
             new(50),

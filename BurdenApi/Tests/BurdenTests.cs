@@ -48,7 +48,6 @@ public class BurdenTests
         {
             Assert.That(version.Version, Is.EqualTo("EBV33.12"));
             Assert.That(version.Supplement, Is.EqualTo("XB"));
-            Assert.That(version.IsVoltageNotCurrent, Is.True);
         });
     }
 

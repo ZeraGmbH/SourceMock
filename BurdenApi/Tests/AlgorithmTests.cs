@@ -124,7 +124,7 @@ namespace BurdenApiTests
         {
             var hardware = Services.GetRequiredService<ICalibrationHardware>();
 
-            await hardware.PrepareAsync("200", 1, new(50), false, new(10));
+            await hardware.PrepareAsync(true, "200", 1, new(50), false, new(10));
 
             var values = await hardware.MeasureAsync(new(new(rMajor, rMinor), new(iMajor, iMinor)));
 
@@ -161,9 +161,9 @@ namespace BurdenApiTests
             Hardware.AddCalibration("IEC50", "200", "50;0.75", new(new(112, 7), new(16, 99)));
 
             if (algorithm.HasValue)
-                await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = "50;0.75", Algorithm = algorithm.Value }, CancellationToken.None);
+                await Calibrator.RunAsync(true, new() { Burden = "IEC50", Range = "200", Step = "50;0.75", Algorithm = algorithm.Value }, CancellationToken.None);
             else
-                await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = "50;0.75" }, CancellationToken.None);
+                await Calibrator.RunAsync(true, new() { Burden = "IEC50", Range = "200", Step = "50;0.75" }, CancellationToken.None);
 
             var step = Calibrator.LastStep;
 
@@ -204,7 +204,7 @@ namespace BurdenApiTests
 
             Hardware.AddCalibration("IEC50", "200", step, new(new(big, small), new(small, big)));
 
-            await Calibrator.RunAsync(new() { Burden = "IEC50", Range = "200", Step = step }, CancellationToken.None);
+            await Calibrator.RunAsync(true, new() { Burden = "IEC50", Range = "200", Step = step }, CancellationToken.None);
 
             var lastStep = Calibrator.LastStep;
 
@@ -238,7 +238,7 @@ namespace BurdenApiTests
 
             Hardware.AddCalibration("IEC50", "200", step, new(new(big, small), new(small, big)));
 
-            var result = await Calibrator.CalibrateStepAsync(new() { Burden = "IEC50", Range = "200", Step = step }, CancellationToken.None);
+            var result = await Calibrator.CalibrateStepAsync(true, new() { Burden = "IEC50", Range = "200", Step = step }, CancellationToken.None);
 
             Assert.That(result, Has.Length.EqualTo(3));
 

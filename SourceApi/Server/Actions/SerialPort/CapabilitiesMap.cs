@@ -151,21 +151,10 @@ public class CapabilitiesMap : ICapabilitiesMap
                 AcVoltage = voltage.Phases[0].AcVoltage
             });
 
-        /* There may be only one frequency configuration with the same generator mode. */
-        if (current.FrequencyRanges.Count != 1 || voltage.FrequencyRanges.Count != 1)
-            throw new InvalidOperationException("data mismatch - expected one frequency range");
-
-        if (current.FrequencyRanges[0].Mode != voltage.FrequencyRanges[0].Mode)
-            throw new InvalidOperationException("data mismatch - expected same frequency mode");
-
+        /* Provide frequency settings as defined by API. */
         capabilties.FrequencyRanges = [
-            new()
-            {
-                Max = current.FrequencyRanges[0].Max.Smallest(voltage.FrequencyRanges[0].Max),
-                Min = current.FrequencyRanges[0].Min.Largest(voltage.FrequencyRanges[0].Min),
-                Mode = current.FrequencyRanges[0].Mode,
-                PrecisionStepSize = current.FrequencyRanges[0].PrecisionStepSize.Largest(voltage.FrequencyRanges[0].PrecisionStepSize),
-            },
+            new() { Mode = FrequencyMode.SYNTHETIC, Min = new(40), Max = new(69.99), PrecisionStepSize = new(0.01) },
+            new() { Mode = FrequencyMode.SYNTHETIC, Min = new(15), Max = new(19.99), PrecisionStepSize = new(0.01) },
             new() { Mode = FrequencyMode.GRID_SYNCHRONOUS },
             new() { Mode = FrequencyMode.THIRD_OF_GRID_SYNCHRONOUS }
         ];

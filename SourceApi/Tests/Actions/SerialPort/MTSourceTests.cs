@@ -69,7 +69,7 @@ public class MTSourceTests
 
         var caps = await sut.GetCapabilitiesAsync(new NoopInterfaceLogger());
 
-        Assert.That((double)caps.FrequencyRanges[0].Min, Is.EqualTo(45));
+        Assert.That((double)caps.FrequencyRanges[0].Min, Is.EqualTo(40));
     }
 
     [TestCase(0.01, "SIPAAR000.010000.00S000.020240.00T000.030120.00")]

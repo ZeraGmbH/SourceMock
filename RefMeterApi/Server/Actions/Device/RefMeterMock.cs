@@ -78,13 +78,23 @@ public abstract class RefMeterMock : IMockRefMeter
     /// </summary>
     /// <param name="value"></param>
     /// <param name="deviation"></param>
+    /// <param name="min"></param>
+    /// <param name="max"></param>
     /// <returns></returns>
-    protected static T GetRandomNumberWithDeviation<T>(T value, T deviation) where T : struct, IDomainSpecificNumber<T>
+    protected static T GetRandomNumberWithDeviation<T>(T value, T deviation, T? min = default, T? max = default) where T : struct, IDomainSpecificNumber<T>
     {
         var maximum = value + deviation;
         var minimum = value - deviation;
 
-        return (Random.Shared.NextDouble() * (maximum - minimum)) + minimum;
+        var diced = (Random.Shared.NextDouble() * (maximum - minimum)) + minimum;
+
+        if (min.HasValue && diced < min.Value)
+            return min.Value;
+
+        if (max.HasValue && diced > max.Value)
+            return max.Value;
+
+        return diced;
     }
 
     /// <summary>

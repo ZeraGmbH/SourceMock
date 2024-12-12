@@ -93,7 +93,7 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
     private async Task<CalibrationStep?> AdjustCoarseOrFine(
         bool resistiveNotImpedance,
         ICalibrationContext context,
-        Func<int, CalibrationPair?> updateCalibrationValue
+        Func<int, bool, CalibrationPair?> updateCalibrationValue
     )
     {
         var deviation = resistiveNotImpedance ? context.LastStep.Deviation.DeltaPower : context.LastStep.Deviation.DeltaFactor;
@@ -102,7 +102,7 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
         if (deviation == 0) return null;
 
         // Apply correction (true means increment, false decrement, impedance is 1 at calibration 0) - it is expected that the order of calibration values mirrors the order of measured values.
-        var nextPair = updateCalibrationValue(((deviation < 0) == resistiveNotImpedance) ? +1 : -1);
+        var nextPair = updateCalibrationValue(((deviation < 0) == resistiveNotImpedance) ? +1 : -1, false);
 
         // Correction may not be possible - bounds are reached.
         if (nextPair == null) return null;

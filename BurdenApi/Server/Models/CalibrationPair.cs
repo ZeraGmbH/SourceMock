@@ -61,12 +61,17 @@ public class CalibrationPair()
     /// Change the coarse calibration.
     /// </summary>
     /// <param name="delta">Set to increment calibration value.</param>
+    /// <param name="clip">If set the value will be clipped against the bounds.</param>
     /// <returns>New calibration pair if changes are applied or null if nothing changed.</returns>
-    public CalibrationPair? ChangeCoarse(int delta)
+    public CalibrationPair? ChangeCoarse(int delta, bool clip = false)
     {
         var coarse = delta + Coarse;
 
-        if (coarse < 0 || coarse > 127) return null;
+        if (coarse < 0)
+            return (clip && Coarse != 0) ? new CalibrationPair(0, Fine) : null;
+
+        if (coarse > 127)
+            return (clip && Coarse != 127) ? new CalibrationPair(127, Fine) : null;
 
         return new CalibrationPair((byte)coarse, Fine);
     }
@@ -75,12 +80,17 @@ public class CalibrationPair()
     /// Change the fine calibration.
     /// </summary>
     /// <param name="delta">Set to increment calibration value.</param>
+    /// <param name="clip">If set the value will be clipped against the bounds.</param>
     /// <returns>New calibration pair if changes are applied or null if nothing changed.</returns>
-    public CalibrationPair? ChangeFine(int delta)
+    public CalibrationPair? ChangeFine(int delta, bool clip = false)
     {
         var fine = delta + Fine;
 
-        if (fine < 0 || fine > 127) return null;
+        if (fine < 0)
+            return (clip && Fine != 0) ? new CalibrationPair(Coarse, 0) : null;
+
+        if (fine > 127)
+            return (clip && Fine != 127) ? new CalibrationPair(Coarse, 127) : null;
 
         return new CalibrationPair(Coarse, (byte)fine);
     }

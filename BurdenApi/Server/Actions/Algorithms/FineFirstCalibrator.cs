@@ -7,13 +7,11 @@ namespace BurdenApi.Actions.Algorithms;
 /// </summary>
 public class FineFirstCalibrator : ICalibrationAlgorithm
 {
-    private bool _ResistanceCoarseFixed = false;
-
-    private bool _ImpedanceCoarseFixed = false;
+    /// <inheritdoc/>
+    public bool ContinueAfterCycleDetection() => false;
 
     /// <inheritdoc/>
-    public Calibration CreateInitialCalibration(Calibration calibration)
-        => new(new(calibration.Resistive.Coarse, 64), new(calibration.Inductive.Coarse, 64));
+    public Calibration CreateInitialCalibration(Calibration calibration) => calibration;
 
     /// <inheritdoc/>
     public async Task<CalibrationStep?> IterateAsync(ICalibrationContext context)
@@ -59,27 +57,28 @@ public class FineFirstCalibrator : ICalibrationAlgorithm
         // What part are we working of.
         var calibration = resistiveNotImpedance ? context.CurrentCalibration.Resistive : context.CurrentCalibration.Inductive;
 
-        // Adjust coarse corrextion if not already fixed.
-        if (!(resistiveNotImpedance ? _ResistanceCoarseFixed : _ImpedanceCoarseFixed))
-        {
-            // Check if there is a better calibration.
-            var coraseStep = await AdjustCoarseOrFine(resistiveNotImpedance, context, calibration.ChangeCoarse);
-
-            if (coraseStep != null)
+        // Try fine steps.
+        if ((calibration.Coarse == 0 || calibration.Fine >= 10) && (calibration.Coarse == 127 || calibration.Fine <= 120))
+            for (int step = 20; step > 0; step /= 2)
             {
-                // We found a better match.
-                if (coraseStep.CalibrationChanged) return coraseStep;
+                // Move forward.
+                var fineStep = await AdjustCoarseOrFine(resistiveNotImpedance, context, calibration.ChangeFine, step);
 
-                // There is no better match in coarse, so fix the calibration value and try the fine value.
-                if (resistiveNotImpedance) _ResistanceCoarseFixed = true; else _ImpedanceCoarseFixed = true;
+                // Not possible at all - we reached a bound.
+                if (fineStep?.Calibration != null) return fineStep;
             }
-        }
 
-        // Adjust fine correction.
-        var fineStep = await AdjustCoarseOrFine(resistiveNotImpedance, context, calibration.ChangeFine);
+        // Try coarse.
+        var coarseStep = await AdjustCoarseOrFine(resistiveNotImpedance, context, (int delta, bool clip) =>
+        {
+            // Try to move coarse.
+            var next = calibration.ChangeCoarse(delta, clip);
 
-        // If fine correction step makes it worse just skip it.
-        return fineStep?.CalibrationChanged == true ? fineStep : null;
+            // If successfull center fine.
+            return (next == null) ? null : new CalibrationPair(next.Coarse, 64);
+        }, 1);
+
+        return coarseStep?.Calibration == null ? null : coarseStep;
     }
 
     /// <summary>
@@ -88,12 +87,14 @@ public class FineFirstCalibrator : ICalibrationAlgorithm
     /// <param name="resistiveNotImpedance">Set if working on resistive pair.</param>
     /// <param name="context">Current calibration environment.</param>
     /// <param name="updateCalibrationValue">Update the calibration for the next step.</param>
+    /// <param name="step">Step to take.</param>
     /// <returns>null if no further processing is possible, elsewhere the Calibration memember will be 
     /// null as well if the changed calibration moved us further away from the goal.</returns>
     private async Task<CalibrationStep?> AdjustCoarseOrFine(
         bool resistiveNotImpedance,
         ICalibrationContext context,
-        Func<int, CalibrationPair?> updateCalibrationValue
+        Func<int, bool, CalibrationPair?> updateCalibrationValue,
+        int step
     )
     {
         var deviation = resistiveNotImpedance ? context.LastStep.Deviation.DeltaPower : context.LastStep.Deviation.DeltaFactor;
@@ -102,7 +103,7 @@ public class FineFirstCalibrator : ICalibrationAlgorithm
         if (deviation == 0) return null;
 
         // Apply correction (true means increment, false decrement, impedance is 1 at calibration 0) - it is expected that the order of calibration values mirrors the order of measured values.
-        var nextPair = updateCalibrationValue(((deviation < 0) == resistiveNotImpedance) ? +1 : -1);
+        var nextPair = updateCalibrationValue(((deviation < 0) == resistiveNotImpedance) ? +step : -step, true);
 
         // Correction may not be possible - bounds are reached.
         if (nextPair == null) return null;
@@ -116,7 +117,8 @@ public class FineFirstCalibrator : ICalibrationAlgorithm
         var nextDelta = nextValues / context.EffectiveGoal;
 
         // We made it worse or nothing changed at all - but indicated with Calibration null that we at least gave it a try.
-        if (Math.Abs(resistiveNotImpedance ? nextDelta.DeltaPower : nextDelta.DeltaFactor) >= Math.Abs(deviation)) return new() { Calibration = null! };
+        if (Math.Abs(resistiveNotImpedance ? nextDelta.DeltaPower : nextDelta.DeltaFactor) >= Math.Abs(deviation))
+            return new() { Calibration = null!, Deviation = nextDelta, Values = nextValues };
 
         // Apply measurement values from the burden as well.
         var burdenValues = await context.MeasureBurdenAsync();
@@ -130,19 +132,5 @@ public class FineFirstCalibrator : ICalibrationAlgorithm
             Deviation = nextDelta,
             Values = nextValues,
         };
-    }
-
-    /// <inheritdoc/>
-    public bool ContinueAfterCycleDetection()
-    {
-        // No repeat allowed if coarse values are fixed - assume fine changes not good enough.
-        if (_ImpedanceCoarseFixed && _ResistanceCoarseFixed) return false;
-
-        // Lock out - will not try again.
-        _ImpedanceCoarseFixed = true;
-        _ResistanceCoarseFixed = true;
-
-        // Try again.
-        return true;
     }
 }

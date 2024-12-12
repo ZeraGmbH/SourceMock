@@ -244,7 +244,7 @@ public partial class ACRefMeterMock(IServiceProvider di) : RefMeterMock
         phase.ReactivePower = GetRandomNumberWithDeviation(phase.ReactivePower!.Value, (ReactivePower)new(0.02));
         phase.ApparentPower = GetRandomNumberWithDeviation(phase.ApparentPower!.Value, (ApparentPower)new(0.02));
         phase.PowerFactor = PowerFactorIsNotNullOrNan(phase.PowerFactor)
-            ? GetRandomNumberWithDeviation(phase.PowerFactor!.Value, (PowerFactor)new(0.02))
+            ? GetRandomNumberWithDeviation(phase.PowerFactor!.Value, new(0.02), new(-1), new(+1))
             : GetRandomNumberWithDeviation(new PowerFactor(0), (PowerFactor)new(0.01));
     }
 

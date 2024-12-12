@@ -16,5 +16,10 @@ public enum CalibrationAlgorithms
     /// <summary>
     /// Adjust one calibration at a time.
     /// </summary>
-    SingleStep = 1
+    SingleStep = 1,
+
+    /// <summary>
+    /// Starts with adjusting the fine calibration first.
+    /// </summary>
+    FineFirst = 2,
 }

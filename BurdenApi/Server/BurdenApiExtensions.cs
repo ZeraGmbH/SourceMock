@@ -24,6 +24,7 @@ public static class BurdenApiConfiguration
         services.AddSingleton<IBurden, Burden>();
 
         services.AddKeyedTransient<ICalibrationAlgorithm, SingleStepCalibrator>(CalibrationAlgorithms.SingleStep);
+        services.AddKeyedTransient<ICalibrationAlgorithm, FineFirstCalibrator>(CalibrationAlgorithms.FineFirst);
 
         services.AddKeyedTransient<ICalibrationAlgorithm, SingleStepCalibrator>(CalibrationAlgorithms.Default);
 

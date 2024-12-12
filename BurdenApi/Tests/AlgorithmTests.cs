@@ -27,6 +27,7 @@ namespace BurdenApiTests
 
             services.AddKeyedTransient<ICalibrationAlgorithm, SingleStepCalibrator>(CalibrationAlgorithms.Default);
             services.AddKeyedTransient<ICalibrationAlgorithm, SingleStepCalibrator>(CalibrationAlgorithms.SingleStep);
+            services.AddKeyedTransient<ICalibrationAlgorithm, FineFirstCalibrator>(CalibrationAlgorithms.FineFirst);
 
             services.AddSingleton<ICalibrationHardware, CalibrationHardwareMock>();
 

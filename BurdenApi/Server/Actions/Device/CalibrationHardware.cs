@@ -21,7 +21,7 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
     private Current _CurrentRange;
 
     /// <inheritdoc/>
-    public async Task<Tuple<GoalValue, double?>> MeasureAsync(Calibration calibration, bool voltageNotCurrent)
+    public async Task<GoalValueWithQuantity> MeasureAsync(Calibration calibration, bool voltageNotCurrent)
     {
         // Apply the calibration to the burden.        
         await Burden.SetTransientCalibrationAsync(calibration, logger);
@@ -61,15 +61,13 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
 
             if (power == null || factor == null) throw new InvalidOperationException("insufficient actual values");
 
-            return Tuple.Create(
-                new GoalValue()
-                {
-                    ApparentPower = power.Value,
-                    PowerFactor = factor.Value
-                },
+            return new GoalValueWithQuantity(
+                power.Value,
+                factor.Value,
                 voltageNotCurrent
                     ? (double?)values.Phases[0].Voltage.AcComponent?.Rms
-                    : (double?)values.Phases[0].Current.AcComponent?.Rms);
+                    : (double?)values.Phases[0].Current.AcComponent?.Rms
+            );
         }
 
         throw new InvalidOperationException("reference meter keeps changing ranges - unable to get reliable actual values");
@@ -190,13 +188,14 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
     }
 
     /// <inheritdoc/>
-    public async Task<Tuple<GoalValue, double?>> MeasureBurdenAsync(bool voltageNotCurrent)
+    public async Task<GoalValueWithQuantity> MeasureBurdenAsync(bool voltageNotCurrent)
     {
         var values = await Burden.MeasureAsync(logger);
 
-        return Tuple.Create(
-             new GoalValue(values.ApparentPower, values.PowerFactor),
-             voltageNotCurrent ? (double?)values.Voltage : (double?)values.Current
+        return new GoalValueWithQuantity(
+            values.ApparentPower,
+            values.PowerFactor,
+            voltageNotCurrent ? (double?)values.Voltage : (double?)values.Current
         );
     }
 }

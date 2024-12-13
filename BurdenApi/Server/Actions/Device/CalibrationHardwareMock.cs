@@ -118,7 +118,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
         => ((BurdenMock)Burden).AddCalibration(burden, range, step, calibration);
 
     /// <inheritdoc/>
-    public Task<Tuple<GoalValue, double?>> MeasureAsync(Calibration calibration, bool voltageNotCurrent)
+    public Task<GoalValueWithQuantity> MeasureAsync(Calibration calibration, bool voltageNotCurrent)
     {
         if (!_CurrentRange.HasValue || !_CurrentPower.HasValue) throw new InvalidOperationException("loadpoint not yet set");
 
@@ -130,11 +130,11 @@ public class CalibrationHardwareMock : ICalibrationHardware
 
         var targetResistance = CreateRelative(_Target.Resistive);
 
-        return Task.FromResult(
-            Tuple.Create(
-                new GoalValue(resistance / targetResistance * _CurrentPower.Value, new(impedance)),
-                (double?)null
-            ));
+        return Task.FromResult(new GoalValueWithQuantity(
+            resistance / targetResistance * _CurrentPower.Value,
+            new(impedance),
+            null
+        ));
     }
 
     private static double RelativeLimit => CreateRelative(127, 127);
@@ -156,5 +156,5 @@ public class CalibrationHardwareMock : ICalibrationHardware
     }
 
     /// <inheritdoc/>
-    public Task<Tuple<GoalValue, double?>> MeasureBurdenAsync(bool voltageNotCurrent) => Task.FromResult(Tuple.Create(new GoalValue(), (double?)null));
+    public Task<GoalValueWithQuantity> MeasureBurdenAsync(bool voltageNotCurrent) => Task.FromResult(new GoalValueWithQuantity());
 }

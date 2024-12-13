@@ -347,7 +347,7 @@ public class BurdenHardwareTests
 
         var values = await Hardware.MeasureAsync(new(), true);
 
-        Assert.That((double)values.Item1.PowerFactor, Is.EqualTo(0.8));
+        Assert.That((double)values.PowerFactor, Is.EqualTo(0.8));
     }
 
     [Test]
@@ -372,7 +372,7 @@ public class BurdenHardwareTests
             Assert.That((double?)CurrentRange, Is.EqualTo(0.5));
         });
 
-        Assert.That((double)values.Item1.PowerFactor, Is.EqualTo(0.8));
+        Assert.That((double)values.PowerFactor, Is.EqualTo(0.8));
     }
 
     [Test]

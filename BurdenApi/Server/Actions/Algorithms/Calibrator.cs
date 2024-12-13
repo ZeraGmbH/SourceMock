@@ -45,10 +45,10 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
     private Frequency _Frequency;
 
     /// <inheritdoc/>
-    public Task<Tuple<GoalValue, double?>> MeasureAsync(Calibration calibration) => hardware.MeasureAsync(calibration, _VoltageNotCurrent);
+    public Task<GoalValueWithQuantity> MeasureAsync(Calibration calibration) => hardware.MeasureAsync(calibration, _VoltageNotCurrent);
 
     /// <inheritdoc/>
-    public Task<Tuple<GoalValue, double?>> MeasureBurdenAsync() => hardware.MeasureBurdenAsync(_VoltageNotCurrent);
+    public Task<GoalValueWithQuantity> MeasureBurdenAsync() => hardware.MeasureBurdenAsync(_VoltageNotCurrent);
 
     private ICalibrationAlgorithm _Algorithm = null!;
 
@@ -146,17 +146,17 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
 
         // Create initial step.
         var values = await MeasureAsync(initialCalibration);
-        var deviation = MakeDeviation(values.Item1, EffectiveGoal, values.Item2);
+        var deviation = MakeDeviation(values, EffectiveGoal, values.Range);
         var burdenValues = await MeasureBurdenAsync();
 
         _Steps.Add(new()
         {
-            BurdenDeviation = MakeDeviation(burdenValues.Item1, EffectiveGoal, values.Item2),
-            BurdenValues = burdenValues.Item1,
+            BurdenDeviation = MakeDeviation(burdenValues, EffectiveGoal, values.Range),
+            BurdenValues = burdenValues,
             Calibration = initialCalibration,
             Deviation = deviation,
             Factor = factor,
-            Values = values.Item1
+            Values = values
         });
 
         // Secure bound by a maximum number of steps - we expect a maximum of 4 * 127 steps.
@@ -232,7 +232,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         var lower = await MeasureAsync(result.Calibration);
         var lowerValues = await MeasureBurdenAsync();
         var lowerGoal = MakeEffectiveGoal(lowerFactor / CurrentBaseFactor);
-        var lowerDeviation = MakeDeviation(lower.Item1, lowerGoal, lowerValues.Item2);
+        var lowerDeviation = MakeDeviation(lower, lowerGoal, lowerValues.Range);
 
         // Measure at 120% (voltage) or 200% (current, voltage limited to 89V).
         var upperFactor = voltageNotCurrent ? 1.2 : 2;
@@ -269,26 +269,26 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         var upper = await MeasureAsync(result.Calibration);
         var upperValues = await MeasureBurdenAsync();
         var upperGoal = MakeEffectiveGoal(upperFactor / CurrentBaseFactor);
-        var upperDeviation = MakeDeviation(upper.Item1, upperGoal, upperValues.Item2);
+        var upperDeviation = MakeDeviation(upper, upperGoal, upperValues.Range);
 
         // Construct result.
         return [
             result,
             new() {
-                BurdenDeviation = MakeDeviation(lowerValues.Item1 , lowerGoal,lowerValues.Item2),
-                BurdenValues = lowerValues.Item1,
+                BurdenDeviation = MakeDeviation(lowerValues , lowerGoal,lowerValues.Range),
+                BurdenValues = lowerValues,
                 Calibration = result.Calibration,
                 Deviation = lowerDeviation,
                 Factor = lowerFactor,
-                Values = lower.Item1,
+                Values = lower,
             },
             new() {
-                BurdenDeviation = MakeDeviation(upperValues.Item1 , upperGoal,upperValues.Item2),
-                BurdenValues = upperValues.Item1,
+                BurdenDeviation = MakeDeviation(upperValues , upperGoal,upperValues.Range),
+                BurdenValues = upperValues,
                 Calibration = result.Calibration,
                 Deviation = upperDeviation,
                 Factor = upperFactor,
-                Values = upper.Item1,
+                Values = upper,
             }
         ];
     }

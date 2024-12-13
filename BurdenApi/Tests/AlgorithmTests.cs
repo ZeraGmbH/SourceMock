@@ -131,8 +131,8 @@ namespace BurdenApiTests
 
             Assert.Multiple(() =>
             {
-                Assert.That((double)values.Item1.ApparentPower, Is.EqualTo(apparentPower).Within(0.0001));
-                Assert.That((double)values.Item1.PowerFactor, Is.EqualTo(powerFactor).Within(0.0001));
+                Assert.That((double)values.ApparentPower, Is.EqualTo(apparentPower).Within(0.0001));
+                Assert.That((double)values.PowerFactor, Is.EqualTo(powerFactor).Within(0.0001));
             });
         }
 

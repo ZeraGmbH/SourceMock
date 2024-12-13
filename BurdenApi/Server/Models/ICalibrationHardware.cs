@@ -13,13 +13,13 @@ public interface ICalibrationHardware
     /// <param name="calibration">Calibration parameters.</param>
     /// <param name="voltageNotCurrent">Set if the range set is the voltage.</param>
     /// <returns>Resulting values.</returns>
-    Task<Tuple<GoalValue, double?>> MeasureAsync(Calibration calibration, bool voltageNotCurrent);
+    Task<GoalValueWithQuantity> MeasureAsync(Calibration calibration, bool voltageNotCurrent);
 
     /// <summary>
     /// Get values from the burden.
     /// </summary>
     /// <returns>Resulting values.</returns>
-    Task<Tuple<GoalValue, double?>> MeasureBurdenAsync(bool voltageNotCurrent);
+    Task<GoalValueWithQuantity> MeasureBurdenAsync(bool voltageNotCurrent);
 
     /// <summary>
     /// Prepare the measurement.

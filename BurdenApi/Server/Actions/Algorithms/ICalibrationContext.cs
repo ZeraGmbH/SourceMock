@@ -27,13 +27,13 @@ public interface ICalibrationContext
     /// </summary>
     /// <param name="calibration">Calibration to apply to the burden before measuring.</param>
     /// <returns>Values as measured by the reference meter.</returns>
-    Task<Tuple<GoalValue, double?>> MeasureAsync(Calibration calibration);
+    Task<GoalValueWithQuantity> MeasureAsync(Calibration calibration);
 
     /// <summary>
     /// Get the current values from the burden.
     /// </summary>
     /// <returns>Values as measured by the burden.</returns>
-    Task<Tuple<GoalValue, double?>> MeasureBurdenAsync();
+    Task<GoalValueWithQuantity> MeasureBurdenAsync();
 
     /// <summary>
     /// Reset the cycle tester.

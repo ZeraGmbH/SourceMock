@@ -127,12 +127,12 @@ namespace BurdenApiTests
 
             await hardware.PrepareAsync(true, "200", 1, new(50), false, new(10));
 
-            var values = await hardware.MeasureAsync(new(new(rMajor, rMinor), new(iMajor, iMinor)));
+            var values = await hardware.MeasureAsync(new(new(rMajor, rMinor), new(iMajor, iMinor)), true);
 
             Assert.Multiple(() =>
             {
-                Assert.That((double)values.ApparentPower, Is.EqualTo(apparentPower).Within(0.0001));
-                Assert.That((double)values.PowerFactor, Is.EqualTo(powerFactor).Within(0.0001));
+                Assert.That((double)values.Item1.ApparentPower, Is.EqualTo(apparentPower).Within(0.0001));
+                Assert.That((double)values.Item1.PowerFactor, Is.EqualTo(powerFactor).Within(0.0001));
             });
         }
 

@@ -192,7 +192,7 @@ public class BurdenHardwareTests
     {
         for (var adjust = 2; adjust-- > 0;)
             Assert.That(
-                await Hardware.PrepareAsync(true, range, percentage, new(50), false, new(5), adjust != 1),
+                (await Hardware.PrepareAsync(true, range, percentage, new(50), false, new(5), adjust != 1)).Item1,
                 Is.EqualTo(adjust == 1 ? expected : percentage).Within(0.001)
             );
     }
@@ -205,7 +205,7 @@ public class BurdenHardwareTests
     {
         for (var adjust = 2; adjust-- > 0;)
             Assert.That(
-                await Hardware.PrepareAsync(false, range, percentage, new(50), false, new(5), adjust != 1),
+                (await Hardware.PrepareAsync(false, range, percentage, new(50), false, new(5), adjust != 1)).Item1,
                 Is.EqualTo(adjust == 1 ? expected : percentage).Within(0.001)
             );
     }
@@ -345,9 +345,9 @@ public class BurdenHardwareTests
             Assert.That(CurrentRange, Is.Null);
         });
 
-        var values = await Hardware.MeasureAsync(new());
+        var values = await Hardware.MeasureAsync(new(), true);
 
-        Assert.That((double)values.PowerFactor, Is.EqualTo(0.8));
+        Assert.That((double)values.Item1.PowerFactor, Is.EqualTo(0.8));
     }
 
     [Test]
@@ -364,7 +364,7 @@ public class BurdenHardwareTests
         CurrentRange = new(250);
         VoltageRange = new(50);
 
-        var values = await Hardware.MeasureAsync(new());
+        var values = await Hardware.MeasureAsync(new(), true);
 
         Assert.Multiple(() =>
         {
@@ -372,7 +372,7 @@ public class BurdenHardwareTests
             Assert.That((double?)CurrentRange, Is.EqualTo(0.5));
         });
 
-        Assert.That((double)values.PowerFactor, Is.EqualTo(0.8));
+        Assert.That((double)values.Item1.PowerFactor, Is.EqualTo(0.8));
     }
 
     [Test]
@@ -437,6 +437,6 @@ public class BurdenHardwareTests
             new(1)
         );
 
-        Assert.That(factor, Is.EqualTo(0.1));
+        Assert.That(factor.Item1, Is.EqualTo(0.1));
     }
 }

@@ -21,7 +21,7 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
     private Current _CurrentRange;
 
     /// <inheritdoc/>
-    public async Task<GoalValue> MeasureAsync(Calibration calibration)
+    public async Task<Tuple<GoalValue, double?>> MeasureAsync(Calibration calibration, bool voltageNotCurrent)
     {
         // Apply the calibration to the burden.        
         await Burden.SetTransientCalibrationAsync(calibration, logger);
@@ -61,7 +61,15 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
 
             if (power == null || factor == null) throw new InvalidOperationException("insufficient actual values");
 
-            return new() { ApparentPower = power.Value, PowerFactor = factor.Value };
+            return Tuple.Create(
+                new GoalValue()
+                {
+                    ApparentPower = power.Value,
+                    PowerFactor = factor.Value
+                },
+                voltageNotCurrent
+                    ? (double?)values.Phases[0].Voltage.AcComponent?.Rms
+                    : (double?)values.Phases[0].Current.AcComponent?.Rms);
         }
 
         throw new InvalidOperationException("reference meter keeps changing ranges - unable to get reliable actual values");
@@ -69,7 +77,7 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
 
 
     /// <inheritdoc/>
-    public async Task<double> PrepareAsync(bool voltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true)
+    public async Task<Tuple<double, double>> PrepareAsync(bool voltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true)
     {
         // Get the capabilities from the source.
         var caps = await source.GetCapabilitiesAsync(logger);
@@ -178,14 +186,17 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         await refMeter.SetActualMeasurementModeAsync(logger, MeasurementModes.MqBase);
 
         // Report new pecentage
-        return percentage;
+        return Tuple.Create(percentage, rangeValue);
     }
 
     /// <inheritdoc/>
-    public async Task<GoalValue> MeasureBurdenAsync()
+    public async Task<Tuple<GoalValue, double?>> MeasureBurdenAsync(bool voltageNotCurrent)
     {
         var values = await Burden.MeasureAsync(logger);
 
-        return new(values.ApparentPower, values.PowerFactor);
+        return Tuple.Create(
+             new GoalValue(values.ApparentPower, values.PowerFactor),
+             voltageNotCurrent ? (double?)values.Voltage : (double?)values.Current
+        );
     }
 }

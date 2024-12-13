@@ -118,7 +118,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
         => ((BurdenMock)Burden).AddCalibration(burden, range, step, calibration);
 
     /// <inheritdoc/>
-    public Task<GoalValue> MeasureAsync(Calibration calibration)
+    public Task<Tuple<GoalValue, double?>> MeasureAsync(Calibration calibration, bool voltageNotCurrent)
     {
         if (!_CurrentRange.HasValue || !_CurrentPower.HasValue) throw new InvalidOperationException("loadpoint not yet set");
 
@@ -130,7 +130,11 @@ public class CalibrationHardwareMock : ICalibrationHardware
 
         var targetResistance = CreateRelative(_Target.Resistive);
 
-        return Task.FromResult(new GoalValue(resistance / targetResistance * _CurrentPower.Value, new(impedance)));
+        return Task.FromResult(
+            Tuple.Create(
+                new GoalValue(resistance / targetResistance * _CurrentPower.Value, new(impedance)),
+                (double?)null
+            ));
     }
 
     private static double RelativeLimit => CreateRelative(127, 127);
@@ -140,15 +144,17 @@ public class CalibrationHardwareMock : ICalibrationHardware
     private static double CreateRelative(CalibrationPair pair) => CreateRelative(pair.Coarse, pair.Fine) / RelativeLimit;
 
     /// <inheritdoc/>
-    public Task<double> PrepareAsync(bool voltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true)
+    public Task<Tuple<double, double>> PrepareAsync(bool voltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true)
     {
+        var rangeValue = BurdenUtils.ParseRange(range);
+
         // Remember for emulation.
-        _CurrentRange = percentage * BurdenUtils.ParseRange(range);
+        _CurrentRange = percentage * rangeValue;
         _CurrentPower = power * percentage * percentage;
 
-        return Task.FromResult(percentage);
+        return Task.FromResult(Tuple.Create(percentage, rangeValue));
     }
 
     /// <inheritdoc/>
-    public Task<GoalValue> MeasureBurdenAsync() => Task.FromResult(new GoalValue());
+    public Task<Tuple<GoalValue, double?>> MeasureBurdenAsync(bool voltageNotCurrent) => Task.FromResult(Tuple.Create(new GoalValue(), (double?)null));
 }

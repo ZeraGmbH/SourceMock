@@ -4,7 +4,7 @@ namespace BurdenApi.Actions.Algorithms;
 
 /// <summary>
 /// 
-/// /// </summary>
+/// </summary>
 public interface ICalibrationContext
 {
     /// <summary>
@@ -27,16 +27,40 @@ public interface ICalibrationContext
     /// </summary>
     /// <param name="calibration">Calibration to apply to the burden before measuring.</param>
     /// <returns>Values as measured by the reference meter.</returns>
-    Task<GoalValue> MeasureAsync(Calibration calibration);
+    Task<Tuple<GoalValue, double?>> MeasureAsync(Calibration calibration);
 
     /// <summary>
     /// Get the current values from the burden.
     /// </summary>
     /// <returns>Values as measured by the burden.</returns>
-    Task<GoalValue> MeasureBurdenAsync();
+    Task<Tuple<GoalValue, double?>> MeasureBurdenAsync();
 
     /// <summary>
     /// Reset the cycle tester.
     /// </summary>
     void ClearCycleTester();
+
+    /// <summary>
+    /// Calculate the deviation.
+    /// </summary>
+    /// <param name="values">What we measured.</param>
+    /// <param name="goal">Target to reach.</param>
+    /// <param name="range">Measured physical quantity.</param>
+    /// <returns>Relative deviation.</returns>
+    GoalDeviation MakeDeviation(GoalValue values, GoalValue goal, double? range);
+}
+
+/// <summary>
+/// 
+/// </summary>
+public static class ICalibrationContextExtensions
+{
+    /// <summary>
+    /// Calculate the deviation.
+    /// </summary>
+    /// <param name="context">Calibration context to use.</param>
+    /// <param name="values">What we measured.</param>
+    /// <param name="range">Measured physical quantity.</param>
+    /// <returns>Relative deviation.</returns>
+    public static GoalDeviation MakeDeviation(this ICalibrationContext context, GoalValue values, double? range) => context.MakeDeviation(values, context.EffectiveGoal, range);
 }

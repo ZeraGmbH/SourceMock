@@ -11,14 +11,15 @@ public interface ICalibrationHardware
     /// Get new values after setting a calibration.
     /// </summary>
     /// <param name="calibration">Calibration parameters.</param>
+    /// <param name="voltageNotCurrent">Set if the range set is the voltage.</param>
     /// <returns>Resulting values.</returns>
-    Task<GoalValue> MeasureAsync(Calibration calibration);
+    Task<Tuple<GoalValue, double?>> MeasureAsync(Calibration calibration, bool voltageNotCurrent);
 
     /// <summary>
     /// Get values from the burden.
     /// </summary>
     /// <returns>Resulting values.</returns>
-    Task<GoalValue> MeasureBurdenAsync();
+    Task<Tuple<GoalValue, double?>> MeasureBurdenAsync(bool voltageNotCurrent);
 
     /// <summary>
     /// Prepare the measurement.
@@ -30,7 +31,8 @@ public interface ICalibrationHardware
     /// <param name="detectRange">Set to automatically detect the best range from the reference meter.</param>
     /// <param name="power">Target apparent power.</param>
     /// <param name="fixedPercentage">Unset to allow tweaking the percentage to respect the limits of the source.</param>
-    Task<double> PrepareAsync(bool voltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true);
+    /// <returns>Tuple with the percentage of the range really used and the electrical quantity set.</returns>
+    Task<Tuple<double, double>> PrepareAsync(bool voltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true);
 
     /// <summary>
     /// Report the burden associated with this hardware.

@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson.Serialization.Options;
 
 namespace MeterTestSystemApi.Models;
 
@@ -67,6 +69,7 @@ public class ErrorConditions
     /// Dictionary uses the enumeration Amplifiers as its key.
     /// </summary>
     [NotNull, Required]
+    [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
     public Dictionary<Amplifiers, AmplifierErrorConditions> Amplifiers { get; set; } = new() {
         { Models.Amplifiers.Current1, new() },
         { Models.Amplifiers.Current2, new() },

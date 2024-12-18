@@ -66,6 +66,8 @@ public static class SourceApiConfiguration
         services.AddTransient<ISimulatedSource, SimulatedSource>();
         services.AddTransient<ISourceCapabilityValidator, SourceCapabilityValidator>();
 
+        services.AddScoped<ISourceHealthUtils, SourceHealthUtils>();
+
         /* Legacy configuration from setting files. */
         var useDatabase = configuration["UseDatabaseConfiguration"] == "yes";
         var deviceType = configuration["SerialPort:DeviceType"];

@@ -18,11 +18,12 @@ namespace SourceApi.Controllers;
 /// </remarks>
 /// <param name="logger">Injected logger.</param>
 /// <param name="source">Injected source.</param>
+/// <param name="sourceHealth"></param>
 /// <param name="interfaceLogger"></param>
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class SourceController(ILogger<SourceController> logger, ISource source, IInterfaceLogger interfaceLogger) : Controller
+public class SourceController(ILogger<SourceController> logger, ISource source, ISourceHealthUtils sourceHealth, IInterfaceLogger interfaceLogger) : Controller
 {
     /// <summary>
     /// Gets the capabilities of this source.
@@ -63,7 +64,7 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
     {
         logger.LogTrace($"Loadpoint to be set: {loadpoint}");
 
-        var srcResult = await source.SetLoadpointAsync(interfaceLogger, loadpoint);
+        var srcResult = await sourceHealth.SetLoadpointAsync(interfaceLogger, loadpoint);
 
         switch (srcResult)
         {
@@ -103,7 +104,7 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
     [SwaggerOperation(OperationId = "TurnOff")]
     public async Task<ActionResult> TurnOffAsync()
     {
-        var srcResult = await source.TurnOffAsync(interfaceLogger);
+        var srcResult = await sourceHealth.TurnOffAsync(interfaceLogger);
 
         switch (srcResult)
         {

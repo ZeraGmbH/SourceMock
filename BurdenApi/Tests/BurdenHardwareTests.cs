@@ -40,6 +40,7 @@ public class BurdenHardwareTests
 
         services.AddTransient<ICalibrationHardware, CalibrationHardware>();
         services.AddTransient<IInterfaceLogger, NoopInterfaceLogger>();
+        services.AddTransient<ISourceHealthUtils, SourceHealthUtils>();
 
         var source = new Mock<ISource>();
 
@@ -426,7 +427,7 @@ public class BurdenHardwareTests
 
         var burden = new Mock<IBurden>();
 
-        var hardware = new CalibrationHardware(source.Object, refMeter.Object, burden.Object, new NoopInterfaceLogger());
+        var hardware = new CalibrationHardware(source.Object, new SourceHealthUtils(source.Object), refMeter.Object, burden.Object, new NoopInterfaceLogger());
 
         var factor = await hardware.PrepareAsync(
             false,

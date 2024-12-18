@@ -11,7 +11,7 @@ namespace BurdenApi.Actions.Device;
 /// <summary>
 /// Implementation of a calibration environment.
 /// </summary>
-public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden burden, IInterfaceLogger logger) : ICalibrationHardware
+public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth, IRefMeter refMeter, IBurden burden, IInterfaceLogger logger) : ICalibrationHardware
 {
     /// <inheritdoc/>
     public IBurden Burden { get; } = burden;
@@ -126,7 +126,7 @@ public class CalibrationHardware(ISource source, IRefMeter refMeter, IBurden bur
         };
 
         // Set the loadpioint.
-        var status = await source.SetLoadpointAsync(logger, lp);
+        var status = await sourceHealth.SetLoadpointAsync(logger, lp);
 
         if (status != SourceApiErrorCodes.SUCCESS) throw new InvalidOperationException($"bad loadpoint: {status}");
 

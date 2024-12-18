@@ -26,6 +26,6 @@ public interface ISourceHealthUtils
     /// Gets the currently set loadpoint.
     /// </summary>
     /// <returns>The loadpoint, null if none was set.</returns>
-    Task<TargetLoadpoint?> GetCurrentLoadpointAsync(IInterfaceLogger logger);
+    Task<Tuple<TargetLoadpoint?, string?>> GetCurrentLoadpointAsync(IInterfaceLogger logger);
 
 }

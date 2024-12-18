@@ -1,4 +1,5 @@
 using SourceApi.Model;
+using ZERA.WebSam.Shared.Actions.User;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace SourceApi.Actions.Source;
@@ -7,23 +8,37 @@ namespace SourceApi.Actions.Source;
 /// Helper class to manipulate the loadpoint and remember who
 /// did it. 
 /// </summary>
-public class SourceHealthUtils(ISource source) : ISourceHealthUtils
+public class SourceHealthUtils(ISource source, ICurrentUser user, SourceHealthUtils.State state) : ISourceHealthUtils
 {
-    /// <inheritdoc/>
-    public Task<TargetLoadpoint?> GetCurrentLoadpointAsync(IInterfaceLogger logger)
+    public class State
     {
-        return source.GetCurrentLoadpointAsync(logger);
+        /// <summary>
+        /// The user who modified the loadpoint.
+        /// </summary>
+        public string? UserId;
     }
 
     /// <inheritdoc/>
-    public Task<SourceApiErrorCodes> SetLoadpointAsync(IInterfaceLogger logger, TargetLoadpoint loadpoint)
+    public async Task<Tuple<TargetLoadpoint?, string?>> GetCurrentLoadpointAsync(IInterfaceLogger logger)
+        => Tuple.Create(await source.GetCurrentLoadpointAsync(logger), state.UserId);
+
+    /// <inheritdoc/>
+    public async Task<SourceApiErrorCodes> SetLoadpointAsync(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
-        return source.SetLoadpointAsync(logger, loadpoint);
+        var result = await source.SetLoadpointAsync(logger, loadpoint);
+
+        if (result == SourceApiErrorCodes.SUCCESS) state.UserId = user.GetUserId();
+
+        return result;
     }
 
     /// <inheritdoc/>
-    public Task<SourceApiErrorCodes> TurnOffAsync(IInterfaceLogger logger)
+    public async Task<SourceApiErrorCodes> TurnOffAsync(IInterfaceLogger logger)
     {
-        return source.TurnOffAsync(logger);
+        var result = await source.TurnOffAsync(logger);
+
+        if (result == SourceApiErrorCodes.SUCCESS) state.UserId = user.GetUserId();
+
+        return result;
     }
 }

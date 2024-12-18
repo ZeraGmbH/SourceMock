@@ -7,6 +7,7 @@ using RefMeterApi.Models;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.Actions.User;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 
@@ -127,7 +128,15 @@ public class BurdenHardwareTests
 
         burden.SetupGet(b => b.HasMockedSource).Returns(true);
 
+        var user = new Mock<ICurrentUser>();
+
+        services.AddSingleton(user.Object);
+
         services.AddSingleton<IBurden>(burden.Object);
+
+        var sourceHealthState = new Mock<SourceHealthUtils.State>();
+
+        services.AddSingleton(sourceHealthState.Object);
 
         Services = services.BuildServiceProvider();
 
@@ -427,7 +436,9 @@ public class BurdenHardwareTests
 
         var burden = new Mock<IBurden>();
 
-        var hardware = new CalibrationHardware(source.Object, new SourceHealthUtils(source.Object), refMeter.Object, burden.Object, new NoopInterfaceLogger());
+        var user = new Mock<ICurrentUser>();
+
+        var hardware = new CalibrationHardware(source.Object, new SourceHealthUtils(source.Object, user.Object, new()), refMeter.Object, burden.Object, new NoopInterfaceLogger());
 
         var factor = await hardware.PrepareAsync(
             false,

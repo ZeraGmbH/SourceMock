@@ -66,6 +66,7 @@ public static class SourceApiConfiguration
         services.AddTransient<ISimulatedSource, SimulatedSource>();
         services.AddTransient<ISourceCapabilityValidator, SourceCapabilityValidator>();
 
+        services.AddSingleton<SourceHealthUtils.State>();
         services.AddScoped<ISourceHealthUtils, SourceHealthUtils>();
 
         /* Legacy configuration from setting files. */

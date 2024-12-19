@@ -1,5 +1,6 @@
 using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Model;
+using System.Security.Claims;
 
 namespace SourceApi.Actions.Source;
 
@@ -26,6 +27,6 @@ public interface ISourceHealthUtils
     /// Gets the currently set loadpoint.
     /// </summary>
     /// <returns>The loadpoint, null if none was set.</returns>
-    Task<Tuple<TargetLoadpoint?, string?>> GetCurrentLoadpointAsync(IInterfaceLogger logger);
+    Task<Tuple<TargetLoadpoint?, ClaimsPrincipal?>> GetCurrentLoadpointAsync(IInterfaceLogger logger);
 
 }

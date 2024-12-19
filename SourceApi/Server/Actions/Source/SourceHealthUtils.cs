@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using SourceApi.Model;
 using ZERA.WebSam.Shared.Actions.User;
 using ZERA.WebSam.Shared.Models.Logging;
@@ -15,19 +16,19 @@ public class SourceHealthUtils(ISource source, ICurrentUser user, SourceHealthUt
         /// <summary>
         /// The user who modified the loadpoint.
         /// </summary>
-        public string? UserId;
+        public ClaimsPrincipal? User;
     }
 
     /// <inheritdoc/>
-    public async Task<Tuple<TargetLoadpoint?, string?>> GetCurrentLoadpointAsync(IInterfaceLogger logger)
-        => Tuple.Create(await source.GetCurrentLoadpointAsync(logger), state.UserId);
+    public async Task<Tuple<TargetLoadpoint?, ClaimsPrincipal?>> GetCurrentLoadpointAsync(IInterfaceLogger logger)
+        => Tuple.Create(await source.GetCurrentLoadpointAsync(logger), state.User);
 
     /// <inheritdoc/>
     public async Task<SourceApiErrorCodes> SetLoadpointAsync(IInterfaceLogger logger, TargetLoadpoint loadpoint)
     {
         var result = await source.SetLoadpointAsync(logger, loadpoint);
 
-        if (result == SourceApiErrorCodes.SUCCESS) state.UserId = user.GetUserId();
+        if (result == SourceApiErrorCodes.SUCCESS) state.User = user.User;
 
         return result;
     }
@@ -37,7 +38,7 @@ public class SourceHealthUtils(ISource source, ICurrentUser user, SourceHealthUt
     {
         var result = await source.TurnOffAsync(logger);
 
-        if (result == SourceApiErrorCodes.SUCCESS) state.UserId = user.GetUserId();
+        if (result == SourceApiErrorCodes.SUCCESS) state.User = user.User;
 
         return result;
     }

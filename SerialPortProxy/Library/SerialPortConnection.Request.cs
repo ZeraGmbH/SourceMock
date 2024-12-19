@@ -122,7 +122,6 @@ public partial class SerialPortConnection
         {
             IPreparedInterfaceLogEntry receiveEntry = null!;
             Exception receiveError = null!;
-            var reply = "";
 
             try
             {
@@ -132,9 +131,12 @@ public partial class SerialPortConnection
                 /* Start logging. */
                 receiveEntry = connection.Prepare(new() { Outgoing = false, RequestId = requestId });
 
-                reply = ReadInput(request.EstimatedDuration);
+                var reply = ReadInput(request.EstimatedDuration);
 
                 _logger.LogDebug("Got reply {Reply} for command {Command}", reply, request.Command);
+
+                /* Always remember the reply - even the terminating string. */
+                answer.Add(reply);
 
                 /* If a device response ends with NAK there are invalid arguments. */
                 if (reply.EndsWith("NAK"))
@@ -151,9 +153,6 @@ public partial class SerialPortConnection
 
                     throw new ArgumentException(request.Command); ;
                 }
-
-                /* Always remember the reply - even the terminating string. */
-                answer.Add(reply);
 
                 /* If the terminating string is detected the reply from the device is complete. */
                 if (request.Match(reply))
@@ -190,7 +189,7 @@ public partial class SerialPortConnection
                         receiveEntry.Finish(new()
                         {
                             Encoding = InterfaceLogPayloadEncodings.Raw,
-                            Payload = reply,
+                            Payload = string.Join("\t", answer),
                             PayloadType = "",
                             TransferException = receiveError?.Message
                         });

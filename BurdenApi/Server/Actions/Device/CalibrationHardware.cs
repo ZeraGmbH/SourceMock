@@ -21,7 +21,7 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
     private Current _CurrentRange;
 
     /// <inheritdoc/>
-    public async Task<GoalValueWithQuantity> MeasureAsync(Calibration calibration, bool voltageNotCurrent)
+    public async Task<RefMeterValueWithQuantity> MeasureAsync(Calibration calibration, bool voltageNotCurrent)
     {
         // Apply the calibration to the burden.        
         await Burden.SetTransientCalibrationAsync(calibration, logger);
@@ -56,13 +56,18 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
             }
 
             // Report.
-            var power = values.Phases[0].ApparentPower;
+            var activePower = values.Phases[0].ActivePower;
+            var apparentPower = values.Phases[0].ApparentPower;
             var factor = values.Phases[0].PowerFactor;
+            var reactivePower = values.Phases[0].ReactivePower;
 
-            if (power == null || factor == null) throw new InvalidOperationException("insufficient actual values");
+            if (apparentPower == null || activePower == null || reactivePower == null || factor == null)
+                throw new InvalidOperationException("insufficient actual values");
 
-            return new GoalValueWithQuantity(
-                power.Value,
+            return new RefMeterValueWithQuantity(
+                apparentPower.Value,
+                activePower.Value,
+                reactivePower.Value,
                 factor.Value,
                 voltageNotCurrent
                     ? (double?)values.Phases[0].Voltage.AcComponent?.Rms

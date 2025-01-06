@@ -27,7 +27,7 @@ public interface ICalibrationContext
     /// </summary>
     /// <param name="calibration">Calibration to apply to the burden before measuring.</param>
     /// <returns>Values as measured by the reference meter.</returns>
-    Task<GoalValueWithQuantity> MeasureAsync(Calibration calibration);
+    Task<RefMeterValueWithQuantity> MeasureAsync(Calibration calibration);
 
     /// <summary>
     /// Get the current values from the burden.

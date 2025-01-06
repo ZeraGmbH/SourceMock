@@ -38,7 +38,7 @@ public class CalibrationStep
     /// Actual values for the calibration.
     /// </summary>
     [NotNull, Required]
-    public GoalValue Values { get; set; } = new();
+    public RefMeterValue Values { get; set; } = new();
 
     /// <summary>
     /// Deviation from the calibration goal.

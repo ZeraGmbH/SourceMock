@@ -45,7 +45,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
     private Frequency _Frequency;
 
     /// <inheritdoc/>
-    public Task<GoalValueWithQuantity> MeasureAsync(Calibration calibration) => hardware.MeasureAsync(calibration, _VoltageNotCurrent);
+    public Task<RefMeterValueWithQuantity> MeasureAsync(Calibration calibration) => hardware.MeasureAsync(calibration, _VoltageNotCurrent);
 
     /// <inheritdoc/>
     public Task<GoalValueWithQuantity> MeasureBurdenAsync() => hardware.MeasureBurdenAsync(_VoltageNotCurrent);

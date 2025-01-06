@@ -15,7 +15,7 @@ public class GoalValue(ApparentPower power, PowerFactor factor)
     public GoalValue() : this(new(0), new(1)) { }
 
     /// <summary>
-    /// Apparent power in W.
+    /// Apparent power in VA.
     /// </summary>
     [NotNull, Required]
     public ApparentPower ApparentPower { get; set; } = power;

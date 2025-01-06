@@ -118,7 +118,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
         => ((BurdenMock)Burden).AddCalibration(burden, range, step, calibration);
 
     /// <inheritdoc/>
-    public Task<GoalValueWithQuantity> MeasureAsync(Calibration calibration, bool voltageNotCurrent)
+    public Task<RefMeterValueWithQuantity> MeasureAsync(Calibration calibration, bool voltageNotCurrent)
     {
         if (!_CurrentRange.HasValue || !_CurrentPower.HasValue) throw new InvalidOperationException("loadpoint not yet set");
 
@@ -130,8 +130,10 @@ public class CalibrationHardwareMock : ICalibrationHardware
 
         var targetResistance = CreateRelative(_Target.Resistive);
 
-        return Task.FromResult(new GoalValueWithQuantity(
+        return Task.FromResult(new RefMeterValueWithQuantity(
             resistance / targetResistance * _CurrentPower.Value,
+            new(0),
+            new(0),
             new(impedance),
             null
         ));

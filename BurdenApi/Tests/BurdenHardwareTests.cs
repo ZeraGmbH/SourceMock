@@ -98,7 +98,16 @@ public class BurdenHardwareTests
         );
 
         refMeter.Setup(r => r.GetActualValuesUncachedAsync(It.IsAny<IInterfaceLogger>(), -1, true)).ReturnsAsync(
-            new MeasuredLoadpoint { Phases = { new() { PowerFactor = new(0.8), ApparentPower = new(3.75) } } }
+            new MeasuredLoadpoint
+            {
+                Phases = {
+                    new() {
+                        ActivePower = new(0),
+                        ApparentPower = new(3.75),
+                        PowerFactor = new(0.8),
+                        ReactivePower = new(0),
+                } }
+            }
         );
 
         refMeter.Setup(r => r.SelectPllChannelAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<PllChannel>())).Callback(

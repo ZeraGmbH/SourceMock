@@ -13,7 +13,7 @@ public interface ICalibrationHardware
     /// <param name="calibration">Calibration parameters.</param>
     /// <param name="voltageNotCurrent">Set if the range set is the voltage.</param>
     /// <returns>Resulting values.</returns>
-    Task<GoalValueWithQuantity> MeasureAsync(Calibration calibration, bool voltageNotCurrent);
+    Task<RefMeterValueWithQuantity> MeasureAsync(Calibration calibration, bool voltageNotCurrent);
 
     /// <summary>
     /// Get values from the burden.

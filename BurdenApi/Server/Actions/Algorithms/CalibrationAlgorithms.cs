@@ -22,4 +22,9 @@ public enum CalibrationAlgorithms
     /// Starts with adjusting the fine calibration first.
     /// </summary>
     FineFirst = 2,
+
+    /// <summary>
+    /// Only measure initial values.
+    /// </summary>
+    MeasureOnly = 3,
 }

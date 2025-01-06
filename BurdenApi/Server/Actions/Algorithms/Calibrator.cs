@@ -159,7 +159,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
             Values = values
         });
 
-        // Secure bound by a maximum number of steps - we expect a maximum of 4 * 127 steps.
+        // Secure bound by a maximum number of steps.
         while (_Steps.Count < 1000)
         {
             // Check for abort.

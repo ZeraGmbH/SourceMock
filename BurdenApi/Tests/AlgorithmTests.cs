@@ -25,9 +25,10 @@ namespace BurdenApiTests
 
             services.AddTransient<ICalibrator, Calibrator>();
 
+            services.AddKeyedTransient<ICalibrationAlgorithm, FineFirstCalibrator>(CalibrationAlgorithms.FineFirst);
+            services.AddKeyedTransient<ICalibrationAlgorithm, NullCalibrator>(CalibrationAlgorithms.MeasureOnly);
             services.AddKeyedTransient<ICalibrationAlgorithm, SingleStepCalibrator>(CalibrationAlgorithms.Default);
             services.AddKeyedTransient<ICalibrationAlgorithm, SingleStepCalibrator>(CalibrationAlgorithms.SingleStep);
-            services.AddKeyedTransient<ICalibrationAlgorithm, FineFirstCalibrator>(CalibrationAlgorithms.FineFirst);
 
             services.AddSingleton<ICalibrationHardware, CalibrationHardwareMock>();
 
@@ -185,6 +186,31 @@ namespace BurdenApiTests
 
                 Assert.That(Math.Abs(step.Deviation.DeltaPower), Is.LessThan(0.1));
                 Assert.That(Math.Abs(step.Deviation.DeltaFactor), Is.LessThan(0.1));
+            });
+        }
+
+        [Test]
+        public async Task Can_Mesaure_Only_Async()
+        {
+            Hardware.AddCalibration("IEC50", "200", "50;0.75", new(new(112, 7), new(16, 99)));
+
+            await Calibrator.RunAsync(true, new() { Burden = "IEC50", Range = "200", Step = "50;0.75", Algorithm = CalibrationAlgorithms.MeasureOnly }, CancellationToken.None);
+
+            var step = Calibrator.LastStep;
+
+            Assert.That(step, Is.Not.Null);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(Calibrator.Steps, Has.Length.EqualTo(1));
+
+                Assert.That(step!.Calibration.Resistive.Coarse, Is.EqualTo(112));
+                Assert.That(step.Calibration.Resistive.Fine, Is.EqualTo(7));
+                Assert.That(step.Calibration.Inductive.Coarse, Is.EqualTo(16));
+                Assert.That(step.Calibration.Inductive.Fine, Is.EqualTo(99));
+
+                Assert.That((double)step.Values.ApparentPower, Is.EqualTo(104.88).Within(0.01));
+                Assert.That((double)step.Values.PowerFactor, Is.EqualTo(0.86).Within(0.01));
             });
         }
 

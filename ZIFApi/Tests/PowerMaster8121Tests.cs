@@ -61,7 +61,7 @@ public class PowerMaster8121Tests
 
         Connection = SerialPortConnection.FromMockedPortInstance(Port, new NullLogger<ISerialPortConnection>(), false);
 
-        Socket = new PowerMaster8121(new NullLogger<PowerMaster8121>());
+        Socket = new PowerMaster8121(new PortSetup821xVSW(), new NullLogger<PowerMaster8121>());
     }
 
     [TearDown]

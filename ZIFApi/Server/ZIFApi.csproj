@@ -17,4 +17,7 @@
     <NoWarn>AD0001;NU1902;NU1903;NU1904</NoWarn>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Include="Actions/**/*.json" CopyToOutputDirectory="PreserveNewest" TargetPath="%(Filename)%(Extension)" />
+  </ItemGroup>
 </Project>

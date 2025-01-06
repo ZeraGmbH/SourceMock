@@ -1,0 +1,2697 @@
+[
+  {
+    "MeterForm": "1",
+    "ServiceDefintion": "S001F01M",
+    "ServiceType": "1PH",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x12"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "2",
+    "ServiceDefintion": "S003F02M",
+    "ServiceType": "1PH-3W",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x02"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x20"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "3",
+    "ServiceDefintion": "S002F03M",
+    "ServiceType": "1PH-3W",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x10"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x81"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x08"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "4",
+    "ServiceDefintion": "S003F04M",
+    "ServiceType": "1PH-3W",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x09"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x10"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "5",
+    "ServiceDefintion": "S004F05M",
+    "ServiceType": "3W-NETWORK",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x08"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x1E"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "5",
+    "ServiceDefintion": "S006F05",
+    "ServiceType": "4W-DELTA C HI",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x9E"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "5",
+    "ServiceDefintion": "S008F05",
+    "ServiceType": "4W-WYE",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x08"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x1E"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "5",
+    "ServiceDefintion": "S005F05",
+    "ServiceType": "3W-DELTA",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x08"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x1E"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "5z",
+    "ServiceDefintion": "F5Z",
+    "ServiceType": "3W-NETWORK",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x1E"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "6",
+    "ServiceDefintion": "S009F06",
+    "ServiceType": "4W-WYE",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0A"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "7",
+    "ServiceDefintion": "NOT USED",
+    "ServiceType": "NOT USED",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "8",
+    "ServiceDefintion": "S010F08",
+    "ServiceType": "4W-DELTA",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x0C"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x02"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "9",
+    "ServiceDefintion": "S010F09",
+    "ServiceType": "4W-DELTA",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x0C"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x02"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "9",
+    "ServiceDefintion": "S000F09",
+    "ServiceType": "4W-WYE",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x0C"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x02"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "9",
+    "ServiceDefintion": "S001F09",
+    "ServiceType": "4W-WYE",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x0C"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x02"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "9z",
+    "ServiceDefintion": "F9Z",
+    "ServiceType": "4W-WYE",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x0C"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x26"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "10",
+    "ServiceDefintion": "S000F09",
+    "ServiceType": "4W-WYE",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x0C"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x02"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "11",
+    "ServiceDefintion": "S010F09",
+    "ServiceType": "4W-DELTA",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x0C"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x02"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x08"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "12",
+    "ServiceDefintion": "S005F12",
+    "ServiceType": "3W-DELTA",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x08"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x03"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x20"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x20"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "12",
+    "ServiceDefintion": "S004F12M",
+    "ServiceType": "3W-NETWORK",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x10"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x03"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x28"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "13",
+    "ServiceDefintion": "S004F12M",
+    "ServiceType": "3W-NETWORK",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x08"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x1E"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "13",
+    "ServiceDefintion": "S005F12",
+    "ServiceType": "3W-DELTA",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x94"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x20"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "14",
+    "ServiceDefintion": "S009F14M",
+    "ServiceType": "4W-WYE",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x02"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x68"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "15",
+    "ServiceDefintion": "S011F15",
+    "ServiceType": "4W-DELTA C HI",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x02"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x68"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "16",
+    "ServiceDefintion": "S000F15",
+    "ServiceType": "4W-WYE",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x02"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x68"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "17",
+    "ServiceDefintion": "S010F15",
+    "ServiceType": "4W-DELTA",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x02"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x68"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "25",
+    "ServiceDefintion": "S003F04M",
+    "ServiceType": "1PH-3W",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x10"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x03"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x20"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "25",
+    "ServiceDefintion": "S004F05M",
+    "ServiceType": "3W-DELTA",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x08"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x03"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x20"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "25",
+    "ServiceDefintion": "S004F12M",
+    "ServiceType": "3W-NETWORK",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x10"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x03"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x20"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "26",
+    "ServiceDefintion": "S004F05M",
+    "ServiceType": "3W-NETWORK",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0A"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "26",
+    "ServiceDefintion": "S006F05",
+    "ServiceType": "4W-DELTA C HI",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x22"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0A"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "26",
+    "ServiceDefintion": "S008F05",
+    "ServiceType": "4W-WYE",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x22"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0B"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "26",
+    "ServiceDefintion": "S004F05M",
+    "ServiceType": "3W-DELTA",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x22"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0B"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "29",
+    "ServiceDefintion": "S009F06",
+    "ServiceType": "4W-WYE",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x02"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "35",
+    "ServiceDefintion": "S003F04M",
+    "ServiceType": "1PH-3W",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x08"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x1E"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "35",
+    "ServiceDefintion": "S004F05M",
+    "ServiceType": "3W-NETWORK",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x08"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x1C"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "35",
+    "ServiceDefintion": "S005F05",
+    "ServiceType": "3W-DELTA",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x94"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x20"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "36",
+    "ServiceDefintion": "S009F06",
+    "ServiceType": "4W-WYE",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0A"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "39",
+    "ServiceDefintion": "S000F09",
+    "ServiceType": "4W-WYE (no N current)",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x0C"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x02"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "45",
+    "ServiceDefintion": "S003F04M",
+    "ServiceType": "1PH-3W",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x1C"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "45",
+    "ServiceDefintion": "S004F05M",
+    "ServiceType": "3W-NETWORK",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x08"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x1E"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "45",
+    "ServiceDefintion": "S005F05",
+    "ServiceType": "3W-DELTA",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x08"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x1E"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "45",
+    "ServiceDefintion": "S007F05M",
+    "ServiceType": "4W-DELTA A HI",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x08"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x14"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x20"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "45",
+    "ServiceDefintion": "S006F05",
+    "ServiceType": "4W-DELTA C HI",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x9C"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "45",
+    "ServiceDefintion": "S008F05",
+    "ServiceType": "4W-WYE",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x1C"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "46",
+    "ServiceDefintion": "S009F06",
+    "ServiceType": "4W-WYE",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0A"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "56",
+    "ServiceDefintion": "S003F04M",
+    "ServiceType": "1PH-3W",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0A"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "56",
+    "ServiceDefintion": "S004F05M",
+    "ServiceType": "3W-NETWORK",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0A"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "56",
+    "ServiceDefintion": "S004F05M",
+    "ServiceType": "3W-DELTA",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x22"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0A"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "56",
+    "ServiceDefintion": "S006F56M",
+    "ServiceType": "4W-DELTA C HI",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x22"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0B"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "56",
+    "ServiceDefintion": "S008F05",
+    "ServiceType": "4W-WYE",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x22"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0A"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "66",
+    "ServiceDefintion": "S003F04M",
+    "ServiceType": "1PH-3W",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x22"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0B"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "66",
+    "ServiceDefintion": "S004F05M",
+    "ServiceType": "3W-NETWORK",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0A"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "66",
+    "ServiceDefintion": "S004F05M",
+    "ServiceType": "3W-DELTA",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x22"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x03"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x05"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  },
+  {
+    "MeterForm": "76",
+    "ServiceDefintion": "S009F06",
+    "ServiceType": "4W-WYE (no N current)",
+    "RelayDefs": [
+      {
+        "PhaseIndex": 0,
+        "PhaseName": "A",
+        "BitMask": "0x0C",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 1,
+        "PhaseName": "B",
+        "BitMask": "0x3F",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 2,
+        "PhaseName": "C",
+        "BitMask": "0x3F",
+        "BitSet": "0x0A"
+      },
+      {
+        "PhaseIndex": 3,
+        "PhaseName": "D",
+        "BitMask": "0x9F",
+        "BitSet": "0x04"
+      },
+      {
+        "PhaseIndex": 4,
+        "PhaseName": "E",
+        "BitMask": "0xFF",
+        "BitSet": "0x01"
+      },
+      {
+        "PhaseIndex": 5,
+        "PhaseName": "F",
+        "BitMask": "0xE0",
+        "BitSet": "0x00"
+      },
+      {
+        "PhaseIndex": 6,
+        "PhaseName": "G",
+        "BitMask": "0x00",
+        "BitSet": "0x00"
+      }
+    ]
+  }
+]

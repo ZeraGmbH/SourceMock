@@ -26,6 +26,9 @@ public static class ZIFApiConfiguration
         // Used to initialize devices from configuration.
         services.AddSingleton<IZIFDevicesFactory, ZIFDevicesFactory>();
 
+        // Configuration parser.
+        services.AddSingleton<IPortSetup821xVSW, PortSetup821xVSW>();
+
         // Register all sockets.
         services.AddTransient(di => di.GetRequiredService<IZIFDevicesFactory>().Devices);
         services.AddTransient(di => di.GetRequiredService<IZIFDevice[]>().FirstOrDefault()!);

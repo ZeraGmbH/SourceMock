@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using NUnit.Framework;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZIFApi.Exceptions;
@@ -9,7 +10,7 @@ namespace ZIFApi.Actions;
 /// <summary>
 /// 
 /// </summary>
-public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
+public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster8121> _logger) : IZIFProtocol
 {
     private readonly struct PortKey(string meterForm, string serviceType)
     {
@@ -26,52 +27,6 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
         public override string ToString()
             => $"{MeterForm}:{ServiceType}";
     }
-
-    /// <summary>
-    /// For each port a bit set indicates a line connected to the meter.
-    /// </summary>
-    private readonly byte[] _portMasks = [
-        0x0c,
-        0x3f,
-        0x3f,
-        0x9f,
-        0xff,
-        0xe0,
-        0x00
-    ];
-
-    /// <summary>
-    /// All known configurations.
-    /// </summary>
-    private readonly Dictionary<PortKey, byte[]> _portsSetups = new() {
-        { new( "1", "1PH"),     [ 0x00, 0x00, 0x00, 0x12, 0x00, 0x00, 0x00 ] },
-        { new( "2", "1PH 3W"),  [ 0x00, 0x00, 0x00, 0x12, 0x00, 0x00, 0x00 ] },
-        { new( "3", "1PH 3W"),  [ 0x00, 0x10, 0x00, 0x81, 0x08, 0x00, 0x00 ] },
-        { new( "4", "1PH 3W"),  [ 0x00, 0x01, 0x02, 0x04, 0x01, 0x00, 0x00 ] },
-        { new( "5", "3WN"),     [ 0x00, 0x00, 0x00, 0x08, 0x1e, 0x00, 0x00 ] },
-        { new( "6", "4WY"),     [ 0x00, 0x00, 0x09, 0x04, 0x01, 0x00, 0x00 ] },
-        { new( "8", "4WD"),     [ 0x0c, 0x00, 0x02, 0x04, 0x00, 0x00, 0x00 ] },
-        { new( "9", "4WY"),     [ 0x0c, 0x00, 0x02, 0x04, 0x00, 0x00, 0x00 ] },
-        { new("10", "4WY"),     [ 0x0c, 0x04, 0x02, 0x04, 0x01, 0x00, 0x00 ] },
-        { new("11", "4WD"),     [ 0x0c, 0x00, 0x02, 0x04, 0x08, 0x00, 0x00 ] },
-        { new("12", "3WN"),     [ 0x00, 0x10, 0x00, 0x03, 0x28, 0x00, 0x00 ] },
-        { new("13", "3WN"),     [ 0x00, 0x00, 0x00, 0x08, 0x1e, 0x00, 0x00 ] },
-        { new("14", "4WY"),     [ 0x00, 0x00, 0x00, 0x02, 0x28, 0x00, 0x00 ] },
-        { new("15", "4WD"),     [ 0x00, 0x00, 0x00, 0x02, 0x68, 0x00, 0x00 ] },
-        { new("16", "4WY"),     [ 0x00, 0x00, 0x00, 0x02, 0x68, 0x00, 0x00 ] },
-        { new("17", "4WD"),     [ 0x00, 0x00, 0x00, 0x02, 0x68, 0x00, 0x00 ] },
-        { new("25", "3WN"),     [ 0x00, 0x10, 0x00, 0x03, 0x20, 0x00, 0x00 ] },
-        { new("26", "1PH 3W"),  [ 0x00, 0x00, 0x0a, 0x04, 0x01, 0x00, 0x00 ] },
-        { new("29", "4WY"),     [ 0x04, 0x00, 0x02, 0x04, 0x00, 0x00, 0x00 ] },
-        { new("35", "1PH 3W"),  [ 0x00, 0x00, 0x00, 0x08, 0x1e, 0x00, 0x00 ] },
-        { new("36", "4WY"),     [ 0x00, 0x00, 0x0a, 0x04, 0x00, 0x00, 0x00 ] },
-        { new("39", "4WY"),     [ 0x0c, 0x00, 0x02, 0x04, 0x00, 0x00, 0x00 ] },
-        { new("45", "3WN"),     [ 0x00, 0x00, 0x00, 0x08, 0x1e, 0x00, 0x00 ] },
-        { new("46", "4WY"),     [ 0x00, 0x00, 0x0a, 0x04, 0x01, 0x00, 0x00 ] },
-        { new("56", "3WN"),     [ 0x00, 0x00, 0x0a, 0x04, 0x01, 0x00, 0x00 ] },
-        { new("66", "3WN"),     [ 0x00, 0x00, 0x0a, 0x04, 0x01, 0x00, 0x00 ] },
-        { new("76", "4WY"),     [ 0x00, 0x00, 0x0a, 0x04, 0x01, 0x00, 0x00 ] },
-    };
 
     private static readonly byte[] _crcTable =
     [
@@ -110,7 +65,7 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
 
     private enum ReadState { Start, End, Length, Data, Checksum };
 
-    private async Task Execute(ISerialPortConnection factory, IInterfaceLogger logger, params int[] command)
+    private async Task ExecuteAsync(ISerialPortConnection factory, IInterfaceLogger logger, params int[] command)
         => await Execute(factory, logger, response => response.Length == 0 ? true : throw new BadLengthException(0), command);
 
     private Task<T> Execute<T>(ISerialPortConnection factory, IInterfaceLogger logger, Func<byte[], T> createResponse, params int[] command)
@@ -351,30 +306,32 @@ public class PowerMaster8121(ILogger<PowerMaster8121> _logger) : IZIFProtocol
 
     /// <inheritdoc/>
     public Task SetActiveAsync(bool active, ISerialPortConnection factory, IInterfaceLogger logger)
-        => Execute(
+        => ExecuteAsync(
                 factory,
                 logger,
                 0x8d, active ? 0x01 : 0x00
             );
 
     /// <inheritdoc/>
-    public Task SetMeterAsync(string meterForm, string serviceType, ISerialPortConnection factory, IInterfaceLogger logger)
+    public async Task SetMeterAsync(string meterForm, string serviceType, ISerialPortConnection factory, IInterfaceLogger logger)
     {
         /* See if we support this meter. */
-        if (!_portsSetups.TryGetValue(new(meterForm, serviceType), out var setup))
+        var setups = await configLoader.PortSetups;
+
+        if (!setups.TryGetValue(new(meterForm, serviceType), out var setup))
             throw new BadMeterFormServiceTypeCombinationException(meterForm, serviceType);
 
-        return Execute(
+        await ExecuteAsync(
             factory,
             logger,
             0x8e,
-            _portMasks[0], setup[0],
-            _portMasks[1], setup[1],
-            _portMasks[2], setup[2],
-            _portMasks[3], setup[3],
-            _portMasks[4], setup[4],
-            _portMasks[5], setup[5],
-            _portMasks[6], setup[6]
+            PortSetup821xVSW.PortMasks[0], setup[0],
+            PortSetup821xVSW.PortMasks[1], setup[1],
+            PortSetup821xVSW.PortMasks[2], setup[2],
+            PortSetup821xVSW.PortMasks[3], setup[3],
+            PortSetup821xVSW.PortMasks[4], setup[4],
+            PortSetup821xVSW.PortMasks[5], setup[5],
+            PortSetup821xVSW.PortMasks[6], setup[6]
         );
     }
 }

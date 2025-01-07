@@ -5,15 +5,11 @@ namespace BurdenApi.Models;
 /// <summary>
 /// Measurement value with additional range quantity.
 /// </summary>
-public class GoalValueWithQuantity(ApparentPower power, PowerFactor factor, double? range) : GoalValue(power, factor)
+public class GoalValueWithQuantity : GoalValue
 {
     /// <summary>
     /// The measured quantity.
     /// </summary>
-    public double? Range { get; set; } = range;
+    public double? Range { get; set; }
 
-    /// <summary>
-    /// To support serialisation.
-    /// </summary>
-    public GoalValueWithQuantity() : this(new(0), new(1), null) { }
 }

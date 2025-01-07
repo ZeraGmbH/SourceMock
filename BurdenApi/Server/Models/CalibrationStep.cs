@@ -32,7 +32,13 @@ public class CalibrationStep
     /// The faxtor used to configure the loadpoint.
     /// </summary>
     [NotNull, Required]
-    public double Factor { get; set; }
+    public double Factor => Configuration.Factor;
+
+    /// <summary>
+    /// Overall settings for the calibration.
+    /// </summary>
+    [NotNull, Required]
+    public PrepareResult Configuration { get; set; } = new();
 
     /// <summary>
     /// Actual values for the calibration.

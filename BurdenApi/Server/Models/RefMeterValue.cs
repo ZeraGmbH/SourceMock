@@ -8,27 +8,42 @@ namespace BurdenApi.Models;
 /// <summary>
 /// An extended pair of values.
 /// </summary>
-public class RefMeterValue(ApparentPower apparentPower, Frequency? frequency, MeasuredLoadpointPhase phase, PowerFactor factor) : GoalValue(apparentPower, factor)
+public class RefMeterValue : GoalValue
 {
     /// <summary>
     /// Full data of the measured phase.
     /// </summary>
     [NotNull, Required]
-    public MeasuredLoadpointPhase Phase { get; set; } = phase;
+    public MeasuredLoadpointPhase Phase { get; set; } = new();
 
     /// <summary>
     /// Meaured frequency.
     /// </summary>
-    public Frequency? Frequency { get; set; } = frequency;
+    public Frequency? Frequency { get; set; }
 
     /// <summary>
-    /// Create a new values information.
+    /// Measured voltage range.
     /// </summary>
-    public RefMeterValue() : this(new(0), null, new(), new(1)) { }
+    [NotNull, Required]
+    public Voltage? VoltageRange { get; set; }
+
+    /// <summary>
+    /// Measrued current range.
+    /// </summary>
+    [NotNull, Required]
+    public Current? CurrentRange { get; set; }
 
     /// <summary>
     /// Silent convert from an internal measurement to the protocol representation.
     /// </summary>
     /// <param name="values">Measured values.</param>
-    public static implicit operator RefMeterValue(RefMeterValueWithQuantity values) => new(values.ApparentPower, values.Frequency, values.Phase, values.PowerFactor);
+    public static implicit operator RefMeterValue(RefMeterValueWithQuantity values) => new()
+    {
+        ApparentPower = values.ApparentPower,
+        CurrentRange = values.CurrentRange,
+        Frequency = values.Frequency,
+        Phase = values.Phase,
+        PowerFactor = values.PowerFactor,
+        VoltageRange = values.VoltageRange,
+    };
 }

@@ -130,13 +130,11 @@ public class CalibrationHardwareMock : ICalibrationHardware
 
         var targetResistance = CreateRelative(_Target.Resistive);
 
-        return Task.FromResult(new RefMeterValueWithQuantity(
-            resistance / targetResistance * _CurrentPower.Value,
-            new(0),
-            new(),
-            new(impedance),
-            null
-        ));
+        return Task.FromResult(new RefMeterValueWithQuantity()
+        {
+            ApparentPower = resistance / targetResistance * _CurrentPower.Value,
+            PowerFactor = new(impedance),
+        });
     }
 
     private static double RelativeLimit => CreateRelative(127, 127);

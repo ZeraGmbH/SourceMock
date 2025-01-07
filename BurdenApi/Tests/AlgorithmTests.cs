@@ -143,8 +143,8 @@ namespace BurdenApiTests
         [TestCase(80, 0.4, 100, 0.5, -0.2, -0.2)]
         public void Can_Calculate_Relative_Goals(double pow1, double fac1, double pow2, double fac2, double deltaPower, double deltaFactor)
         {
-            var current = new GoalValue(new(pow1), new(fac1));
-            var goal = new GoalValue(new(pow2), new(fac2));
+            var current = new GoalValue { ApparentPower = new(pow1), PowerFactor = new(fac1) };
+            var goal = new GoalValue { ApparentPower = new(pow2), PowerFactor = new(fac2) };
 
             var delta = current / goal;
 

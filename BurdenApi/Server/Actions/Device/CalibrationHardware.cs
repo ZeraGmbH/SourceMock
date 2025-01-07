@@ -37,12 +37,11 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
             // Ask device for values.
             var values = await refMeter.GetActualValuesUncachedAsync(logger, -1, true);
 
+            // Ask for current ranges.
+            var status = await refMeter.GetRefMeterStatusAsync(logger);
+
             // Check for keeping the ranges.
             if ((double)_VoltageRange != 0 && (double)_CurrentRange != 0)
-            {
-                // Ask for current ranges.
-                var status = await refMeter.GetRefMeterStatusAsync(logger);
-
                 if (status.VoltageRange != _VoltageRange || status.CurrentRange != _CurrentRange)
                 {
                     if (status.VoltageRange != _VoltageRange)
@@ -53,7 +52,6 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
 
                     continue;
                 }
-            }
 
             // Report.
             var phase = values.Phases[0];
@@ -63,15 +61,18 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
             if (apparentPower == null || factor == null)
                 throw new InvalidOperationException("insufficient actual values");
 
-            return new RefMeterValueWithQuantity(
-                apparentPower.Value,
-                values.Frequency,
-                phase,
-                factor.Value,
-                voltageNotCurrent
+            return new()
+            {
+                ApparentPower = apparentPower.Value,
+                CurrentRange = status.CurrentRange,
+                Frequency = values.Frequency,
+                Phase = phase,
+                PowerFactor = factor.Value,
+                VoltageRange = status.VoltageRange,
+                Range = voltageNotCurrent
                     ? (double?)values.Phases[0].Voltage.AcComponent?.Rms
                     : (double?)values.Phases[0].Current.AcComponent?.Rms
-            );
+            };
         }
 
         throw new InvalidOperationException("reference meter keeps changing ranges - unable to get reliable actual values");
@@ -202,10 +203,11 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
     {
         var values = await Burden.MeasureAsync(logger);
 
-        return new GoalValueWithQuantity(
-            values.ApparentPower,
-            values.PowerFactor,
-            voltageNotCurrent ? (double?)values.Voltage : (double?)values.Current
-        );
+        return new()
+        {
+            ApparentPower = values.ApparentPower,
+            PowerFactor = values.PowerFactor,
+            Range = voltageNotCurrent ? (double?)values.Voltage : (double?)values.Current,
+        };
     }
 }

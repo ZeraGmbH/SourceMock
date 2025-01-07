@@ -8,23 +8,29 @@ namespace BurdenApi.Models;
 /// <summary>
 /// Measurement value with additional power information.
 /// </summary>
-public class RefMeterValueWithQuantity(ApparentPower apparentPower, Frequency? frequency, MeasuredLoadpointPhase phase, PowerFactor factor, double? range)
-    : GoalValueWithQuantity(apparentPower, factor, range)
+public class RefMeterValueWithQuantity : GoalValueWithQuantity
 {
     /// <summary>
     /// Full data of the measured phase.
     /// </summary>
     [NotNull, Required]
-    public MeasuredLoadpointPhase Phase { get; set; } = phase;
+    public MeasuredLoadpointPhase Phase { get; set; } = new();
 
     /// <summary>
     /// Meaured frequency.
     /// </summary>
     [NotNull, Required]
-    public Frequency? Frequency { get; set; } = frequency;
+    public Frequency? Frequency { get; set; }
 
     /// <summary>
-    /// To support serialisation.
+    /// Measured voltage range.
     /// </summary>
-    public RefMeterValueWithQuantity() : this(new(0), null, new(), new(1), null) { }
+    [NotNull, Required]
+    public Voltage? VoltageRange { get; set; }
+
+    /// <summary>
+    /// Measrued current range.
+    /// </summary>
+    [NotNull, Required]
+    public Current? CurrentRange { get; set; }
 }

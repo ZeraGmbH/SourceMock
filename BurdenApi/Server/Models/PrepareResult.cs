@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using Castle.Components.DictionaryAdapter;
 using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace BurdenApi.Models;
@@ -25,15 +24,18 @@ public class PrepareResult
     /// <summary>
     /// Voltage range enforced - may be different from measured range.
     /// </summary>
+    [NotNull, Required]
     public Voltage VoltageRange { get; set; }
 
     /// <summary>
     /// Current range enforced - may be different from measured range.
     /// </summary>
+    [NotNull, Required]
     public Current CurrentRange { get; set; }
 
     /// <summary>
     /// Set if working on a voltage burden.
     /// </summary>
-    [NotNull, Required] public bool IsVoltageNotCurrentBurden { get; set; }
+    [NotNull, Required]
+    public bool IsVoltageNotCurrentBurden { get; set; }
 }

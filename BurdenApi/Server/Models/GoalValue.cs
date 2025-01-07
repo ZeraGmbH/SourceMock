@@ -7,24 +7,19 @@ namespace BurdenApi.Models;
 /// <summary>
 /// A target pair of values.
 /// </summary>
-public class GoalValue(ApparentPower power, PowerFactor factor)
+public class GoalValue
 {
-    /// <summary>
-    /// To support serialisation.
-    /// </summary>
-    public GoalValue() : this(new(0), new(1)) { }
-
     /// <summary>
     /// Apparent power in VA.
     /// </summary>
     [NotNull, Required]
-    public ApparentPower ApparentPower { get; set; } = power;
+    public ApparentPower ApparentPower { get; set; }
 
     /// <summary>
     /// Powerfactor between as cos of angle difference.
     /// </summary>
     [NotNull, Required]
-    public PowerFactor PowerFactor { get; set; } = factor;
+    public PowerFactor PowerFactor { get; set; }
 
     /// <summary>
     /// Calcluate the deviation of a goal value.

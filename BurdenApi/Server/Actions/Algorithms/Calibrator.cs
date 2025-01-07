@@ -62,7 +62,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
     /// <summary>
     /// The range used in the loadpoint.
     /// </summary>
-    private double _PreparedRange;
+    private PrepareResult _PrepareInfo = new();
 
     /// <inheritdoc/>
     public GoalDeviation MakeDeviation(GoalValue values, GoalValue goal, double? range)
@@ -71,7 +71,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         if (range.HasValue)
             goal = new()
             {
-                ApparentPower = goal.ApparentPower * (range.Value * range.Value) / (_PreparedRange * _PreparedRange),
+                ApparentPower = goal.ApparentPower * (range.Value * range.Value) / (_PrepareInfo.Range * _PrepareInfo.Range),
                 PowerFactor = goal.PowerFactor
             };
 
@@ -136,7 +136,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         await burden.SetActiveAsync(false, logger);
 
         // Prepare the loadpoint for this step.
-        _PreparedRange = (await hardware.PrepareAsync(_VoltageNotCurrent, request.Range, factor, _Frequency, request.ChooseBestRange, Goal.ApparentPower)).Range;
+        _PrepareInfo = await hardware.PrepareAsync(_VoltageNotCurrent, request.Range, factor, _Frequency, request.ChooseBestRange, Goal.ApparentPower);
 
         // Switch burden on.
         await burden.SetBurdenAsync(request.Burden, logger);
@@ -154,9 +154,9 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
             BurdenDeviation = MakeDeviation(burdenValues, EffectiveGoal, values.Range),
             BurdenValues = burdenValues,
             Calibration = initialCalibration,
+            Configuration = _PrepareInfo,
             Deviation = deviation,
-            Factor = factor,
-            Values = values
+            Values = values,
         });
 
         // Secure bound by a maximum number of steps.
@@ -192,7 +192,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         }
 
         // Finish result.
-        LastStep.Factor = factor;
+        LastStep.Configuration = _PrepareInfo;
     }
 
     /// <summary>
@@ -223,15 +223,11 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
 
         // Measure at 80% (voltage) or 1% (current).
         var goalCorrection = voltageNotCurrent ? 1 : CurrentBaseFactor;
-        var lowerFactor = voltageNotCurrent ? 0.8 : 0.01;
-
-        var lowerPrepare = await hardware.PrepareAsync(voltageNotCurrent, request.Range, lowerFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower, false);
-
-        lowerFactor = lowerPrepare.Factor;
+        var lowerPrepare = await hardware.PrepareAsync(voltageNotCurrent, request.Range, voltageNotCurrent ? 0.8 : 0.01, _Frequency, request.ChooseBestRange, Goal.ApparentPower, false);
 
         var lower = await MeasureAsync(result.Calibration);
         var lowerValues = await MeasureBurdenAsync();
-        var lowerGoal = MakeEffectiveGoal(lowerFactor / goalCorrection);
+        var lowerGoal = MakeEffectiveGoal(lowerPrepare.Factor / goalCorrection);
         var lowerDeviation = MakeDeviation(lower, lowerGoal, lower.Range);
 
         // Measure at 120% (voltage) or 200% (current, voltage limited to 89V).
@@ -264,11 +260,9 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
 
         var upperPrepare = await hardware.PrepareAsync(voltageNotCurrent, request.Range, upperFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower, false);
 
-        upperFactor = upperPrepare.Factor;
-
         var upper = await MeasureAsync(result.Calibration);
         var upperValues = await MeasureBurdenAsync();
-        var upperGoal = MakeEffectiveGoal(upperFactor / goalCorrection);
+        var upperGoal = MakeEffectiveGoal(upperPrepare.Factor / goalCorrection);
         var upperDeviation = MakeDeviation(upper, upperGoal, upper.Range);
 
         // Construct result.
@@ -278,16 +272,16 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
                 BurdenDeviation = MakeDeviation(lowerValues, lowerGoal, lower.Range),
                 BurdenValues = lowerValues,
                 Calibration = result.Calibration,
+                Configuration = lowerPrepare,
                 Deviation = lowerDeviation,
-                Factor = lowerFactor,
                 Values = lower,
             },
             new() {
                 BurdenDeviation = MakeDeviation(upperValues, upperGoal, upper.Range),
                 BurdenValues = upperValues,
                 Calibration = result.Calibration,
+                Configuration = upperPrepare,
                 Deviation = upperDeviation,
-                Factor = upperFactor,
                 Values = upper,
             }
         ];

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using RefMeterApi.Models;
 using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace BurdenApi.Models;
@@ -7,23 +8,23 @@ namespace BurdenApi.Models;
 /// <summary>
 /// Measurement value with additional power information.
 /// </summary>
-public class RefMeterValueWithQuantity(ApparentPower apparentPower, ActivePower activePower, ReactivePower reactivePower, PowerFactor factor, double? range)
+public class RefMeterValueWithQuantity(ApparentPower apparentPower, Frequency? frequency, MeasuredLoadpointPhase phase, PowerFactor factor, double? range)
     : GoalValueWithQuantity(apparentPower, factor, range)
 {
     /// <summary>
-    /// Active power in W.
+    /// Full data of the measured phase.
     /// </summary>
     [NotNull, Required]
-    public ActivePower ActivePower { get; set; } = activePower;
+    public MeasuredLoadpointPhase Phase { get; set; } = phase;
 
     /// <summary>
-    /// Reactive power in VAr.
+    /// Meaured frequency.
     /// </summary>
     [NotNull, Required]
-    public ReactivePower ReactivePower { get; set; } = reactivePower;
+    public Frequency? Frequency { get; set; } = frequency;
 
     /// <summary>
     /// To support serialisation.
     /// </summary>
-    public RefMeterValueWithQuantity() : this(new(0), new(0), new(0), new(1), null) { }
+    public RefMeterValueWithQuantity() : this(new(0), null, new(), new(1), null) { }
 }

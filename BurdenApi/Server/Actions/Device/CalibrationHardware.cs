@@ -56,18 +56,17 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
             }
 
             // Report.
-            var activePower = values.Phases[0].ActivePower;
-            var apparentPower = values.Phases[0].ApparentPower;
-            var factor = values.Phases[0].PowerFactor;
-            var reactivePower = values.Phases[0].ReactivePower;
+            var phase = values.Phases[0];
+            var apparentPower = phase.ApparentPower;
+            var factor = phase.PowerFactor;
 
-            if (apparentPower == null || activePower == null || reactivePower == null || factor == null)
+            if (apparentPower == null || factor == null)
                 throw new InvalidOperationException("insufficient actual values");
 
             return new RefMeterValueWithQuantity(
                 apparentPower.Value,
-                activePower.Value,
-                reactivePower.Value,
+                values.Frequency,
+                phase,
                 factor.Value,
                 voltageNotCurrent
                     ? (double?)values.Phases[0].Voltage.AcComponent?.Rms

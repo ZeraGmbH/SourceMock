@@ -133,7 +133,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
         return Task.FromResult(new RefMeterValueWithQuantity(
             resistance / targetResistance * _CurrentPower.Value,
             new(0),
-            new(0),
+            new(),
             new(impedance),
             null
         ));

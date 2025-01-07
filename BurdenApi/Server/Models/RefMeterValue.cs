@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using RefMeterApi.Models;
 using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace BurdenApi.Models;
@@ -7,28 +8,27 @@ namespace BurdenApi.Models;
 /// <summary>
 /// An extended pair of values.
 /// </summary>
-public class RefMeterValue(ApparentPower apparentPower, ActivePower activePower, ReactivePower reactivePower, PowerFactor factor) : GoalValue(apparentPower, factor)
+public class RefMeterValue(ApparentPower apparentPower, Frequency? frequency, MeasuredLoadpointPhase phase, PowerFactor factor) : GoalValue(apparentPower, factor)
 {
     /// <summary>
-    /// Active power in W.
+    /// Full data of the measured phase.
     /// </summary>
     [NotNull, Required]
-    public ActivePower ActivePower { get; set; } = activePower;
+    public MeasuredLoadpointPhase Phase { get; set; } = phase;
 
     /// <summary>
-    /// Reactive power in VAr.
+    /// Meaured frequency.
     /// </summary>
-    [NotNull, Required]
-    public ReactivePower ReactivePower { get; set; } = reactivePower;
+    public Frequency? Frequency { get; set; } = frequency;
 
     /// <summary>
     /// Create a new values information.
     /// </summary>
-    public RefMeterValue() : this(new(0), new(0), new(0), new(1)) { }
+    public RefMeterValue() : this(new(0), null, new(), new(1)) { }
 
     /// <summary>
     /// Silent convert from an internal measurement to the protocol representation.
     /// </summary>
     /// <param name="values">Measured values.</param>
-    public static implicit operator RefMeterValue(RefMeterValueWithQuantity values) => new(values.ApparentPower, values.ActivePower, values.ReactivePower, values.PowerFactor);
+    public static implicit operator RefMeterValue(RefMeterValueWithQuantity values) => new(values.ApparentPower, values.Frequency, values.Phase, values.PowerFactor);
 }

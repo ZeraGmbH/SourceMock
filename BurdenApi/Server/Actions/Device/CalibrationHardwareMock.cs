@@ -154,7 +154,13 @@ public class CalibrationHardwareMock : ICalibrationHardware
         _CurrentRange = percentage * rangeValue;
         _CurrentPower = power * percentage * percentage;
 
-        return Task.FromResult(new PrepareResult { Factor = percentage, Range = rangeValue });
+        return Task.FromResult(new PrepareResult
+        {
+            CurrentRange = voltageNotCurrent ? Current.Zero : new(rangeValue),
+            Factor = percentage,
+            IsVoltageNotCurrentBurden = voltageNotCurrent,
+            VoltageRange = voltageNotCurrent ? new(rangeValue) : Voltage.Zero,
+        });
     }
 
     /// <inheritdoc/>

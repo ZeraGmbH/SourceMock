@@ -188,7 +188,13 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
         await refMeter.SetActualMeasurementModeAsync(logger, MeasurementModes.MqBase);
 
         // Report new pecentage
-        return new() { Factor = percentage, Range = rangeValue };
+        return new()
+        {
+            CurrentRange = _CurrentRange,
+            Factor = percentage,
+            IsVoltageNotCurrentBurden = voltageNotCurrent,
+            VoltageRange = _VoltageRange,
+        };
     }
 
     /// <inheritdoc/>

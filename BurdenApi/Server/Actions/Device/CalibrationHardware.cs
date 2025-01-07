@@ -79,7 +79,7 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
 
 
     /// <inheritdoc/>
-    public async Task<Tuple<double, double>> PrepareAsync(bool voltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true)
+    public async Task<PrepareResult> PrepareAsync(bool voltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true)
     {
         // Get the capabilities from the source.
         var caps = await source.GetCapabilitiesAsync(logger);
@@ -188,7 +188,7 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
         await refMeter.SetActualMeasurementModeAsync(logger, MeasurementModes.MqBase);
 
         // Report new pecentage
-        return Tuple.Create(percentage, rangeValue);
+        return new() { Factor = percentage, Range = rangeValue };
     }
 
     /// <inheritdoc/>

@@ -211,7 +211,7 @@ public class BurdenHardwareTests
     {
         for (var adjust = 2; adjust-- > 0;)
             Assert.That(
-                (await Hardware.PrepareAsync(true, range, percentage, new(50), false, new(5), adjust != 1)).Item1,
+                (await Hardware.PrepareAsync(true, range, percentage, new(50), false, new(5), adjust != 1)).Factor,
                 Is.EqualTo(adjust == 1 ? expected : percentage).Within(0.001)
             );
     }
@@ -224,7 +224,7 @@ public class BurdenHardwareTests
     {
         for (var adjust = 2; adjust-- > 0;)
             Assert.That(
-                (await Hardware.PrepareAsync(false, range, percentage, new(50), false, new(5), adjust != 1)).Item1,
+                (await Hardware.PrepareAsync(false, range, percentage, new(50), false, new(5), adjust != 1)).Factor,
                 Is.EqualTo(adjust == 1 ? expected : percentage).Within(0.001)
             );
     }
@@ -458,6 +458,6 @@ public class BurdenHardwareTests
             new(1)
         );
 
-        Assert.That(factor.Item1, Is.EqualTo(0.1));
+        Assert.That(factor.Factor, Is.EqualTo(0.1));
     }
 }

@@ -136,7 +136,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         await burden.SetActiveAsync(false, logger);
 
         // Prepare the loadpoint for this step.
-        _PreparedRange = (await hardware.PrepareAsync(_VoltageNotCurrent, request.Range, factor, _Frequency, request.ChooseBestRange, Goal.ApparentPower)).Item2;
+        _PreparedRange = (await hardware.PrepareAsync(_VoltageNotCurrent, request.Range, factor, _Frequency, request.ChooseBestRange, Goal.ApparentPower)).Range;
 
         // Switch burden on.
         await burden.SetBurdenAsync(request.Burden, logger);
@@ -227,7 +227,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
 
         var lowerPrepare = await hardware.PrepareAsync(voltageNotCurrent, request.Range, lowerFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower, false);
 
-        lowerFactor = lowerPrepare.Item1;
+        lowerFactor = lowerPrepare.Factor;
 
         var lower = await MeasureAsync(result.Calibration);
         var lowerValues = await MeasureBurdenAsync();
@@ -264,7 +264,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
 
         var upperPrepare = await hardware.PrepareAsync(voltageNotCurrent, request.Range, upperFactor, _Frequency, request.ChooseBestRange, Goal.ApparentPower, false);
 
-        upperFactor = upperPrepare.Item1;
+        upperFactor = upperPrepare.Factor;
 
         var upper = await MeasureAsync(result.Calibration);
         var upperValues = await MeasureBurdenAsync();

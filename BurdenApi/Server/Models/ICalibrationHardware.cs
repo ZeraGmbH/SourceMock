@@ -32,7 +32,7 @@ public interface ICalibrationHardware
     /// <param name="power">Target apparent power.</param>
     /// <param name="fixedPercentage">Unset to allow tweaking the percentage to respect the limits of the source.</param>
     /// <returns>Tuple with the percentage of the range really used and the electrical quantity set.</returns>
-    Task<Tuple<double, double>> PrepareAsync(bool voltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true);
+    Task<PrepareResult> PrepareAsync(bool voltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true);
 
     /// <summary>
     /// Report the burden associated with this hardware.

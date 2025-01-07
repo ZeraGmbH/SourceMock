@@ -146,7 +146,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
     private static double CreateRelative(CalibrationPair pair) => CreateRelative(pair.Coarse, pair.Fine) / RelativeLimit;
 
     /// <inheritdoc/>
-    public Task<Tuple<double, double>> PrepareAsync(bool voltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true)
+    public Task<PrepareResult> PrepareAsync(bool voltageNotCurrent, string range, double percentage, Frequency frequency, bool detectRange, ApparentPower power, bool fixedPercentage = true)
     {
         var rangeValue = BurdenUtils.ParseRange(range);
 
@@ -154,7 +154,7 @@ public class CalibrationHardwareMock : ICalibrationHardware
         _CurrentRange = percentage * rangeValue;
         _CurrentPower = power * percentage * percentage;
 
-        return Task.FromResult(Tuple.Create(percentage, rangeValue));
+        return Task.FromResult(new PrepareResult { Factor = percentage, Range = rangeValue });
     }
 
     /// <inheritdoc/>

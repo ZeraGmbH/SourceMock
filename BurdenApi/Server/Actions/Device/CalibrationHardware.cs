@@ -68,10 +68,8 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
                 Frequency = values.Frequency,
                 Phase = phase,
                 PowerFactor = factor.Value,
+                Rms = voltageNotCurrent ? (double?)phase.Voltage.AcComponent?.Rms : (double?)phase.Current.AcComponent?.Rms,
                 VoltageRange = status.VoltageRange,
-                Range = voltageNotCurrent
-                    ? (double?)values.Phases[0].Voltage.AcComponent?.Rms
-                    : (double?)values.Phases[0].Current.AcComponent?.Rms
             };
         }
 
@@ -194,6 +192,7 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
             CurrentRange = _CurrentRange,
             Factor = percentage,
             IsVoltageNotCurrentBurden = voltageNotCurrent,
+            Range = rangeValue,
             VoltageRange = _VoltageRange,
         };
     }
@@ -207,7 +206,7 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
         {
             ApparentPower = values.ApparentPower,
             PowerFactor = values.PowerFactor,
-            Range = voltageNotCurrent ? (double?)values.Voltage : (double?)values.Current,
+            Rms = voltageNotCurrent ? (double?)values.Voltage : (double?)values.Current,
         };
     }
 }

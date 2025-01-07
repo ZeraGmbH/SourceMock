@@ -19,7 +19,7 @@ public class PrepareResult
     /// Primary range choosen.
     /// </summary>
     [NotNull, Required]
-    public double Range => IsVoltageNotCurrentBurden ? (double)VoltageRange : (double)CurrentRange;
+    public double Range { get; set; }
 
     /// <summary>
     /// Voltage range enforced - may be different from measured range.

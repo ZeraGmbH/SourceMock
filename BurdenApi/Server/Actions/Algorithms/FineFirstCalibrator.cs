@@ -114,7 +114,7 @@ public class FineFirstCalibrator : ICalibrationAlgorithm
             : new Calibration(context.CurrentCalibration.Resistive, nextPair);
 
         var nextValues = await context.MeasureAsync(nextCalibration);
-        var nextDelta = context.MakeDeviation(nextValues, nextValues.Range);
+        var nextDelta = context.MakeDeviation(nextValues, nextValues.Rms);
 
         // We made it worse or nothing changed at all - but indicated with Calibration null that we at least gave it a try.
         if (Math.Abs(resistiveNotImpedance ? nextDelta.DeltaPower : nextDelta.DeltaFactor) >= Math.Abs(deviation))
@@ -125,7 +125,7 @@ public class FineFirstCalibrator : ICalibrationAlgorithm
 
         return new()
         {
-            BurdenDeviation = context.MakeDeviation(burdenValues, nextValues.Range),
+            BurdenDeviation = context.MakeDeviation(burdenValues, nextValues.Rms),
             BurdenValues = burdenValues,
             Calibration = nextCalibration,
             Deviation = nextDelta,

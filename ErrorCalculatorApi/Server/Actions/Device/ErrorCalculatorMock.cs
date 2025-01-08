@@ -92,7 +92,7 @@ public class ErrorCalculatorMock(IServiceProvider di) : IErrorCalculatorMock
         {
             /* Keep this in continuous mode. */
             _status.ErrorValue = Random.Shared.Next(9500, 10700) / 100d - 100d;
-            _status.Progress = 0d;
+            _status.Progress = _continuous ? 0d : 100d;
 
             /* Restart counting or end measurement. */
             if (_continuous)

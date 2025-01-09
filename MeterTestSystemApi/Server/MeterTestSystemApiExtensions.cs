@@ -1,6 +1,7 @@
 using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Actions;
 using MeterTestSystemApi.Actions.Device;
+using MeterTestSystemApi.Actions.Probing;
 using MeterTestSystemApi.Controllers;
 using MeterTestSystemApi.Models;
 using MeterTestSystemApi.Models.Configuration;
@@ -124,6 +125,13 @@ public static class MeterTestSystemApiConfiguration
         services.AddSingleton<IProbeConfigurationService, ProbeConfigurationService>();
         services.AddScoped<IConfigurationProbePlan, ConfigurationProbePlan>();
         services.AddScoped<IProbingOperationStore, ProbingOperationStore>();
+
+        /* Probing algorithms. */
+        services.AddKeyedTransient<IProbeExecutor, ProbeSerialPort>(typeof(SerialProbe));
+        services.AddKeyedTransient<ISerialPortProbeExecutor, ESxBSerialPortProbing>(SerialProbeProtocols.ESxB);
+        services.AddKeyedTransient<ISerialPortProbeExecutor, FGSerialPortProbing>(SerialProbeProtocols.FG30x);
+        services.AddKeyedTransient<ISerialPortProbeExecutor, MTSerialPortProbing>(SerialProbeProtocols.MT768);
+        services.AddKeyedTransient<ISerialPortProbeExecutor, ZIFSerialPortProbing>(SerialProbeProtocols.PM8181);
 
         if (configuration.GetValue<bool>("UseMeterTestSystemRestMock") == true)
             services.AddKeyedSingleton<IMeterTestSystem, FallbackMeteringSystem>(MeterTestSystemRestController.MockKey);

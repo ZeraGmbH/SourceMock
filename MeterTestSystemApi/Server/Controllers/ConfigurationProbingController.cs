@@ -35,10 +35,8 @@ public class ConfigurationProbingController(IProbeConfigurationService prober, I
     /// <returns>Result from the probes in the order of requests.</returns>
     [HttpPost("probe"), SamAuthorize(WebSamRole.testsystemadmin)]
     [SwaggerOperation(OperationId = "ManualProbe")]
-    public string[] Probe([FromBody] List<Probe> probes)
-    {
-        return [.. probes.Select(p => $"{p} not yet implemented")];
-    }
+    public async Task<ActionResult<string[]>> Probe([FromBody] List<Probe> probes)
+        => Ok(await prober.ProbeManualAsync(probes));
 
     /// <summary>
     /// Cancel the current probing.

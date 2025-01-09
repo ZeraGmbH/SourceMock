@@ -1,3 +1,5 @@
+using MeterTestSystemApi.Services;
+
 namespace MeterTestSystemApi.Models.ConfigurationProviders;
 
 /// <summary>
@@ -27,4 +29,11 @@ public interface IProbeConfigurationService
     /// Report if a probe operation is currently active.
     /// </summary>
     bool IsActive { get; }
+
+    /// <summary>
+    /// Manual probe.
+    /// </summary>
+    /// <param name="probes">List of probes to execute.</param>
+    /// <returns>Empty or some error information.</returns>
+    Task<string[]> ProbeManualAsync(IEnumerable<Probe> probes);
 }

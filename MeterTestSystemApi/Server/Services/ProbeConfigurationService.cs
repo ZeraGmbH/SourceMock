@@ -7,7 +7,7 @@ namespace MeterTestSystemApi.Services;
 /// Service to scan the system for meter test system components.
 /// </summary>
 /// <remarks>This is NOT a real implemntation esp. concerning synchronisation. This is another story!</remarks>
-public class ProbeConfigurationService : IProbeConfigurationService
+public class ProbeConfigurationService(IServiceProvider services) : IProbeConfigurationService
 {
     private class Current
     {
@@ -108,5 +108,26 @@ public class ProbeConfigurationService : IProbeConfigurationService
 
 
         throw new NotSupportedException("for now only dry run possible");
+    }
+
+    /// <inheritdoc/>
+    public async Task<string[]> ProbeManualAsync(IEnumerable<Probe> probes)
+    {
+        var errors = new List<string>();
+
+        foreach (var probe in probes)
+            try
+            {
+                errors.Add(await
+                    services
+                        .GetRequiredKeyedService<IProbeExecutor>(probe.GetType())
+                        .ExecuteAsync(probe));
+            }
+            catch (Exception e)
+            {
+                errors.Add($"{probe}: {e.Message}");
+            }
+
+        return [.. errors];
     }
 }

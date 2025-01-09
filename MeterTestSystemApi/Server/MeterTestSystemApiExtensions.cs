@@ -127,11 +127,12 @@ public static class MeterTestSystemApiConfiguration
         services.AddScoped<IProbingOperationStore, ProbingOperationStore>();
 
         /* Probing algorithms. */
-        services.AddKeyedTransient<IProbeExecutor, ProbeSerialPort>(typeof(SerialProbe));
-        services.AddKeyedTransient<ISerialPortProbeExecutor, ESxBSerialPortProbing>(SerialProbeProtocols.ESxB);
-        services.AddKeyedTransient<ISerialPortProbeExecutor, FGSerialPortProbing>(SerialProbeProtocols.FG30x);
-        services.AddKeyedTransient<ISerialPortProbeExecutor, MTSerialPortProbing>(SerialProbeProtocols.MT768);
-        services.AddKeyedTransient<ISerialPortProbeExecutor, ZIFSerialPortProbing>(SerialProbeProtocols.PM8181);
+        services.AddTransient<ISerialPortConnectionForProbing, SerialPortConnectionForProbing>();
+        services.AddKeyedScoped<IProbeExecutor, ProbeSerialPort>(typeof(SerialProbe));
+        services.AddKeyedScoped<ISerialPortProbeExecutor, ESxBSerialPortProbing>(SerialProbeProtocols.ESxB);
+        services.AddKeyedScoped<ISerialPortProbeExecutor, FGSerialPortProbing>(SerialProbeProtocols.FG30x);
+        services.AddKeyedScoped<ISerialPortProbeExecutor, MTSerialPortProbing>(SerialProbeProtocols.MT768);
+        services.AddKeyedScoped<ISerialPortProbeExecutor, ZIFSerialPortProbing>(SerialProbeProtocols.PM8181);
 
         if (configuration.GetValue<bool>("UseMeterTestSystemRestMock") == true)
             services.AddKeyedSingleton<IMeterTestSystem, FallbackMeteringSystem>(MeterTestSystemRestController.MockKey);

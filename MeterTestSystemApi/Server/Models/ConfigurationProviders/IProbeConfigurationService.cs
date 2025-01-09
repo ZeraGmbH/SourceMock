@@ -1,3 +1,4 @@
+using MeterTestSystemApi.Actions.Probing;
 using MeterTestSystemApi.Services;
 
 namespace MeterTestSystemApi.Models.ConfigurationProviders;
@@ -34,6 +35,7 @@ public interface IProbeConfigurationService
     /// Manual probe.
     /// </summary>
     /// <param name="probes">List of probes to execute.</param>
+    /// <param name="services">Scoped service provider.</param>
     /// <returns>Empty or some error information.</returns>
-    Task<string[]> ProbeManualAsync(IEnumerable<Probe> probes);
+    Task<ProbeInfo[]> ProbeManualAsync(IEnumerable<Probe> probes, IServiceProvider services);
 }

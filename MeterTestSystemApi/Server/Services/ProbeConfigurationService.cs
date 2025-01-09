@@ -1,3 +1,5 @@
+using System.Reflection;
+using MeterTestSystemApi.Actions.Probing;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,7 +9,7 @@ namespace MeterTestSystemApi.Services;
 /// Service to scan the system for meter test system components.
 /// </summary>
 /// <remarks>This is NOT a real implemntation esp. concerning synchronisation. This is another story!</remarks>
-public class ProbeConfigurationService(IServiceProvider services) : IProbeConfigurationService
+public class ProbeConfigurationService : IProbeConfigurationService
 {
     private class Current
     {
@@ -111,9 +113,9 @@ public class ProbeConfigurationService(IServiceProvider services) : IProbeConfig
     }
 
     /// <inheritdoc/>
-    public async Task<string[]> ProbeManualAsync(IEnumerable<Probe> probes)
+    public async Task<ProbeInfo[]> ProbeManualAsync(IEnumerable<Probe> probes, IServiceProvider services)
     {
-        var errors = new List<string>();
+        var errors = new List<ProbeInfo>();
 
         foreach (var probe in probes)
             try
@@ -125,7 +127,9 @@ public class ProbeConfigurationService(IServiceProvider services) : IProbeConfig
             }
             catch (Exception e)
             {
-                errors.Add($"{probe}: {e.Message}");
+                if (e is TargetInvocationException dyn) e = dyn.InnerException ?? e;
+
+                errors.Add(new() { Message = $"{probe}: {e.Message}", Succeeded = false });
             }
 
         return [.. errors];

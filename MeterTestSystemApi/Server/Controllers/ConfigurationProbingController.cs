@@ -3,6 +3,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using ZERA.WebSam.Shared.Security;
 using MeterTestSystemApi.Services;
+using MeterTestSystemApi.Actions.Probing;
 
 namespace MeterTestSystemApi.Controllers;
 
@@ -35,8 +36,8 @@ public class ConfigurationProbingController(IProbeConfigurationService prober, I
     /// <returns>Result from the probes in the order of requests.</returns>
     [HttpPost("probe"), SamAuthorize(WebSamRole.testsystemadmin)]
     [SwaggerOperation(OperationId = "ManualProbe")]
-    public async Task<ActionResult<string[]>> Probe([FromBody] List<Probe> probes)
-        => Ok(await prober.ProbeManualAsync(probes));
+    public async Task<ActionResult<ProbeInfo[]>> Probe([FromBody] List<Probe> probes)
+        => Ok(await prober.ProbeManualAsync(probes, services));
 
     /// <summary>
     /// Cancel the current probing.

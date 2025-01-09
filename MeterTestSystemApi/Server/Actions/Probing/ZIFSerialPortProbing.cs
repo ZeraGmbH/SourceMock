@@ -1,4 +1,5 @@
 using MeterTestSystemApi.Services;
+using SerialPortProxy;
 
 namespace MeterTestSystemApi.Actions.Probing;
 
@@ -8,7 +9,13 @@ namespace MeterTestSystemApi.Actions.Probing;
 public class ZIFSerialPortProbing : ISerialPortProbeExecutor
 {
     /// <inheritdoc/>
-    public Task<string> ExecuteAsync(SerialProbe probe)
+    public bool EnableReader => false;
+
+    /// <inheritdoc/>
+    public void AdjustOptions(SerialPortOptions options) { }
+
+    /// <inheritdoc/>
+    public Task<ProbeInfo> ExecuteAsync(SerialProbe probe, ISerialPortConnection connection)
     {
         throw new NotImplementedException();
     }

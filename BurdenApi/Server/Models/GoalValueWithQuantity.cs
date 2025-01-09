@@ -1,5 +1,3 @@
-using ZERA.WebSam.Shared.DomainSpecific;
-
 namespace BurdenApi.Models;
 
 /// <summary>

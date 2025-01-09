@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using ZERA.WebSam.Shared.Security;
+using MeterTestSystemApi.Services;
 
 namespace MeterTestSystemApi.Controllers;
 
@@ -25,6 +26,18 @@ public class ConfigurationProbingController(IProbeConfigurationService prober, I
         await prober.StartProbeAsync(request, dryRun, services);
 
         return Ok();
+    }
+
+    /// <summary>
+    /// Manually executes probes.
+    /// </summary>
+    /// <param name="probes">List of probes.</param>
+    /// <returns>Result from the probes in the order of requests.</returns>
+    [HttpPost("probe"), SamAuthorize(WebSamRole.testsystemadmin)]
+    [SwaggerOperation(OperationId = "ManualProbe")]
+    public string[] Probe([FromBody] List<Probe> probes)
+    {
+        return [.. probes.Select(p => $"{p} not yet implemented")];
     }
 
     /// <summary>

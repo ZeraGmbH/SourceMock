@@ -1,25 +1,31 @@
+using System.Text.Json.Serialization;
+
 namespace MeterTestSystemApi.Services;
 
-internal enum ProbeResult
+/// <summary>
+/// Result of a probe operation.
+/// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum ProbeResult
 {
     /// <summary>
     /// Planned to probe.
     /// </summary>
-    Planned,
+    Planned = 0,
 
     /// <summary>
     /// Probing successful.
     /// </summary>
-    Succeeded,
+    Succeeded = 1,
 
     /// <summary>
     /// Probing failed.
     /// </summary>
-    Failed,
+    Failed = 2,
 
     /// <summary>
     /// Probing skipped - no result.
     /// </summary>
-    Skipped
+    Skipped = 3
 }
 

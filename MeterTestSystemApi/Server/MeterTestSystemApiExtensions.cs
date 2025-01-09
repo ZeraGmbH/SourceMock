@@ -31,7 +31,10 @@ public static class MeterTestSystemApiConfiguration
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(MeterTestSystemApiConfiguration).Assembly.GetName().Name}.xml"), true);
 
         /* Must add enumeration explicitly because it is only used as a dictionary key class. */
-        SwaggerModelExtender.AddType<Amplifiers>().Register(options);
+        SwaggerModelExtender
+            .AddType<Amplifiers>()
+            .AddType<SerialProbe>()
+            .Register(options);
     }
 
     /// <summary>

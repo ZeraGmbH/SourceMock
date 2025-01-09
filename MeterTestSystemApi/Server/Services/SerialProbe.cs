@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 using MeterTestSystemApi.Models.Configuration;
 
 namespace MeterTestSystemApi.Services;
@@ -5,17 +8,19 @@ namespace MeterTestSystemApi.Services;
 /// <summary>
 /// Describe a single serial port probing.
 /// </summary>
-internal class SerialProbe : Probe
+public class SerialProbe : Probe
 {
     /// <summary>
     /// Protocol to use.
     /// </summary>
-    public required SerialProbeProtocols Protocol { get; set; }
+    [NotNull, Required]
+    public SerialProbeProtocols Protocol { get; set; }
 
     /// <summary>
     /// Device to use.
     /// </summary>
-    public required SerialPortComponentConfiguration Device { get; set; }
+    [NotNull, Required]
+    public SerialPortComponentConfiguration Device { get; set; } = null!;
 
     /// <summary>
     /// Create a description for the probe.
@@ -25,6 +30,7 @@ internal class SerialProbe : Probe
     /// <summary>
     /// Get the device path of this connection.
     /// </summary>
+    [JsonIgnore]
     public string DevicePath => $"/dev/tty{Device.Type switch
     {
         SerialPortTypes.RS232 => "S",

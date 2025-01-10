@@ -68,7 +68,12 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
     private async Task ExecuteAsync(ISerialPortConnection factory, IInterfaceLogger logger, params int[] command)
         => await Execute(factory, logger, response => response.Length == 0 ? true : throw new BadLengthException(0), command);
 
-    private Task<T> Execute<T>(ISerialPortConnection factory, IInterfaceLogger logger, Func<byte[], T> createResponse, params int[] command)
+    /// <summary>
+    /// Convert a command to a protocol request including checksum.
+    /// </summary>
+    /// <param name="command">Command to send.</param>
+    /// <returns>Protocol representation.</returns>
+    public static byte[] CommandToProtocol(params int[] command)
     {
         // - STX and length of command bytes.
         var buffer = new List<byte> { 0xa5, checked((byte)(1 + command.Length)) };
@@ -81,6 +86,13 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
 
         // - ETX
         buffer.Add(0x5a);
+
+        return [.. buffer];
+    }
+
+    private Task<T> Execute<T>(ISerialPortConnection factory, IInterfaceLogger logger, Func<byte[], T> createResponse, params int[] command)
+    {
+        var buffer = CommandToProtocol(command);
 
         // It's now time to get exclusive access to the serial port.
         return factory.CreateExecutor(InterfaceLogSourceTypes.ZIF).RawExecuteAsync(logger, (port, connection) =>
@@ -97,7 +109,7 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
                 sendEntry = connection.Prepare(new() { Outgoing = true, RequestId = requestId });
 
                 /* Send to device. */
-                port.RawWrite([.. buffer]);
+                port.RawWrite(buffer);
             }
             catch (Exception e)
             {
@@ -114,7 +126,7 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
                     sendEntry.Finish(new()
                     {
                         Encoding = InterfaceLogPayloadEncodings.Raw,
-                        Payload = BitConverter.ToString([.. buffer]),
+                        Payload = BitConverter.ToString(buffer),
                         PayloadType = "",
                         TransferException = sendError?.Message
                     });
@@ -172,7 +184,14 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
         });
     }
 
-    private static byte[] ReadResponse(int[] command, ISerialPort port, List<byte> all)
+    /// <summary>
+    /// Read response for a command.
+    /// </summary>
+    /// <param name="command">Command sent.</param>
+    /// <param name="port">Serial port connection to use.</param>
+    /// <param name="all">Everything we got.</param>
+    /// <returns>Payload.</returns>
+    public static byte[] ReadResponse(int[] command, ISerialPort port, List<byte> all)
     {
         var data = new List<byte>();
         int length = 0;

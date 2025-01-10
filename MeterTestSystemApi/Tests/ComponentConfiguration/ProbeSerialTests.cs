@@ -19,19 +19,30 @@ public class ProbeSerialTests
     {
         private readonly Queue<string> _replies = [];
 
+        private readonly Queue<byte> _rawReplies = [];
+
         public void Dispose()
         {
         }
 
         public byte? RawRead()
         {
-            throw new NotImplementedException();
+            if (_rawReplies.TryDequeue(out var reply))
+                return reply;
+
+            return null;
         }
 
         public void RawWrite(byte[] command)
         {
-            throw new NotImplementedException();
+            switch (BitConverter.ToString(command))
+            {
+                case "A5-02-C2-E7-5A":
+                    Array.ForEach<byte>([0xa5, 0x08, 0x06, 0xc2, 0x02, 0x00, 0x00, 0x00, 0x16, 0x96, 0x5a], _rawReplies.Enqueue);
+                    break;
+            }
         }
+
 
         public string ReadLine()
         {
@@ -110,11 +121,11 @@ public class ProbeSerialTests
         Services?.Dispose();
     }
 
-    [TestCase(SerialProbeProtocols.MT768, 0, SerialPortTypes.USB, true, "MT Model MT712")]
-    [TestCase(SerialProbeProtocols.PM8181, 1, SerialPortTypes.RS232, false, "/dev/ttyS1: PM8181: The method or operation is not implemented.")]
-    [TestCase(SerialProbeProtocols.FG30x, 2, SerialPortTypes.USB, true, "FG Model FG312")]
-    [TestCase(SerialProbeProtocols.ESxB, 3, SerialPortTypes.RS232, true, "ESxB Version EBV99.13")]
-    public async Task Can_Probe_Serial_Port(SerialProbeProtocols protocol, int index, SerialPortTypes type, bool implemented, string message)
+    [TestCase(SerialProbeProtocols.MT768, 0, SerialPortTypes.USB, "MT Model MT712")]
+    [TestCase(SerialProbeProtocols.PM8181, 1, SerialPortTypes.RS232, "PowerMaster8121 ZIF Version 2.22")]
+    [TestCase(SerialProbeProtocols.FG30x, 2, SerialPortTypes.USB, "FG Model FG312")]
+    [TestCase(SerialProbeProtocols.ESxB, 3, SerialPortTypes.RS232, "ESxB Version EBV99.13")]
+    public async Task Can_Probe_Serial_Port(SerialProbeProtocols protocol, int index, SerialPortTypes type, string message)
     {
         var results = await Prober.ProbeManualAsync([new SerialProbe {
             Device = new() { Index = checked((uint)index), Type = type},
@@ -124,7 +135,7 @@ public class ProbeSerialTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(results[0].Succeeded, Is.EqualTo(implemented));
+            Assert.That(results[0].Succeeded, Is.True);
             Assert.That(results[0].Message, Is.EqualTo(message));
         });
     }

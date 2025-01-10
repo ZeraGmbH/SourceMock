@@ -1,12 +1,13 @@
 using MeterTestSystemApi.Services;
 using SerialPortProxy;
+using ZERA.WebSam.Shared.Models.Logging;
 
 namespace MeterTestSystemApi.Actions.Probing;
 
 /// <summary>
 /// Probe for a burden connected to a serial port.
 /// </summary>
-public class ESxBSerialPortProbing : ISerialPortProbeExecutor
+public class ESxBSerialPortProbing(IInterfaceLogger logger) : ISerialPortProbeExecutor
 {
     /// <inheritdoc/>
     public bool EnableReader => true;
@@ -15,8 +16,14 @@ public class ESxBSerialPortProbing : ISerialPortProbeExecutor
     public void AdjustOptions(SerialPortOptions options) { }
 
     /// <inheritdoc/>
-    public Task<ProbeInfo> ExecuteAsync(SerialProbe probe, ISerialPortConnection connection)
+    public async Task<ProbeInfo> ExecuteAsync(SerialProbe probe, ISerialPortConnection connection)
     {
-        throw new NotImplementedException();
+        var executor = connection.CreateExecutor(InterfaceLogSourceTypes.Burden, "probe");
+
+        var reply = await executor.ExecuteAsync(logger, SerialPortRequest.Create("AV", "AVACK"))[0];
+
+        if (reply.Length < 3) return new() { Succeeded = false, Message = "invalid reply" };
+
+        return new() { Message = $"ESxB Version {reply[^3]}", Succeeded = true };
     }
 }

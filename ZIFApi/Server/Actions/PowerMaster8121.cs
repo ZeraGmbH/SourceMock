@@ -48,6 +48,9 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
         116,  42, 200, 150,  21,  75, 169, 247, 182, 232,  10,  84, 215, 137, 107,  53
     ];
 
+    /// <inheritdoc/>
+    public int Index { get; set; }
+
     /// <summary>
     /// Calculate a CRC8(MAXIM)
     /// </summary>
@@ -91,11 +94,25 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
     }
 
     private Task<T> Execute<T>(ISerialPortConnection factory, IInterfaceLogger logger, Func<byte[], T> createResponse, params int[] command)
+        => Execute(factory, $"{Index}", logger, _logger, createResponse, command);
+
+    /// <summary>
+    /// Execute a single command.
+    /// </summary>
+    /// <param name="factory">Port factory to use.</param>
+    /// <param name="interfaceLogger">Interface logging.</param>
+    /// <param name="logger">System logging.</param>
+    /// <param name="createResponse">How to create the response from the binary data.</param>
+    /// <param name="id">Test position of the socket.</param>
+    /// <param name="command">Command to execute.</param>
+    /// <typeparam name="T">Type of response.</typeparam>
+    /// <returns>Response reconstructed from binary reply.</returns>
+    public static Task<T> Execute<T>(ISerialPortConnection factory, string id, IInterfaceLogger interfaceLogger, ILogger logger, Func<byte[], T> createResponse, params int[] command)
     {
         var buffer = CommandToProtocol(command);
 
         // It's now time to get exclusive access to the serial port.
-        return factory.CreateExecutor(InterfaceLogSourceTypes.ZIF).RawExecuteAsync(logger, (port, connection) =>
+        return factory.CreateExecutor(InterfaceLogSourceTypes.ZIF, id).RawExecuteAsync(interfaceLogger, (port, connection) =>
         {
             /* Prepare logging. */
             var requestId = Guid.NewGuid().ToString();
@@ -113,7 +130,7 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
             }
             catch (Exception e)
             {
-                _logger.LogError("Unable to sent {Command} to port: {Exception}", BitConverter.ToString([.. command.Select(b => (byte)b)]), e.Message);
+                logger.LogError("Unable to sent {Command} to port: {Exception}", BitConverter.ToString([.. command.Select(b => (byte)b)]), e.Message);
 
                 /* Data could not be sent - create a log entry for the issue. */
                 sendError = e;
@@ -134,7 +151,7 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
                 catch (Exception e)
                 {
                     /* Nothing more we can do. */
-                    _logger.LogCritical("Unable to create log entry: {Exception}", e.Message);
+                    logger.LogCritical("Unable to create log entry: {Exception}", e.Message);
                 }
 
             /* Failed - we can stop now. */
@@ -154,7 +171,7 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
             }
             catch (Exception e)
             {
-                _logger.LogError("Unable to read reply for {Command} from port: {Exception}", BitConverter.ToString([.. command.Select(b => (byte)b)]), e.Message);
+                logger.LogError("Unable to read reply for {Command} from port: {Exception}", BitConverter.ToString([.. command.Select(b => (byte)b)]), e.Message);
 
                 /* Reply could not be received - create a log entry for the issue. */
                 receiveError = e;
@@ -178,7 +195,7 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
                     catch (Exception e)
                     {
                         /* Nothing more we can do. */
-                        _logger.LogCritical("Unable to create log entry: {Exception}", e.Message);
+                        logger.LogCritical("Unable to create log entry: {Exception}", e.Message);
                     }
             }
         });

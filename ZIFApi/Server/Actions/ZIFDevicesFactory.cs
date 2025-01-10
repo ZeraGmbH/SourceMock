@@ -104,6 +104,8 @@ public class ZIFDevicesFactory(IServiceProvider services, ILogger<ZIFDevicesFact
 
                             var protocol = services.GetRequiredKeyedService<IZIFProtocol>(socket.Type);
 
+                            protocol.Index = i;
+
                             var port = config.ConfigurationType switch
                             {
                                 SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, log, false),

@@ -9,6 +9,11 @@ namespace ZIFApi.Models;
 public interface IZIFProtocol
 {
     /// <summary>
+    /// The test position of the socket.
+    /// </summary>
+    int Index { get; set; }
+
+    /// <summary>
     /// Read the software version.
     /// </summary>
     /// <param name="factory">Serial port factory to use.</param>

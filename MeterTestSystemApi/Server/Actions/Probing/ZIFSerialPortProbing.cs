@@ -1,4 +1,5 @@
 using MeterTestSystemApi.Services;
+using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZIFApi.Actions;
@@ -8,7 +9,7 @@ namespace MeterTestSystemApi.Actions.Probing;
 /// <summary>
 /// Probe for a ZIF socket connected to a serial port.
 /// </summary>
-public class ZIFSerialPortProbing(IInterfaceLogger logger) : ISerialPortProbeExecutor
+public class ZIFSerialPortProbing(IInterfaceLogger logger, ILogger<ZIFSerialPortProbing> _logger) : ISerialPortProbeExecutor
 {
     /// <inheritdoc/>
     public bool EnableReader => false;
@@ -16,24 +17,10 @@ public class ZIFSerialPortProbing(IInterfaceLogger logger) : ISerialPortProbeExe
     /// <inheritdoc/>
     public void AdjustOptions(SerialPortOptions options) { }
 
-    private readonly int[] _VersionRequest = [0xc2];
-
     /// <inheritdoc/>
     public async Task<ProbeInfo> ExecuteAsync(SerialProbe probe, ISerialPortConnection connection)
     {
-        var executor = connection.CreateExecutor(InterfaceLogSourceTypes.ZIF, "probe");
-
-        var reply = await executor.RawExecuteAsync(
-            logger,
-            (port, logger) =>
-            {
-                /* Convert to protocol and send. */
-                port.RawWrite(PowerMaster8121.CommandToProtocol(_VersionRequest));
-
-                /* Wait for the reply. */
-                return PowerMaster8121.ReadResponse(_VersionRequest, port, []);
-            }
-        );
+        var reply = await PowerMaster8121.Execute(connection, "probe", logger, _logger, raw => raw, 0xc2);
 
         if (reply.Length != 5) return new() { Succeeded = false, Message = "invalid reply" };
 

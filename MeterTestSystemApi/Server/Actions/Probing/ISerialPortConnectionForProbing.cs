@@ -14,5 +14,15 @@ public interface ISerialPortConnectionForProbing
     /// <param name="options">Some options concerning the physical connection.</param>
     /// <param name="enableReader">Set to activate the background reader.</param>
     /// <returns>A new connection.</returns>
-    ISerialPortConnection Create(string port, SerialPortOptions? options, bool enableReader);
+    ISerialPortConnection CreatePhysical(string port, SerialPortOptions? options, bool enableReader);
+
+    /// <summary>
+    /// Create a new port.
+    /// </summary>
+    /// <param name="serverAndPort">Endpoint to the server - must include a port.</param>
+    /// <param name="readTimeout">Maximum number of milliseconds to wait for new data.</param>
+    /// <param name="enableReader">Set to activate the background reader.</param>
+    /// <returns>A new connection.</returns>
+    ISerialPortConnection CreateNetwork(string serverAndPort, int? readTimeout, bool enableReader);
+
 }

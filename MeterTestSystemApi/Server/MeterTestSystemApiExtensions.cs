@@ -35,6 +35,7 @@ public static class MeterTestSystemApiConfiguration
         SwaggerModelExtender
             .AddType<Amplifiers>()
             .AddType<SerialProbe>()
+            .AddType<SerialProbeOverTcp>()
             .Register(options);
     }
 
@@ -129,6 +130,7 @@ public static class MeterTestSystemApiConfiguration
         /* Probing algorithms. */
         services.AddTransient<ISerialPortConnectionForProbing, SerialPortConnectionForProbing>();
         services.AddKeyedScoped<IProbeExecutor, ProbeSerialPort>(typeof(SerialProbe));
+        services.AddKeyedScoped<IProbeExecutor, ProbeSerialPortOverTcp>(typeof(SerialProbeOverTcp));
         services.AddKeyedScoped<ISerialPortProbeExecutor, ESxBSerialPortProbing>(SerialProbeProtocols.ESxB);
         services.AddKeyedScoped<ISerialPortProbeExecutor, FGSerialPortProbing>(SerialProbeProtocols.FG30x);
         services.AddKeyedScoped<ISerialPortProbeExecutor, MTSerialPortProbing>(SerialProbeProtocols.MT768);

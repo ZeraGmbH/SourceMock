@@ -82,7 +82,7 @@ public class ProbeTests
         Assert.That(Prober.IsActive, Is.False);
         Assert.That(Prober.Result, Is.Not.Null);
 
-        Assert.That(Prober.Result.Log, Has.Count.EqualTo(1146));
+        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(1146));
     }
 
     [TestCase(0, 21)]

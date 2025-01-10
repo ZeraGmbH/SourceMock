@@ -9,6 +9,10 @@ namespace MeterTestSystemApi.Actions.Probing;
 public class SerialPortConnectionForProbing(ILogger<SerialPortConnection> logger) : ISerialPortConnectionForProbing
 {
     /// <inheritdoc/>
-    public ISerialPortConnection Create(string port, SerialPortOptions? options, bool enableReader)
+    public ISerialPortConnection CreatePhysical(string port, SerialPortOptions? options, bool enableReader)
         => SerialPortConnection.FromSerialPort(port, options, logger, enableReader);
+
+    /// <inheritdoc/>
+    public ISerialPortConnection CreateNetwork(string serverAndPort, int? readTimeout, bool enableReader)
+        => SerialPortConnection.FromNetwork(serverAndPort, logger, enableReader, readTimeout);
 }

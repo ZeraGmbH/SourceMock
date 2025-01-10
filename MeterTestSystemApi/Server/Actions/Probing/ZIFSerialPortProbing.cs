@@ -18,7 +18,7 @@ public class ZIFSerialPortProbing(IInterfaceLogger logger, ILogger<ZIFSerialPort
     public void AdjustOptions(SerialPortOptions options) { }
 
     /// <inheritdoc/>
-    public async Task<ProbeInfo> ExecuteAsync(SerialProbe probe, ISerialPortConnection connection)
+    public async Task<ProbeInfo> ExecuteAsync(ISerialPortConnection connection)
     {
         var reply = await PowerMaster8121.Execute(connection, "probe", logger, _logger, raw => raw, 0xc2);
 

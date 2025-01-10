@@ -37,6 +37,5 @@ public class SerialProbe : Probe
         SerialPortTypes.USB => "USB",
         _ => throw new ArgumentException($"unknown serial port type {Device.Type}")
     }}{Device.Index}";
-
 }
 

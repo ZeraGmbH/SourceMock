@@ -120,10 +120,13 @@ public class ProbeConfigurationService : IProbeConfigurationService
         foreach (var probe in probes)
             try
             {
-                errors.Add(await
-                    services
-                        .GetRequiredKeyedService<IProbeExecutor>(probe.GetType())
-                        .ExecuteAsync(probe));
+                if (probe.Result == ProbeResult.Skipped)
+                    errors.Add(new() { Succeeded = true, Message = "Excluded from probing" });
+                else
+                    errors.Add(await
+                        services
+                            .GetRequiredKeyedService<IProbeExecutor>(probe.GetType())
+                            .ExecuteAsync(probe));
             }
             catch (Exception e)
             {

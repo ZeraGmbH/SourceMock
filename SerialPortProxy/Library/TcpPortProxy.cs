@@ -21,7 +21,9 @@ public class TcpPortProxy : ISerialPort
     /// </summary>
     /// <param name="serverAndPort">Server name or IP and TCP port to use -
     /// separated by a colon.</param>
-    public TcpPortProxy(string serverAndPort)
+    /// <param name="readTimeout">Maximum time to wait on new data (in milliseconds).</param>
+    /// <param name="writeTimeout">Maximum time for a write operation to finish (in milliseconds).</param>
+    public TcpPortProxy(string serverAndPort, int? readTimeout = null, int? writeTimeout = null)
     {
         /* Split the target. */
         var sep = serverAndPort.IndexOf(':');
@@ -35,8 +37,8 @@ public class TcpPortProxy : ISerialPort
         /* Create the connection. */
         _client = new TcpClient(AddressFamily.InterNetwork)
         {
-            SendTimeout = 30000,
-            ReceiveTimeout = 30000,
+            SendTimeout = writeTimeout ?? 30000,
+            ReceiveTimeout = readTimeout ?? 30000,
         };
 
         try

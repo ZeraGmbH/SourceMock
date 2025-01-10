@@ -22,8 +22,7 @@ public interface ISerialPortProbeExecutor
     /// <summary>
     /// Run a single probing algorithm.
     /// </summary>
-    /// <param name="probe">Probe configuration.</param>
     /// <param name="connection">Connectiojn to use.</param>
     /// <returns>Error message or empty.</returns>
-    Task<ProbeInfo> ExecuteAsync(SerialProbe probe, ISerialPortConnection connection);
+    Task<ProbeInfo> ExecuteAsync(ISerialPortConnection connection);
 }

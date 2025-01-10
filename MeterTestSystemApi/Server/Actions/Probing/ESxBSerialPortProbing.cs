@@ -16,7 +16,7 @@ public class ESxBSerialPortProbing(IInterfaceLogger logger) : ISerialPortProbeEx
     public void AdjustOptions(SerialPortOptions options) { }
 
     /// <inheritdoc/>
-    public async Task<ProbeInfo> ExecuteAsync(SerialProbe probe, ISerialPortConnection connection)
+    public async Task<ProbeInfo> ExecuteAsync(ISerialPortConnection connection)
     {
         var executor = connection.CreateExecutor(InterfaceLogSourceTypes.Burden, "probe");
 

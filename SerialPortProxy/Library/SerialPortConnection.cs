@@ -135,9 +135,10 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
     /// <param name="serverAndPort">Name of the server to connect including the port - separated by colons.</param>
     /// <param name="logger">Optional logging instance.</param>
     /// <param name="enableReader">Unset to disable the input reader.</param>
+    /// <param name="readTimeout">Timeout (in Milliseconds) to wait on input after sending a command.</param>
     /// <returns>The brand new connection.</returns>
-    public static ISerialPortConnection FromNetwork(string serverAndPort, ILogger<ISerialPortConnection> logger, bool enableReader = true)
-        => FromPortInstance(new TcpPortProxy(serverAndPort), new() { Protocol = InterfaceLogProtocolTypes.Com, Endpoint = serverAndPort }, logger, enableReader);
+    public static ISerialPortConnection FromNetwork(string serverAndPort, ILogger<ISerialPortConnection> logger, bool enableReader = true, int? readTimeout = null)
+        => FromPortInstance(new TcpPortProxy(serverAndPort, readTimeout), new() { Protocol = InterfaceLogProtocolTypes.Com, Endpoint = serverAndPort }, logger, enableReader, readTimeout);
 
     /// <summary>
     /// Create a new mocked based connection.

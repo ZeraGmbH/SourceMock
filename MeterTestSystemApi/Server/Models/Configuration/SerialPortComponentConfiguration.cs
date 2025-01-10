@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using SerialPortProxy;
 
 namespace MeterTestSystemApi.Models.Configuration;
 
@@ -19,4 +20,9 @@ public class SerialPortComponentConfiguration
     /// </summary>
     [NotNull, Required]
     public SerialPortTypes Type { get; set; }
+
+    /// <summary>
+    /// Optional fine tuning of the confioguration.
+    /// </summary>
+    public SerialPortOptions? Options { get; set; }
 }

@@ -17,7 +17,7 @@ public class FGSerialPortProbing(IInterfaceLogger logger) : ISerialPortProbeExec
     public void AdjustOptions(SerialPortOptions options) { }
 
     /// <inheritdoc/>
-    public async Task<ProbeInfo> ExecuteAsync(SerialProbe probe, ISerialPortConnection connection)
+    public async Task<ProbeInfo> ExecuteAsync(ISerialPortConnection connection)
     {
         var executor = connection.CreateExecutor(InterfaceLogSourceTypes.MeterTestSystem, "probe");
         var request = SerialPortRequest.Create("TS", new Regex("^TS(.{8})(.{4})$"));

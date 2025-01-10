@@ -8,6 +8,7 @@ namespace MeterTestSystemApi.Services;
 /// Describe a single probing operation.
 /// </summary>
 [JsonDerivedType(typeof(SerialProbe), typeDiscriminator: "SerialPort")]
+[JsonDerivedType(typeof(SerialProbeOverTcp), typeDiscriminator: "SerialPortOverTcp")]
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "_type")]
 public abstract class Probe
 {

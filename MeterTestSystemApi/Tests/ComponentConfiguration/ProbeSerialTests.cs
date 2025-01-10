@@ -78,9 +78,13 @@ public class ProbeSerialTests
 
     private IProbeConfigurationService Prober = null!;
 
+    private int? BaudRateOption = null;
+
     [SetUp]
     public void Setup()
     {
+        BaudRateOption = null;
+
         var services = new ServiceCollection();
 
         services.AddLogging();
@@ -89,7 +93,8 @@ public class ProbeSerialTests
 
         services.AddSingleton<IProbeConfigurationService, ProbeConfigurationService>();
 
-        services.AddKeyedTransient<IProbeExecutor, ProbeSerialPort>(typeof(SerialProbe));
+        services.AddKeyedScoped<IProbeExecutor, ProbeSerialPort>(typeof(SerialProbe));
+        services.AddKeyedScoped<IProbeExecutor, ProbeSerialPortOverTcp>(typeof(SerialProbeOverTcp));
         services.AddKeyedTransient<ISerialPortProbeExecutor, ESxBSerialPortProbing>(SerialProbeProtocols.ESxB);
         services.AddKeyedTransient<ISerialPortProbeExecutor, FGSerialPortProbing>(SerialProbeProtocols.FG30x);
         services.AddKeyedTransient<ISerialPortProbeExecutor, MTSerialPortProbing>(SerialProbeProtocols.MT768);
@@ -97,16 +102,27 @@ public class ProbeSerialTests
 
         var connectionMock = new Mock<ISerialPortConnectionForProbing>();
 
-        connectionMock.Setup(f => f.Create(It.IsAny<string>(), It.IsAny<SerialPortOptions>(), It.IsAny<bool>())).Returns(
+        connectionMock.Setup(f => f.CreatePhysical(It.IsAny<string>(), It.IsAny<SerialPortOptions>(), It.IsAny<bool>())).Returns(
             (string port, SerialPortOptions? options, bool enableReader) =>
             {
                 Assert.That(options, Is.Not.Null);
                 Assert.That(options!.ReadTimeout, Is.EqualTo(2000));
                 Assert.That(options.WriteTimeout, Is.EqualTo(2000));
+                Assert.That(options.BaudRate, Is.EqualTo(BaudRateOption));
 
                 return SerialPortConnection.FromMockedPortInstance(new PortMock(), new NullLogger<SerialPortConnection>(), enableReader, options.ReadTimeout);
             }
         );
+
+        connectionMock.Setup(f => f.CreateNetwork(It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<bool>())).Returns(
+           (string endpoint, int? readTimeout, bool enableReader) =>
+           {
+               Assert.That(readTimeout, Is.EqualTo(2000));
+               Assert.That(endpoint, Is.EqualTo("some-server:12983"));
+
+               return SerialPortConnection.FromMockedPortInstance(new PortMock(), new NullLogger<SerialPortConnection>(), enableReader);
+           }
+       );
 
         services.AddSingleton(connectionMock.Object);
 
@@ -125,7 +141,7 @@ public class ProbeSerialTests
     [TestCase(SerialProbeProtocols.PM8181, 1, SerialPortTypes.RS232, "PowerMaster8121 ZIF Version 2.22")]
     [TestCase(SerialProbeProtocols.FG30x, 2, SerialPortTypes.USB, "FG Model FG312")]
     [TestCase(SerialProbeProtocols.ESxB, 3, SerialPortTypes.RS232, "ESxB Version EBV99.13")]
-    public async Task Can_Probe_Serial_Port(SerialProbeProtocols protocol, int index, SerialPortTypes type, string message)
+    public async Task Can_Probe_Serial_Port_Async(SerialProbeProtocols protocol, int index, SerialPortTypes type, string message)
     {
         var results = await Prober.ProbeManualAsync([new SerialProbe {
             Device = new() { Index = checked((uint)index), Type = type},
@@ -138,5 +154,54 @@ public class ProbeSerialTests
             Assert.That(results[0].Succeeded, Is.True);
             Assert.That(results[0].Message, Is.EqualTo(message));
         });
+    }
+
+    [TestCase(SerialProbeProtocols.MT768, "MT Model MT712")]
+    [TestCase(SerialProbeProtocols.PM8181, "PowerMaster8121 ZIF Version 2.22")]
+    [TestCase(SerialProbeProtocols.FG30x, "FG Model FG312")]
+    [TestCase(SerialProbeProtocols.ESxB, "ESxB Version EBV99.13")]
+    public async Task Can_Probe_Serial_Port_Over_Network_Async(SerialProbeProtocols protocol, string message)
+    {
+        var results = await Prober.ProbeManualAsync([new SerialProbeOverTcp {
+                Endpoint = "some-server:12983",
+                Protocol = protocol,
+                Result = ProbeResult.Planned
+            }], Services);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(results[0].Succeeded, Is.True);
+            Assert.That(results[0].Message, Is.EqualTo(message));
+        });
+    }
+
+    [Test]
+    public async Task Can_Provide_Options_Async()
+    {
+        BaudRateOption = 14440;
+
+        var results = await Prober.ProbeManualAsync([new SerialProbe {
+            Device = new() { Index = 0, Type = SerialPortTypes.USB, Options = new() { BaudRate = 14440 } },
+            Protocol = SerialProbeProtocols.FG30x,
+            Result = ProbeResult.Planned
+        }], Services);
+
+        Assert.Multiple(() =>
+       {
+           Assert.That(results[0].Succeeded, Is.True);
+           Assert.That(results[0].Message, Is.EqualTo("FG Model FG312"));
+       });
+    }
+
+    [Test]
+    public async Task Can_Skip_Probe_Async()
+    {
+        var results = await Prober.ProbeManualAsync([new SerialProbe {
+            Device = new() { Index = 0, Type = SerialPortTypes.USB },
+            Protocol = SerialProbeProtocols.FG30x,
+            Result = ProbeResult.Skipped
+        }], Services);
+
+        Assert.That(results[0].Message, Is.EqualTo("Excluded from probing"));
     }
 }

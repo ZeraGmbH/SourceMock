@@ -177,9 +177,10 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
     /// <param name="port">Implementation to use.</param>
     /// <param name="logger">Optional logging instance.</param>
     /// <param name="enableReader">Unset to disable the input reader.</param>
+    /// <param name="readTimeout">Timeout (in Milliseconds) to wait on input after sending a command.</param>
     /// <returns>The new connection.</returns>
-    public static ISerialPortConnection FromMockedPortInstance(ISerialPort port, ILogger<ISerialPortConnection> logger, bool enableReader = true)
-        => FromPortInstance(port, new() { Protocol = InterfaceLogProtocolTypes.Mock, Endpoint = "mocked" }, logger, enableReader);
+    public static ISerialPortConnection FromMockedPortInstance(ISerialPort port, ILogger<ISerialPortConnection> logger, bool enableReader = true, int? readTimeout = null)
+        => FromPortInstance(port, new() { Protocol = InterfaceLogProtocolTypes.Mock, Endpoint = "mocked" }, logger, enableReader, readTimeout);
 
     /// <summary>
     /// On dispose the serial connection and the ProcessFromQueue thread are terminated.

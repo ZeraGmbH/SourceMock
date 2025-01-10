@@ -22,7 +22,7 @@ public class FGSerialPortProbing(IInterfaceLogger logger) : ISerialPortProbeExec
         var executor = connection.CreateExecutor(InterfaceLogSourceTypes.MeterTestSystem, "probe");
         var request = SerialPortRequest.Create("TS", new Regex("^TS(.{8})(.{4})$"));
 
-        await Task.WhenAll(executor.ExecuteAsync(logger, request));
+        await executor.ExecuteAsync(logger, request)[0];
 
         return new() { Message = $"FG Model {request.EndMatch!.Groups[1].Value.Trim()}", Succeeded = true };
     }

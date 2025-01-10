@@ -50,6 +50,10 @@ public class ProbeSerialTests
                 case "TS":
                     _replies.Enqueue("TSFG312   V265");
                     break;
+                case "AAV":
+                    _replies.Enqueue("MT712V04.99");
+                    _replies.Enqueue("AAVACK");
+                    break;
             }
         }
     }
@@ -84,7 +88,7 @@ public class ProbeSerialTests
                 Assert.That(options!.ReadTimeout, Is.EqualTo(2000));
                 Assert.That(options.WriteTimeout, Is.EqualTo(2000));
 
-                return SerialPortConnection.FromMockedPortInstance(new PortMock(), new NullLogger<SerialPortConnection>(), enableReader);
+                return SerialPortConnection.FromMockedPortInstance(new PortMock(), new NullLogger<SerialPortConnection>(), enableReader, options.ReadTimeout);
             }
         );
 
@@ -101,7 +105,7 @@ public class ProbeSerialTests
         Services?.Dispose();
     }
 
-    [TestCase(SerialProbeProtocols.MT768, 0, SerialPortTypes.USB, false, "/dev/ttyUSB0: MT768: The method or operation is not implemented.")]
+    [TestCase(SerialProbeProtocols.MT768, 0, SerialPortTypes.USB, true, "MT Model MT712")]
     [TestCase(SerialProbeProtocols.PM8181, 1, SerialPortTypes.RS232, false, "/dev/ttyS1: PM8181: The method or operation is not implemented.")]
     [TestCase(SerialProbeProtocols.FG30x, 2, SerialPortTypes.USB, true, "FG Model FG312")]
     [TestCase(SerialProbeProtocols.ESxB, 3, SerialPortTypes.RS232, false, "/dev/ttyS3: ESxB: The method or operation is not implemented.")]

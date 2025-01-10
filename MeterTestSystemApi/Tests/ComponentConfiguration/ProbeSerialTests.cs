@@ -113,7 +113,7 @@ public class ProbeSerialTests
     [TestCase(SerialProbeProtocols.MT768, 0, SerialPortTypes.USB, true, "MT Model MT712")]
     [TestCase(SerialProbeProtocols.PM8181, 1, SerialPortTypes.RS232, false, "/dev/ttyS1: PM8181: The method or operation is not implemented.")]
     [TestCase(SerialProbeProtocols.FG30x, 2, SerialPortTypes.USB, true, "FG Model FG312")]
-    [TestCase(SerialProbeProtocols.ESxB, 3, SerialPortTypes.RS232, true, "EBV99.13")]
+    [TestCase(SerialProbeProtocols.ESxB, 3, SerialPortTypes.RS232, true, "ESxB Version EBV99.13")]
     public async Task Can_Probe_Serial_Port(SerialProbeProtocols protocol, int index, SerialPortTypes type, bool implemented, string message)
     {
         var results = await Prober.ProbeManualAsync([new SerialProbe {

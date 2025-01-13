@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
-
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Security;
+using ZERA.WebSam.Shared;
 
 namespace SourceApi.Controllers;
 
@@ -60,6 +60,7 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [SwaggerOperation(OperationId = "SetLoadpoint")]
+    [ActiveOperation(ForbidScript = true)]
     public async Task<ActionResult> SetLoadpointAsync([FromBody] TargetLoadpoint loadpoint)
     {
         logger.LogTrace($"Loadpoint to be set: {loadpoint}");

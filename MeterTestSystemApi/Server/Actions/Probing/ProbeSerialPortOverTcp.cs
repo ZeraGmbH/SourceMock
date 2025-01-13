@@ -1,6 +1,5 @@
 using MeterTestSystemApi.Services;
 using Microsoft.Extensions.DependencyInjection;
-using SerialPortProxy;
 
 namespace MeterTestSystemApi.Actions.Probing;
 

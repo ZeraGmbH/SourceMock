@@ -1,4 +1,3 @@
-using MeterTestSystemApi.Services;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 

@@ -1,4 +1,3 @@
-using MeterTestSystemApi.Services;
 using SerialPortProxy;
 
 namespace MeterTestSystemApi.Actions.Probing;

@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using MeterTestSystemApi.Services;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 

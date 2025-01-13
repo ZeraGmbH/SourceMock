@@ -9,6 +9,7 @@ using SourceApi.Model;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Actions.User;
 using ZERA.WebSam.Shared.DomainSpecific;
+using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace BurdenApiTests;
@@ -42,6 +43,7 @@ public class BurdenHardwareTests
         services.AddTransient<ICalibrationHardware, CalibrationHardware>();
         services.AddTransient<IInterfaceLogger, NoopInterfaceLogger>();
         services.AddTransient<ISourceHealthUtils, SourceHealthUtils>();
+        services.AddTransient<IActiveOperations, ActiveOperations>();
 
         var source = new Mock<ISource>();
 
@@ -447,7 +449,13 @@ public class BurdenHardwareTests
 
         var user = new Mock<ICurrentUser>();
 
-        var hardware = new CalibrationHardware(source.Object, new SourceHealthUtils(source.Object, user.Object, new()), refMeter.Object, burden.Object, new NoopInterfaceLogger());
+        var hardware = new CalibrationHardware(
+            source.Object,
+            new SourceHealthUtils(source.Object, user.Object, new(), new ActiveOperations()),
+            refMeter.Object,
+            burden.Object,
+            new NoopInterfaceLogger()
+        );
 
         var factor = await hardware.PrepareAsync(
             false,

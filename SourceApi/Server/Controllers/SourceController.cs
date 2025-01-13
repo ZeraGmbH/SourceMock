@@ -7,6 +7,7 @@ using SourceApi.Model;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Security;
 using ZERA.WebSam.Shared;
+using ZERA.WebSam.Shared.Models;
 
 namespace SourceApi.Controllers;
 
@@ -23,7 +24,12 @@ namespace SourceApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class SourceController(ILogger<SourceController> logger, ISource source, ISourceHealthUtils sourceHealth, IInterfaceLogger interfaceLogger) : Controller
+public class SourceController(
+    ILogger<SourceController> logger,
+    ISource source,
+    ISourceHealthUtils sourceHealth,
+    IInterfaceLogger interfaceLogger
+) : Controller
 {
     /// <summary>
     /// Gets the capabilities of this source.
@@ -71,6 +77,7 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
         {
             case SourceApiErrorCodes.SUCCESS:
                 logger.LogTrace("Loadpoint was successfully set.");
+
                 return Ok();
             case SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_DIFFERENT_NUMBER_OF_PHASES:
             case SourceApiErrorCodes.LOADPOINT_NOT_SUITABLE_VOLTAGE_INVALID:
@@ -80,11 +87,13 @@ public class SourceController(ILogger<SourceController> logger, ISource source, 
             case SourceApiErrorCodes.LOADPOINT_ANGLE_INVALID:
             case SourceApiErrorCodes.SUCCESS_NOT_ACTIVATED:
                 logger.LogInformation(srcResult.ToString());
+
                 return Problem(
                     detail: srcResult.ToUserFriendlyString(),
                     statusCode: StatusCodes.Status422UnprocessableEntity);
             default:
                 logger.LogError($"Unkown response from source: {srcResult}");
+
                 return Problem(
                     detail: $"Unkown Response from source: {srcResult}, {srcResult.ToUserFriendlyString()}",
                     statusCode: StatusCodes.Status500InternalServerError);

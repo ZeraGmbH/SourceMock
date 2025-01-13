@@ -6,6 +6,7 @@ using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared.Security;
+using ZERA.WebSam.Shared;
 
 namespace MeterTestSystemApi.Controllers;
 
@@ -53,6 +54,7 @@ public class MeterTestSystemController(IMeterTestSystem device, IInterfaceLogger
     [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
     [ProducesResponseType(StatusCodes.Status410Gone)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ActiveOperation(ForbidScript = true, ForbidLoadpoint = true)]
     public Task<ActionResult> SetAmplifiersAndReferenceMeterAsync([FromBody] AmplifiersAndReferenceMeter request) =>
         ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => _device.SetAmplifiersAndReferenceMeterAsync(interfaceLogger, request));
 

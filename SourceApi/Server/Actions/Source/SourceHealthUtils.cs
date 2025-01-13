@@ -34,7 +34,7 @@ public class SourceHealthUtils(ISource source, ICurrentUser user, SourceHealthUt
         state.User = user.User;
 
         /* If there is any phase at least partially active the loadpoint is considered to be active - regardless of quantity values which may be 0. */
-        activeOperations.ActiveLoadpoint = loadpoint.Phases.Find(p => p.Current?.On == true || p.Voltage?.On == true) != null;
+        activeOperations.SetOperation(ActiveOperationTypes.Loadpoint, loadpoint.Phases.Find(p => p.Current?.On == true || p.Voltage?.On == true) != null);
 
         return SourceApiErrorCodes.SUCCESS;
     }
@@ -48,7 +48,7 @@ public class SourceHealthUtils(ISource source, ICurrentUser user, SourceHealthUt
 
         state.User = user.User;
 
-        activeOperations.ActiveLoadpoint = false;
+        activeOperations.SetOperation(ActiveOperationTypes.Loadpoint, false);
 
         return SourceApiErrorCodes.SUCCESS;
     }

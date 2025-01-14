@@ -51,13 +51,13 @@ public class SerialPortFGMock : ISerialPort
     }
 
     /// <inheritdoc/>
-    public byte? RawRead(CancellationToken? cancel) => throw new NotImplementedException();
+    public byte? RawRead() => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public void RawWrite(byte[] command, CancellationToken? cancel) => throw new NotImplementedException();
+    public void RawWrite(byte[] command) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public virtual string ReadLine(CancellationToken? cancel)
+    public virtual string ReadLine()
     {
         if (!_replies.TryDequeue(out var info))
         {
@@ -79,7 +79,7 @@ public class SerialPortFGMock : ISerialPort
     private static double MockNumber(double number) => number * (1.0 + Random.Shared.Next(-1000, +1000) / 100000.0);
 
     /// <inheritdoc/>
-    public virtual void WriteLine(string command, CancellationToken? cancel)
+    public virtual void WriteLine(string command)
     {
         switch (command)
         {

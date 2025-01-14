@@ -17,7 +17,7 @@ class PortMock : ISerialPort
     {
     }
 
-    public string ReadLine(CancellationToken? cancel)
+    public string ReadLine()
     {
         if (Replies.TryDequeue(out var reply))
             return reply;
@@ -27,7 +27,7 @@ class PortMock : ISerialPort
         throw new TimeoutException("no reply in queue");
     }
 
-    public void WriteLine(string command, CancellationToken? cancel)
+    public void WriteLine(string command)
     {
         switch (command)
         {
@@ -48,9 +48,9 @@ class PortMock : ISerialPort
         }
     }
 
-    public void RawWrite(byte[] command, CancellationToken? cancel) => throw new NotImplementedException();
+    public void RawWrite(byte[] command) => throw new NotImplementedException();
 
-    public byte? RawRead(CancellationToken? cancel) => throw new NotImplementedException();
+    public byte? RawRead() => throw new NotImplementedException();
 }
 
 [TestFixture]

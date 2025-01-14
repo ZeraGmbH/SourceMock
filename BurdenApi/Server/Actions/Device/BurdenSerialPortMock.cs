@@ -1503,13 +1503,13 @@ public class BurdenSerialPortMock : IBurdenSerialPortMock
     }
 
     /// <inheritdoc/>
-    public byte? RawRead(CancellationToken? cancel) => throw new NotSupportedException();
+    public byte? RawRead() => throw new NotSupportedException();
 
     /// <inheritdoc/>
-    public void RawWrite(byte[] command, CancellationToken? cancel) => throw new NotSupportedException();
+    public void RawWrite(byte[] command) => throw new NotSupportedException();
 
     /// <inheritdoc/>
-    public string ReadLine(CancellationToken? cancel)
+    public string ReadLine()
     {
         if (!_replies.TryDequeue(out var info))
         {
@@ -1524,7 +1524,7 @@ public class BurdenSerialPortMock : IBurdenSerialPortMock
     }
 
     /// <inheritdoc/>
-    public void WriteLine(string command, CancellationToken? cancel)
+    public void WriteLine(string command)
     {
         foreach (var test in _Commands)
         {

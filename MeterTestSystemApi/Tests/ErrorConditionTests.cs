@@ -27,7 +27,7 @@ public class ErrorConditionTests
         {
         }
 
-        public virtual string ReadLine(CancellationToken? cancel)
+        public virtual string ReadLine()
         {
             if (_replies.TryDequeue(out var reply))
                 return reply;
@@ -37,7 +37,7 @@ public class ErrorConditionTests
             throw new TimeoutException("no reply in queue");
         }
 
-        public void WriteLine(string command, CancellationToken? cancel)
+        public void WriteLine(string command)
         {
             switch (command)
             {
@@ -50,9 +50,9 @@ public class ErrorConditionTests
             }
         }
 
-        public void RawWrite(byte[] command, CancellationToken? cancel) => throw new NotImplementedException();
+        public void RawWrite(byte[] command) => throw new NotImplementedException();
 
-        public byte? RawRead(CancellationToken? cancel) => throw new NotImplementedException();
+        public byte? RawRead() => throw new NotImplementedException();
     }
 
     [TestCase(false)]

@@ -34,11 +34,11 @@ public class MTSourceTests
 
         public static string[] Commands => _current!._commands.ToArray();
 
-        public override void WriteLine(string command, CancellationToken? cancel = null)
+        public override void WriteLine(string command)
         {
             _commands.Add(command);
 
-            base.WriteLine(command, cancel);
+            base.WriteLine(command);
         }
     }
 

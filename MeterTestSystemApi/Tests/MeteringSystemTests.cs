@@ -30,7 +30,7 @@ public class MeterTestSystemTests
         {
         }
 
-        public string ReadLine(CancellationToken? cancel)
+        public string ReadLine()
         {
             if (_queue.TryDequeue(out var reply))
                 return reply;
@@ -40,7 +40,7 @@ public class MeterTestSystemTests
             throw new TimeoutException("queue is empty");
         }
 
-        public void WriteLine(string command, CancellationToken? cancel)
+        public void WriteLine(string command)
         {
             Commands.Add(command);
 
@@ -61,9 +61,9 @@ public class MeterTestSystemTests
             }
         }
 
-        public void RawWrite(byte[] command, CancellationToken? cancel) => throw new NotImplementedException();
+        public void RawWrite(byte[] command) => throw new NotImplementedException();
 
-        public byte? RawRead(CancellationToken? cancel) => throw new NotImplementedException();
+        public byte? RawRead() => throw new NotImplementedException();
     }
 
     private readonly NullLogger<SerialPortFGMeterTestSystem> _meterLogger = new();

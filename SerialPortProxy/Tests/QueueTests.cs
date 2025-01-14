@@ -17,7 +17,7 @@ class GroupMock : ISerialPort
     {
     }
 
-    public string ReadLine(CancellationToken? cancel)
+    public string ReadLine()
     {
         if (_replies.TryDequeue(out var reply))
             return reply;
@@ -27,15 +27,15 @@ class GroupMock : ISerialPort
         throw new TimeoutException("no reply in quuue");
     }
 
-    public void WriteLine(string command, CancellationToken? cancel)
+    public void WriteLine(string command)
     {
         if (command.StartsWith("R"))
             _replies.Enqueue(command);
     }
 
-    public void RawWrite(byte[] command, CancellationToken? cancel) => throw new NotImplementedException();
+    public void RawWrite(byte[] command) => throw new NotImplementedException();
 
-    public byte? RawRead(CancellationToken? cancel) => throw new NotImplementedException();
+    public byte? RawRead() => throw new NotImplementedException();
 }
 
 [TestFixture]

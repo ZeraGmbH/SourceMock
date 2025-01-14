@@ -140,18 +140,21 @@ public class SerialPortMTMock : ISerialPort
     }
 
     /// <inheritdoc/>
-    public byte? RawRead(CancellationToken? cancel) => throw new NotSupportedException();
+    public byte? RawRead() => throw new NotSupportedException();
 
     /// <inheritdoc/>
-    public void RawWrite(byte[] command, CancellationToken? cancel) => throw new NotSupportedException();
+    public void RawWrite(byte[] command) => throw new NotSupportedException();
 
     /// <summary>
     /// Reset in a unit test environment.
     /// </summary>
     protected virtual bool UseDelay => true;
 
-    /// <inheritdoc/>
-    public virtual string ReadLine(CancellationToken? cancel = null)
+    /// <summary>
+    /// Report the next outstanding reply string.
+    /// </summary>
+    /// <returns>Next string.</returns>
+    public virtual string ReadLine()
     {
         if (!_replies.TryDequeue(out var info))
         {
@@ -169,8 +172,11 @@ public class SerialPortMTMock : ISerialPort
 
     private int DosageProgress => Math.Min((int)((DateTime.Now - _dosageStart).TotalSeconds * 10), 100);
 
-    /// <inheritdoc/>
-    public virtual void WriteLine(string command, CancellationToken? cancel)
+    /// <summary>
+    /// Simulate a command.
+    /// </summary>
+    /// <param name="command">Command to simulate.</param>
+    public virtual void WriteLine(string command)
     {
         switch (command)
         {

@@ -66,7 +66,7 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
         var buRequest = SerialPortRequest.Create("BU", new Regex(@"^BU(.+)$"));
         var fiRequest = SerialPortRequest.Create("FI", new Regex(@"^FI(.+)$"));
 
-        await Task.WhenAll(_device.ExecuteAsync(logger, CancellationToken.None, biRequest, buRequest, fiRequest));
+        await Task.WhenAll(_device.ExecuteAsync(logger, biRequest, buRequest, fiRequest));
 
         /* Convert text representations to numbers. */
         var voltage = new Voltage(double.Parse(buRequest.EndMatch!.Groups[1].Value));
@@ -99,7 +99,7 @@ public partial class SerialPortFGRefMeter : ISerialPortFGRefMeter
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("TS", new Regex("^TS(.{8})(.{4})$"));
 
-        await _device.ExecuteAsync(logger, CancellationToken.None, request)[0];
+        await _device.ExecuteAsync(logger, request)[0];
 
         return new()
         {

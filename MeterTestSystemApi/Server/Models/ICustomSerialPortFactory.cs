@@ -21,7 +21,6 @@ public interface ICustomSerialPortFactory : IDisposable
     /// <param name="name">Name of the serial port.</param>
     /// <param name="requests">Requests to execute.</param>
     /// <param name="logger">Interface logging helper.</param>
-    /// <param name="cancel"></param>
     /// <returns>Results of the execution.</returns>
-    Task<SerialPortReply[]> ExecuteAsync(string name, IEnumerable<SerialPortCommand> requests, IInterfaceLogger logger, CancellationToken? cancel = null);
+    Task<SerialPortReply[]> ExecuteAsync(string name, IEnumerable<SerialPortCommand> requests, IInterfaceLogger logger);
 }

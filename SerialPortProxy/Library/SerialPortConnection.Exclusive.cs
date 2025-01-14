@@ -5,11 +5,11 @@ namespace SerialPortProxy;
 
 public partial class SerialPortConnection
 {
-    private class ExclusiveAccessItem<T>(Func<ISerialPort, IInterfaceConnection, CancellationToken, T> algorithm, IInterfaceConnection logger, CancellationToken cancel) : QueueItem
+    private class ExclusiveAccessItem<T>(Func<ISerialPort, IInterfaceConnection, T> algorithm, IInterfaceConnection logger) : QueueItem
     {
         private readonly TaskCompletionSource<T> _Task = new();
 
-        private readonly Func<ISerialPort, IInterfaceConnection, CancellationToken, T> _Algorithm = algorithm;
+        private readonly Func<ISerialPort, IInterfaceConnection, T> _Algorithm = algorithm;
 
         private readonly IInterfaceConnection _Logger = logger;
 
@@ -28,7 +28,7 @@ public partial class SerialPortConnection
 
             try
             {
-                _Task.SetResult(_Algorithm(connection._port, _Logger, cancel));
+                _Task.SetResult(_Algorithm(connection._port, _Logger));
             }
             catch (Exception e)
             {
@@ -37,7 +37,7 @@ public partial class SerialPortConnection
         }
     }
 
-    private Task<T> ExecuteAsync<T>(IInterfaceConnection connection, CancellationToken cancel, Func<ISerialPort, IInterfaceConnection, CancellationToken, T> algorithm)
+    private Task<T> ExecuteAsync<T>(IInterfaceConnection connection, Func<ISerialPort, IInterfaceConnection, T> algorithm)
     {
         ArgumentNullException.ThrowIfNull(algorithm, nameof(algorithm));
 
@@ -45,7 +45,7 @@ public partial class SerialPortConnection
         lock (_queue)
         {
             /* Queue is locked, we have exclusive access and can now safely add the entry. */
-            var item = new ExclusiveAccessItem<T>(algorithm, connection, cancel);
+            var item = new ExclusiveAccessItem<T>(algorithm, connection);
 
             _queue.Enqueue(item);
 

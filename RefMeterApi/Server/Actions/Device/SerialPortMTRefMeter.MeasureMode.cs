@@ -38,7 +38,7 @@ partial class SerialPortMTRefMeter
     public async Task<MeasurementModes?> GetActualMeasurementModeAsync(IInterfaceLogger logger)
     {
         /* Execute the request and get the answer from the device. */
-        var replies = await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("AST", "ASTACK"))[0];
+        var replies = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AST", "ASTACK"))[0];
 
         /* Find the mode. */
         var modeAsString = replies.SingleOrDefault(r => r.StartsWith("M="));
@@ -53,7 +53,7 @@ partial class SerialPortMTRefMeter
     public async Task<MeasurementModes[]> GetMeasurementModesAsync(IInterfaceLogger logger)
     {
         /* Execute the request and get the answer from the device. */
-        var replies = await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("AML", "AMLACK"))[0];
+        var replies = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AML", "AMLACK"))[0];
 
         /* Prepare response with three phases. */
         var response = new List<MeasurementModes>();
@@ -88,6 +88,6 @@ partial class SerialPortMTRefMeter
         var supported = SupportedModes.Single(m => m.Value == mode);
 
         /* Send the command to the device. */
-        return _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"AMT{supported.Key}", "AMTACK"))[0];
+        return _device.ExecuteAsync(logger, SerialPortRequest.Create($"AMT{supported.Key}", "AMTACK"))[0];
     }
 }

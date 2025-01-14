@@ -40,7 +40,7 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connecti
     public async Task<string[]> GetBurdensAsync(IInterfaceLogger log)
     {
         // Request burdens from device.
-        var burdens = await device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create("AB", "ABACK"))[0];
+        var burdens = await device.ExecuteAsync(log, SerialPortRequest.Create("AB", "ABACK"))[0];
 
         if (burdens.Length < 1) throw new InvalidOperationException($"too few response lines");
 
@@ -50,7 +50,7 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connecti
     private async Task<Tuple<Calibration, string>?> GetCalibrationInfoAsync(string burden, string range, string step, IInterfaceLogger log)
     {
         // Request values from device.
-        var values = await device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create($"GA{burden};{range};{step}", "GAACK"))[0];
+        var values = await device.ExecuteAsync(log, SerialPortRequest.Create($"GA{burden};{range};{step}", "GAACK"))[0];
 
         if (values.Length < 2) throw new InvalidOperationException($"too few response lines");
 
@@ -66,7 +66,7 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connecti
     public async Task<BurdenStatus> GetStatusAsync(IInterfaceLogger log)
     {
         // Request status from device.
-        var status = await device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create("ST", "STACK"))[0];
+        var status = await device.ExecuteAsync(log, SerialPortRequest.Create("ST", "STACK"))[0];
 
         if (status.Length < 5) throw new InvalidOperationException($"too few response lines");
 
@@ -108,7 +108,7 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connecti
     public async Task<BurdenVersion> GetVersionAsync(IInterfaceLogger log)
     {
         // Request version from device.
-        var version = await device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create("AV", "AVACK"))[0];
+        var version = await device.ExecuteAsync(log, SerialPortRequest.Create("AV", "AVACK"))[0];
 
         if (version.Length < 3) throw new InvalidOperationException($"too few response lines");
 
@@ -119,15 +119,15 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connecti
     /// <inheritdoc/>
     public Task ProgramAsync(string? burden, IInterfaceLogger log)
         // Enforce a read timeout of 5 Minutes - in worst case serial line will be blocked for that duration.
-        => device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create($"PR{burden ?? string.Empty}", "PRACK", 300000))[0];
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"PR{burden ?? string.Empty}", "PRACK", 300000))[0];
 
     /// <inheritdoc/>
     public Task SetActiveAsync(bool on, IInterfaceLogger log)
-        => device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create($"ON{(on ? 1 : 0)}", "ONACK"))[0];
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"ON{(on ? 1 : 0)}", "ONACK"))[0];
 
     /// <inheritdoc/>
     public Task SetBurdenAsync(string burden, IInterfaceLogger log)
-        => device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create($"SB{burden}", "SBACK"))[0];
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"SB{burden}", "SBACK"))[0];
 
     /// <inheritdoc/>
     public async Task SetPermanentCalibrationAsync(string burden, string range, string step, Calibration calibration, IInterfaceLogger log)
@@ -141,27 +141,27 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connecti
         var extra = match.Success ? $"{match.Groups[1].Value}.0" : before.Item2;
 
         // Update
-        await device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create(
+        await device.ExecuteAsync(log, SerialPortRequest.Create(
             $"SA{fullName};0x{calibration.Resistive.Coarse:x2};0x{calibration.Resistive.Fine:x2};0x{calibration.Inductive.Coarse:x2};0x{calibration.Inductive.Fine:x2};{extra}", "SAACK"))[0];
     }
 
     /// <inheritdoc/>
     public Task SetRangeAsync(string range, IInterfaceLogger log)
-        => device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create($"SR{range}", "SRACK"))[0];
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"SR{range}", "SRACK"))[0];
 
     /// <inheritdoc/>
     public Task SetStepAsync(string step, IInterfaceLogger log)
-        => device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create($"SN{step}", "SNACK"))[0];
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"SN{step}", "SNACK"))[0];
 
     /// <inheritdoc/>
     public Task SetTransientCalibrationAsync(Calibration calibration, IInterfaceLogger log)
-        => device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create($"SF0x{calibration.Resistive.Coarse:x2};0x{calibration.Resistive.Fine:x2};0x{calibration.Inductive.Coarse:x2};0x{calibration.Inductive.Fine:x2}", "SFACK"))[0];
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"SF0x{calibration.Resistive.Coarse:x2};0x{calibration.Resistive.Fine:x2};0x{calibration.Inductive.Coarse:x2};0x{calibration.Inductive.Fine:x2}", "SFACK"))[0];
 
     /// <inheritdoc/>
     public async Task<BurdenValues> MeasureAsync(IInterfaceLogger log)
     {
         /* Execute the request and get the answer from the device. */
-        var replies = await device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create("ME", "MEACK"))[0];
+        var replies = await device.ExecuteAsync(log, SerialPortRequest.Create("ME", "MEACK"))[0];
 
         /* Prepare response with a single phase. */
         var response = new BurdenValues();
@@ -214,16 +214,16 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connecti
 
     /// <inheritdoc/>
     public Task CancelCalibrationAsync(IInterfaceLogger log)
-        => device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create("CC", "CCACK"))[0];
+        => device.ExecuteAsync(log, SerialPortRequest.Create("CC", "CCACK"))[0];
 
     /// <inheritdoc/>
     public Task SetMeasuringCalibrationAsync(bool on, IInterfaceLogger log)
-        => device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create($"MR{(on ? 1 : 0)}", "MRACK"))[0];
+        => device.ExecuteAsync(log, SerialPortRequest.Create($"MR{(on ? 1 : 0)}", "MRACK"))[0];
 
     /// <inheritdoc/>
     public async Task<string[]> GetRangesAsync(string burden, IInterfaceLogger log)
     {
-        var ranges = await device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create($"AR{burden}", "ARACK"))[0];
+        var ranges = await device.ExecuteAsync(log, SerialPortRequest.Create($"AR{burden}", "ARACK"))[0];
 
         return [.. ranges.Take(ranges.Length - 1)];
     }
@@ -231,7 +231,7 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connecti
     /// <inheritdoc/>
     public async Task<string[]> GetStepsAsync(string burden, IInterfaceLogger log)
     {
-        var steps = await device.ExecuteAsync(log, CancellationToken.None, SerialPortRequest.Create($"AN{burden}", "ANACK"))[0];
+        var steps = await device.ExecuteAsync(log, SerialPortRequest.Create($"AN{burden}", "ANACK"))[0];
 
         return [.. steps.Take(steps.Length - 1)];
     }
@@ -247,7 +247,7 @@ public class Burden([FromKeyedServices("Burden")] ISerialPortConnection connecti
                         : SerialPortRequest.Create(r.Command, r.Reply))
                 .ToArray();
 
-        await Task.WhenAll(device.ExecuteAsync(logger, CancellationToken.None, commands));
+        await Task.WhenAll(device.ExecuteAsync(logger, commands));
 
         return [.. commands.Select(SerialPortReply.FromRequest)];
     }

@@ -32,7 +32,6 @@ partial class SerialPortMTRefMeter
         /* Execute the request and get the answer from the device. */
         var replies = await _device.ExecuteAsync(
             logger,
-            CancellationToken.None,
             SerialPortRequest.Create("ATI01", "ATIACK"),
             SerialPortRequest.Create(singlePhase
                 ? "AME0;3;6;9;12;15;18;21"

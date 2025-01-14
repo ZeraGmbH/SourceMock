@@ -25,11 +25,11 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
     private class Executor(SerialPortConnection port, InterfaceLogEntryConnection connection) : ISerialPortConnectionExecutor
     {
         /// <inheritdoc/>
-        public Task<string[]>[] ExecuteAsync(IInterfaceLogger logger, CancellationToken cancel, params SerialPortRequest[] requests)
-            => port.ExecuteAsync(logger.CreateConnection(connection), cancel, requests);
+        public Task<string[]>[] ExecuteAsync(IInterfaceLogger logger, params SerialPortRequest[] requests)
+            => port.ExecuteAsync(logger.CreateConnection(connection), requests);
 
-        public Task<T> RawExecuteAsync<T>(IInterfaceLogger logger, CancellationToken cancel, Func<ISerialPort, IInterfaceConnection, CancellationToken, T> algorithm)
-            => port.ExecuteAsync(logger.CreateConnection(connection), cancel, algorithm);
+        public Task<T> RawExecuteAsync<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, T> algorithm)
+            => port.ExecuteAsync(logger.CreateConnection(connection), algorithm);
     }
 
     private abstract class QueueItem
@@ -272,9 +272,8 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
     /// </summary>
     /// <remarks>Use timeout with care since it can block the server.</remarks>
     /// <param name="timeout">Maximum timeout (in milliseconds) to wait for an answer.</param>
-    /// <param name="cancel">Allow read operation to be cancelled.</param>
     /// <returns>The next line.</returns>
-    private string ReadInput(int? timeout, CancellationToken cancel)
+    private string ReadInput(int? timeout)
     {
         lock (_incoming)
             for (; ; )

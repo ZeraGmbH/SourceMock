@@ -57,7 +57,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     /// <inheritdoc/>
     public async Task<MeterConstant> GetMeterConstantAsync(IInterfaceLogger logger)
     {
-        var reply = await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("AST", "ASTACK"))[0];
+        var reply = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AST", "ASTACK"))[0];
 
         /* We need the range of voltage and current and the measurement mode as well. */
         double? voltage = null, current = null;
@@ -88,7 +88,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     public async Task<ReferenceMeterInformation> GetMeterInformationAsync(IInterfaceLogger logger)
     {
         /* Execute the request and wait for the information string. */
-        var reply = await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("AAV", "AAVACK"))[0];
+        var reply = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
         if (reply.Length < 2)
             throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");
@@ -115,7 +115,7 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     public async Task<Voltage[]> GetVoltageRangesAsync(IInterfaceLogger logger)
     {
         /* Execute the request and wait for the information string. */
-        var reply = await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("AVI", "AVIACK"))[0];
+        var reply = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AVI", "AVIACK"))[0];
 
         return [.. reply.Take(reply.Length - 1).Select(v => new Voltage(double.Parse(v)))];
     }
@@ -124,31 +124,31 @@ public partial class SerialPortMTRefMeter : ISerialPortMTRefMeter
     public async Task<Current[]> GetCurrentRangesAsync(IInterfaceLogger logger)
     {
         /* Execute the request and wait for the information string. */
-        var reply = await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("ACI", "ACIACK"))[0];
+        var reply = await _device.ExecuteAsync(logger, SerialPortRequest.Create("ACI", "ACIACK"))[0];
 
         return [.. reply.Take(reply.Length - 1).Select(c => new Current(double.Parse(c)))];
     }
 
     /// <inheritdoc/>
     public Task SetVoltageRangeAsync(IInterfaceLogger logger, Voltage voltage)
-        => _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"AVR{(double)voltage}", "AVRACK"))[0];
+        => _device.ExecuteAsync(logger, SerialPortRequest.Create($"AVR{(double)voltage}", "AVRACK"))[0];
 
     /// <inheritdoc/>
     public Task SetCurrentRangeAsync(IInterfaceLogger logger, Current current)
-        => _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"ACR{(double)current}", "ACRACK"))[0];
+        => _device.ExecuteAsync(logger, SerialPortRequest.Create($"ACR{(double)current}", "ACRACK"))[0];
 
     /// <inheritdoc/>
     public Task SetAutomaticAsync(IInterfaceLogger logger, bool voltageRanges = true, bool currentRanges = true, bool pll = true)
-        => _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"AAM{(voltageRanges ? "A" : "M")}{(currentRanges ? "A" : "M")}{(pll ? "A" : "M")}", "AAMACK"))[0];
+        => _device.ExecuteAsync(logger, SerialPortRequest.Create($"AAM{(voltageRanges ? "A" : "M")}{(currentRanges ? "A" : "M")}{(pll ? "A" : "M")}", "AAMACK"))[0];
 
     /// <inheritdoc/>
     public Task SelectPllChannelAsync(IInterfaceLogger logger, PllChannel pll)
-        => _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"AWR{(int)pll}", "AWRACK"))[0];
+        => _device.ExecuteAsync(logger, SerialPortRequest.Create($"AWR{(int)pll}", "AWRACK"))[0];
 
     /// <inheritdoc/>
     public async Task<RefMeterStatus> GetRefMeterStatusAsync(IInterfaceLogger logger)
     {
-        var reply = await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("AST", "ASTACK"))[0];
+        var reply = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AST", "ASTACK"))[0];
 
         /* We need the range of voltage and current and the measurement mode as well. */
         double? voltage = null, current = null;

@@ -36,7 +36,7 @@ partial class SerialPortFGRefMeter
         await TestConfiguredAsync(logger);
 
         /* Request from device. */
-        var replies = await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("MI", new Regex(@"^MI([^;]+;)*$")))[0];
+        var replies = await _device.ExecuteAsync(logger, SerialPortRequest.Create("MI", new Regex(@"^MI([^;]+;)*$")))[0];
 
         /* Analyse result and report all supported values. */
         var response = new List<MeasurementModes>();
@@ -67,7 +67,7 @@ partial class SerialPortFGRefMeter
 
         /* Send the command to the device. */
         await _device
-            .ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"MA{supported.Key}", "OKMA"))[0]
+            .ExecuteAsync(logger, SerialPortRequest.Create($"MA{supported.Key}", "OKMA"))[0]
             .ContinueWith((_t) => _measurementMode = mode, TaskScheduler.Current);
     }
 }

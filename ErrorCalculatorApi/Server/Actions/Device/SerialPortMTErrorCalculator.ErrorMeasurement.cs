@@ -25,13 +25,13 @@ partial class SerialPortMTErrorCalculator
     private static readonly Regex MatchErrorStatus3 = new(@"^([^;]+);([^;]+)$");
 
     /// <inheritdoc/>
-    public Task AbortErrorMeasurementAsync(IInterfaceLogger logger) => _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("AEE", "AEEACK"))[0];
+    public Task AbortErrorMeasurementAsync(IInterfaceLogger logger) => _device.ExecuteAsync(logger, SerialPortRequest.Create("AEE", "AEEACK"))[0];
 
     /// <inheritdoc/>
     public async Task<ErrorMeasurementStatus> GetErrorStatusAsync(IInterfaceLogger logger)
     {
         /* Ask the device for the current status. */
-        var replies = await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("AES1", "AESACK"))[0];
+        var replies = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AES1", "AESACK"))[0];
 
         /* Prepare for the result. */
         var result = new ErrorMeasurementStatus { State = ErrorMeasurementStates.NotActive };
@@ -167,7 +167,7 @@ partial class SerialPortMTErrorCalculator
         }
 
         /* Now we can send the resulting texts and power factors to the device. */
-        return _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"AEP{rawMeter};{powMeter:00};{rawImpulses};{powImpulses}", "AEPACK"))[0];
+        return _device.ExecuteAsync(logger, SerialPortRequest.Create($"AEP{rawMeter};{powMeter:00};{rawImpulses};{powImpulses}", "AEPACK"))[0];
     }
 
     /// <summary>
@@ -230,7 +230,7 @@ partial class SerialPortMTErrorCalculator
 
     /// <inheritdoc/>
     public Task StartErrorMeasurementAsync(IInterfaceLogger logger, bool continuous, ErrorCalculatorMeterConnections? connection) =>
-        _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create(continuous ? "AEB1" : "AEB0", "AEBACK"))[0];
+        _device.ExecuteAsync(logger, SerialPortRequest.Create(continuous ? "AEB1" : "AEB0", "AEBACK"))[0];
 
     /// <inheritdoc/>
     public Task<Impulses?> GetNumberOfDeviceUnderTestImpulsesAsync(IInterfaceLogger logger) => Task.FromResult<Impulses?>(null);

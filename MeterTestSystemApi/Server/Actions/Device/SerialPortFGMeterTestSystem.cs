@@ -97,17 +97,17 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
     {
         _logger.LogInformation("Starting up FG30x hardware");
 
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("RE1", "OKRE"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("SE1", "OKSE"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("HP11", "OKHP"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("OL1111111111111111", "OKOL"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("SF0", "OKSF"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("HEAAAAAAAAAAAAAAAA", "OKHE"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"3CM4", "OK3CM4"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"2S1xx", "2OK"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"2X0000", "2OK"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"2X0200", "2OK"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("OF11111111+000.000", "OKOF"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("RE1", "OKRE"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("SE1", "OKSE"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("HP11", "OKHP"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("OL1111111111111111", "OKOL"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("SF0", "OKSF"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("HEAAAAAAAAAAAAAAAA", "OKHE"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"3CM4", "OK3CM4"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2S1xx", "2OK"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2X0000", "2OK"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2X0200", "2OK"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create("OF11111111+000.000", "OKOF"))[0];
     }
 
     /// <summary>
@@ -118,13 +118,13 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
     {
         _logger.LogInformation("Shutting down FG30x hardware");
 
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"2S0xx", "2OK"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"OL1111111111111111", "OKOL"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"PL", "OKPL"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"SF0", "OKSF"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"UPAER000.000000.00S000.000120.00T000.000240.00", "OKUP"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"UIAAAAAAAAA", "OKUI"))[0];
-        await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"HP00", "OKHP"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"2S0xx", "2OK"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"OL1111111111111111", "OKOL"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"PL", "OKPL"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"SF0", "OKSF"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"UPAER000.000000.00S000.000120.00T000.000240.00", "OKUP"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"UIAAAAAAAAA", "OKUI"))[0];
+        await _device.ExecuteAsync(logger, SerialPortRequest.Create($"HP00", "OKHP"))[0];
     }
 
     /// <inheritdoc/>
@@ -265,7 +265,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
             var voltageCode = CodeMappings.Voltage[settings.VoltageAmplifier];
 
             /* Send the combined command to the meter test system. */
-            await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create($"ZP{voltageCode:00}{currentCode:00}{auxVoltageCode:00}{auxCurrentCode:00}{refMeterCode:00}", "OKZP"))[0];
+            await _device.ExecuteAsync(logger, SerialPortRequest.Create($"ZP{voltageCode:00}{currentCode:00}{auxVoltageCode:00}{auxCurrentCode:00}{refMeterCode:00}", "OKZP"))[0];
         }
         catch (Exception)
         {
@@ -292,7 +292,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("TS", new Regex("^TS(.{8})(.{4})$"));
 
-        await _device.ExecuteAsync(logger, CancellationToken.None, request)[0];
+        await _device.ExecuteAsync(logger, request)[0];
 
         /* Create response structure. */
         return new()
@@ -308,7 +308,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("SM", _smRegEx);
 
-        await _device.ExecuteAsync(logger, CancellationToken.None, request)[0];
+        await _device.ExecuteAsync(logger, request)[0];
 
         /* Create response structure. */
         return ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, true);
@@ -318,7 +318,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
     /// Enable error condition generation.
     /// </summary>
     /// <param name="logger">Logger to use.</param>
-    public Task ActivateErrorConditionsAsync(IInterfaceLogger logger) => _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("SE1", "OKSE"))[0];
+    public Task ActivateErrorConditionsAsync(IInterfaceLogger logger) => _device.ExecuteAsync(logger, SerialPortRequest.Create("SE1", "OKSE"))[0];
 
     /// <summary>
     /// Configure the error calculators.
@@ -418,7 +418,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
                         : SerialPortRequest.Create(r.Command, r.Reply))
                 .ToArray();
 
-        await Task.WhenAll(_device.ExecuteAsync(logger, CancellationToken.None, commands));
+        await Task.WhenAll(_device.ExecuteAsync(logger, commands));
 
         return [.. commands.Select(SerialPortReply.FromRequest)];
     }

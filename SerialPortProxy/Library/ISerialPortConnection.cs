@@ -12,19 +12,17 @@ public interface ISerialPortConnectionExecutor
     /// Add a command to be sent to the serial port to the queue.
     /// </summary>
     /// <param name="logger">Current logging scope.</param>
-    /// <param name="cancel">Allow to cancel the operation.</param>
     /// <param name="requests">The command to send to the device.</param>
     /// <exception cref="ArgumentNullException">Parameter must not be null.</exception>
     /// <returns>All lines sent from the device as a task.</returns>
-    Task<string[]>[] ExecuteAsync(IInterfaceLogger logger, CancellationToken cancel, params SerialPortRequest[] requests);
+    Task<string[]>[] ExecuteAsync(IInterfaceLogger logger, params SerialPortRequest[] requests);
 
     /// <summary>
     /// Direct and exclusive access to the serial port.
     /// </summary>
     /// <param name="logger">Current logging scope.</param>
-    /// <param name="cancel">Allow to cancel the operation.</param>
     /// <param name="algorithm">What to do with the port.</param>
-    Task<T> RawExecuteAsync<T>(IInterfaceLogger logger, CancellationToken cancel, Func<ISerialPort, IInterfaceConnection, CancellationToken, T> algorithm);
+    Task<T> RawExecuteAsync<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, T> algorithm);
 }
 
 /// <summary>

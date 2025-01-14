@@ -112,7 +112,7 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
         var buffer = CommandToProtocol(command);
 
         // It's now time to get exclusive access to the serial port.
-        return factory.CreateExecutor(InterfaceLogSourceTypes.ZIF, id).RawExecuteAsync(interfaceLogger, CancellationToken.None, (port, connection, cancel) =>
+        return factory.CreateExecutor(InterfaceLogSourceTypes.ZIF, id).RawExecuteAsync(interfaceLogger, (port, connection) =>
         {
             /* Prepare logging. */
             var requestId = Guid.NewGuid().ToString();
@@ -126,7 +126,7 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
                 sendEntry = connection.Prepare(new() { Outgoing = true, RequestId = requestId });
 
                 /* Send to device. */
-                port.RawWrite(buffer, cancel);
+                port.RawWrite(buffer);
             }
             catch (Exception e)
             {
@@ -167,7 +167,7 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
                 receiveEntry = connection.Prepare(new() { Outgoing = false, RequestId = requestId });
 
                 /* Retrieve the answer from the socket and convert to a model. */
-                return createResponse(ReadResponse(command, port, reply, cancel));
+                return createResponse(ReadResponse(command, port, reply));
             }
             catch (Exception e)
             {
@@ -207,16 +207,15 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
     /// <param name="command">Command sent.</param>
     /// <param name="port">Serial port connection to use.</param>
     /// <param name="all">Everything we got.</param>
-    /// <param name="cancel"></param>
     /// <returns>Payload.</returns>
-    public static byte[] ReadResponse(int[] command, ISerialPort port, List<byte> all, CancellationToken cancel)
+    public static byte[] ReadResponse(int[] command, ISerialPort port, List<byte> all)
     {
         var data = new List<byte>();
         int length = 0;
 
         for (var state = ReadState.Start; ;)
         {
-            var next = port.RawRead(cancel) ?? throw new NoMoreDataException();
+            var next = port.RawRead() ?? throw new NoMoreDataException();
 
             all.Add(next);
 

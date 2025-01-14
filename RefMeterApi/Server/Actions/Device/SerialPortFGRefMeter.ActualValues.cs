@@ -47,7 +47,7 @@ partial class SerialPortFGRefMeter
         var mqRequest = SerialPortRequest.Create("MQ", new Regex(@"^MQR([^;]+);S([^;]+);T([^;]+);$"));
         var msRequest = SerialPortRequest.Create("MS", new Regex(@"^MSR([^;]+);S([^;]+);T([^;]+);$"));
 
-        await Task.WhenAll(_device.ExecuteAsync(logger, afRequest, aiRequest, auRequest, awRequest, biRequest, buRequest, mpRequest, mqRequest, msRequest));
+        await Task.WhenAll(_device.ExecuteAsync(logger, CancellationToken.None, afRequest, aiRequest, auRequest, awRequest, biRequest, buRequest, mpRequest, mqRequest, msRequest));
 
         /* Convert text representations to numbers. */
         var voltageRange = double.Parse(buRequest.EndMatch!.Groups[1].Value);

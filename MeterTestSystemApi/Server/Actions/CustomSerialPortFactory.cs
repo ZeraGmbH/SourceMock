@@ -93,7 +93,7 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
     }
 
     /// <inheritdoc/>
-    public async Task<SerialPortReply[]> ExecuteAsync(string name, IEnumerable<SerialPortCommand> requests, IInterfaceLogger logger)
+    public async Task<SerialPortReply[]> ExecuteAsync(string name, IEnumerable<SerialPortCommand> requests, IInterfaceLogger logger, CancellationToken? cancel = null)
     {
         var commands =
             requests
@@ -106,7 +106,7 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
         await Task.WhenAll(
             LookupPort(name)
                 .CreateExecutor(InterfaceLogSourceTypes.SerialPort, name)
-                .ExecuteAsync(logger, commands));
+                .ExecuteAsync(logger, cancel ?? CancellationToken.None, commands));
 
         return [.. commands.Select(SerialPortReply.FromRequest)];
     }

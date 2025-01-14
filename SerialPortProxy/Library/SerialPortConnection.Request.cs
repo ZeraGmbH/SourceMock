@@ -5,7 +5,7 @@ namespace SerialPortProxy;
 
 public partial class SerialPortConnection
 {
-    private class RequestBasedItem(SerialPortRequest[] requests, IInterfaceConnection logger) : QueueItem
+    private class RequestBasedItem(SerialPortRequest[] requests, IInterfaceConnection logger, CancellationToken cancel) : QueueItem
     {
         private readonly SerialPortRequest[] _Requests = requests;
 
@@ -24,7 +24,7 @@ public partial class SerialPortConnection
                 if (failed)
                     request.Result.SetException(new OperationCanceledException("previous command failed"));
                 else
-                    failed = !connection.ExecuteCommand(request, _Logger);
+                    failed = !connection.ExecuteCommand(request, _Logger, cancel);
         }
 
         public override void Discard(SerialPortConnection connection)
@@ -38,7 +38,7 @@ public partial class SerialPortConnection
         }
     }
 
-    private Task<string[]>[] ExecuteAsync(IInterfaceConnection connection, params SerialPortRequest[] requests)
+    private Task<string[]>[] ExecuteAsync(IInterfaceConnection connection, CancellationToken cancel, params SerialPortRequest[] requests)
     {
         ArgumentNullException.ThrowIfNull(requests, nameof(requests));
 
@@ -47,7 +47,7 @@ public partial class SerialPortConnection
         {
             /* Queue is locked, we have exclusive access and can now safely add the entry. */
             if (requests.Length > 0)
-                _queue.Enqueue(new RequestBasedItem(requests, connection));
+                _queue.Enqueue(new RequestBasedItem(requests, connection, cancel));
 
             /* If queue executer thread is waiting (Monitor.Wait) for new entries wake it up for immediate processing the new entry. */
             Monitor.Pulse(_queue);
@@ -66,8 +66,9 @@ public partial class SerialPortConnection
     /// </summary>
     /// <param name="request">Describes the request.</param>
     /// <param name="connection"></param>
+    /// <param name="cancel"></param>
     /// <returns>Gesetzt, wenn die Ausführung erfolgreich war.</returns>
-    private bool ExecuteCommand(SerialPortRequest request, IInterfaceConnection connection)
+    private bool ExecuteCommand(SerialPortRequest request, IInterfaceConnection connection, CancellationToken cancel)
     {
         /* Prepare logging. */
         var requestId = Guid.NewGuid().ToString();
@@ -83,7 +84,7 @@ public partial class SerialPortConnection
             sendEntry = connection.Prepare(new() { Outgoing = true, RequestId = requestId });
 
             /* Send the command string to the device - <CR> is automatically added. */
-            _port.WriteLine(request.Command);
+            _port.WriteLine(request.Command, cancel);
 
             _logger.LogDebug("Command {Command} accepted by device", request.Command);
         }
@@ -131,7 +132,7 @@ public partial class SerialPortConnection
                 /* Start logging. */
                 receiveEntry = connection.Prepare(new() { Outgoing = false, RequestId = requestId });
 
-                var reply = ReadInput(request.EstimatedDuration);
+                var reply = ReadInput(request.EstimatedDuration, cancel);
 
                 _logger.LogDebug("Got reply {Reply} for command {Command}", reply, request.Command);
 

@@ -86,7 +86,7 @@ public partial class SerialPortFGSource(ILogger<SerialPortFGSource> logger, [Fro
 
         Logger.LogTrace("Switching anything off.");
 
-        await Task.WhenAll(Device.ExecuteAsync(logger, SerialPortRequest.Create("UIAAAAAAAAA", "OKUI")));
+        await Task.WhenAll(Device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("UIAAAAAAAAA", "OKUI")));
 
         Info.IsActive = false;
 

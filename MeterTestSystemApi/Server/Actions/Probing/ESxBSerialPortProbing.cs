@@ -19,7 +19,7 @@ public class ESxBSerialPortProbing(IInterfaceLogger logger) : ISerialPortProbeEx
     {
         var executor = connection.CreateExecutor(InterfaceLogSourceTypes.Burden, "probe");
 
-        var reply = await executor.ExecuteAsync(logger, SerialPortRequest.Create("AV", "AVACK"))[0];
+        var reply = await executor.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("AV", "AVACK"))[0];
 
         if (reply.Length < 3) return new() { Succeeded = false, Message = "invalid reply" };
 

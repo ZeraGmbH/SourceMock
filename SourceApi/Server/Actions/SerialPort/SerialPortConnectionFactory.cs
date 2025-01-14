@@ -21,10 +21,10 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
     {
         class Executor : ISerialPortConnectionExecutor
         {
-            public Task<string[]>[] ExecuteAsync(IInterfaceLogger logger, params SerialPortRequest[] requests) =>
+            public Task<string[]>[] ExecuteAsync(IInterfaceLogger logger, CancellationToken token, params SerialPortRequest[] requests) =>
                 requests.Select(r => Task.FromException<string[]>(new NotSupportedException())).ToArray();
 
-            public Task<T> RawExecuteAsync<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, T> algorithm)
+            public Task<T> RawExecuteAsync<T>(IInterfaceLogger logger, CancellationToken token, Func<ISerialPort, IInterfaceConnection, CancellationToken, T> algorithm)
                 => Task.FromException<T>(new NotSupportedException());
         }
 

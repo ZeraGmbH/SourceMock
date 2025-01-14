@@ -46,7 +46,7 @@ public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, I
     {
         Logger.LogTrace("Switching anything off.");
 
-        await Task.WhenAll(Device.ExecuteAsync(logger, SerialPortRequest.Create("SUIAAAAAAAAA", "SOKUI")));
+        await Task.WhenAll(Device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("SUIAAAAAAAAA", "SOKUI")));
 
         Info.IsActive = false;
 

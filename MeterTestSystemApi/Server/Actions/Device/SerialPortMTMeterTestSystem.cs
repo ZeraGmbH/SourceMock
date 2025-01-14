@@ -97,7 +97,7 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem, ISerialPortOwner
     public async Task<MeterTestSystemFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger logger)
     {
         /* Execute the request and wait for the information string. */
-        var reply = await _device.ExecuteAsync(logger, SerialPortRequest.Create("AAV", "AAVACK"))[0];
+        var reply = await _device.ExecuteAsync(logger, CancellationToken.None, SerialPortRequest.Create("AAV", "AAVACK"))[0];
 
         if (reply.Length < 2)
             throw new InvalidOperationException($"wrong number of response lines - expected 2 but got {reply.Length}");
@@ -139,7 +139,7 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem, ISerialPortOwner
         /* Send command and check reply. */
         var request = SerialPortRequest.Create("SSM", _smRegEx);
 
-        await _device.ExecuteAsync(logger, request)[0];
+        await _device.ExecuteAsync(logger, CancellationToken.None, request)[0];
 
         /* Create response structure. */
         return ErrorConditionParser.Parse(request.EndMatch!.Groups[1].Value, false);
@@ -156,7 +156,7 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem, ISerialPortOwner
                         : SerialPortRequest.Create(r.Command, r.Reply))
                 .ToArray();
 
-        await Task.WhenAll(_device.ExecuteAsync(logger, commands));
+        await Task.WhenAll(_device.ExecuteAsync(logger, CancellationToken.None, commands));
 
         return [.. commands.Select(SerialPortReply.FromRequest)];
     }

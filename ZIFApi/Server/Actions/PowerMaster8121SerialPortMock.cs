@@ -13,12 +13,12 @@ public class PowerMaster8121SerialPortMock : ISerialPort
     public void Dispose() { }
 
     /// <inheritdoc/>
-    public byte? RawRead() => _reply.TryDequeue(out var data) ? data : throw new EndOfStreamException("read without a write");
+    public byte? RawRead(CancellationToken? cancel) => _reply.TryDequeue(out var data) ? data : throw new EndOfStreamException("read without a write");
 
     private void Reply(params byte[] reply) => reply.ToList().ForEach(_reply.Enqueue);
 
     /// <inheritdoc/>
-    public void RawWrite(byte[] command)
+    public void RawWrite(byte[] command, CancellationToken? cancel)
     {
         if (command[0] != 0xa5) throw new InvalidOperationException("ETX missing");
         if (command[^1] != 0x5a) throw new InvalidOperationException("STX missing");
@@ -53,8 +53,8 @@ public class PowerMaster8121SerialPortMock : ISerialPort
     }
 
     /// <inheritdoc/>
-    public string ReadLine() => throw new NotImplementedException();
+    public string ReadLine(CancellationToken? cancel) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public void WriteLine(string command) => throw new NotImplementedException();
+    public void WriteLine(string command, CancellationToken? cancel) => throw new NotImplementedException();
 }

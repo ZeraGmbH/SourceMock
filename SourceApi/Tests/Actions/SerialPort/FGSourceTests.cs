@@ -15,11 +15,11 @@ public class FGSourceTests
     {
         public readonly List<string> Commands = [];
 
-        public override void WriteLine(string command)
+        public override void WriteLine(string command, CancellationToken? cancel)
         {
             Commands.Add(command);
 
-            base.WriteLine(command);
+            base.WriteLine(command, cancel);
         }
     }
 

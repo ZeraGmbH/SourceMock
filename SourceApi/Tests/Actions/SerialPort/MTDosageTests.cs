@@ -34,11 +34,11 @@ public class MTDosageTests
 
         public static string[] Commands => _current!._commands.ToArray();
 
-        public override void WriteLine(string command)
+        public override void WriteLine(string command, CancellationToken? cancel)
         {
             _commands.Add(command);
 
-            base.WriteLine(command);
+            base.WriteLine(command, cancel);
         }
     }
 

@@ -17,7 +17,7 @@ public class FixedReplyMock : ISerialPort
     {
     }
 
-    public string ReadLine()
+    public string ReadLine(CancellationToken? cancel)
     {
         if (_queue.TryDequeue(out var reply))
             return reply;
@@ -27,10 +27,10 @@ public class FixedReplyMock : ISerialPort
         throw new TimeoutException("queue is empty");
     }
 
-    public void WriteLine(string command) =>
+    public void WriteLine(string command, CancellationToken? cancel) =>
         Array.ForEach(_replies, _queue.Enqueue);
 
-    public void RawWrite(byte[] command) => throw new NotImplementedException();
+    public void RawWrite(byte[] command, CancellationToken? cancel) => throw new NotImplementedException();
 
-    public byte? RawRead() => throw new NotImplementedException();
+    public byte? RawRead(CancellationToken? cancel) => throw new NotImplementedException();
 }

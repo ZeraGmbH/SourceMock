@@ -65,7 +65,7 @@ public class TcpPortProxy : ISerialPort
     }
 
     /// <inheritdoc/>
-    public string ReadLine()
+    public string ReadLine(CancellationToken? cancel = null)
     {
         for (; ; )
         {
@@ -94,10 +94,11 @@ public class TcpPortProxy : ISerialPort
     }
 
     /// <inheritdoc/>
-    public void WriteLine(string command) => RawWrite(Encoding.ASCII.GetBytes($"{command}\r"));
+    public void WriteLine(string command, CancellationToken? cancel = null)
+        => RawWrite(Encoding.ASCII.GetBytes($"{command}\r"), cancel);
 
     /// <inheritdoc/>
-    public byte? RawRead()
+    public byte? RawRead(CancellationToken? cancel)
     {
         if (_collector.Count < 1)
         {
@@ -114,5 +115,5 @@ public class TcpPortProxy : ISerialPort
     }
 
     /// <inheritdoc/>
-    public void RawWrite(byte[] command) => _stream.Write(command, 0, command.Length);
+    public void RawWrite(byte[] command, CancellationToken? cancel) => _stream.Write(command, 0, command.Length);
 }

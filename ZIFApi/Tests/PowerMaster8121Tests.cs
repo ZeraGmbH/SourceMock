@@ -27,9 +27,9 @@ public class PowerMaster8121Tests
 
         public void Dispose() { }
 
-        public byte? RawRead() => _queue.TryDequeue(out byte data) ? data : null;
+        public byte? RawRead(CancellationToken? cancel) => _queue.TryDequeue(out byte data) ? data : null;
 
-        public void RawWrite(byte[] command)
+        public void RawWrite(byte[] command, CancellationToken? cancel)
         {
             Assert.That(BitConverter.ToString(command), Is.EqualTo(_request));
             Assert.That(_queue, Has.Count.EqualTo(0));
@@ -37,12 +37,12 @@ public class PowerMaster8121Tests
             _queue = new(_reply);
         }
 
-        public string ReadLine()
+        public string ReadLine(CancellationToken? cancel)
         {
             throw new NotImplementedException();
         }
 
-        public void WriteLine(string command)
+        public void WriteLine(string command, CancellationToken? cancel)
         {
             throw new NotImplementedException();
         }

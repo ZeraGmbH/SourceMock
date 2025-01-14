@@ -25,7 +25,7 @@ public class ProbeSerialTests
         {
         }
 
-        public byte? RawRead()
+        public byte? RawRead(CancellationToken? cancel)
         {
             if (_rawReplies.TryDequeue(out var reply))
                 return reply;
@@ -33,7 +33,7 @@ public class ProbeSerialTests
             return null;
         }
 
-        public void RawWrite(byte[] command)
+        public void RawWrite(byte[] command, CancellationToken? cancel)
         {
             switch (BitConverter.ToString(command))
             {
@@ -44,7 +44,7 @@ public class ProbeSerialTests
         }
 
 
-        public string ReadLine()
+        public string ReadLine(CancellationToken? cancel)
         {
             if (_replies.TryDequeue(out var reply))
                 return reply;
@@ -54,7 +54,7 @@ public class ProbeSerialTests
             throw new TimeoutException("queue is empty");
         }
 
-        public void WriteLine(string command)
+        public void WriteLine(string command, CancellationToken? cancel)
         {
             switch (command)
             {

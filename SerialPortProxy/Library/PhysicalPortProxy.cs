@@ -41,7 +41,7 @@ public class PhysicalPortProxy : ISerialPort
     public void Dispose() => _port.Dispose();
 
     /// <inheritdoc/>
-    public byte? RawRead()
+    public byte? RawRead(CancellationToken? cancel)
     {
         var data = _port.ReadByte();
 
@@ -49,11 +49,11 @@ public class PhysicalPortProxy : ISerialPort
     }
 
     /// <inheritdoc/>
-    public void RawWrite(byte[] command) => _port.Write(command, 0, command.Length);
+    public void RawWrite(byte[] command, CancellationToken? cancel) => _port.Write(command, 0, command.Length);
 
     /// <inheritdoc/>
-    public string ReadLine() => _port.ReadLine();
+    public string ReadLine(CancellationToken? cancel) => _port.ReadLine();
 
     /// <inheritdoc/>
-    public void WriteLine(string command) => _port.WriteLine(command);
+    public void WriteLine(string command, CancellationToken? cancel) => _port.WriteLine(command);
 }

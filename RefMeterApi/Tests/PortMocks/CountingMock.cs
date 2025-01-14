@@ -12,7 +12,7 @@ public class CountingMock : ISerialPort
     {
     }
 
-    public string ReadLine()
+    public string ReadLine(CancellationToken? cancel)
     {
         if (!_queue.TryDequeue(out var reply))
         {
@@ -27,7 +27,7 @@ public class CountingMock : ISerialPort
         return reply;
     }
 
-    public void WriteLine(string command)
+    public void WriteLine(string command, CancellationToken? cancel)
     {
         switch (command)
         {
@@ -43,7 +43,7 @@ public class CountingMock : ISerialPort
         }
     }
 
-    public void RawWrite(byte[] command) => throw new NotImplementedException();
+    public void RawWrite(byte[] command, CancellationToken? cancel) => throw new NotImplementedException();
 
-    public byte? RawRead() => throw new NotImplementedException();
+    public byte? RawRead(CancellationToken? cancel) => throw new NotImplementedException();
 }

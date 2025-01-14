@@ -28,7 +28,7 @@ abstract class PortMock : ISerialPort
     {
     }
 
-    public virtual string ReadLine()
+    public virtual string ReadLine(CancellationToken? cancel)
     {
         if (_replies.TryDequeue(out var reply))
             return reply;
@@ -38,7 +38,7 @@ abstract class PortMock : ISerialPort
         throw new TimeoutException("no reply in queue");
     }
 
-    public void WriteLine(string command)
+    public void WriteLine(string command, CancellationToken? cancel)
     {
         switch (command)
         {
@@ -52,9 +52,9 @@ abstract class PortMock : ISerialPort
         }
     }
 
-    public void RawWrite(byte[] command) => throw new NotImplementedException();
+    public void RawWrite(byte[] command, CancellationToken? cancel) => throw new NotImplementedException();
 
-    public byte? RawRead() => throw new NotImplementedException();
+    public byte? RawRead(CancellationToken? cancel) => throw new NotImplementedException();
 }
 
 /// <summary>
@@ -88,7 +88,7 @@ class VersionTimeoutMock : PortMock
 {
     public VersionTimeoutMock() : base("") { }
 
-    public override string ReadLine()
+    public override string ReadLine(CancellationToken? cancel)
     {
         Thread.Sleep(100);
 

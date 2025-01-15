@@ -112,7 +112,7 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
         var buffer = CommandToProtocol(command);
 
         // It's now time to get exclusive access to the serial port.
-        return factory.CreateExecutor(InterfaceLogSourceTypes.ZIF, id).RawExecuteAsync(interfaceLogger, (port, connection) =>
+        return factory.CreateExecutor(InterfaceLogSourceTypes.ZIF, id).RawExecuteAsync(interfaceLogger, (port, connection, cancel) =>
         {
             /* Prepare logging. */
             var requestId = Guid.NewGuid().ToString();

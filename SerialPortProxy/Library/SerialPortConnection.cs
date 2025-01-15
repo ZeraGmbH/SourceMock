@@ -29,7 +29,7 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
         public Task<string[]>[] ExecuteAsync(IInterfaceLogger logger, params SerialPortRequest[] requests)
             => port.ExecuteAsync(logger.CreateConnection(connection), requests);
 
-        public Task<T> RawExecuteAsync<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, T> algorithm)
+        public Task<T> RawExecuteAsync<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, ICancellationService?, T> algorithm)
             => port.ExecuteAsync(logger.CreateConnection(connection), algorithm);
     }
 

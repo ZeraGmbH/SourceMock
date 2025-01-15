@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace SerialPortProxy;
@@ -22,7 +23,7 @@ public interface ISerialPortConnectionExecutor
     /// </summary>
     /// <param name="logger">Current logging scope.</param>
     /// <param name="algorithm">What to do with the port.</param>
-    Task<T> RawExecuteAsync<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, T> algorithm);
+    Task<T> RawExecuteAsync<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, ICancellationService?, T> algorithm);
 }
 
 /// <summary>

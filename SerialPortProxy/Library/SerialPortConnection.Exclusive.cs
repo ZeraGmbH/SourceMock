@@ -1,15 +1,16 @@
 ﻿using Microsoft.Extensions.Logging;
+using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace SerialPortProxy;
 
 public partial class SerialPortConnection
 {
-    private class ExclusiveAccessItem<T>(Func<ISerialPort, IInterfaceConnection, T> algorithm, IInterfaceConnection logger) : QueueItem
+    private class ExclusiveAccessItem<T>(Func<ISerialPort, IInterfaceConnection, ICancellationService?, T> algorithm, ICancellationService? cancel, IInterfaceConnection logger) : QueueItem
     {
         private readonly TaskCompletionSource<T> _Task = new();
 
-        private readonly Func<ISerialPort, IInterfaceConnection, T> _Algorithm = algorithm;
+        private readonly Func<ISerialPort, IInterfaceConnection, ICancellationService?, T> _Algorithm = algorithm;
 
         private readonly IInterfaceConnection _Logger = logger;
 
@@ -28,7 +29,7 @@ public partial class SerialPortConnection
 
             try
             {
-                _Task.SetResult(_Algorithm(connection._port, _Logger));
+                _Task.SetResult(_Algorithm(connection._port, _Logger, cancel));
             }
             catch (Exception e)
             {
@@ -37,7 +38,7 @@ public partial class SerialPortConnection
         }
     }
 
-    private Task<T> ExecuteAsync<T>(IInterfaceConnection connection, Func<ISerialPort, IInterfaceConnection, T> algorithm)
+    private Task<T> ExecuteAsync<T>(IInterfaceConnection connection, Func<ISerialPort, IInterfaceConnection, ICancellationService?, T> algorithm)
     {
         ArgumentNullException.ThrowIfNull(algorithm, nameof(algorithm));
 
@@ -45,7 +46,7 @@ public partial class SerialPortConnection
         lock (_queue)
         {
             /* Queue is locked, we have exclusive access and can now safely add the entry. */
-            var item = new ExclusiveAccessItem<T>(algorithm, connection);
+            var item = new ExclusiveAccessItem<T>(algorithm, _cancel, connection);
 
             _queue.Enqueue(item);
 

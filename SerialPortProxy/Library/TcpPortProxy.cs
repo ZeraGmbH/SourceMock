@@ -101,6 +101,12 @@ public class TcpPortProxy : ISerialPort
     {
         if (_collector.Count < 1)
         {
+            /* Busy wait while no data is available. */
+            if (timeout != null)
+                for (var end = DateTime.UtcNow.AddMilliseconds(timeout.Value); !_stream.DataAvailable; Thread.Sleep(10))
+                    if (DateTime.UtcNow >= end)
+                        throw new TimeoutException("read operation timed out");
+
             var data = _stream.ReadByte();
 
             return data == -1 ? null : checked((byte)data);

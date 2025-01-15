@@ -294,6 +294,9 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
     /// <returns>The next line.</returns>
     private string ReadInput(int? timeout)
     {
+        /* Time limit for the operation. */
+        var end = DateTime.UtcNow.AddMilliseconds(timeout ?? UnitTest ?? ReadTimeout);
+
         lock (_incoming)
             for (; ; )
             {
@@ -301,9 +304,12 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
                 if (_incoming.TryDequeue(out var line))
                     return line;
 
-                /* Wait for new data. */
-                if (!Monitor.Wait(_incoming, timeout ?? UnitTest ?? ReadTimeout))
-                    throw new TimeoutException("no reply from serial port");
+                /* Wait for new data - respecting timeout and cancellation. */
+                if (!Monitor.Wait(_incoming, 100))
+                    if (DateTime.UtcNow >= end)
+                        throw new TimeoutException("no reply from serial port");
+                    else
+                        _cancel?.ThrowIfCancellationRequested();
             }
     }
 

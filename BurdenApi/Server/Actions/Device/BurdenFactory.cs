@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using SourceApi.Model.Configuration;
+using ZERA.WebSam.Shared.Models;
 
 namespace BurdenApi.Actions.Device;
 
@@ -76,12 +77,13 @@ public class BurdenFactory(IServiceProvider services, ILogger<BurdenFactory> log
                 try
                 {
                     var log = services.GetRequiredService<ILogger<SerialPortConnection>>();
+                    var cancel = services.GetService<ICancellationService>();
 
                     _Connection = config.ConfigurationType switch
                     {
-                        SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, log),
-                        SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint!, log),
-                        SerialPortConfigurationTypes.Mock => SerialPortConnection.FromMock<BurdenSerialPortMock>(log),
+                        SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, log, cancel: cancel),
+                        SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint!, log, cancel: cancel),
+                        SerialPortConfigurationTypes.Mock => SerialPortConnection.FromMock<BurdenSerialPortMock>(log, cancel: cancel),
                         _ => throw new NotSupportedException($"Unknown serial port configuration type {config.ConfigurationType}"),
                     };
                 }

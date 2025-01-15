@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using SourceApi.Model.Configuration;
+using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace MeterTestSystemApi.Actions;
@@ -64,11 +65,12 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
                     try
                     {
                         var log = services.GetRequiredService<ILogger<SerialPortConnection>>();
+                        var cancel = services.GetService<ICancellationService>();
 
                         var port = config.ConfigurationType switch
                         {
-                            SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, log),
-                            SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint!, log),
+                            SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, log, cancel: cancel),
+                            SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint!, log, cancel: cancel),
                             _ => throw new NotSupportedException($"Unknown serial port configuration type {config.ConfigurationType}"),
                         };
 

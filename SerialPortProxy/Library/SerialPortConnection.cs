@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace SerialPortProxy;
@@ -93,6 +94,8 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
     /// <inheritdoc/>
     public ISerialPort Port => _port;
 
+    private readonly ICancellationService? _cancel;
+
     /// <summary>
     /// Initialize a serial connection manager.
     /// </summary>
@@ -101,11 +104,19 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
     /// <param name="logger">Optional logging instance.</param>
     /// <param name="enableReader">Unset to disable the input reader.</param>
     /// <param name="readTimeout">Timeout (in Milliseconds) to wait on input after sending a command.</param>
+    /// <param name="cancel">Service to ask for termination of the current operation.</param>
     /// <exception cref="ArgumentNullException">Proxy must not be null.</exception>
-    private SerialPortConnection(ISerialPort port, InterfaceLogEntryTargetConnection target, ILogger<ISerialPortConnection> logger, bool enableReader, int? readTimeout)
+    private SerialPortConnection(
+        ISerialPort port,
+        InterfaceLogEntryTargetConnection target,
+        ILogger<ISerialPortConnection> logger,
+        bool enableReader,
+        int? readTimeout,
+        ICancellationService? cancel)
     {
         ReadTimeout = readTimeout ?? 30000;
 
+        _cancel = cancel;
         _logger = logger ?? new NullLogger<SerialPortConnection>();
         _port = port ?? throw new ArgumentNullException(nameof(port));
         _target = target;
@@ -125,9 +136,10 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
     /// <param name="options">Additional options.</param>
     /// <param name="logger">Optional logging instance.</param>
     /// <param name="enableReader">Unset to disable the input reader.</param>
+    /// <param name="cancel">Manage script execution cancel to allow early abort.</param>
     /// <returns>The brand new connection.</returns>
-    public static ISerialPortConnection FromSerialPort(string port, SerialPortOptions? options, ILogger<ISerialPortConnection> logger, bool enableReader = true)
-        => FromPortInstance(new PhysicalPortProxy(port, options), new() { Protocol = InterfaceLogProtocolTypes.Com, Endpoint = port }, logger, enableReader, options?.ReadTimeout);
+    public static ISerialPortConnection FromSerialPort(string port, SerialPortOptions? options, ILogger<ISerialPortConnection> logger, bool enableReader = true, ICancellationService? cancel = null)
+        => FromPortInstance(new PhysicalPortProxy(port, options), new() { Protocol = InterfaceLogProtocolTypes.Com, Endpoint = port }, logger, enableReader, options?.ReadTimeout, cancel);
 
     /// <summary>
     /// Create a new connection based on a TCP-to-Serial passthrouh connection.
@@ -136,9 +148,10 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
     /// <param name="logger">Optional logging instance.</param>
     /// <param name="enableReader">Unset to disable the input reader.</param>
     /// <param name="readTimeout">Timeout (in Milliseconds) to wait on input after sending a command.</param>
+    /// <param name="cancel">Manage script execution cancel to allow early abort.</param>
     /// <returns>The brand new connection.</returns>
-    public static ISerialPortConnection FromNetwork(string serverAndPort, ILogger<ISerialPortConnection> logger, bool enableReader = true, int? readTimeout = null)
-        => FromPortInstance(new TcpPortProxy(serverAndPort, readTimeout), new() { Protocol = InterfaceLogProtocolTypes.Com, Endpoint = serverAndPort }, logger, enableReader, readTimeout);
+    public static ISerialPortConnection FromNetwork(string serverAndPort, ILogger<ISerialPortConnection> logger, bool enableReader = true, int? readTimeout = null, ICancellationService? cancel = null)
+        => FromPortInstance(new TcpPortProxy(serverAndPort, readTimeout), new() { Protocol = InterfaceLogProtocolTypes.Com, Endpoint = serverAndPort }, logger, enableReader, readTimeout, cancel);
 
     /// <summary>
     /// Create a new mocked based connection.
@@ -146,9 +159,11 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
     /// <param name="logger">Optional logging instance.</param>
     /// <typeparam name="T">Some mocked class implementing ISerialPort.</typeparam>
     /// <param name="enableReader">Unset to disable the input reader.</param>
+    /// <param name="readTimeout">Timeout (in Milliseconds) to wait on input after sending a command.</param>
+    /// <param name="cancel">Manage script execution cancel to allow early abort.</param>
     /// <returns>The new connection.</returns>
-    public static ISerialPortConnection FromMock<T>(ILogger<ISerialPortConnection> logger, bool enableReader = true) where T : class, ISerialPort, new()
-        => FromMock(typeof(T), logger, enableReader);
+    public static ISerialPortConnection FromMock<T>(ILogger<ISerialPortConnection> logger, bool enableReader = true, int? readTimeout = null, ICancellationService? cancel = null) where T : class, ISerialPort, new()
+        => FromMock(typeof(T), logger, enableReader, readTimeout, cancel);
 
     /// <summary>
     /// Create a new mocked based connection.
@@ -158,9 +173,10 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
     /// <param name="logger">Optional logging instance.</param>
     /// <param name="enableReader">Unset to disable the input reader.</param>
     /// <param name="readTimeout">Timeout (in Milliseconds) to wait on input after sending a command.</param>
+    /// <param name="cancel">Manage script execution cancel to allow early abort.</param>
     /// <returns>The new connection.</returns>
-    private static ISerialPortConnection FromPortInstance(ISerialPort port, InterfaceLogEntryTargetConnection target, ILogger<ISerialPortConnection> logger, bool enableReader = true, int? readTimeout = null)
-        => new SerialPortConnection(port, target, logger, enableReader, readTimeout);
+    private static ISerialPortConnection FromPortInstance(ISerialPort port, InterfaceLogEntryTargetConnection target, ILogger<ISerialPortConnection> logger, bool enableReader = true, int? readTimeout = null, ICancellationService? cancel = null)
+        => new SerialPortConnection(port, target, logger, enableReader, readTimeout, cancel);
 
     /// <summary>
     /// Create a new mocked based connection.
@@ -168,9 +184,11 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
     /// <param name="mockType">Some mocked class implementing ISerialPort.</param>
     /// <param name="logger">Optional logging instance.</param>
     /// <param name="enableReader">Unset to disable the input reader.</param>
+    /// <param name="readTimeout">Timeout (in Milliseconds) to wait on input after sending a command.</param>
+    /// <param name="cancel">Manage script execution cancel to allow early abort.</param>
     /// <returns>The new connection.</returns>
-    public static ISerialPortConnection FromMock(Type mockType, ILogger<ISerialPortConnection> logger, bool enableReader = true)
-        => FromMockedPortInstance((ISerialPort)Activator.CreateInstance(mockType)!, logger, enableReader);
+    public static ISerialPortConnection FromMock(Type mockType, ILogger<ISerialPortConnection> logger, bool enableReader = true, int? readTimeout = null, ICancellationService? cancel = null)
+        => FromMockedPortInstance((ISerialPort)Activator.CreateInstance(mockType)!, logger, enableReader, readTimeout, cancel);
 
     /// <summary>
     /// Create a new mocked based connection.
@@ -179,9 +197,10 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
     /// <param name="logger">Optional logging instance.</param>
     /// <param name="enableReader">Unset to disable the input reader.</param>
     /// <param name="readTimeout">Timeout (in Milliseconds) to wait on input after sending a command.</param>
+    /// <param name="cancel">Manage script execution cancel to allow early abort.</param>
     /// <returns>The new connection.</returns>
-    public static ISerialPortConnection FromMockedPortInstance(ISerialPort port, ILogger<ISerialPortConnection> logger, bool enableReader = true, int? readTimeout = null)
-        => FromPortInstance(port, new() { Protocol = InterfaceLogProtocolTypes.Mock, Endpoint = "mocked" }, logger, enableReader, readTimeout);
+    public static ISerialPortConnection FromMockedPortInstance(ISerialPort port, ILogger<ISerialPortConnection> logger, bool enableReader = true, int? readTimeout = null, ICancellationService? cancel = null)
+        => FromPortInstance(port, new() { Protocol = InterfaceLogProtocolTypes.Mock, Endpoint = "mocked" }, logger, enableReader, readTimeout, cancel);
 
     /// <summary>
     /// On dispose the serial connection and the ProcessFromQueue thread are terminated.

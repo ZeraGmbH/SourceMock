@@ -25,7 +25,7 @@ public class ProbeSerialTests
         {
         }
 
-        public byte? RawRead()
+        public byte? RawRead(int? timeout = null)
         {
             if (_rawReplies.TryDequeue(out var reply))
                 return reply;

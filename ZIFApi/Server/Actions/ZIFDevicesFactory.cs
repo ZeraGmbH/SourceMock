@@ -105,7 +105,9 @@ public class ZIFDevicesFactory(IServiceProvider services, ILogger<ZIFDevicesFact
                             var cancel = services.GetService<ICancellationService>();
 
                             var protocol = services.GetRequiredKeyedService<IZIFProtocol>(socket.Type);
+
                             protocol.Index = i;
+                            protocol.ReadTimeout = config.SerialPortOptions?.ReadTimeout;
 
                             var port = config.ConfigurationType switch
                             {

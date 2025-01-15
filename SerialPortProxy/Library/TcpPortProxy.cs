@@ -97,7 +97,7 @@ public class TcpPortProxy : ISerialPort
     public void WriteLine(string command) => RawWrite(Encoding.ASCII.GetBytes($"{command}\r"));
 
     /// <inheritdoc/>
-    public byte? RawRead()
+    public byte? RawRead(int? timeout = null)
     {
         if (_collector.Count < 1)
         {

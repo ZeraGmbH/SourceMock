@@ -51,7 +51,7 @@ public class SerialPortFGMock : ISerialPort
     }
 
     /// <inheritdoc/>
-    public byte? RawRead() => throw new NotImplementedException();
+    public byte? RawRead(int? timeout = null) => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public void RawWrite(byte[] command) => throw new NotImplementedException();

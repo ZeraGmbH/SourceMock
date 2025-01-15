@@ -14,6 +14,11 @@ public interface IZIFProtocol
     int Index { get; set; }
 
     /// <summary>
+    /// Optional read timeout in milliseconds.
+    /// </summary>
+    int? ReadTimeout { get; set; }
+
+    /// <summary>
     /// Read the software version.
     /// </summary>
     /// <param name="factory">Serial port factory to use.</param>

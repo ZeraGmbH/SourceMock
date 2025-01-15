@@ -27,7 +27,7 @@ public class PowerMaster8121Tests
 
         public void Dispose() { }
 
-        public byte? RawRead() => _queue.TryDequeue(out byte data) ? data : null;
+        public byte? RawRead(int? timeout = null) => _queue.TryDequeue(out byte data) ? data : null;
 
         public void RawWrite(byte[] command)
         {

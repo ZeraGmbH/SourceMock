@@ -10,16 +10,21 @@ namespace MeterTestSystemApi.Actions.Probing;
 /// </summary>
 public class ZIFSerialPortProbing(IInterfaceLogger logger, ILogger<ZIFSerialPortProbing> _logger) : ISerialPortProbeExecutor
 {
+    private int? _readTimeout;
+
     /// <inheritdoc/>
     public bool EnableReader => false;
 
     /// <inheritdoc/>
-    public void AdjustOptions(SerialPortOptions options) { }
+    public void AdjustOptions(SerialPortOptions options)
+    {
+        _readTimeout = options.ReadTimeout;
+    }
 
     /// <inheritdoc/>
     public async Task<ProbeInfo> ExecuteAsync(ISerialPortConnection connection)
     {
-        var reply = await PowerMaster8121.Execute(connection, "probe", logger, _logger, raw => raw, 0xc2);
+        var reply = await PowerMaster8121.Execute(connection, "probe", _readTimeout ?? 2000, logger, _logger, raw => raw, 0xc2);
 
         if (reply.Length != 5) return new() { Succeeded = false, Message = "invalid reply" };
 

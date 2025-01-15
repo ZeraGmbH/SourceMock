@@ -41,8 +41,15 @@ public class PhysicalPortProxy : ISerialPort
     public void Dispose() => _port.Dispose();
 
     /// <inheritdoc/>
-    public byte? RawRead()
+    public byte? RawRead(int? timeout = null)
     {
+        /* Busy wait while no data is available. */
+        if (timeout != null)
+            for (var end = DateTime.UtcNow.AddMilliseconds(timeout.Value); _port.IsOpen && _port.BytesToRead < 1; Thread.Sleep(10))
+                if (DateTime.UtcNow >= end)
+                    throw new TimeoutException("read operation timed out");
+
+        /* Blocked read of next byte. */
         var data = _port.ReadByte();
 
         return data == -1 ? null : checked((byte)data);

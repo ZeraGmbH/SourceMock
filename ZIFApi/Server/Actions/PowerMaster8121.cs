@@ -1,6 +1,8 @@
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using SerialPortProxy;
+using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZIFApi.Exceptions;
 using ZIFApi.Models;
@@ -51,6 +53,9 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
     /// <inheritdoc/>
     public int Index { get; set; }
 
+    /// <inheritdoc/>
+    public int? ReadTimeout { get; set; }
+
     /// <summary>
     /// Calculate a CRC8(MAXIM)
     /// </summary>
@@ -94,7 +99,7 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
     }
 
     private Task<T> Execute<T>(ISerialPortConnection factory, IInterfaceLogger logger, Func<byte[], T> createResponse, params int[] command)
-        => Execute(factory, $"{Index}", logger, _logger, createResponse, command);
+        => Execute(factory, $"{Index}", ReadTimeout, logger, _logger, createResponse, command);
 
     /// <summary>
     /// Execute a single command.
@@ -104,10 +109,11 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
     /// <param name="logger">System logging.</param>
     /// <param name="createResponse">How to create the response from the binary data.</param>
     /// <param name="id">Test position of the socket.</param>
+    /// <param name="readTimeout">Maximum time to wait for reply in milliseconds.</param>
     /// <param name="command">Command to execute.</param>
     /// <typeparam name="T">Type of response.</typeparam>
     /// <returns>Response reconstructed from binary reply.</returns>
-    public static Task<T> Execute<T>(ISerialPortConnection factory, string id, IInterfaceLogger interfaceLogger, ILogger logger, Func<byte[], T> createResponse, params int[] command)
+    public static Task<T> Execute<T>(ISerialPortConnection factory, string id, int? readTimeout, IInterfaceLogger interfaceLogger, ILogger logger, Func<byte[], T> createResponse, params int[] command)
     {
         var buffer = CommandToProtocol(command);
 
@@ -167,7 +173,7 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
                 receiveEntry = connection.Prepare(new() { Outgoing = false, RequestId = requestId });
 
                 /* Retrieve the answer from the socket and convert to a model. */
-                return createResponse(ReadResponse(command, port, reply));
+                return createResponse(ReadResponse(command, port, reply, readTimeout ?? 30000, cancel));
             }
             catch (Exception e)
             {
@@ -207,15 +213,17 @@ public class PowerMaster8121(IPortSetup821xVSW configLoader, ILogger<PowerMaster
     /// <param name="command">Command sent.</param>
     /// <param name="port">Serial port connection to use.</param>
     /// <param name="all">Everything we got.</param>
+    /// <param name="readTimeout">Timeout to read the response.</param>
+    /// <param name="cancel">Manages cancel requests.</param>
     /// <returns>Payload.</returns>
-    public static byte[] ReadResponse(int[] command, ISerialPort port, List<byte> all)
+    public static byte[] ReadResponse(int[] command, ISerialPort port, List<byte> all, int readTimeout, ICancellationService? cancel)
     {
         var data = new List<byte>();
         int length = 0;
 
         for (var state = ReadState.Start; ;)
         {
-            var next = port.RawRead() ?? throw new NoMoreDataException();
+            var next = port.RawRead(readTimeout, cancel) ?? throw new NoMoreDataException();
 
             all.Add(next);
 

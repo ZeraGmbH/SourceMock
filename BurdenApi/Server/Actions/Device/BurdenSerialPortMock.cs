@@ -1503,7 +1503,7 @@ public class BurdenSerialPortMock : IBurdenSerialPortMock
     }
 
     /// <inheritdoc/>
-    public byte? RawRead() => throw new NotSupportedException();
+    public byte? RawRead(int? timeout = null) => throw new NotSupportedException();
 
     /// <inheritdoc/>
     public void RawWrite(byte[] command) => throw new NotSupportedException();

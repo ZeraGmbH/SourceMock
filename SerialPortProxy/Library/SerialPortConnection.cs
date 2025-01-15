@@ -304,8 +304,8 @@ public partial class SerialPortConnection : ISerialPortConnectionMock
                 if (_incoming.TryDequeue(out var line))
                     return line;
 
-                /* Wait for new data - respecting timeout and cancellation. */
-                if (!Monitor.Wait(_incoming, 100))
+                /* Wait for new data - respecting timeout and cancellation each 250 milliseconds. */
+                if (!Monitor.Wait(_incoming, 250))
                     if (DateTime.UtcNow >= end)
                         throw new TimeoutException("no reply from serial port");
                     else

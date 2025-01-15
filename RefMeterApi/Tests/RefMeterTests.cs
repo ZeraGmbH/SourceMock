@@ -110,7 +110,7 @@ public class RefMeterTests
 
         public void RawWrite(byte[] command) => throw new NotImplementedException();
 
-        public byte? RawRead() => throw new NotImplementedException();
+        public byte? RawRead(int? timeout = null) => throw new NotImplementedException();
     }
 
     [Test]

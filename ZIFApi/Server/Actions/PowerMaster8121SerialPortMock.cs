@@ -13,7 +13,7 @@ public class PowerMaster8121SerialPortMock : ISerialPort
     public void Dispose() { }
 
     /// <inheritdoc/>
-    public byte? RawRead() => _reply.TryDequeue(out var data) ? data : throw new EndOfStreamException("read without a write");
+    public byte? RawRead(int? timeout = null) => _reply.TryDequeue(out var data) ? data : throw new EndOfStreamException("read without a write");
 
     private void Reply(params byte[] reply) => reply.ToList().ForEach(_reply.Enqueue);
 

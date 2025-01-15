@@ -7,6 +7,7 @@ using ErrorCalculatorApi.Exceptions;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging;
 using ZERA.WebSam.Shared;
+using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;
@@ -15,7 +16,8 @@ namespace ErrorCalculatorApi.Actions.Device.MAD;
 /// MAD communication using a TCP channel.
 /// </summary>
 /// <param name="logger">Logging helper.</param>
-public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
+/// <param name="cancel"></param>
+public class MadTcpConnection(ILogger<MadTcpConnection> logger, ICancellationService? cancel = null) : IMadConnection
 {
     /// <summary>
     /// Convert endpoint from string to server name and port.
@@ -221,9 +223,15 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
             {
                 lock (_collector)
                 {
+                    /* Time limit for the operation. */
+                    var end = DateTime.UtcNow.AddMilliseconds(30000);
+
                     while (_response == null)
-                        if (!Monitor.Wait(_collector, TimeSpan.FromSeconds(30)))
-                            throw new TimeoutException("no reply from error calculator");
+                        if (!Monitor.Wait(_collector, 100))
+                            if (DateTime.UtcNow >= end)
+                                throw new TimeoutException("no reply from error calculator");
+                            else
+                                cancel?.ThrowIfCancellationRequested();
 
                     response = _response;
                 }

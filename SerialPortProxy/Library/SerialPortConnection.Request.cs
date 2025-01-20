@@ -120,6 +120,8 @@ public partial class SerialPortConnection
         /* Collect response strings until expected termination string is detected. */
         for (var answer = new List<string>(); ;)
         {
+            var reply = string.Empty;
+
             IPreparedInterfaceLogEntry receiveEntry = null!;
             Exception receiveError = null!;
 
@@ -131,7 +133,7 @@ public partial class SerialPortConnection
                 /* Start logging. */
                 receiveEntry = connection.Prepare(new() { Outgoing = false, RequestId = requestId });
 
-                var reply = ReadInput(request.EstimatedDuration);
+                reply = ReadInput(request.EstimatedDuration);
 
                 _logger.LogDebug("Got reply {Reply} for command {Command}", reply, request.Command);
 
@@ -189,7 +191,7 @@ public partial class SerialPortConnection
                         receiveEntry.Finish(new()
                         {
                             Encoding = InterfaceLogPayloadEncodings.Raw,
-                            Payload = string.Join("\t", answer),
+                            Payload = reply,
                             PayloadType = "",
                             TransferException = receiveError?.Message
                         });

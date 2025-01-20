@@ -116,7 +116,8 @@ public class SingleStepCalibrator : ICalibrationAlgorithm
         var nextDelta = context.MakeDeviation(nextValues, nextValues.Rms);
 
         // We made it worse or nothing changed at all - but indicated with Calibration null that we at least gave it a try.
-        if (Math.Abs(resistiveNotImpedance ? nextDelta.DeltaPower : nextDelta.DeltaFactor) >= Math.Abs(deviation)) return new() { Calibration = null! };
+        if (Math.Abs(resistiveNotImpedance ? nextDelta.DeltaPower : nextDelta.DeltaFactor) >= Math.Abs(deviation))
+            return new() { Calibration = null!, Deviation = nextDelta, Values = nextValues };
 
         // Apply measurement values from the burden as well.
         var burdenValues = await context.MeasureBurdenAsync();

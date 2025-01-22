@@ -34,7 +34,7 @@ partial class SerialPortMTRefMeter
             logger,
             SerialPortRequest.Create("ATI01", "ATIACK"),
             SerialPortRequest.Create(singlePhase
-                ? "AME0;3;6;9;12;15;18;21"
+                ? "AME0;3;6;9;12;15;18;21;28"
                 : "AME",
             "AMEACK")
         )[1];

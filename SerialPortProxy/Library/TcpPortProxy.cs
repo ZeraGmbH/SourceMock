@@ -16,6 +16,17 @@ public class TcpPortProxy : ISerialPort
 
     private readonly List<byte> _collector = new();
 
+
+    /// <summary>
+    /// All connections currently open.
+    /// </summary>
+    private static readonly HashSet<string> _openEndpoints = [];
+
+    /// <summary>
+    /// The key of this connection.
+    /// </summary>
+    private readonly string? _endpointKey;
+
     /// <summary>
     /// Initialize the new connection.
     /// </summary>
@@ -25,30 +36,37 @@ public class TcpPortProxy : ISerialPort
     /// <param name="writeTimeout">Maximum time for a write operation to finish (in milliseconds).</param>
     public TcpPortProxy(string serverAndPort, int? readTimeout = null, int? writeTimeout = null)
     {
-        /* Split the target. */
-        var sep = serverAndPort.IndexOf(':');
+        /* Make sure port can be opened only once. */
+        lock (_openEndpoints)
+            if (!_openEndpoints.Add(serverAndPort))
+                throw new InvalidOperationException($"connection {serverAndPort} already in use");
 
-        if (sep < 0)
-            throw new ArgumentException(nameof(serverAndPort));
-
-        var server = serverAndPort[..sep];
-        var port = ushort.Parse(serverAndPort[(sep + 1)..]);
-
-        /* Create the connection. */
-        _client = new TcpClient(AddressFamily.InterNetwork)
-        {
-            SendTimeout = writeTimeout ?? 30000,
-            ReceiveTimeout = readTimeout ?? 30000,
-        };
+        /* Now remember or key. */
+        _endpointKey = serverAndPort;
 
         try
         {
+            /* Split the target. */
+            var sep = serverAndPort.IndexOf(':');
+
+            if (sep < 0) throw new ArgumentException(": expected", nameof(serverAndPort));
+
+            var server = serverAndPort[..sep];
+            var port = ushort.Parse(serverAndPort[(sep + 1)..]);
+
+            /* Create the connection. */
+            _client = new TcpClient(AddressFamily.InterNetwork)
+            {
+                SendTimeout = writeTimeout ?? 30000,
+                ReceiveTimeout = readTimeout ?? 30000,
+            };
+
             _client.Connect(server, port);
 
             /* Attach to the stream. */
             _stream = _client.GetStream();
         }
-        catch (System.Exception)
+        catch (Exception)
         {
             /* Proper cleanup. */
             Dispose();
@@ -60,8 +78,17 @@ public class TcpPortProxy : ISerialPort
     /// <inheritdoc/>
     public void Dispose()
     {
-        _stream?.Dispose();
-        _client?.Dispose();
+        try
+        {
+            _stream?.Dispose();
+            _client?.Dispose();
+        }
+        finally
+        {
+            if (!string.IsNullOrEmpty(_endpointKey))
+                lock (_openEndpoints)
+                    _openEndpoints.Remove(_endpointKey);
+        }
     }
 
     /// <inheritdoc/>

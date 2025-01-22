@@ -148,8 +148,5 @@ public static class MeterTestSystemApiConfiguration
     /// 
     /// </summary>
     /// <param name="services"></param>
-    public static void StartMeterTestSystemApi(this IServiceProvider services)
-    {
-        services.GetRequiredService<IProbingOperationStore>();
-    }
+    public static Task StartMeterTestSystemApiAsync(this IServiceProvider services) => services.StartServiceAsync<IProbingOperationStore>();
 }

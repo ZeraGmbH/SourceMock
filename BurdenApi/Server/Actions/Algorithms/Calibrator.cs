@@ -65,13 +65,13 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
     private PrepareResult _PrepareInfo = new();
 
     /// <inheritdoc/>
-    public GoalDeviation MakeDeviation(GoalValue values, GoalValue goal, double? rms)
+    public GoalDeviation MakeDeviation(GoalValue values, GoalValue goal, double? rms, double? range = null)
     {
         // Make sure we are working relative to the really measures range,
         if (rms.HasValue && rms.Value > 0)
             goal = new()
             {
-                ApparentPower = goal.ApparentPower * (rms.Value * rms.Value) / (_PrepareInfo.Range * _PrepareInfo.Range),
+                ApparentPower = goal.ApparentPower * (rms.Value * rms.Value) / ((range ?? _PrepareInfo.Range) * (range ?? _PrepareInfo.Range)),
                 PowerFactor = goal.PowerFactor
             };
 
@@ -107,7 +107,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         _Steps.Clear();
         _CycleTester.Clear();
 
-        // Correct the goal in ANSI mode.
+        // Correct the goal in ANSI mode - just to move result into the 5% center.
         EffectiveGoal = request.Burden != "ANSI"
             ? Goal
             : new()
@@ -228,7 +228,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         var lower = await MeasureAsync(result.Calibration);
         var lowerValues = await MeasureBurdenAsync();
         var lowerGoal = MakeEffectiveGoal(lowerPrepare.Factor / goalCorrection);
-        var lowerDeviation = MakeDeviation(lower, lowerGoal, lower.Rms);
+        var lowerDeviation = MakeDeviation(lower, lowerGoal, lower.Rms, lowerPrepare.Range);
 
         // Measure at 120% (voltage) or 200% (current, voltage limited to 89V).
         var upperFactor = voltageNotCurrent ? 1.2 : 2;
@@ -263,7 +263,7 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         var upper = await MeasureAsync(result.Calibration);
         var upperValues = await MeasureBurdenAsync();
         var upperGoal = MakeEffectiveGoal(upperPrepare.Factor / goalCorrection);
-        var upperDeviation = MakeDeviation(upper, upperGoal, upper.Rms);
+        var upperDeviation = MakeDeviation(upper, upperGoal, upper.Rms, upperPrepare.Range);
 
         // Construct result.
         return [

@@ -9,5 +9,4 @@ public class GoalValueWithQuantity : GoalValue
     /// The measured quantity.
     /// </summary>
     public double? Rms { get; set; }
-
 }

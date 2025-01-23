@@ -46,8 +46,9 @@ public interface ICalibrationContext
     /// <param name="values">What we measured.</param>
     /// <param name="goal">Target to reach.</param>
     /// <param name="rms">Measured physical quantity.</param>
+    /// <param name="range">Expected physical value.</param>
     /// <returns>Relative deviation.</returns>
-    GoalDeviation MakeDeviation(GoalValue values, GoalValue goal, double? rms);
+    GoalDeviation MakeDeviation(GoalValue values, GoalValue goal, double? rms, double? range = null);
 }
 
 /// <summary>

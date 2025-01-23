@@ -58,15 +58,26 @@ public class FineFirstCalibrator : ICalibrationAlgorithm
         var calibration = resistiveNotImpedance ? context.CurrentCalibration.Resistive : context.CurrentCalibration.Inductive;
 
         // Try fine steps.
-        if ((calibration.Coarse == 0 || calibration.Fine >= 10) && (calibration.Coarse == 127 || calibration.Fine <= 120))
-            for (int step = 20; step > 0; step /= 2)
-            {
-                // Move forward.
-                var fineStep = await AdjustCoarseOrFine(resistiveNotImpedance, context, calibration.ChangeFine, step);
 
-                // Not possible at all - we reached a bound.
-                if (fineStep?.Calibration != null) return fineStep;
-            }
+        for (int step = 20; step > 0; step /= 2)
+        {
+            // Move forward.
+            var fineStep = await AdjustCoarseOrFine(resistiveNotImpedance, context, (int delta, bool clip) =>
+            {
+                // Apply delta to current calibration.                
+                var next = calibration.ChangeFine(delta, clip);
+
+                if (next == null) return null;
+
+                // Must not exceed boundaries - keep distance from coarse as long as coarse boundaries are not reached.
+                if ((next.Coarse != 0 && next.Fine < 10) || (next.Coarse != 127 && next.Fine > 120)) return null;
+
+                return next;
+            }, step);
+
+            // Not possible at all - we reached a bound.
+            if (fineStep?.Calibration != null) return fineStep;
+        }
 
         // Try coarse.
         var coarseStep = await AdjustCoarseOrFine(resistiveNotImpedance, context, (int delta, bool clip) =>
@@ -75,7 +86,7 @@ public class FineFirstCalibrator : ICalibrationAlgorithm
             var next = calibration.ChangeCoarse(delta, clip);
 
             // If successfull center fine.
-            return (next == null) ? null : new CalibrationPair(next.Coarse, 64);
+            return (next == null) ? null : new CalibrationPair(next.Coarse, (byte)(delta < 0 ? 120 : 10));
         }, 1);
 
         return coarseStep?.Calibration == null ? null : coarseStep;
@@ -97,7 +108,8 @@ public class FineFirstCalibrator : ICalibrationAlgorithm
         int step
     )
     {
-        var deviation = resistiveNotImpedance ? context.LastStep.Deviation.DeltaPower : context.LastStep.Deviation.DeltaFactor;
+        var lastDeviation = context.LastStep.Deviation;
+        var deviation = resistiveNotImpedance ? lastDeviation.DeltaPower : lastDeviation.DeltaFactor;
 
         // No difference at all - access part (e.g. GoalValue.ApparentPower) using accessor method field
         if (deviation == 0) return null;
@@ -117,7 +129,7 @@ public class FineFirstCalibrator : ICalibrationAlgorithm
         var nextDelta = context.MakeDeviation(nextValues, nextValues.Rms);
 
         // We made it worse or nothing changed at all - but indicated with Calibration null that we at least gave it a try.
-        if (Math.Abs(resistiveNotImpedance ? nextDelta.DeltaPower : nextDelta.DeltaFactor) >= Math.Abs(deviation))
+        if (Math.Abs(nextDelta.DeltaPower) + Math.Abs(nextDelta.DeltaFactor) >= Math.Abs(lastDeviation.DeltaPower) + Math.Abs(lastDeviation.DeltaFactor))
             return new() { Calibration = null!, Deviation = nextDelta, Values = nextValues };
 
         // Apply measurement values from the burden as well.

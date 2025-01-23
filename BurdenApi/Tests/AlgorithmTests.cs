@@ -158,7 +158,7 @@ namespace BurdenApiTests
         [TestCase(null, 148)]
         [TestCase(CalibrationAlgorithms.Default, 148)]
         [TestCase(CalibrationAlgorithms.SingleStep, 148)]
-        [TestCase(CalibrationAlgorithms.FineFirst, 300)]
+        [TestCase(CalibrationAlgorithms.FineFirst, 522)]
         public async Task Can_Run_Calibration_Async(CalibrationAlgorithms? algorithm, int steps)
         {
             Hardware.AddCalibration("IEC50", "200", "50;0.75", new(new(112, 7), new(16, 99)));

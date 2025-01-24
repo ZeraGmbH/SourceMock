@@ -1,3 +1,4 @@
+using BurdenApi.Actions.Device;
 using BurdenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using ZERA.WebSam.Shared.DomainSpecific;
@@ -143,6 +144,12 @@ public class Calibrator(ICalibrationHardware hardware, IInterfaceLogger logger, 
         await burden.SetRangeAsync(request.Range, logger);
         await burden.SetStepAsync(request.Step, logger);
         await burden.SetActiveAsync(true, logger);
+
+        // Check for simulation mode to speed up tests.
+        var isMock = burden is IBurdenMock mockedBurden && mockedBurden.HasMockedSource;
+
+        // Wait a bit for stabilisation.
+        if (!isMock) await Task.Delay(5000, cancel);
 
         // Create initial step.
         var values = await MeasureAsync(initialCalibration);

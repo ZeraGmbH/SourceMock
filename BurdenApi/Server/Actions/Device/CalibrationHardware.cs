@@ -133,12 +133,6 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
 
         if (status != SourceApiErrorCodes.SUCCESS) throw new InvalidOperationException($"bad loadpoint: {status}");
 
-        // Check for simulation mode to speed up tests.
-        var isMock = Burden is IBurdenMock mockedBurden && mockedBurden.HasMockedSource;
-
-        // Wait a bit for stabilisation.
-        if (!isMock) await Task.Delay(5000);
-
         // Get the best fit on reference meter range.
         if (detectRange)
         {
@@ -185,6 +179,12 @@ public class CalibrationHardware(ISource source, ISourceHealthUtils sourceHealth
 
         // Configure reference meter.
         await refMeter.SetActualMeasurementModeAsync(logger, MeasurementModes.MqBase);
+
+        // Check for simulation mode to speed up tests.
+        var isMock = Burden is IBurdenMock mockedBurden && mockedBurden.HasMockedSource;
+
+        // Wait a bit for stabilisation.
+        if (!isMock) await Task.Delay(10000);
 
         // Report new pecentage
         return new()

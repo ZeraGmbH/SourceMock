@@ -13,6 +13,5 @@ public interface IZIFDevicesFactory : IDisposable
     /// <summary>
     /// 
     /// </summary>
-    /// <value></value>
     IZIFDevice[] Devices { get; }
 }

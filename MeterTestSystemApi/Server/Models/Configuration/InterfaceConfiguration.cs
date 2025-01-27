@@ -5,6 +5,7 @@ using BurdenApi.Models;
 using ErrorCalculatorApi.Models;
 using MongoDB.Bson.Serialization.Attributes;
 using SourceApi.Model.Configuration;
+using WatchDogApi.Models;
 using ZERA.WebSam.Shared.Models;
 using ZIFApi.Models;
 
@@ -76,4 +77,11 @@ public class InterfaceConfiguration
     [BsonElement("burden")]
     [NotNull, Required]
     public BurdenConfiguration Burden { get; set; } = new();
+
+    /// <summary>
+    /// Configuration of the watch dog.
+    /// </summary>
+    [BsonElement("watchDog")]
+    [NotNull, Required]
+    public WatchDogConfiguration WatchDog { get; set; } = new();
 }

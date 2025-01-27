@@ -17,6 +17,7 @@ COPY RefMeterApi RefMeterApi
 COPY SerialPortProxy SerialPortProxy
 COPY Shared Shared
 COPY SourceApi SourceApi
+COPY WatchDogApi WatchDogApi
 COPY ZIFApi ZIFApi
 
 COPY WebServer/Server/WebSamDeviceApis.csproj Server/WebSamDeviceApis/WebSamDeviceApis.csproj

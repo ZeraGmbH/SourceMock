@@ -13,6 +13,13 @@ namespace MeterTestSystemApi.Models.Configuration;
 public class MeterTestSystemConfiguration
 {
     /// <summary>
+    /// Set if WebSAM is started in probing mode.
+    /// </summary>
+    [BsonElement("probing")]
+    [NotNull, Required]
+    public bool Probing { get; set; } = false;
+
+    /// <summary>
     /// Type of the connected meter test system - use to decide
     /// what communication protocols to use.
     /// </summary>

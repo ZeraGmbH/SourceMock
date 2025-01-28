@@ -4,6 +4,7 @@ using MeterTestSystemApi.Models.ConfigurationProviders;
 using MeterTestSystemApi.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using ZERA.WebSam.Shared.Models;
 
 namespace MeterTestSystemApiTests.ComponentConfiguration;
 
@@ -28,6 +29,8 @@ public class ProbeTests
 
         services.AddSingleton(storeMock.Object);
 
+        services.AddSingleton(new Mock<IServerLifetime>().Object);
+
         Services = services.BuildServiceProvider();
 
         Prober = Services.GetRequiredService<IProbeConfigurationService>();
@@ -39,7 +42,7 @@ public class ProbeTests
         Services?.Dispose();
     }
 
-    private Task StartProbe_Async(MeterTestSystemComponentsConfiguration config, bool dryRun) => Prober.StartProbeAsync(new() { Configuration = config }, dryRun, Services);
+    private Task StartProbe_Async(MeterTestSystemComponentsConfiguration config, bool dryRun) => Prober.ConfigureProbingAsync(new() { Configuration = config }, dryRun, Services);
 
     private static List<TestPositionConfiguration> MakeList(int count) => Enumerable.Range(0, count).Select(_ => new TestPositionConfiguration
     {
@@ -332,7 +335,7 @@ public class ProbeTests
     [Test]
     public async Task Can_Probe_Serial_Ports_Async()
     {
-        await Prober.StartProbeAsync(new()
+        await Prober.ConfigureProbingAsync(new()
         {
             Configuration = { FrequencyGenerator = new(), MT768 = new() },
             SerialPorts = {
@@ -349,7 +352,7 @@ public class ProbeTests
     [Test]
     public async Task Can_Probe_HID_Events_Async()
     {
-        await Prober.StartProbeAsync(new()
+        await Prober.ConfigureProbingAsync(new()
         {
             Configuration = { BarcodeReader = 0 },
             HIDEvents = {

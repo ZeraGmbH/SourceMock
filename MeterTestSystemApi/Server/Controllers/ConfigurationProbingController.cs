@@ -24,7 +24,7 @@ public class ConfigurationProbingController(IProbeConfigurationService prober, I
     [SwaggerOperation(OperationId = "StartConfigurationProbe")]
     public async Task<ActionResult> StartAsync([FromBody] ProbeConfigurationRequest request, bool dryRun = false)
     {
-        await prober.StartProbeAsync(request, dryRun, services);
+        await prober.ConfigureProbingAsync(request, dryRun, services);
 
         return Ok();
     }
@@ -44,9 +44,9 @@ public class ConfigurationProbingController(IProbeConfigurationService prober, I
     /// </summary>
     [HttpDelete, SamAuthorize(WebSamRole.testsystemadmin)]
     [SwaggerOperation(OperationId = "CancelConfigurationProbe")]
-    public async Task<ActionResult> CancelAsync()
+    public ActionResult Cancel()
     {
-        await prober.AbortAsync();
+        prober.Abort();
 
         return Ok();
     }
@@ -59,4 +59,13 @@ public class ConfigurationProbingController(IProbeConfigurationService prober, I
     [SwaggerOperation(OperationId = "GetConfigurationProbeResult")]
     public ActionResult<ProbeConfigurationResult?> GetResult()
         => prober.IsActive ? NoContent() : prober.Result;
+
+
+    /// <summary>
+    /// See if a probing operation is active.
+    /// </summary>
+    /// <returns>Set if a probing operation is active.</returns>
+    [HttpGet("active"), SamAuthorize]
+    [SwaggerOperation(OperationId = "ConfigurationProbingActive")]
+    public ActionResult<bool> TestActive() => Ok(prober.IsActive);
 }

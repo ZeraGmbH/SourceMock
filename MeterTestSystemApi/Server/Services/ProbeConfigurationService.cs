@@ -1,46 +1,25 @@
 using System.Reflection;
 using MeterTestSystemApi.Actions.Probing;
+using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using Microsoft.Extensions.DependencyInjection;
+using ZERA.WebSam.Shared.Models;
+using ZERA.WebSam.Shared.Models.Logging;
 
 namespace MeterTestSystemApi.Services;
 
 /// <summary>
 /// Service to scan the system for meter test system components.
 /// </summary>
-/// <remarks>This is NOT a real implemntation esp. concerning synchronisation. This is another story!</remarks>
-public class ProbeConfigurationService : IProbeConfigurationService
+public class ProbeConfigurationService(IServerLifetime lifetime, IServiceProvider services) : IProbeConfigurationService
 {
-    private class Current
-    {
-        /// <summary>
-        /// Current executing probe task.
-        /// </summary>
-        private TaskCompletionSource _probing = new();
-
-        /// <summary>
-        /// Current cancel token.
-        /// </summary>
-        private CancellationTokenSource _cancel = new();
-
-        /// <summary>
-        /// Send a cancel to the probing task.
-        /// </summary>
-        public Task CancelAsync() => _cancel.CancelAsync();
-
-        /// <summary>
-        /// Report the probing task.
-        /// </summary>
-        public Task Task => _probing.Task;
-    }
-
     /// <summary>
     /// Synchronize access to probe operation.
     /// </summary>
     private readonly object _sync = new();
 
     /// <inheritdoc/>
-    public bool IsActive => _active?.Task.IsCompleted == false;
+    public bool IsActive => _active != null;
 
     /// <summary>
     /// Result of the last probing.
@@ -53,30 +32,20 @@ public class ProbeConfigurationService : IProbeConfigurationService
     /// <summary>
     /// Current executing probe task.
     /// </summary>
-    private Current? _active;
+    private TaskCompletionSource? _active;
 
     /// <inheritdoc/>
-    public async Task AbortAsync()
+    public void Abort()
     {
-        /* Request the current probing task. */
-        Current? active;
-
-        lock (_sync) active = _active;
-
-        /* See if there is some active task. */
-        if (active == null) throw new InvalidOperationException("no active probing");
-
-        /* Send a cancel request. */
-        await active.CancelAsync();
-
-        /* Wait for the task to cancel. */
-#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
-        await active.Task;
-#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
+        lock (_sync)
+            if (_active == null)
+                throw new InvalidOperationException("no active probing");
+            else
+                _active.SetCanceled();
     }
 
     /// <inheritdoc/>
-    public Task StartProbeAsync(ProbeConfigurationRequest request, bool dryRun, IServiceProvider services)
+    public async Task ConfigureProbingAsync(ProbeConfigurationRequest request, bool dryRun, IServiceProvider services)
     {
         lock (_sync)
         {
@@ -101,15 +70,18 @@ public class ProbeConfigurationService : IProbeConfigurationService
                 _lastResult = result;
 
                 /* Finish. */
-                return Task.CompletedTask;
+                return;
             }
 
-            /* Create the new probing task. */
+            /* Lock out. */
             _active = new();
         }
 
+        /* Activate probing. */
+        await services.GetRequiredService<IMeterTestSystemConfigurationStore>().StartProbingAsync();
 
-        throw new NotSupportedException("for now only dry run possible");
+        /* Restart server. */
+        await lifetime.RestartAsync(services.GetRequiredService<IInterfaceLogger>());
     }
 
     /// <inheritdoc/>
@@ -136,5 +108,55 @@ public class ProbeConfigurationService : IProbeConfigurationService
             }
 
         return [.. errors];
+    }
+
+    /// <summary>
+    /// Start probing on a separate thread.
+    /// </summary>
+    public void StartProbing()
+    {
+        new Thread(async () =>
+        {
+            // Mark as probing.
+            _active = new();
+
+            // Create probe esp. to access interface logging and databases.
+            using var scope = services.CreateScope();
+
+            var di = scope.ServiceProvider;
+
+            try
+            {
+                // Interface logger used for all hardware access.
+                var logger = di.GetRequiredService<IInterfaceLogger>();
+
+                try
+                {
+                    // This is where we probe.
+                    Thread.Sleep(15000);
+                }
+                finally
+                {
+                    try
+                    {
+                        // Activate regular operation mode.
+                        await di.GetRequiredService<IMeterTestSystemConfigurationStore>().ResetProbingAsync();
+
+                        // Time to restart the server.
+                        await di.GetRequiredService<IServerLifetime>().RestartAsync(logger);
+                    }
+                    catch (Exception e)
+                    {
+                        // Cleanup error - not good at all.
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                // Fatal probing error - better not end up here.
+                Console.WriteLine(e.Message);
+            }
+        }).Start();
     }
 }

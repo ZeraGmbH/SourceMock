@@ -8,6 +8,7 @@ using Moq;
 using NUnit.Framework.Internal;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace MeterTestSystemApiTests.ComponentConfiguration;
@@ -125,6 +126,8 @@ public class ProbeSerialTests
        );
 
         services.AddSingleton(connectionMock.Object);
+
+        services.AddSingleton(new Mock<IServerLifetime>().Object);
 
         Services = services.BuildServiceProvider();
 

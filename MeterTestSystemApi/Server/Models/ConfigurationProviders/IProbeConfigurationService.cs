@@ -14,12 +14,17 @@ public interface IProbeConfigurationService
     /// <param name="request">Hints on the scan.</param>
     /// <param name="dryRun">Set to do only report what to probe.</param>
     /// <param name="services">Scoped service provider.</param>
-    Task StartProbeAsync(ProbeConfigurationRequest request, bool dryRun, IServiceProvider services);
+    Task ConfigureProbingAsync(ProbeConfigurationRequest request, bool dryRun, IServiceProvider services);
+
+    /// <summary>
+    /// Start the probing on a separate thread.
+    /// </summary>
+    void StartProbing();
 
     /// <summary>
     /// Abort the current probe operation.
     /// </summary>
-    Task AbortAsync();
+    void Abort();
 
     /// <summary>
     /// Get the result of the last probing.

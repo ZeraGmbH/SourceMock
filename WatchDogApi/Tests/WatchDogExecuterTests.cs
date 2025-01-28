@@ -1,0 +1,111 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.TestHost;
+using WatchDogApi.Actions;
+using Microsoft.Extensions.DependencyInjection;
+using WatchDogApi.Models;
+using WatchDogApi.Services;
+using System.Threading.Tasks;
+using Moq;
+
+namespace WatchDogApiTests;
+
+[TestFixture]
+public class WatchDogExecuterTests
+{
+    class Logger : ILogger<WatchDog>
+    {
+        public readonly List<string> Messages = [];
+
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) =>
+            Messages.Add(formatter(state, exception));
+    }
+
+    private static Logger _logger = new Logger();
+
+    private IWatchDogExecuter _watchdog = null!;
+
+    private ServiceProvider _services = null!;
+
+    [SetUp]
+    public void Setup()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IWatchDogExecuter, WatchDogExecuter>();
+
+        // for specific tests inject a "normal" http client (connection refused tests etc.)
+        if (TestContext.CurrentContext.Test.Name == "Query_Non_Existant_Server")
+        {
+            var clientMock = new Mock<IHttpClientFactory>();
+            clientMock.Setup(s => s.CreateClient(It.IsAny<string>())).Returns(() => new HttpClient());
+            services.AddSingleton(clientMock.Object);
+        }
+        else
+        {
+            var clientMock = new Mock<IHttpClientFactory>();
+            clientMock.Setup(s => s.CreateClient(It.IsAny<string>())).Returns(() => new TestServer(new WebHostBuilder().Configure(app =>
+            {
+                app.Run(async context =>
+                {
+                    if (context.Request.Path == "/watchdogTest.asp")
+                    {
+                        context.Response.ContentType = "text/html";
+                        await context.Response.WriteAsync("<HTML><HEAD><TITLE>IP-WatchDog: ResetPage</TITLE></HEAD><BODY><B>ResetPage[3]</B><br>Page for method: OutgoingHTML page<br>Reset timer for IP addr: 192.168.32.16<br>Your IP address: 192.168.32.1<br></BODY></HTML>");
+                    }
+                    else if (context.Request.Path == "/not-a-watchdog.asp")
+                    {
+                        context.Response.ContentType = "text/html";
+                        await context.Response.WriteAsync("<html>You shall not pass!</html>");
+                    }
+                });
+            })).CreateClient());
+            services.AddSingleton(clientMock.Object);
+        }
+
+        _services = services.BuildServiceProvider();
+
+        _watchdog = _services.GetRequiredService<IWatchDogExecuter>();
+    }
+
+    [TearDown]
+    public void Teardown()
+    {
+        _services.Dispose();
+    }
+
+    [Test]
+    public async Task Fails_On_Querying_Wrong_Address()
+    {
+        var result = await _watchdog.QueryWatchDogAsync("/foo");
+
+        Assert.That(!result);
+    }
+    [Test]
+    public async Task Fails_On_Querying_Wrong_Response()
+    {
+        var result = await _watchdog.QueryWatchDogAsync("/not-a-watchdog.asp");
+
+        Assert.That(!result);
+    }
+
+    [Test]
+    public async Task Can_Successfully_Query_Server()
+    {
+        var result = await _watchdog.QueryWatchDogAsync("/watchdogTest.asp");
+
+        Assert.That(result);
+    }
+
+    [Test]
+    public void Query_Non_Existant_Server()
+    {
+        Assert.ThrowsAsync<HttpRequestException>(async () => await _watchdog.QueryWatchDogAsync("http://localhost:0"));
+    }
+}
+

@@ -10,7 +10,7 @@ namespace WatchDogApi.Actions;
 /// </summary>
 public class WatchDog : IWatchDog, IDisposable
 {
-    private readonly Thread _poller;
+    private readonly Object _poller = new();
 
     private bool _running = true;
 
@@ -20,23 +20,25 @@ public class WatchDog : IWatchDog, IDisposable
 
     private readonly WatchDogConfiguration _config;
 
+    private readonly IWatchDogExecuter _watchdogExecuter;
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="config"></param>
     /// <param name="services"></param>
-    public WatchDog(WatchDogConfiguration config, IServiceProvider services)
+    /// <param name="watchdogExecuter"></param>
+    public WatchDog(WatchDogConfiguration config, IServiceProvider services, IWatchDogExecuter watchdogExecuter)
     {
         _config = config;
         _logger = services.GetRequiredService<ILogger<WatchDog>>();
         _services = services;
+        _watchdogExecuter = watchdogExecuter;
 
-        _poller = new Thread(Poller);
-
-        _poller.Start();
+        Task.Factory.StartNew(Poller);
     }
 
-    private void Poller()
+    private async Task Poller()
     {
         using var scope = _services.CreateScope();
 
@@ -53,7 +55,7 @@ public class WatchDog : IWatchDog, IDisposable
         while (_running)
         {
             // POLL
-            Poll(logConnection);
+            await PollAsync(logConnection);
 
             // Wait for next POLL TIME (5000ms).
             lock (_poller)
@@ -62,40 +64,46 @@ public class WatchDog : IWatchDog, IDisposable
         }
     }
 
-    private void Poll(IInterfaceConnection logConnection)
+    private async Task PollAsync(IInterfaceConnection logConnection)
     {
         try
         {
+            /* Prepare logging. */
             var requestId = Guid.NewGuid().ToString();
             var sendEntry = logConnection.Prepare(new() { Outgoing = true, RequestId = requestId });
 
             var sendInfo = new InterfaceLogPayload()
             {
                 Encoding = InterfaceLogPayloadEncodings.Raw,
-                Payload = "HTTP",
+                Payload = "",
+                PayloadType = ""
+            };
+
+            var receiveEntry = logConnection.Prepare(new() { Outgoing = false, RequestId = requestId });
+            var receiveInfo = new InterfaceLogPayload()
+            {
+                Encoding = InterfaceLogPayloadEncodings.Raw,
+                Payload = "",
                 PayloadType = ""
             };
 
             try
             {
-                throw new NotImplementedException("connection refused");
+                ArgumentException.ThrowIfNullOrEmpty(_config.EndPoint);
+                sendInfo.Payload = "URL: " + _config.EndPoint;
+                if (!await _watchdogExecuter.QueryWatchDogAsync(_config.EndPoint))
+                    throw new InvalidOperationException("Site reachable, but is not WatchDog!");
+                receiveInfo.Payload = "WatchDog Polled.";
             }
             catch (Exception e)
             {
-                sendInfo.TransferException = e.Message;
+                receiveInfo.TransferException = e.Message;
             }
             finally
             {
                 sendEntry.Finish(sendInfo);
+                receiveEntry.Finish(receiveInfo);
             }
-
-            /* Prepare logging. */
-            var receiveEntry = logConnection.Prepare(new() { Outgoing = false, RequestId = requestId });
-            var receiveInfo = new InterfaceLogPayload() { Encoding = InterfaceLogPayloadEncodings.Raw, Payload = "", PayloadType = "" };
-
-            receiveInfo.TransferException = new NotImplementedException("not yet implemented").Message;
-
-            receiveEntry.Finish(receiveInfo);
         }
         catch (Exception e)
         {

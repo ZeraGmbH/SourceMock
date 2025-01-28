@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using WatchDogApi.Actions;
 using WatchDogApi.Models;
+using WatchDogApi.Services;
 
 namespace WatchDogApi;
 
@@ -19,6 +20,7 @@ public static class WatchDogApiConfiguration
     public static void UseWatchDogApi(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSingleton<IWatchDogFactory, WatchDogFactory>();
+        services.AddTransient<IWatchDogExecuter, WatchDogExecuter>();
 
         services.AddTransient(di => di.GetRequiredService<IWatchDogFactory>().WatchDog!);
     }

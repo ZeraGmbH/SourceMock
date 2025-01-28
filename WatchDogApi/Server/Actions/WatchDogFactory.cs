@@ -5,7 +5,7 @@ namespace WatchDogApi.Actions;
 /// <summary>
 /// Implement the factory to create watchdogs.
 /// </summary>
-public class WatchDogFactory(IServiceProvider services) : IWatchDogFactory
+public class WatchDogFactory(IServiceProvider services, IWatchDogExecuter watchDogExecuter) : IWatchDogFactory
 {
 
     private readonly object _sync = new();
@@ -55,7 +55,7 @@ public class WatchDogFactory(IServiceProvider services) : IWatchDogFactory
                 /* No watchdog active. */
                 if (string.IsNullOrEmpty(config.EndPoint)) return;
 
-                _watchDog = new WatchDog(config, services);
+                _watchDog = new WatchDog(config, services, watchDogExecuter);
             }
             finally
             {

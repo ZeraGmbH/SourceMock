@@ -8,9 +8,9 @@ namespace WatchDogApi.Actions;
 /// <summary>
 /// 
 /// </summary>
-public class WatchDog : IWatchDog, IDisposable
+public class WatchDog : IWatchDog
 {
-    private readonly Object _poller = new();
+    private readonly object _poller = new();
 
     private bool _running = true;
 
@@ -44,35 +44,39 @@ public class WatchDog : IWatchDog, IDisposable
 
         var logger = scope.ServiceProvider.GetRequiredService<IInterfaceLogger>();
 
-        var logConnection = logger.CreateConnection(
-            new InterfaceLogEntryConnection
-            {
-                Endpoint = _config.EndPoint ?? "n/a",
-                Protocol = InterfaceLogProtocolTypes.Http,
-                WebSamType = InterfaceLogSourceTypes.WatchDog,
-            });
-
         while (_running)
         {
             // POLL
-            if (!String.IsNullOrEmpty(_config.EndPoint))
-                await PollAsync(logConnection);
+            var config = _config;
 
-            // Wait for next POLL TIME, if not set 5000ms.
+            if (!string.IsNullOrEmpty(config.EndPoint))
+            {
+                var logConnection = logger.CreateConnection(
+                    new InterfaceLogEntryConnection
+                    {
+                        Endpoint = config.EndPoint,
+                        Protocol = InterfaceLogProtocolTypes.Http,
+                        WebSamType = InterfaceLogSourceTypes.WatchDog,
+                    });
+
+                await PollAsync(config, logConnection);
+            }
+
+            // Wait for next POLL TIME, if not set use 15s but at least 1s.
             lock (_poller)
-                if (_running)
-                    Monitor.Wait(_poller, _config.Interval ?? 5000);
+                if (_running && _config == config)
+                    Monitor.Wait(_poller, Math.Max(1000, config.Interval ?? 15000));
         }
     }
 
-    private async Task PollAsync(IInterfaceConnection logConnection)
+    private async Task PollAsync(WatchDogConfiguration config, IInterfaceConnection logConnection)
     {
         try
         {
             /* Prepare logging. */
             var requestId = Guid.NewGuid().ToString();
-            var sendEntry = logConnection.Prepare(new() { Outgoing = true, RequestId = requestId });
 
+            var sendEntry = logConnection.Prepare(new() { Outgoing = true, RequestId = requestId });
             var sendInfo = new InterfaceLogPayload()
             {
                 Encoding = InterfaceLogPayloadEncodings.Raw,
@@ -90,10 +94,13 @@ public class WatchDog : IWatchDog, IDisposable
 
             try
             {
-                ArgumentException.ThrowIfNullOrEmpty(_config.EndPoint);
-                sendInfo.Payload = "URL: " + _config.EndPoint;
-                if (!await _watchdogExecuter.QueryWatchDogAsync(_config.EndPoint))
+                sendInfo.Payload = "URL: " + config.EndPoint;
+
+                sendEntry.Finish(sendInfo);
+
+                if (!await _watchdogExecuter.QueryWatchDogAsync(config.EndPoint!))
                     throw new InvalidOperationException("Site reachable, but is not WatchDog!");
+
                 receiveInfo.Payload = "WatchDog Polled.";
             }
             catch (Exception e)
@@ -102,7 +109,6 @@ public class WatchDog : IWatchDog, IDisposable
             }
             finally
             {
-                sendEntry.Finish(sendInfo);
                 receiveEntry.Finish(receiveInfo);
             }
         }
@@ -113,7 +119,7 @@ public class WatchDog : IWatchDog, IDisposable
     }
 
     /// <inheritdoc/>
-    public void Dispose()
+    public void Terminate()
     {
         lock (_poller)
         {

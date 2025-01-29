@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using WatchDogApi.Models;
 
 namespace WatchDogApi.Services;
@@ -12,10 +11,9 @@ public class WatchDogExecuter(IHttpClientFactory http) : IWatchDogExecuter
     public async Task<bool> QueryWatchDogAsync(string endpoint)
     {
         var httpClient = http.CreateClient();
+
         var response = await httpClient.GetStringAsync(endpoint);
-        if (response.Contains("IP-WatchDog"))
-            return true;
-        else
-            return false;
+
+        return response.Contains("IP-WatchDog");
     }
 }

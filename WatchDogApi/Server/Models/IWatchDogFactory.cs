@@ -14,5 +14,5 @@ public interface IWatchDogFactory : IDisposable
     /// <summary>
     /// 
     /// </summary>
-    IWatchDog? WatchDog { get; }
+    IWatchDog WatchDog { get; }
 }

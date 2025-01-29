@@ -12,10 +12,10 @@ public class WatchDogFactory(IServiceProvider services, IWatchDogExecuter watchD
 
     private bool _initialized = false;
 
-    private WatchDog? _watchDog;
+    private WatchDog _watchDog = null!;
 
     /// <inheritdoc/>
-    public IWatchDog? WatchDog
+    public IWatchDog WatchDog
     {
         get
         {
@@ -36,7 +36,7 @@ public class WatchDogFactory(IServiceProvider services, IWatchDogExecuter watchD
         {
             _initialized = true;
 
-            _watchDog?.Dispose();
+            _watchDog?.Terminate();
 
             Monitor.PulseAll(_sync);
         }
@@ -53,8 +53,6 @@ public class WatchDogFactory(IServiceProvider services, IWatchDogExecuter watchD
             try
             {
                 /* No watchdog active. */
-                if (string.IsNullOrEmpty(config.EndPoint)) return;
-
                 _watchDog = new WatchDog(config, services, watchDogExecuter);
             }
             finally

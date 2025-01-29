@@ -3,11 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.TestHost;
-using WatchDogApi.Actions;
 using Microsoft.Extensions.DependencyInjection;
 using WatchDogApi.Models;
 using WatchDogApi.Services;
-using System.Threading.Tasks;
 using Moq;
 
 namespace WatchDogApiTests;

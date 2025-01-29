@@ -7,11 +7,8 @@ using WatchDogApi.Actions;
 using Microsoft.Extensions.DependencyInjection;
 using WatchDogApi.Models;
 using WatchDogApi.Services;
-using System.Threading.Tasks;
 using Moq;
 using ZERA.WebSam.Shared.Models.Logging;
-using ZERA.WebSam.Shared.Actions;
-using ZstdSharp.Unsafe;
 
 namespace WatchDogApiTests;
 

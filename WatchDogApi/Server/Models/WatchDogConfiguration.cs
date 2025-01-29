@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace WatchDogApi.Models;
@@ -11,11 +12,12 @@ public class WatchDogConfiguration
     /// Endpoint to the watchdog, e.g. &lt;IP:Port&gt;.
     /// </summary>
     [BsonElement("endPoint")]
-    public string? EndPoint { get; set; } = null;
+    public string? EndPoint { get; set; }
 
     /// <summary>
     /// Poll Interval in ms
     /// </summary>
     [BsonElement("interval")]
-    public int? Interval { get; set; } = null;
+    [Range(1000, 3600 * 1000)]
+    public int? Interval { get; set; }
 }

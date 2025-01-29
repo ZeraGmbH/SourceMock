@@ -22,7 +22,7 @@ public static class WatchDogApiConfiguration
         services.AddSingleton<IWatchDogFactory, WatchDogFactory>();
         services.AddTransient<IWatchDogExecuter, WatchDogExecuter>();
 
-        services.AddTransient(di => di.GetRequiredService<IWatchDogFactory>().WatchDog!);
+        services.AddTransient(di => di.GetRequiredService<IWatchDogFactory>().WatchDog);
     }
 
     /// <summary>

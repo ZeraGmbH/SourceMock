@@ -30,6 +30,7 @@ public class ProbeTests
         services.AddSingleton(storeMock.Object);
 
         services.AddSingleton(new Mock<IServerLifetime>().Object);
+        services.AddSingleton(new Mock<IActiveOperations>().Object);
 
         Services = services.BuildServiceProvider();
 

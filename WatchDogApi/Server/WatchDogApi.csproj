@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ZERA.WebSam.Shared" Version="0.17.23" />
+    <PackageReference Include="ZERA.WebSam.Shared" Version="0.17.24" />
   </ItemGroup>
 
 </Project>

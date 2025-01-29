@@ -11,7 +11,7 @@ namespace MeterTestSystemApi.Services;
 /// <summary>
 /// Service to scan the system for meter test system components.
 /// </summary>
-public class ProbeConfigurationService(IServerLifetime lifetime, IServiceProvider services) : IProbeConfigurationService
+public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperations activities, IServiceProvider services) : IProbeConfigurationService
 {
     /// <summary>
     /// Synchronize access to probe operation.
@@ -77,6 +77,9 @@ public class ProbeConfigurationService(IServerLifetime lifetime, IServiceProvide
             _active = new();
         }
 
+        /* Mark probing as active - actually not of much value sind since server will be restarted soon. */
+        activities.SetOperation(ActiveOperationTypes.Probing, true);
+
         /* Activate probing. */
         await services.GetRequiredService<IMeterTestSystemConfigurationStore>().StartProbingAsync();
 
@@ -119,6 +122,9 @@ public class ProbeConfigurationService(IServerLifetime lifetime, IServiceProvide
         {
             // Mark as probing.
             _active = new();
+
+            // Lockout client since we are now probing.
+            activities.SetOperation(ActiveOperationTypes.Probing, true);
 
             // Create probe esp. to access interface logging and databases.
             using var scope = services.CreateScope();

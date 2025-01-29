@@ -128,6 +128,7 @@ public class ProbeSerialTests
         services.AddSingleton(connectionMock.Object);
 
         services.AddSingleton(new Mock<IServerLifetime>().Object);
+        services.AddSingleton(new Mock<IActiveOperations>().Object);
 
         Services = services.BuildServiceProvider();
 

@@ -187,7 +187,7 @@ public class WatchDogTests
     [Test, MaxTime(11000)]
     public async Task Can_Silence_Watchdog()
     {
-        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "/not-a-watchdog.asp" });
+        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "/not-a-watchdog.asp", Interval = 1500 });
 
         _watchdog = _services.GetRequiredService<IWatchDogFactory>().WatchDog!;
 
@@ -202,7 +202,7 @@ public class WatchDogTests
         _payloads.Clear();
         _accessCounter = new TaskCompletionSource();
 
-        _watchdog.SetConfig(new WatchDogConfiguration { EndPoint = "" });
+        _watchdog.SetConfig(new WatchDogConfiguration { EndPoint = "", Interval = 1500 });
 
         await Task.Delay(6000);
 

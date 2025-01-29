@@ -18,7 +18,7 @@ public class WatchDog : IWatchDog, IDisposable
 
     private readonly IServiceProvider _services;
 
-    private readonly WatchDogConfiguration _config;
+    private WatchDogConfiguration _config;
 
     private readonly IWatchDogExecuter _watchdogExecuter;
 
@@ -55,12 +55,13 @@ public class WatchDog : IWatchDog, IDisposable
         while (_running)
         {
             // POLL
-            await PollAsync(logConnection);
+            if (!String.IsNullOrEmpty(_config.EndPoint))
+                await PollAsync(logConnection);
 
-            // Wait for next POLL TIME (5000ms).
+            // Wait for next POLL TIME, if not set 5000ms.
             lock (_poller)
                 if (_running)
-                    Monitor.Wait(_poller, 5000);
+                    Monitor.Wait(_poller, _config.Interval ?? 5000);
         }
     }
 
@@ -117,6 +118,17 @@ public class WatchDog : IWatchDog, IDisposable
         lock (_poller)
         {
             _running = false;
+
+            Monitor.Pulse(_poller);
+        }
+    }
+
+    /// <inheritdoc/>
+    public void SetConfig(WatchDogConfiguration config)
+    {
+        lock (_poller)
+        {
+            _config = config;
 
             Monitor.Pulse(_poller);
         }

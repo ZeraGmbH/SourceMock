@@ -15,20 +15,6 @@ namespace WatchDogApiTests;
 [TestFixture]
 public class WatchDogExecuterTests
 {
-    class Logger : ILogger<WatchDog>
-    {
-        public readonly List<string> Messages = [];
-
-        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
-
-        public bool IsEnabled(LogLevel logLevel) => true;
-
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) =>
-            Messages.Add(formatter(state, exception));
-    }
-
-    private static Logger _logger = new Logger();
-
     private IWatchDogExecuter _watchdog = null!;
 
     private ServiceProvider _services = null!;

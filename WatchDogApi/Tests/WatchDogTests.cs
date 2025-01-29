@@ -18,20 +18,6 @@ namespace WatchDogApiTests;
 [TestFixture]
 public class WatchDogTests
 {
-    class Logger : ILogger<WatchDog>
-    {
-        public readonly List<string> Messages = [];
-
-        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
-
-        public bool IsEnabled(LogLevel logLevel) => true;
-
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) =>
-            Messages.Add(formatter(state, exception));
-    }
-
-    private static Logger _logger = new Logger();
-
     private IWatchDogExecuter _watchdogExecuter = null!;
     private IWatchDog _watchdog = null!;
 
@@ -169,6 +155,103 @@ public class WatchDogTests
        {
            Assert.That(_payloads.Count == 2);
            Assert.That(_payloads[1].TransferException!.Contains("Site reachable, but is not WatchDog!"));
+       });
+    }
+
+    [Test, MaxTime(10000)]
+    public async Task Can_Change_Config_Endpoint_During_Runtime()
+    {
+        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "/not-a-watchdog.asp" });
+
+        _watchdog = _services.GetRequiredService<IWatchDogFactory>().WatchDog!;
+
+        await _accessCounter.Task;
+
+        Assert.Multiple(() =>
+       {
+           Assert.That(_payloads.Count == 2);
+           Assert.That(_payloads[1].TransferException!.Contains("Site reachable, but is not WatchDog!"));
+       });
+
+        _payloads.Clear();
+        _accessCounter = new TaskCompletionSource();
+
+        _watchdog.SetConfig(new WatchDogConfiguration { EndPoint = "/watchdogTest.asp" });
+
+        await _accessCounter.Task;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(_payloads.Count == 2);
+            Assert.That(_payloads[1].Payload!.Contains("WatchDog Polled."));
+        });
+    }
+
+    [Test, MaxTime(11000)]
+    public async Task Can_Silence_Watchdog()
+    {
+        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "/not-a-watchdog.asp" });
+
+        _watchdog = _services.GetRequiredService<IWatchDogFactory>().WatchDog!;
+
+        await _accessCounter.Task;
+
+        Assert.Multiple(() =>
+       {
+           Assert.That(_payloads.Count == 2);
+           Assert.That(_payloads[1].TransferException!.Contains("Site reachable, but is not WatchDog!"));
+       });
+
+        _payloads.Clear();
+        _accessCounter = new TaskCompletionSource();
+
+        _watchdog.SetConfig(new WatchDogConfiguration { EndPoint = "" });
+
+        await Task.Delay(6000);
+
+        Assert.That(_payloads.Count == 0);
+
+        _watchdog.SetConfig(new WatchDogConfiguration { EndPoint = "/watchdogTest.asp" });
+
+        await _accessCounter.Task;
+
+        Assert.Multiple(() =>
+       {
+           Assert.That(_payloads.Count == 2);
+           Assert.That(_payloads[1].Payload.Contains("WatchDog Polled."));
+       });
+    }
+
+    [Test, MaxTime(15000)]
+    public async Task Can_Configure_Interval()
+    {
+        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "/not-a-watchdog.asp" });
+
+        _watchdog = _services.GetRequiredService<IWatchDogFactory>().WatchDog!;
+
+        await _accessCounter.Task;
+
+        Assert.Multiple(() =>
+       {
+           Assert.That(_payloads.Count == 2);
+           Assert.That(_payloads[1].TransferException!.Contains("Site reachable, but is not WatchDog!"));
+       });
+
+        _payloads.Clear();
+        _accessCounter = new TaskCompletionSource();
+
+        _watchdog.SetConfig(new WatchDogConfiguration { EndPoint = "/watchdogTest.asp", Interval = 1500 });
+
+        await _accessCounter.Task;
+
+        _payloads.Clear();
+
+        await Task.Delay(2500);
+
+        Assert.Multiple(() =>
+       {
+           Assert.That(_payloads.Count == 2);
+           Assert.That(_payloads[1].Payload.Contains("WatchDog Polled."));
        });
     }
 }

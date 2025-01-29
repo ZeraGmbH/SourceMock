@@ -12,4 +12,10 @@ public class WatchDogConfiguration
     /// </summary>
     [BsonElement("endPoint")]
     public string? EndPoint { get; set; } = null;
+
+    /// <summary>
+    /// Poll Interval in ms
+    /// </summary>
+    [BsonElement("interval")]
+    public int? Interval { get; set; } = null;
 }

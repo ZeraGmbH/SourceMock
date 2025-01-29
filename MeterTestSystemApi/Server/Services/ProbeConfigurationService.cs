@@ -32,7 +32,7 @@ public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperatio
     /// <summary>
     /// Current executing probe task.
     /// </summary>
-    private TaskCompletionSource? _active;
+    private CancellationTokenSource? _active;
 
     /// <inheritdoc/>
     public void Abort()
@@ -41,7 +41,7 @@ public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperatio
             if (_active == null)
                 throw new InvalidOperationException("no active probing");
             else
-                _active.SetCanceled();
+                _active.Cancel();
     }
 
     /// <inheritdoc/>
@@ -121,7 +121,9 @@ public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperatio
         new Thread(async () =>
         {
             // Mark as probing.
-            _active = new();
+            var cancel = new CancellationTokenSource();
+
+            _active = cancel;
 
             // Lockout client since we are now probing.
             activities.SetOperation(ActiveOperationTypes.Probing, true);
@@ -139,7 +141,7 @@ public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperatio
                 try
                 {
                     // This is where we probe.
-                    Thread.Sleep(15000);
+                    await Task.Delay(15000, cancel.Token);
                 }
                 finally
                 {

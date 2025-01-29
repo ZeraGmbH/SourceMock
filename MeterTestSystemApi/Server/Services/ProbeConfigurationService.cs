@@ -3,6 +3,7 @@ using MeterTestSystemApi.Actions.Probing;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
@@ -11,7 +12,7 @@ namespace MeterTestSystemApi.Services;
 /// <summary>
 /// Service to scan the system for meter test system components.
 /// </summary>
-public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperations activities, IServiceProvider services) : IProbeConfigurationService
+public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperations activities, IServiceProvider services, ILogger<ProbeConfigurationService> logger) : IProbeConfigurationService
 {
     /// <summary>
     /// Synchronize access to probe operation.
@@ -22,12 +23,9 @@ public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperatio
     public bool IsActive => _active != null;
 
     /// <summary>
-    /// Result of the last probing.
+    /// Test only.
     /// </summary>
-    private volatile ProbeConfigurationResult? _lastResult;
-
-    /// <inheritdoc/>
-    public ProbeConfigurationResult? Result => _lastResult;
+    public void ResetActive() => _active = null;
 
     /// <summary>
     /// Current executing probe task.
@@ -45,7 +43,7 @@ public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperatio
     }
 
     /// <inheritdoc/>
-    public async Task ConfigureProbingAsync(ProbeConfigurationRequest request, bool dryRun, IServiceProvider services)
+    public async Task ConfigureProbingAsync(ProbeConfigurationRequest request, IServiceProvider services)
     {
         lock (_sync)
         {
@@ -53,25 +51,18 @@ public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperatio
             if (_active != null) throw new InvalidOperationException("probing already active");
 
             /* Create the plan. */
-            var plan = services.GetRequiredService<IConfigurationProbePlan>();
+            var store = services.GetRequiredService<IProbingOperationStore>();
 
-            /* Fill the probes. */
+            /* Write plan to database. */
 #pragma warning disable VSTHRD103 // Call async methods when in an async method
-            plan.ConfigureProbeAsync(request).Wait();
-
-            /* Copy plan steps to result. */
-            var result = plan.FinishProbeAsync().Result;
-#pragma warning restore VSTHRD103 // Call async methods when in an async method
-
-            /* Only dry run allowed. */
-            if (dryRun)
+            store.AddAsync(new()
             {
-                /* Provide as last result. */
-                _lastResult = result;
-
-                /* Finish. */
-                return;
-            }
+                Created = DateTime.UtcNow,
+                Id = Guid.NewGuid().ToString(),
+                Request = request,
+                Result = new(),
+            }).Wait();
+#pragma warning restore VSTHRD103 // Call async methods when in an async method
 
             /* Lock out. */
             _active = new();
@@ -128,6 +119,9 @@ public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperatio
             // Lockout client since we are now probing.
             activities.SetOperation(ActiveOperationTypes.Probing, true);
 
+            // Report.
+            logger.LogInformation("entering probing mode");
+
             // Create probe esp. to access interface logging and databases.
             using var scope = services.CreateScope();
 
@@ -136,34 +130,43 @@ public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperatio
             try
             {
                 // Interface logger used for all hardware access.
-                var logger = di.GetRequiredService<IInterfaceLogger>();
+                var interfaceLogger = di.GetRequiredService<IInterfaceLogger>();
+                var store = di.GetRequiredService<IConfigurationProbePlan>();
 
                 try
                 {
+                    // Load the latest plan.
+                    var ops = await store.ConfigureProbeAsync();
+
+                    logger.LogInformation("processing probing request created at {Created}", ops.Created);
+
                     // This is where we probe.
                     await Task.Delay(15000, cancel.Token);
+
+                    // Finish.
+                    await store.FinishProbeAsync();
                 }
                 finally
                 {
+                    logger.LogInformation("leaving probing mode");
+
                     try
                     {
                         // Activate regular operation mode.
                         await di.GetRequiredService<IMeterTestSystemConfigurationStore>().ResetProbingAsync();
 
                         // Time to restart the server.
-                        await di.GetRequiredService<IServerLifetime>().RestartAsync(logger);
+                        await di.GetRequiredService<IServerLifetime>().RestartAsync(interfaceLogger);
                     }
                     catch (Exception e)
                     {
-                        // Cleanup error - not good at all.
-                        Console.WriteLine(e.Message);
+                        logger.LogCritical("failed to finish probing mode properly: {Exception}", e.Message);
                     }
                 }
             }
             catch (Exception e)
             {
-                // Fatal probing error - better not end up here.
-                Console.WriteLine(e.Message);
+                logger.LogCritical("unrecoverable error during probing: {Exception}", e.Message);
             }
         }).Start();
     }

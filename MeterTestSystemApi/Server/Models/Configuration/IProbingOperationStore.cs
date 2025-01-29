@@ -1,3 +1,5 @@
+using MeterTestSystemApi.Models.ConfigurationProviders;
+
 namespace MeterTestSystemApi.Models.Configuration;
 
 /// <summary>

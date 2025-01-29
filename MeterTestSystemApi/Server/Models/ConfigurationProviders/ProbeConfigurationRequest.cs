@@ -26,4 +26,10 @@ public class ProbeConfigurationRequest
     /// </summary>
     [NotNull, Required]
     public List<bool> HIDEvents { get; set; } = [];
+
+    /// <summary>
+    /// If set the system configuration will not be modified.
+    /// </summary>
+    [NotNull, Required]
+    public bool DryRun { get; set; }
 }

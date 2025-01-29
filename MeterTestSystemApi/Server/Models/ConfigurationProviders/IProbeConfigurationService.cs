@@ -12,9 +12,8 @@ public interface IProbeConfigurationService
     /// Probe the system for meter test system components.
     /// </summary>
     /// <param name="request">Hints on the scan.</param>
-    /// <param name="dryRun">Set to do only report what to probe.</param>
     /// <param name="services">Scoped service provider.</param>
-    Task ConfigureProbingAsync(ProbeConfigurationRequest request, bool dryRun, IServiceProvider services);
+    Task ConfigureProbingAsync(ProbeConfigurationRequest request, IServiceProvider services);
 
     /// <summary>
     /// Start the probing on a separate thread.
@@ -25,11 +24,6 @@ public interface IProbeConfigurationService
     /// Abort the current probe operation.
     /// </summary>
     void Abort();
-
-    /// <summary>
-    /// Get the result of the last probing.
-    /// </summary>
-    ProbeConfigurationResult? Result { get; }
 
     /// <summary>
     /// Report if a probe operation is currently active.

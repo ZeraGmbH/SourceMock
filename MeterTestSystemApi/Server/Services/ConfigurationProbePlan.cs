@@ -47,10 +47,19 @@ public class ConfigurationProbePlan(IProbingOperationStore store) : IConfigurati
     private ProbeConfigurationRequest _request => _operation.Request;
 
     /// <inheritdoc/>
-    public async Task ConfigureProbeAsync(ProbeConfigurationRequest request)
+    public Task<ProbingOperation> ConfigureProbeAsync() => Task.Run(() =>
     {
+        _operation =
+            store
+                .Query()
+                .Where(o => o.Finished == null)
+                .OrderByDescending(o => o.Created)
+                .FirstOrDefault()
+            ?? throw new InvalidOperationException("no active probe request");
+
+        _operation.Result = new();
+
         _probes.Clear();
-        _operation = new() { Created = DateTime.UtcNow, Id = Guid.NewGuid().ToString(), Request = request, Result = new() };
 
         AddTcpIpProbes();
         AddSerialProbes();
@@ -59,8 +68,8 @@ public class ConfigurationProbePlan(IProbingOperationStore store) : IConfigurati
         for (var i = 0; i < _request.Configuration.TestPositions.Count; i++)
             _result.Configuration.TestPositions.Add(new());
 
-        await store.AddAsync(_operation);
-    }
+        return _operation;
+    });
 
     private void AddSerialProbes()
     {
@@ -378,15 +387,13 @@ public class ConfigurationProbePlan(IProbingOperationStore store) : IConfigurati
     }
 
     /// <inheritdoc/>
-    public async Task<ProbeConfigurationResult> FinishProbeAsync()
+    public async Task FinishProbeAsync()
     {
         foreach (var probe in _probes)
             _result.Log.Add($"{probe}: {probe.Result}");
 
         _operation.Finished = DateTime.UtcNow;
 
-        var operation = await store.UpdateAsync(_operation);
-
-        return operation.Result;
+        await store.UpdateAsync(_operation);
     }
 }

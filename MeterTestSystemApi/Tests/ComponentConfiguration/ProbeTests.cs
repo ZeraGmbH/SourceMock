@@ -4,7 +4,9 @@ using MeterTestSystemApi.Models.ConfigurationProviders;
 using MeterTestSystemApi.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models;
+using ZERA.WebSam.Shared.Models.Logging;
 
 namespace MeterTestSystemApiTests.ComponentConfiguration;
 
@@ -15,27 +17,56 @@ public class ProbeTests
 
     private IProbeConfigurationService Prober = null!;
 
+    private readonly List<ProbingOperation> _Operations = [];
+
     [SetUp]
     public void Setup()
     {
+        _Operations.Clear();
+
         var services = new ServiceCollection();
+
+        services.AddLogging();
 
         services.AddSingleton<IProbeConfigurationService, ProbeConfigurationService>();
         services.AddTransient<IConfigurationProbePlan, ConfigurationProbePlan>();
+        services.AddTransient<IInterfaceLogger, NoopInterfaceLogger>();
 
         var storeMock = new Mock<IProbingOperationStore>();
 
-        storeMock.Setup(s => s.UpdateAsync(It.IsAny<ProbingOperation>())).ReturnsAsync((ProbingOperation op) => op);
+        storeMock.Setup(s => s.AddAsync(It.IsAny<ProbingOperation>())).ReturnsAsync((ProbingOperation op) =>
+        {
+            _Operations.Add(op);
+
+            return op;
+        });
+
+        storeMock.Setup(s => s.UpdateAsync(It.IsAny<ProbingOperation>())).ReturnsAsync((ProbingOperation op) =>
+        {
+            _Operations[_Operations.FindIndex(o => o.Id == op.Id)] = op;
+
+            return op;
+        });
+
+        storeMock.Setup(s => s.Query()).Returns(() =>
+        {
+            return _Operations.AsQueryable();
+        });
 
         services.AddSingleton(storeMock.Object);
 
         services.AddSingleton(new Mock<IServerLifetime>().Object);
         services.AddSingleton(new Mock<IActiveOperations>().Object);
+        services.AddSingleton(new Mock<IMeterTestSystemConfigurationStore>().Object);
 
         Services = services.BuildServiceProvider();
 
         Prober = Services.GetRequiredService<IProbeConfigurationService>();
     }
+
+    private ProbingOperation LatestOperation => _Operations[^1];
+
+    private ProbeConfigurationResult LatestResult => LatestOperation.Result;
 
     [TearDown]
     public void Teardown()
@@ -43,7 +74,20 @@ public class ProbeTests
         Services?.Dispose();
     }
 
-    private Task StartProbe_Async(MeterTestSystemComponentsConfiguration config, bool dryRun) => Prober.ConfigureProbingAsync(new() { Configuration = config }, dryRun, Services);
+    private Task StartProbeAsync(MeterTestSystemComponentsConfiguration config) => StartProbeAsync(new ProbeConfigurationRequest { Configuration = config });
+
+    private async Task StartProbeAsync(ProbeConfigurationRequest config)
+    {
+        ((ProbeConfigurationService)Prober).ResetActive();
+
+        await Prober.ConfigureProbingAsync(config, Services);
+
+        var plan = Services.GetRequiredService<IConfigurationProbePlan>();
+
+        await plan.ConfigureProbeAsync();
+        await plan.FinishProbeAsync();
+    }
+
 
     private static List<TestPositionConfiguration> MakeList(int count) => Enumerable.Range(0, count).Select(_ => new TestPositionConfiguration
     {
@@ -69,7 +113,7 @@ public class ProbeTests
     [Test]
     public async Task Can_Create_Probing_Plan_Async()
     {
-        await StartProbe_Async(new()
+        await StartProbeAsync(new MeterTestSystemComponentsConfiguration()
         {
             TestPositions = MakeList(TestPositionConfiguration.MaxPosition),
             DCComponents = AllDcComponents,
@@ -81,12 +125,11 @@ public class ProbeTests
             EnableIPWatchDog = true,
             EnableMP2020Control = true,
             EnableOmegaiBTHX = true,
-        }, true);
+        });
 
-        Assert.That(Prober.IsActive, Is.False);
-        Assert.That(Prober.Result, Is.Not.Null);
+        Assert.That(Prober.IsActive, Is.True);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(1146));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(1146));
     }
 
     [TestCase(0, 21)]
@@ -95,25 +138,22 @@ public class ProbeTests
     [TestCase(80, 1141)]
     public async Task Can_Restrict_Probing_Plan_By_Position_Count_Async(int count, int expected)
     {
-        await StartProbe_Async(new()
+        await StartProbeAsync(new MeterTestSystemComponentsConfiguration()
         {
             TestPositions = MakeList(count),
             DCComponents = AllDcComponents,
             MT310s2Functions = AllMT310s2Functions,
             NBoxRouterTypes = AllNBoxRouters,
             TransformerComponents = AllTransformerComponents,
-        }, true);
+        });
 
-        Assert.That(Prober.IsActive, Is.False);
-        Assert.That(Prober.Result, Is.Not.Null);
-
-        Assert.That(Prober.Result.Log, Has.Count.EqualTo(expected));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(expected));
     }
 
     [TestCase(81)]
     public void Can_Detect_Bad_Position_Count(int count)
     {
-        Assert.ThrowsAsync<AggregateException>(() => StartProbe_Async(new() { TestPositions = MakeList(count) }, true));
+        Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => StartProbeAsync(new MeterTestSystemComponentsConfiguration() { TestPositions = MakeList(count) }));
     }
 
     [TestCase(DCComponents.CurrentSCG06, 1)]
@@ -126,17 +166,17 @@ public class ProbeTests
     [TestCase(DCComponents.VoltageSVG150, 1)]
     public async Task Can_Restrict_Probing_Plan_By_DC_Component_Async(DCComponents component, int expected)
     {
-        await StartProbe_Async(new() { DCComponents = { component } }, true);
+        await StartProbeAsync(new MeterTestSystemComponentsConfiguration() { DCComponents = { component } });
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(expected));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(expected));
     }
 
     [Test]
     public async Task Can_Restrict_Probing_Plan_By_DC_Components_Async()
     {
-        await StartProbe_Async(new() { DCComponents = { DCComponents.CurrentSCG06, DCComponents.VoltageSVG1200, DCComponents.SPS } }, true);
+        await StartProbeAsync(new MeterTestSystemComponentsConfiguration() { DCComponents = { DCComponents.CurrentSCG06, DCComponents.VoltageSVG1200, DCComponents.SPS } });
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(3));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(3));
     }
 
     [Test]
@@ -148,111 +188,111 @@ public class ProbeTests
         /* Not enabled. */
         Assert.That(pos.Enabled, Is.False);
 
-        await StartProbe_Async(config, true);
+        await StartProbeAsync(config);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(0));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(0));
 
         /* Enable configuration. */
         pos.Enabled = true;
 
-        await StartProbe_Async(config, true);
+        await StartProbeAsync(config);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(0));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(0));
 
         /* Enable direct DUT connection. */
         Assert.That(pos.EnableDirectDutConnection, Is.False);
 
         pos.EnableDirectDutConnection = true;
 
-        await StartProbe_Async(config, true);
+        await StartProbeAsync(config);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(2));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(2));
 
         /* Enable UART interface. */
         Assert.That(pos.EnableUART, Is.False);
 
         pos.EnableUART = true;
 
-        await StartProbe_Async(config, true);
+        await StartProbeAsync(config);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(4));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(4));
 
         /* Enable update server. */
         Assert.That(pos.EnableUpdateServer, Is.False);
 
         pos.EnableUpdateServer = true;
 
-        await StartProbe_Async(config, true);
+        await StartProbeAsync(config);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(6));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(6));
 
         /* Enable COM server. */
         Assert.That(pos.EnableCOMServer, Is.False);
 
         pos.EnableCOMServer = true;
 
-        await StartProbe_Async(config, true);
+        await StartProbeAsync(config);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(7));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(7));
 
         /* Enable backend gateway. */
         Assert.That(pos.EnableBackendGateway, Is.False);
 
         pos.EnableBackendGateway = true;
 
-        await StartProbe_Async(config, true);
+        await StartProbeAsync(config);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(8));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(8));
 
         /* Enable object access. */
         Assert.That(pos.EnableObjectAccess, Is.False);
 
         pos.EnableObjectAccess = true;
 
-        await StartProbe_Async(config, true);
+        await StartProbeAsync(config);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(9));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(9));
 
         /* Enable SIM server 1. */
         Assert.That(pos.EnableSIMServer1, Is.False);
 
         pos.EnableSIMServer1 = true;
 
-        await StartProbe_Async(config, true);
+        await StartProbeAsync(config);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(10));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(10));
 
         /* Enable MAD server. */
         Assert.That(pos.EnableMAD, Is.False);
 
         pos.EnableMAD = true;
 
-        await StartProbe_Async(config, true);
+        await StartProbeAsync(config);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(14));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(14));
 
         /* Forbidden protocol. */
         Assert.That(pos.MadProtocol, Is.Null);
 
         pos.MadProtocol = (ErrorCalculatorProtocols)33;
 
-        Assert.ThrowsAsync<AggregateException>(() => StartProbe_Async(config, true));
+        Assert.ThrowsAsync<NotImplementedException>(() => StartProbeAsync(config));
 
         /* Only old MAD protocol. */
         pos.MadProtocol = ErrorCalculatorProtocols.MAD_1;
 
-        await StartProbe_Async(config, true);
+        await StartProbeAsync(config);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(12));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(12));
 
         /* Only STM6000. */
         Assert.That(pos.STMServer, Is.Null);
 
         pos.STMServer = ServerTypes.STM6000;
 
-        await StartProbe_Async(config, true);
+        await StartProbeAsync(config);
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(8));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(8));
     }
 
     [TestCase(TransformerComponents.STR260Phase1, 1)]
@@ -263,80 +303,80 @@ public class ProbeTests
     [TestCase(TransformerComponents.SPS, 1)]
     public async Task Can_Restrict_Probing_Plan_By_Transformer_Components_Async(TransformerComponents components, int expected)
     {
-        await StartProbe_Async(new() { TransformerComponents = { components } }, true);
+        await StartProbeAsync(new MeterTestSystemComponentsConfiguration() { TransformerComponents = { components } });
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(expected));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(expected));
     }
 
     [Test]
     public async Task Can_Restrict_Probing_Plan_By_Transformer_Component_Async()
     {
-        await StartProbe_Async(new() { TransformerComponents = { TransformerComponents.CurrentWM3000or1000, TransformerComponents.VoltageWM3000or1000 } }, true);
+        await StartProbeAsync(new MeterTestSystemComponentsConfiguration() { TransformerComponents = { TransformerComponents.CurrentWM3000or1000, TransformerComponents.VoltageWM3000or1000 } });
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(2));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(2));
     }
 
     [TestCase(NBoxRouterTypes.Prime, 1)]
     [TestCase(NBoxRouterTypes.G3, 1)]
     public async Task Can_Restrict_Probing_Plan_By_NBox_Router_Async(NBoxRouterTypes types, int expected)
     {
-        await StartProbe_Async(new() { NBoxRouterTypes = { types } }, true);
+        await StartProbeAsync(new MeterTestSystemComponentsConfiguration() { NBoxRouterTypes = { types } });
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(expected));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(expected));
     }
 
     [Test]
     public async Task Can_Restrict_Probing_Plan_By_NBox_Routers_Async()
     {
-        await StartProbe_Async(new() { NBoxRouterTypes = { NBoxRouterTypes.G3, NBoxRouterTypes.Prime } }, true);
+        await StartProbeAsync(new MeterTestSystemComponentsConfiguration() { NBoxRouterTypes = { NBoxRouterTypes.G3, NBoxRouterTypes.Prime } });
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(2));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(2));
     }
 
     [Test]
     public async Task Can_Restrict_Probing_Plan_By_COM5003_Async()
     {
-        await StartProbe_Async(new() { EnableCOM5003 = true }, true);
+        await StartProbeAsync(new MeterTestSystemComponentsConfiguration() { EnableCOM5003 = true });
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(1));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(1));
     }
 
     [Test]
     public async Task Can_Restrict_Probing_Plan_By_DTS100_Async()
     {
-        await StartProbe_Async(new() { EnableDTS100 = true }, true);
+        await StartProbeAsync(new MeterTestSystemComponentsConfiguration() { EnableDTS100 = true });
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(1));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(1));
     }
 
     [Test]
     public async Task Can_Restrict_Probing_Plan_By_IP_Watchdog_Async()
     {
-        await StartProbe_Async(new() { EnableIPWatchDog = true }, true);
+        await StartProbeAsync(new MeterTestSystemComponentsConfiguration() { EnableIPWatchDog = true });
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(1));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(1));
     }
 
     [Test]
     public async Task Can_Restrict_Probing_Plan_By_Omega_iBTHX_Async()
     {
-        await StartProbe_Async(new() { EnableOmegaiBTHX = true }, true);
+        await StartProbeAsync(new MeterTestSystemComponentsConfiguration() { EnableOmegaiBTHX = true });
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(1));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(1));
     }
 
     [Test]
     public async Task Can_Restrict_Probing_Plan_By_MP2020_Async()
     {
-        await StartProbe_Async(new() { EnableMP2020Control = true }, true);
+        await StartProbeAsync(new MeterTestSystemComponentsConfiguration() { EnableMP2020Control = true });
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(1));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(1));
     }
 
     [Test]
     public async Task Can_Probe_Serial_Ports_Async()
     {
-        await Prober.ConfigureProbingAsync(new()
+        await StartProbeAsync(new ProbeConfigurationRequest()
         {
             Configuration = { FrequencyGenerator = new(), MT768 = new() },
             SerialPorts = {
@@ -345,15 +385,15 @@ public class ProbeTests
                 new(){SerialPortTypes.USB},
                 new(){SerialPortTypes.RS232,SerialPortTypes.USB},
         }
-        }, true, Services);
+        });
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(8));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(8));
     }
 
     [Test]
     public async Task Can_Probe_HID_Events_Async()
     {
-        await Prober.ConfigureProbingAsync(new()
+        await StartProbeAsync(new ProbeConfigurationRequest()
         {
             Configuration = { BarcodeReader = 0 },
             HIDEvents = {
@@ -362,8 +402,8 @@ public class ProbeTests
                 false,
                 true
             }
-        }, true, Services);
+        });
 
-        Assert.That(Prober.Result!.Log, Has.Count.EqualTo(2));
+        Assert.That(LatestResult.Log, Has.Count.EqualTo(2));
     }
 }

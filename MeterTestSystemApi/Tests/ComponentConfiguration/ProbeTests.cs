@@ -2,6 +2,7 @@ using ErrorCalculatorApi.Models;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using MeterTestSystemApi.Services;
+using MeterTestSystemApi.Services.Probing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using ZERA.WebSam.Shared.Actions;
@@ -85,7 +86,7 @@ public class ProbeTests
         var plan = Services.GetRequiredService<IConfigurationProbePlan>();
 
         await plan.ConfigureProbeAsync();
-        await plan.FinishProbeAsync();
+        await plan.FinishProbeAsync(CancellationToken.None);
     }
 
 

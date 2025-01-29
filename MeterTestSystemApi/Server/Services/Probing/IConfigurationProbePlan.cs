@@ -1,6 +1,6 @@
 using MeterTestSystemApi.Models.Configuration;
 
-namespace MeterTestSystemApi.Services;
+namespace MeterTestSystemApi.Services.Probing;
 
 /// <summary>
 /// Probing plan.
@@ -15,6 +15,7 @@ public interface IConfigurationProbePlan
     /// <summary>
     /// Finish the probe.
     /// </summary>
+    /// <param name="cancel">Cancel the probing before it is done.</param>
     /// <returns>Result of the probing operation.</returns>
-    Task FinishProbeAsync();
+    Task FinishProbeAsync(CancellationToken cancel);
 }

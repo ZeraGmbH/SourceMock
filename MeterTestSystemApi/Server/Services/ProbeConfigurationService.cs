@@ -1,9 +1,10 @@
-using System.Reflection;
 using MeterTestSystemApi.Actions.Probing;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
+using MeterTestSystemApi.Services.Probing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Reflection;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
@@ -140,11 +141,8 @@ public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperatio
 
                     logger.LogInformation("processing probing request created at {Created}", ops.Created);
 
-                    // This is where we probe.
-                    await Task.Delay(15000, cancel.Token);
-
-                    // Finish.
-                    await store.FinishProbeAsync();
+                    // Process.
+                    await store.FinishProbeAsync(cancel.Token);
                 }
                 finally
                 {

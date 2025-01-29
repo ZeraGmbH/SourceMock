@@ -7,6 +7,7 @@ using MeterTestSystemApi.Models;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using MeterTestSystemApi.Services;
+using MeterTestSystemApi.Services.Probing;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

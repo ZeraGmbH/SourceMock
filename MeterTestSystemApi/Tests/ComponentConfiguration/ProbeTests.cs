@@ -1,4 +1,5 @@
 using ErrorCalculatorApi.Models;
+using MeterTestSystemApi.Actions.Probing;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using MeterTestSystemApi.Services;
@@ -60,6 +61,21 @@ public class ProbeTests
         services.AddSingleton(new Mock<IActiveOperations>().Object);
         services.AddSingleton(new Mock<IMeterTestSystemConfigurationStore>().Object);
 
+        var serialProbe = new Mock<IProbeExecutor>();
+
+        serialProbe.Setup(s => s.ExecuteAsync(It.IsAny<Probe>())).ReturnsAsync((SerialProbe p) =>
+            new ProbeInfo
+            {
+                Succeeded =
+                    (p.Protocol == SerialProbeProtocols.FG30x && p.Device.Type == SerialPortTypes.USB && p.Device.Index == 0) ||
+                    (p.Protocol == SerialProbeProtocols.MT768 && p.Device.Type == SerialPortTypes.USB && p.Device.Index == 1) ||
+                    (p.Protocol == SerialProbeProtocols.ESxB && p.Device.Type == SerialPortTypes.RS232 && p.Device.Index == 3) ||
+                    (p.Protocol == SerialProbeProtocols.PM8181 && p.Device.Type == SerialPortTypes.RS232 && p.Device.Index == 2),
+                Message = "mocking"
+            });
+
+        services.AddKeyedSingleton<IProbeExecutor>(typeof(SerialProbe), serialProbe.Object);
+
         Services = services.BuildServiceProvider();
 
         Prober = Services.GetRequiredService<IProbeConfigurationService>();
@@ -89,27 +105,29 @@ public class ProbeTests
         await plan.FinishProbeAsync(CancellationToken.None);
     }
 
+    private static List<TestPositionConfiguration> MakeList(int count) => [..
+        Enumerable
+            .Range(0, count)
+            .Select(_ => new TestPositionConfiguration
+            {
+                Enabled = true,
+                EnableBackendGateway = true,
+                EnableCOMServer = true,
+                EnableDirectDutConnection = true,
+                EnableMAD = true,
+                EnableObjectAccess = true,
+                EnableSIMServer1 = true,
+                EnableUART = true,
+                EnableUpdateServer = true,
+            })];
 
-    private static List<TestPositionConfiguration> MakeList(int count) => Enumerable.Range(0, count).Select(_ => new TestPositionConfiguration
-    {
-        Enabled = true,
-        EnableBackendGateway = true,
-        EnableCOMServer = true,
-        EnableDirectDutConnection = true,
-        EnableMAD = true,
-        EnableObjectAccess = true,
-        EnableSIMServer1 = true,
-        EnableUART = true,
-        EnableUpdateServer = true,
-    }).ToList();
+    private static readonly List<DCComponents> AllDcComponents = [.. Enum.GetValues<DCComponents>()];
 
-    private static readonly List<DCComponents> AllDcComponents = Enum.GetValues<DCComponents>().ToList();
+    private static readonly List<TransformerComponents> AllTransformerComponents = [.. Enum.GetValues<TransformerComponents>()];
 
-    private static readonly List<TransformerComponents> AllTransformerComponents = Enum.GetValues<TransformerComponents>().ToList();
+    private static readonly List<MT310s2Functions> AllMT310s2Functions = [.. Enum.GetValues<MT310s2Functions>()];
 
-    private static readonly List<MT310s2Functions> AllMT310s2Functions = Enum.GetValues<MT310s2Functions>().ToList();
-
-    private static readonly List<NBoxRouterTypes> AllNBoxRouters = Enum.GetValues<NBoxRouterTypes>().ToList();
+    private static readonly List<NBoxRouterTypes> AllNBoxRouters = [.. Enum.GetValues<NBoxRouterTypes>()];
 
     [Test]
     public async Task Can_Create_Probing_Plan_Async()
@@ -379,16 +397,51 @@ public class ProbeTests
     {
         await StartProbeAsync(new ProbeConfigurationRequest()
         {
-            Configuration = { FrequencyGenerator = new(), MT768 = new() },
+            Configuration = { FrequencyGenerator = new(), MT768 = new(), ESxB = new(), PM8121ZIF = new() },
             SerialPorts = {
-                new(){},
-                new(){SerialPortTypes.RS232},
                 new(){SerialPortTypes.USB},
                 new(){SerialPortTypes.RS232,SerialPortTypes.USB},
-        }
+                new(){SerialPortTypes.RS232},
+                new(){SerialPortTypes.RS232,SerialPortTypes.USB},
+                new(){},
+                new(){SerialPortTypes.RS232,SerialPortTypes.USB},
+            }
         });
 
-        Assert.That(LatestResult.Log, Has.Count.EqualTo(8));
+        Assert.That(LatestResult.Log, Is.EqualTo([
+            "/dev/ttyUSB0: FG30x: Succeeded",
+            "/dev/ttyUSB0: MT768: Skipped",
+            "/dev/ttyUSB0: PM8181: Skipped",
+            "/dev/ttyUSB0: ESxB: Skipped",
+            "/dev/ttyUSB1: FG30x: Skipped",
+            "/dev/ttyUSB1: MT768: Succeeded",
+            "/dev/ttyUSB1: PM8181: Skipped",
+            "/dev/ttyUSB1: ESxB: Skipped",
+            "/dev/ttyS1: FG30x: Skipped",
+            "/dev/ttyS1: MT768: Skipped",
+            "/dev/ttyS1: PM8181: Failed",
+            "/dev/ttyS1: ESxB: Failed",
+            "/dev/ttyS2: FG30x: Skipped",
+            "/dev/ttyS2: MT768: Skipped",
+            "/dev/ttyS2: PM8181: Succeeded",
+            "/dev/ttyS2: ESxB: Skipped",
+            "/dev/ttyUSB3: FG30x: Skipped",
+            "/dev/ttyUSB3: MT768: Skipped",
+            "/dev/ttyUSB3: PM8181: Skipped",
+            "/dev/ttyUSB3: ESxB: Failed",
+            "/dev/ttyS3: FG30x: Skipped",
+            "/dev/ttyS3: MT768: Skipped",
+            "/dev/ttyS3: PM8181: Skipped",
+            "/dev/ttyS3: ESxB: Succeeded",
+            "/dev/ttyUSB5: FG30x: Skipped",
+            "/dev/ttyUSB5: MT768: Skipped",
+            "/dev/ttyUSB5: PM8181: Skipped",
+            "/dev/ttyUSB5: ESxB: Skipped",
+            "/dev/ttyS5: FG30x: Skipped",
+            "/dev/ttyS5: MT768: Skipped",
+            "/dev/ttyS5: PM8181: Skipped",
+            "/dev/ttyS5: ESxB: Skipped",
+        ]));
     }
 
     [Test]

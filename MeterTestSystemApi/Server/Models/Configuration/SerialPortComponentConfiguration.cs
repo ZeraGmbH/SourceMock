@@ -22,7 +22,7 @@ public class SerialPortComponentConfiguration
     public SerialPortTypes Type { get; set; }
 
     /// <summary>
-    /// Optional fine tuning of the confioguration.
+    /// Optional fine tuning of the configuration.
     /// </summary>
     public SerialPortOptions? Options { get; set; }
 }

@@ -130,41 +130,35 @@ public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperatio
 
             try
             {
-                // Interface logger used for all hardware access.
-                var interfaceLogger = di.GetRequiredService<IInterfaceLogger>();
+                // Load the latest plan.
                 var store = di.GetRequiredService<IConfigurationProbePlan>();
+                var ops = await store.ConfigureProbeAsync();
 
-                try
-                {
-                    // Load the latest plan.
-                    var ops = await store.ConfigureProbeAsync();
+                logger.LogInformation("processing probing request created at {Created}", ops.Created);
 
-                    logger.LogInformation("processing probing request created at {Created}", ops.Created);
-
-                    // Process.
-                    await store.FinishProbeAsync(cancel.Token);
-                }
-                finally
-                {
-                    logger.LogInformation("leaving probing mode");
-
-                    try
-                    {
-                        // Activate regular operation mode.
-                        await di.GetRequiredService<IMeterTestSystemConfigurationStore>().ResetProbingAsync();
-
-                        // Time to restart the server.
-                        await di.GetRequiredService<IServerLifetime>().RestartAsync(interfaceLogger);
-                    }
-                    catch (Exception e)
-                    {
-                        logger.LogCritical("failed to finish probing mode properly: {Exception}", e.Message);
-                    }
-                }
+                // Process.
+                await store.FinishProbeAsync(cancel.Token);
             }
             catch (Exception e)
             {
                 logger.LogCritical("unrecoverable error during probing: {Exception}", e.Message);
+            }
+            finally
+            {
+                logger.LogInformation("leaving probing mode");
+
+                try
+                {
+                    // Activate regular operation mode.
+                    await di.GetRequiredService<IMeterTestSystemConfigurationStore>().ResetProbingAsync();
+
+                    // Time to restart the server.
+                    await di.GetRequiredService<IServerLifetime>().RestartAsync(di.GetRequiredService<IInterfaceLogger>());
+                }
+                catch (Exception e)
+                {
+                    logger.LogCritical("failed to finish probing mode properly: {Exception}", e.Message);
+                }
             }
         }).Start();
     }

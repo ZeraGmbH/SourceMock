@@ -1,4 +1,6 @@
 using MeterTestSystemApi.Models.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace MeterTestSystemApi.Services.Probing;
 
@@ -43,6 +45,42 @@ partial class ConfigurationProbePlan
                             Device = new() { Type = type, Index = (uint)i }
                         });
                 }
+        }
+    }
+
+    private async Task ProbeSerialAsync(SerialProbe probe)
+    {
+        /* Not in plan. */
+        if (probe.Result != ProbeResult.Planned) return;
+
+        try
+        {
+            /* Use manual executor to probe the port. */
+            var executer = _services.GetRequiredKeyedService<IProbeExecutor>(probe.GetType());
+            var info = await executer.ExecuteAsync(probe);
+
+            /* Copy result. */
+            probe.Result = info.Succeeded ? ProbeResult.Succeeded : ProbeResult.Failed;
+
+            if (!info.Succeeded)
+                _logger.LogInformation("{Probe} failed: {Exception}", probe.ToString(), info.Message);
+            else
+                foreach (var other in _probes)
+                    /* Other serial probe which is still to be probed. */
+                    if (other is SerialProbe otherSerial && otherSerial.Result == ProbeResult.Planned)
+                        if (otherSerial.Device.Type == probe.Device.Type && otherSerial.Device.Index == probe.Device.Index)
+                            /* Can only have one device on a specific serial port. */
+                            otherSerial.Result = ProbeResult.Skipped;
+                        else if (otherSerial.Protocol == probe.Protocol)
+                            /* Currently each protocol supports only one device - may in future change when ZIF sockets are supported per test position. */
+                            otherSerial.Result = ProbeResult.Skipped;
+        }
+        catch (Exception e)
+        {
+            /* Something went very wrong. */
+            probe.Result = ProbeResult.Failed;
+
+            _logger.LogError("probe {Probe} failed: {Exception}", probe.ToString(), e.Message);
         }
     }
 

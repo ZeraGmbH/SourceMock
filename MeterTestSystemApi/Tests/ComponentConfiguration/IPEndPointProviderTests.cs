@@ -1,5 +1,6 @@
 using System.Net;
 using MeterTestSystemApi.Models.ConfigurationProviders;
+using MeterTestSystemApi.Services;
 
 namespace MeterTestSystemApiTests.ComponentConfiguration;
 
@@ -9,7 +10,7 @@ public class IPEndPointProviderTests
     [TestCase(113, 12823, "192.168.32.113:12823")]
     public void Can_Create_Address_From_Endpoint_Configuration(int ip, int port, string expected)
     {
-        IPEndPoint config = new IPEndPointProvider
+        IPProbeEndPoint config = new IPEndPointProvider
         {
             IP = checked((byte)ip),
             Port = checked((ushort)port)

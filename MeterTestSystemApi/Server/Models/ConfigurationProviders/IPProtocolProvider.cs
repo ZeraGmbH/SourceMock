@@ -1,5 +1,5 @@
-using System.Net;
 using MeterTestSystemApi.Models.Configuration;
+using MeterTestSystemApi.Services;
 
 namespace MeterTestSystemApi.Models.ConfigurationProviders;
 
@@ -36,7 +36,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetMadEndpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetMadEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -54,7 +54,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetUpdateEndpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetUpdateEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -73,7 +73,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetDirectDutConnectionEndpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetDirectDutConnectionEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -91,7 +91,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetUARTEndpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetUARTEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -109,7 +109,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetObjectAccessEndpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetObjectAccessEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -126,7 +126,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetCOMServerEndpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetCOMServerEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -143,7 +143,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetSIMServer1Endpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetSIMServer1Endpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -160,7 +160,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetBackendGatewayEndpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetBackendGatewayEndpoint(int position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -175,38 +175,38 @@ public static class IPProtocolProvider
     /// Calculate the CR2020 endpoint to control the MP2020.
     /// </summary>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint Get2020ControlEndpoint() => new IPEndPointProvider { IP = 100, Port = 14200 };
+    public static IPProbeEndPoint Get2020ControlEndpoint() => new IPEndPointProvider { IP = 100, Port = 14200 };
 
     /// <summary>
     /// Calculate the Omega iBTHX temparature and humidity sensor endpoint.
     /// </summary>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetOmegaiBTHXEndpoint() => new IPEndPointProvider { IP = 12, Port = 2000 };
+    public static IPProbeEndPoint GetOmegaiBTHXEndpoint() => new IPEndPointProvider { IP = 12, Port = 2000 };
 
     /// <summary>
     /// Calculate the COM5003 endpoint for the external reference (absolute).
     /// </summary>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetCOM5003Endpoint() => new IPEndPointProvider { IP = 13, Port = 6320 };
+    public static IPProbeEndPoint GetCOM5003Endpoint() => new IPEndPointProvider { IP = 13, Port = 6320 };
 
     /// <summary>
     /// Calculate the GUI endpoint of the IP watchdog - for PING only the address part is uses.
     /// </summary>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetIPWatchDogEndpoint() => new IPEndPointProvider { IP = 16, Port = 80 };
+    public static IPProbeEndPoint GetIPWatchDogEndpoint() => new IPEndPointProvider { IP = 16, Port = 80 };
 
     /// <summary>
     /// Calculate the endpoint of the DTS100 keyboard.
     /// </summary>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetDTS100Endpoint() => new IPEndPointProvider { IP = 17, Port = 4001 };
+    public static IPProbeEndPoint GetDTS100Endpoint() => new IPEndPointProvider { IP = 17, Port = 4001 };
 
     /// <summary>
     /// Calculate the endpoint of any DC component.
     /// </summary>
     /// <param name="component">DC component of interest.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetDCComponentEndpoint(DCComponents component)
+    public static IPProbeEndPoint GetDCComponentEndpoint(DCComponents component)
         => component switch
         {
             DCComponents.CurrentSCG06 => new IPEndPointProvider { IP = 83, Port = 10001 },
@@ -226,7 +226,7 @@ public static class IPProtocolProvider
     /// </summary>
     /// <param name="component">Transformer component of interest.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetTransformerComponentEndpoint(TransformerComponents component)
+    public static IPProbeEndPoint GetTransformerComponentEndpoint(TransformerComponents component)
         => component switch
         {
             TransformerComponents.CurrentWM3000or1000 => new IPEndPointProvider { IP = 211, Port = 6315 },
@@ -243,7 +243,7 @@ public static class IPProtocolProvider
     /// </summary>
     /// <param name="function">Function of interest.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetMT310s2FunctionEndpoint(MT310s2Functions function)
+    public static IPProbeEndPoint GetMT310s2FunctionEndpoint(MT310s2Functions function)
         => function switch
         {
             MT310s2Functions.DCCalibration => new IPEndPointProvider { IP = 22, Port = 6320 },
@@ -259,7 +259,7 @@ public static class IPProtocolProvider
     /// </summary>
     /// <param name="type">Router of interest.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPEndPoint GetNBoxRouterEndpoint(NBoxRouterTypes type)
+    public static IPProbeEndPoint GetNBoxRouterEndpoint(NBoxRouterTypes type)
         => type switch
         {
             NBoxRouterTypes.Prime => new IPEndPointProvider { IP = 18, Port = 80 },

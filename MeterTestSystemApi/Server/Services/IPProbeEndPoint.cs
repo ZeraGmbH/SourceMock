@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using System.Net;
 
 namespace MeterTestSystemApi.Services;
 
@@ -21,10 +20,7 @@ public class IPProbeEndPoint
     [NotNull, Required]
     public ushort Port { get; set; }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="endPoint"></param>
-    public static implicit operator IPProbeEndPoint(IPEndPoint endPoint) => new() { Server = endPoint.Address.ToString(), Port = (ushort)endPoint.Port };
+    /// <inheritdoc/>
+    public override string ToString() => $"{Server}:{Port}";
 }
 

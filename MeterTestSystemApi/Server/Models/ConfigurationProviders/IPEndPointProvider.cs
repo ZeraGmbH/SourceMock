@@ -1,4 +1,5 @@
 using System.Net;
+using MeterTestSystemApi.Services;
 
 namespace MeterTestSystemApi.Models.ConfigurationProviders;
 
@@ -17,7 +18,7 @@ public class IPEndPointProvider
     /// </summary>
     /// <param name="ip">Last byte of the IP address.</param>
     /// <returns>Full address.</returns>
-    public static IPAddress MakeAddress(byte ip) => IPAddress.Parse(TestNetPattern.Replace("{IP}", ip.ToString()));
+    public static string MakeAddress(byte ip) => IPAddress.Parse(TestNetPattern.Replace("{IP}", ip.ToString())).ToString();
 
     /// <summary>
     /// The last byte of the IP address.
@@ -32,6 +33,6 @@ public class IPEndPointProvider
     /// <summary>
     /// Construct the full endpoint address from the properties.
     /// </summary>
-    public static implicit operator IPEndPoint(IPEndPointProvider endPoint) => new(MakeAddress(endPoint.IP), endPoint.Port);
+    public static implicit operator IPProbeEndPoint(IPEndPointProvider endPoint) => new() { Server = MakeAddress(endPoint.IP), Port = endPoint.Port };
 }
 

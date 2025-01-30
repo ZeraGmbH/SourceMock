@@ -62,18 +62,41 @@ partial class ConfigurationProbePlan
             /* Copy result. */
             probe.Result = info.Succeeded ? ProbeResult.Succeeded : ProbeResult.Failed;
 
+            /* Done if not found - typically will not end up here but throw some exception. */
             if (!info.Succeeded)
+            {
                 _logger.LogInformation("{Probe} failed: {Exception}", probe.ToString(), info.Message);
-            else
-                foreach (var other in _probes)
-                    /* Other serial probe which is still to be probed. */
-                    if (other is SerialProbe otherSerial && otherSerial.Result == ProbeResult.Planned)
-                        if (otherSerial.Device.Type == probe.Device.Type && otherSerial.Device.Index == probe.Device.Index)
-                            /* Can only have one device on a specific serial port. */
-                            otherSerial.Result = ProbeResult.Skipped;
-                        else if (otherSerial.Protocol == probe.Protocol)
-                            /* Currently each protocol supports only one device - may in future change when ZIF sockets are supported per test position. */
-                            otherSerial.Result = ProbeResult.Skipped;
+
+                return;
+            }
+
+            /* Make sure neither this port nor this device is probed for again. */
+            foreach (var other in _probes)
+                /* Other serial probe which is still to be probed. */
+                if (other is SerialProbe otherSerial && otherSerial.Result == ProbeResult.Planned)
+                    if (otherSerial.Device.Type == probe.Device.Type && otherSerial.Device.Index == probe.Device.Index)
+                        /* Can only have one device on a specific serial port. */
+                        otherSerial.Result = ProbeResult.Skipped;
+                    else if (otherSerial.Protocol == probe.Protocol)
+                        /* Currently each protocol supports only one device - may in future change when ZIF sockets are supported per test position. */
+                        otherSerial.Result = ProbeResult.Skipped;
+
+            /* Update the configuration result. */
+            switch (probe.Protocol)
+            {
+                case SerialProbeProtocols.FG30x:
+                    _result.Configuration.FrequencyGenerator = probe.Device;
+                    break;
+                case SerialProbeProtocols.MT768:
+                    _result.Configuration.MT768 = probe.Device;
+                    break;
+                case SerialProbeProtocols.ESxB:
+                    _result.Configuration.ESxB = probe.Device;
+                    break;
+                case SerialProbeProtocols.PM8181:
+                    _result.Configuration.PM8121ZIF = probe.Device;
+                    break;
+            }
         }
         catch (Exception e)
         {

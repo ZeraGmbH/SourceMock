@@ -54,7 +54,7 @@ jobs:
           kill -9 $SOURCE_MOCK_PID
 
       - name: Upload Build Artifacts Windows
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-win-x64
           path: "WebServer/Server/bin/Release/net9.0/win-x64/publish/"
@@ -62,7 +62,7 @@ jobs:
           retention-days: 1
 
       - name: Upload Build Artifacts Linux
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-linux-x64
           path: "WebServer/Server/bin/Release/net9.0/linux-x64/publish/"
@@ -77,7 +77,7 @@ jobs:
 
       - name: Upload Docker Artifacts
         if: github.event.inputs.docker_images == 'true'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: device-api
           path: device-api.tar

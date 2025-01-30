@@ -19,7 +19,9 @@ public interface IMadConnection : IDisposable
     /// </summary>
     /// <param name="webSamId">Unique identifier inside WebSam.</param>
     /// <param name="config">Configuration to use.</param>
-    public Task InitializeAsync(string webSamId, ErrorCalculatorConfiguration config);
+    /// <param name="readTimeout">Timeout while receiving data - in milliseconds.</param>
+    /// <param name="writeTimeout">Timeout while sending data - in milliseconds.</param>
+    public Task InitializeAsync(string webSamId, ErrorCalculatorConfiguration config, int? readTimeout = null, int? writeTimeout = null);
 
     /// <summary>
     /// Execute a single XML request.

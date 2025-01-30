@@ -17,11 +17,16 @@ partial class Mad1ErrorCalculator
     </KMA_XML_0_01>
   ";
 
-  /// <inheritdoc/>
-  public async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger logger)
+  /// <summary>
+  /// Try to retrive the current firmware version.
+  /// </summary>
+  /// <param name="connection">Connection to use.</param>
+  /// <param name="logger">Protocol logging sink.</param>
+  /// <returns>Version information if available.</returns>
+  public static async Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersionAsync(IMadConnection connection, IInterfaceLogger logger)
   {
     /* Execute the request. */
-    var res = await _connection.ExecuteAsync(logger, LoadXmlFromString(VersionRequestXml), "serverVerRes");
+    var res = await connection.ExecuteAsync(logger, LoadXmlFromString(VersionRequestXml), "serverVerRes");
 
     /* Analyse overall result. */
     var info = res.SelectSingleNode("KMA_XML_0_01/kmaContainer/serverVerRes");
@@ -32,4 +37,7 @@ partial class Mad1ErrorCalculator
       Version = info?.SelectSingleNode("versionValue")?.InnerText.Trim() ?? string.Empty
     };
   }
+
+  /// <inheritdoc/>
+  public Task<ErrorCalculatorFirmwareVersion> GetFirmwareVersionAsync(IInterfaceLogger logger) => GetFirmwareVersionAsync(_connection, logger);
 }

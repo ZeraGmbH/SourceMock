@@ -1,6 +1,7 @@
 using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Actions.Device;
 using MeterTestSystemApi.Actions.Probing.HTTP;
+using MeterTestSystemApi.Actions.Probing.KoaLa;
 using MeterTestSystemApi.Actions.Probing.MTS;
 using MeterTestSystemApi.Actions.Probing.SerialPort;
 using MeterTestSystemApi.Actions.Probing.TcpIp;
@@ -147,6 +148,7 @@ public static class MeterTestSystemApiConfiguration
         services.AddKeyedScoped<IHttpProbeExecutor, WatchDogHttpProbe>(IPProbeProtocols.IPWatchdog);
 
         services.AddKeyedScoped<IProbeExecutor, ProbeIP>(typeof(IPProbe));
+        services.AddKeyedScoped<IIPProbeExecutor, STMv1IPProbe>(IPProbeProtocols.MADServer1);
         services.AddKeyedScoped<IIPProbeExecutor, WatchDogIPProbe>(IPProbeProtocols.IPWatchdog);
 
         if (configuration.GetValue<bool>("UseMeterTestSystemRestMock") == true)

@@ -80,7 +80,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger, ICancellationSer
     private async Task ConnectAsync()
     {
         /* Try to connect if we are not already connected. */
-        for (; !client.Connected; Thread.Sleep(5000))
+        for (; !client.Connected; Thread.Sleep(client.ReceiveTimeout))
             try
             {
                 /* Do a regular connect - will be cancelled on dispose. */
@@ -181,8 +181,8 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger, ICancellationSer
     public Task<XmlDocument> ExecuteAsync(IInterfaceLogger logger, XmlDocument request, string reply) => Task.Run(() =>
     {
         /* Wait for connect. */
-        for (var i = 100; !client.Connected && i-- > 0; Thread.Sleep(100))
-            if (i == 0)
+        for (var end = DateTime.UtcNow.AddMilliseconds(client.ReceiveTimeout); !client.Connected; Thread.Sleep(100))
+            if (DateTime.UtcNow > end)
                 throw new NotConnectedException();
 
         /* There can be at most one outstaning request at any time. */
@@ -268,8 +268,16 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger, ICancellationSer
     private InterfaceLogEntryConnection? _connectionInfo;
 
     /// <inheritdoc/>
-    public Task InitializeAsync(string webSamId, ErrorCalculatorConfiguration config)
+    public Task InitializeAsync(string webSamId, ErrorCalculatorConfiguration config, int? readTimeout = null, int? writeTimeout = null)
     {
+        /* Apply timeouts. */
+        using (client)
+            client = new()
+            {
+                SendTimeout = readTimeout ?? 5000,
+                ReceiveTimeout = writeTimeout ?? 5000,
+            };
+
         /* Prepare logging. */
         _connectionInfo = new()
         {

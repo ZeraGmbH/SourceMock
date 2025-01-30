@@ -1,4 +1,9 @@
+using System.Diagnostics;
+using ErrorCalculatorApi.Models;
+using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace MeterTestSystemApi.Services.Probing;
 
@@ -46,5 +51,68 @@ partial class ConfigurationProbePlan
                 Protocol = IPProbeProtocols.DTS100,
                 EndPoint = IPProtocolProvider.GetDTS100Endpoint()
             });
+    }
+
+    private async Task ProbeTcpIpAsync(IPProbe probe)
+    {
+        /* Not in plan. */
+        if (probe.Result != ProbeResult.Planned) return;
+
+        try
+        {
+            /* Configuration to use for probing - little tewak to make developers like us.. */
+            var effectiveProbe = _useLocalhost
+                ? new()
+                {
+                    EndPoint = new() { Server = Environment.GetEnvironmentVariable("HOSTNAME")!, Port = probe.EndPoint.Port },
+                    Protocol = probe.Protocol,
+                    Result = probe.Result,
+                    ServerType = probe.ServerType,
+                    TestPosition = probe.TestPosition
+                }
+                : probe;
+
+            /* Use manual executor to probe the port. */
+            var executer = _services.GetRequiredKeyedService<IProbeExecutor>(effectiveProbe.GetType());
+            var info = await executer.ExecuteAsync(effectiveProbe);
+
+            /* Copy result. */
+            probe.Result = info.Succeeded ? ProbeResult.Succeeded : ProbeResult.Failed;
+
+            /* Done if not found - typically will not end up here but throw some exception. */
+            if (!info.Succeeded)
+            {
+                _logger.LogInformation("{Probe} failed: {Exception}", probe.ToString(), info.Message);
+
+                return;
+            }
+
+            /* Not attached to a position. */
+            var pos = (int)(probe.TestPosition ?? 0);
+
+            if (pos-- < 1) return;
+
+            /* Allocate test position. */
+            var positions = _result.Configuration.TestPositions;
+
+            while (positions.Count <= pos) positions.Add(new());
+
+            /* Register the probing result. */
+            switch (probe.Protocol)
+            {
+                case IPProbeProtocols.MADServer1:
+                    positions[pos].EnableMAD = true;
+                    positions[pos].MadProtocol = ErrorCalculatorProtocols.MAD_1;
+                    positions[pos].STMServer = probe.ServerType ?? ServerTypes.STM6000;
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+            /* Something went very wrong. */
+            probe.Result = ProbeResult.Failed;
+
+            _logger.LogError("probe {Probe} failed: {Exception}", probe.ToString(), e.Message);
+        }
     }
 }

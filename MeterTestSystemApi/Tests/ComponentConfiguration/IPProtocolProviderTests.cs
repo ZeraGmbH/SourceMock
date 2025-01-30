@@ -6,13 +6,12 @@ namespace MeterTestSystemApiTests.ComponentConfiguration;
 [TestFixture]
 public class IPProtocolProviderTests
 {
-    [TestCase(-1)]
     [TestCase(0)]
     [TestCase(81)]
     [TestCase(1000)]
     public void Can_Validate_Parameters_For_MAD_Server(int position)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetMadEndpoint(position, ServerTypes.STM6000));
+        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetMadEndpoint((uint)position, ServerTypes.STM6000));
     }
 
     [TestCase(1, ServerTypes.STM6000, "192.168.32.101:14207")]
@@ -25,16 +24,15 @@ public class IPProtocolProviderTests
     [TestCase(80, ServerTypes.STM4000, "192.168.32.188:14907")]
     public void Can_Get_IP_Address_For_MAD_Server(int position, ServerTypes type, string expected)
     {
-        Assert.That(IPProtocolProvider.GetMadEndpoint(position, type).ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetMadEndpoint((uint)position, type).ToString(), Is.EqualTo(expected));
     }
 
-    [TestCase(-1)]
     [TestCase(0)]
     [TestCase(81)]
     [TestCase(1000)]
     public void Can_Validate_Parameters_For_Update_Server(int position)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetUpdateEndpoint(position, ServerTypes.STM6000));
+        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetUpdateEndpoint((uint)position, ServerTypes.STM6000));
     }
 
     [TestCase(1, ServerTypes.STM6000, "192.168.32.101:14196")]
@@ -47,16 +45,15 @@ public class IPProtocolProviderTests
     [TestCase(80, ServerTypes.STM4000, "192.168.32.188:14196")]
     public void Can_Get_IP_Address_For_Update_Server(int position, ServerTypes type, string expected)
     {
-        Assert.That(IPProtocolProvider.GetUpdateEndpoint(position, type).ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetUpdateEndpoint((uint)position, type).ToString(), Is.EqualTo(expected));
     }
 
-    [TestCase(-1)]
     [TestCase(0)]
     [TestCase(81)]
     [TestCase(1000)]
     public void Can_Validate_Parameters_For_Direct_Dut_Connection(int position)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetDirectDutConnectionEndpoint(position, ServerTypes.STM6000));
+        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetDirectDutConnectionEndpoint((uint)position, ServerTypes.STM6000));
     }
 
     [TestCase(1, ServerTypes.STM6000, "192.168.32.101:14202")]
@@ -69,16 +66,15 @@ public class IPProtocolProviderTests
     [TestCase(80, ServerTypes.STM4000, "192.168.32.188:14902")]
     public void Can_Get_IP_Address_For_Direct_Dut_Connection(int position, ServerTypes type, string expected)
     {
-        Assert.That(IPProtocolProvider.GetDirectDutConnectionEndpoint(position, type).ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetDirectDutConnectionEndpoint((uint)position, type).ToString(), Is.EqualTo(expected));
     }
 
-    [TestCase(-1)]
     [TestCase(0)]
     [TestCase(81)]
     [TestCase(1000)]
     public void Can_Validate_Parameters_For_UART(int position)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetUARTEndpoint(position, ServerTypes.STM6000));
+        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetUARTEndpoint((uint)position, ServerTypes.STM6000));
     }
 
     [TestCase(1, ServerTypes.STM6000, "192.168.32.101:14209")]
@@ -91,16 +87,15 @@ public class IPProtocolProviderTests
     [TestCase(80, ServerTypes.STM4000, "192.168.32.188:14909")]
     public void Can_Get_IP_Address_For_UART(int position, ServerTypes type, string expected)
     {
-        Assert.That(IPProtocolProvider.GetUARTEndpoint(position, type).ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetUARTEndpoint((uint)position, type).ToString(), Is.EqualTo(expected));
     }
 
-    [TestCase(-1)]
     [TestCase(0)]
     [TestCase(81)]
     [TestCase(1000)]
     public void Can_Validate_Parameters_For_Legacy_OA(int position)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetObjectAccessEndpoint(position, ServerTypes.STM6000));
+        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetObjectAccessEndpoint((uint)position, ServerTypes.STM6000));
     }
 
     [TestCase(ServerTypes.STM4000)]
@@ -115,16 +110,15 @@ public class IPProtocolProviderTests
     [TestCase(80, "192.168.32.180:14204")]
     public void Can_Get_IP_Address_For_Legacy_OA(int position, string expected)
     {
-        Assert.That(IPProtocolProvider.GetObjectAccessEndpoint(position, ServerTypes.STM6000).ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetObjectAccessEndpoint((uint)position, ServerTypes.STM6000).ToString(), Is.EqualTo(expected));
     }
 
-    [TestCase(-1)]
     [TestCase(0)]
     [TestCase(81)]
     [TestCase(1000)]
     public void Can_Validate_Parameters_For_COM_Server(int position)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetCOMServerEndpoint(position, ServerTypes.STM6000));
+        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetCOMServerEndpoint((uint)position, ServerTypes.STM6000));
     }
 
     [TestCase(ServerTypes.STM4000)]
@@ -139,16 +133,15 @@ public class IPProtocolProviderTests
     [TestCase(80, "192.168.32.180:14201")]
     public void Can_Get_IP_Address_For_COM_Server(int position, string expected)
     {
-        Assert.That(IPProtocolProvider.GetCOMServerEndpoint(position, ServerTypes.STM6000).ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetCOMServerEndpoint((uint)position, ServerTypes.STM6000).ToString(), Is.EqualTo(expected));
     }
 
-    [TestCase(-1)]
     [TestCase(0)]
     [TestCase(81)]
     [TestCase(1000)]
     public void Can_Validate_Parameters_For_SIM_Server_1(int position)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetSIMServer1Endpoint(position, ServerTypes.STM6000));
+        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetSIMServer1Endpoint((uint)position, ServerTypes.STM6000));
     }
 
     [TestCase(ServerTypes.STM4000)]
@@ -163,16 +156,15 @@ public class IPProtocolProviderTests
     [TestCase(80, "192.168.32.180:14208")]
     public void Can_Get_IP_Address_For_SIM_Server_1(int position, string expected)
     {
-        Assert.That(IPProtocolProvider.GetSIMServer1Endpoint(position, ServerTypes.STM6000).ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetSIMServer1Endpoint((uint)position, ServerTypes.STM6000).ToString(), Is.EqualTo(expected));
     }
 
-    [TestCase(-1)]
     [TestCase(0)]
     [TestCase(81)]
     [TestCase(1000)]
     public void Can_Validate_Parameters_For_Backend_Gateway(int position)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetBackendGatewayEndpoint(position, ServerTypes.STM6000));
+        Assert.Throws<ArgumentOutOfRangeException>(() => IPProtocolProvider.GetBackendGatewayEndpoint((uint)position, ServerTypes.STM6000));
     }
 
     [TestCase(ServerTypes.STM4000)]
@@ -187,7 +179,7 @@ public class IPProtocolProviderTests
     [TestCase(80, "192.168.32.180:14198")]
     public void Can_Get_IP_Address_For_Backend_Gateway(int position, string expected)
     {
-        Assert.That(IPProtocolProvider.GetBackendGatewayEndpoint(position, ServerTypes.STM6000).ToString(), Is.EqualTo(expected));
+        Assert.That(IPProtocolProvider.GetBackendGatewayEndpoint((uint)position, ServerTypes.STM6000).ToString(), Is.EqualTo(expected));
     }
 
     [Test]

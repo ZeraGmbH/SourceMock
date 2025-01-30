@@ -85,9 +85,9 @@ public class TestPositionConfiguration
     /// </summary>
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <exception cref="ArgumentOutOfRangeException">Position is not in the indicated range.</exception>
-    public static void AssertPosition(int position)
+    public static void AssertPosition(uint position)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(position, 1);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(position, MaxPosition);
+        ArgumentOutOfRangeException.ThrowIfLessThan(position, (uint)1);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(position, (uint)MaxPosition);
     }
 }

@@ -4,7 +4,9 @@ using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using MeterTestSystemApi.Services;
 using MeterTestSystemApi.Services.Probing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
 using Moq;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models;
@@ -28,7 +30,10 @@ public class ProbeTests
 
         var services = new ServiceCollection();
 
+        var configuration = new ConfigurationBuilder().Build();
+
         services.AddLogging();
+        services.AddSingleton<IConfiguration>(configuration);
 
         services.AddSingleton<IProbeConfigurationService, ProbeConfigurationService>();
         services.AddTransient<IConfigurationProbePlan, ConfigurationProbePlan>();

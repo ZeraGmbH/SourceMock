@@ -13,14 +13,14 @@ public static class IPProtocolProvider
     /// </summary>
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <returns>IP of the corresponding STM 4000.</returns>
-    private static byte GetIpForStm4000(int position) => (byte)(181 + (position - 1) / 10);
+    private static byte GetIpForStm4000(uint position) => (byte)(181 + (position - 1) / 10);
 
     /// <summary>
     /// For a given test position calculate the related IP for an STM 6000.
     /// </summary>
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <returns>IP of the corresponding STM 6000.</returns>
-    private static byte GetIpForStm6000(int position) => (byte)(position + 100);
+    private static byte GetIpForStm6000(uint position) => (byte)(position + 100);
 
     /// <summary>
     /// Calculate the port number for a test position connected to a STM 4000.
@@ -28,7 +28,7 @@ public static class IPProtocolProvider
     /// <param name="firstPort">Port for test position 1.</param>
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <returns>The requested port.</returns>
-    private static ushort GetPortForStm4000(ushort firstPort, int position) => (ushort)(firstPort + (position - 1) % 10 * 100);
+    private static ushort GetPortForStm4000(ushort firstPort, uint position) => (ushort)(firstPort + (position - 1) % 10 * 100);
 
     /// <summary>
     /// Calculate the endpoint for the MAD server of any test position.
@@ -36,7 +36,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPProbeEndPoint GetMadEndpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetMadEndpoint(uint position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -54,7 +54,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPProbeEndPoint GetUpdateEndpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetUpdateEndpoint(uint position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -73,7 +73,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPProbeEndPoint GetDirectDutConnectionEndpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetDirectDutConnectionEndpoint(uint position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -91,7 +91,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPProbeEndPoint GetUARTEndpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetUARTEndpoint(uint position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -109,7 +109,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPProbeEndPoint GetObjectAccessEndpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetObjectAccessEndpoint(uint position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -126,7 +126,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPProbeEndPoint GetCOMServerEndpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetCOMServerEndpoint(uint position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -143,7 +143,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPProbeEndPoint GetSIMServer1Endpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetSIMServer1Endpoint(uint position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 
@@ -160,7 +160,7 @@ public static class IPProtocolProvider
     /// <param name="position">Position index between 1 and 80 - both inclusive.</param>
     /// <param name="type">Type of the STM providing the connection.</param>
     /// <returns>The configuration for the endpoint.</returns>
-    public static IPProbeEndPoint GetBackendGatewayEndpoint(int position, ServerTypes type)
+    public static IPProbeEndPoint GetBackendGatewayEndpoint(uint position, ServerTypes type)
     {
         TestPositionConfiguration.AssertPosition(position);
 

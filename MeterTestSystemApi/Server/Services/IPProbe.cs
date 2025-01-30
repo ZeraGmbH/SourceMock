@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using MeterTestSystemApi.Models.Configuration;
 
 namespace MeterTestSystemApi.Services;
 
@@ -21,8 +22,18 @@ public class IPProbe : Probe
     public IPProbeEndPoint EndPoint { get; set; } = null!;
 
     /// <summary>
+    /// Optional test position if applicable.
+    /// </summary>
+    public uint? TestPosition { get; set; }
+
+    /// <summary>
+    /// Type of the server addressed.
+    /// </summary>
+    public ServerTypes? ServerType { get; set; }
+
+    /// <summary>
     /// Create a description for the probe.
     /// </summary>
-    public override string ToString() => $"{EndPoint}[{Protocol}]";
+    public override string ToString() => $"{EndPoint}[{Protocol}]{(TestPosition == null ? string.Empty : $"@{TestPosition}")}";
 }
 

@@ -1,6 +1,6 @@
-using Castle.Core.Logging;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace MeterTestSystemApi.Services.Probing;
@@ -26,16 +26,22 @@ public partial class ConfigurationProbePlan : IConfigurationProbePlan
 
     private readonly ILogger<ConfigurationProbePlan> _logger;
 
+    private readonly bool _useLocalhost;
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="store"></param>
     /// <param name="logger"></param>
     /// <param name="services"></param>
-    public ConfigurationProbePlan(IProbingOperationStore store, ILogger<ConfigurationProbePlan> logger, IServiceProvider services)
+    /// <param name="configuration"></param>
+    public ConfigurationProbePlan(IProbingOperationStore store, ILogger<ConfigurationProbePlan> logger, IServiceProvider services, IConfiguration configuration)
     {
+        _useLocalhost = configuration.GetValue<bool>("UseLocalhostForIPProbing");
+
         _handlers = new() {
             { typeof(SerialProbe), p => ProbeSerialAsync((SerialProbe)p) },
+            { typeof(IPProbe), p => ProbeTcpIpAsync((IPProbe)p) },
         };
 
         _logger = logger;

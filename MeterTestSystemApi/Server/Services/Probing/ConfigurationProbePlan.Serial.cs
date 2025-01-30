@@ -106,5 +106,4 @@ partial class ConfigurationProbePlan
             _logger.LogError("probe {Probe} failed: {Exception}", probe.ToString(), e.Message);
         }
     }
-
 }

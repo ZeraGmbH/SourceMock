@@ -12,17 +12,17 @@ partial class ConfigurationProbePlan
     private void AddStmProbes()
     {
         /* Check for contraint. */
-        var positionCount = _request.Configuration.TestPositions.Count;
+        var positionCount = (uint)_request.Configuration.TestPositions.Count;
 
         if (positionCount == 0) return;
 
         TestPositionConfiguration.AssertPosition(positionCount);
 
         /* Per test position probes - STM6000 and STM4000. */
-        for (var pos = 0; pos < positionCount;)
+        for (uint pos = 0; pos < positionCount;)
         {
             /* See if the position should be scanned. */
-            var config = _request.Configuration.TestPositions[pos++];
+            var config = _request.Configuration.TestPositions[(int)pos++];
 
             if (!config.Enabled) continue;
 
@@ -55,7 +55,9 @@ partial class ConfigurationProbePlan
                         _probes.Add(new IPProbe
                         {
                             Protocol = version,
-                            EndPoint = IPProtocolProvider.GetMadEndpoint(pos, type)
+                            EndPoint = IPProtocolProvider.GetMadEndpoint(pos, type),
+                            TestPosition = pos,
+                            ServerType = type
                         });
                     }
 
@@ -63,21 +65,27 @@ partial class ConfigurationProbePlan
                     _probes.Add(new IPProbe
                     {
                         Protocol = IPProbeProtocols.UpdateServer,
-                        EndPoint = IPProtocolProvider.GetUpdateEndpoint(pos, type)
+                        EndPoint = IPProtocolProvider.GetUpdateEndpoint(pos, type),
+                        TestPosition = pos,
+                        ServerType = type
                     });
 
                 if (config.EnableDirectDutConnection)
                     _probes.Add(new IPProbe
                     {
                         Protocol = IPProbeProtocols.COMServerDUT,
-                        EndPoint = IPProtocolProvider.GetDirectDutConnectionEndpoint(pos, type)
+                        EndPoint = IPProtocolProvider.GetDirectDutConnectionEndpoint(pos, type),
+                        TestPosition = pos,
+                        ServerType = type
                     });
 
                 if (config.EnableUART)
                     _probes.Add(new IPProbe
                     {
                         Protocol = IPProbeProtocols.COMServerUART,
-                        EndPoint = IPProtocolProvider.GetUARTEndpoint(pos, type)
+                        EndPoint = IPProtocolProvider.GetUARTEndpoint(pos, type),
+                        TestPosition = pos,
+                        ServerType = type
                     });
             }
 
@@ -88,28 +96,32 @@ partial class ConfigurationProbePlan
                 _probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.COMServerObjectAccess,
-                    EndPoint = IPProtocolProvider.GetObjectAccessEndpoint(pos, ServerTypes.STM6000)
+                    EndPoint = IPProtocolProvider.GetObjectAccessEndpoint(pos, ServerTypes.STM6000),
+                    TestPosition = pos
                 });
 
             if (config.EnableCOMServer)
                 _probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.COMServer,
-                    EndPoint = IPProtocolProvider.GetCOMServerEndpoint(pos, ServerTypes.STM6000)
+                    EndPoint = IPProtocolProvider.GetCOMServerEndpoint(pos, ServerTypes.STM6000),
+                    TestPosition = pos
                 });
 
             if (config.EnableSIMServer1)
                 _probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.SIMServer1,
-                    EndPoint = IPProtocolProvider.GetSIMServer1Endpoint(pos, ServerTypes.STM6000)
+                    EndPoint = IPProtocolProvider.GetSIMServer1Endpoint(pos, ServerTypes.STM6000),
+                    TestPosition = pos
                 });
 
             if (config.EnableBackendGateway)
                 _probes.Add(new IPProbe
                 {
                     Protocol = IPProbeProtocols.BackendGateway,
-                    EndPoint = IPProtocolProvider.GetBackendGatewayEndpoint(pos, ServerTypes.STM6000)
+                    EndPoint = IPProtocolProvider.GetBackendGatewayEndpoint(pos, ServerTypes.STM6000),
+                    TestPosition = pos
                 });
         }
     }

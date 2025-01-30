@@ -145,6 +145,7 @@ public static class MeterTestSystemApiConfiguration
         services.AddKeyedScoped<ISerialPortProbeExecutor, ZIFSerialPortProbing>(SerialProbeProtocols.PM8181);
 
         services.AddKeyedScoped<IProbeExecutor, ProbeHttp>(typeof(HttpProbe));
+        services.AddKeyedScoped<IHttpProbeExecutor, STMv1RestProbe>(IPProbeProtocols.MADServer1);
         services.AddKeyedScoped<IHttpProbeExecutor, WatchDogHttpProbe>(IPProbeProtocols.IPWatchdog);
 
         services.AddKeyedScoped<IProbeExecutor, ProbeIP>(typeof(IPProbe));

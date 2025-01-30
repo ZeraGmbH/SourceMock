@@ -35,6 +35,8 @@ public static class MeterTestSystemApiConfiguration
         /* Must add enumeration explicitly because it is only used as a dictionary key class. */
         SwaggerModelExtender
             .AddType<Amplifiers>()
+            .AddType<HttpProbe>()
+            .AddType<IPProbe>()
             .AddType<SerialProbe>()
             .AddType<SerialProbeOverTcp>()
             .Register(options);
@@ -130,12 +132,19 @@ public static class MeterTestSystemApiConfiguration
 
         /* Probing algorithms. */
         services.AddTransient<ISerialPortConnectionForProbing, SerialPortConnectionForProbing>();
+
         services.AddKeyedScoped<IProbeExecutor, ProbeSerialPort>(typeof(SerialProbe));
         services.AddKeyedScoped<IProbeExecutor, ProbeSerialPortOverTcp>(typeof(SerialProbeOverTcp));
         services.AddKeyedScoped<ISerialPortProbeExecutor, ESxBSerialPortProbing>(SerialProbeProtocols.ESxB);
         services.AddKeyedScoped<ISerialPortProbeExecutor, FGSerialPortProbing>(SerialProbeProtocols.FG30x);
         services.AddKeyedScoped<ISerialPortProbeExecutor, MTSerialPortProbing>(SerialProbeProtocols.MT768);
         services.AddKeyedScoped<ISerialPortProbeExecutor, ZIFSerialPortProbing>(SerialProbeProtocols.PM8181);
+
+        services.AddKeyedScoped<IProbeExecutor, ProbeHttp>(typeof(HttpProbe));
+        services.AddKeyedScoped<IHttpProbeExecutor, WatchDogHttpProbe>(IPProbeProtocols.IPWatchdog);
+
+        services.AddKeyedScoped<IProbeExecutor, ProbeIP>(typeof(IPProbe));
+        services.AddKeyedScoped<IIPProbeExecutor, WatchDogIPProbe>(IPProbeProtocols.IPWatchdog);
 
         if (configuration.GetValue<bool>("UseMeterTestSystemRestMock") == true)
             services.AddKeyedSingleton<IMeterTestSystem, FallbackMeteringSystem>(MeterTestSystemRestController.MockKey);

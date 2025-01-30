@@ -4,9 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace MeterTestSystemApi.Services;
 
 /// <summary>
-/// Describe a single IP probing.
+/// Describe a HTTP endpoint probing.
 /// </summary>
-public class IPProbe : Probe
+public class HttpProbe : Probe
 {
     /// <summary>
     /// Protocol to use.
@@ -18,7 +18,7 @@ public class IPProbe : Probe
     /// IP endpoint to use.
     /// </summary>
     [NotNull, Required]
-    public IPProbeEndPoint EndPoint { get; set; } = null!;
+    public string EndPoint { get; set; } = null!;
 
     /// <summary>
     /// Create a description for the probe.

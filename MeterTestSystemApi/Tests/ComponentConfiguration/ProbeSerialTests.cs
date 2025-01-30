@@ -1,4 +1,5 @@
-using MeterTestSystemApi.Actions.Probing;
+using MeterTestSystemApi.Actions.Probing.MTS;
+using MeterTestSystemApi.Actions.Probing.SerialPort;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using MeterTestSystemApi.Services;

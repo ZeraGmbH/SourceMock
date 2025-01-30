@@ -1,8 +1,9 @@
 using System.Text.RegularExpressions;
+using MeterTestSystemApi.Actions.Probing.SerialPort;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 
-namespace MeterTestSystemApi.Actions.Probing;
+namespace MeterTestSystemApi.Actions.Probing.MTS;
 
 /// <summary>
 /// Probe for a MT786/MT707/MT3000 connected to a serial port.

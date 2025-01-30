@@ -1,16 +1,16 @@
 using MeterTestSystemApi.Services;
 
-namespace MeterTestSystemApi.Actions.Probing;
+namespace MeterTestSystemApi.Actions.Probing.TcpIp;
 
 /// <summary>
 /// 
 /// </summary>
-public interface IHttpProbeExecutor
+public interface IIPProbeExecutor
 {
     /// <summary>
     /// Run a single probing algorithm.
     /// </summary>
-    /// <param name="probe">Connectiojn to use.</param>
+    /// <param name="probe">Connection to use.</param>
     /// <returns>Error message or empty.</returns>
-    Task<ProbeInfo> ExecuteAsync(HttpProbe probe);
+    Task<ProbeInfo> ExecuteAsync(IPProbe probe);
 }

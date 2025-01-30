@@ -8,7 +8,7 @@ using SourceApi.Model.Configuration;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
-namespace MeterTestSystemApi.Actions;
+namespace MeterTestSystemApi.Actions.Probing.SerialPort;
 
 /// <summary>
 /// 

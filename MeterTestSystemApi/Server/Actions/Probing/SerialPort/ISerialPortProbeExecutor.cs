@@ -1,6 +1,6 @@
 using SerialPortProxy;
 
-namespace MeterTestSystemApi.Actions.Probing;
+namespace MeterTestSystemApi.Actions.Probing.SerialPort;
 
 /// <summary>
 /// Interface fo rprobing over a serial port.

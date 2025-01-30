@@ -1,7 +1,7 @@
 using MeterTestSystemApi.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MeterTestSystemApi.Actions.Probing;
+namespace MeterTestSystemApi.Actions.Probing.TcpIp;
 
 /// <summary>
 /// 

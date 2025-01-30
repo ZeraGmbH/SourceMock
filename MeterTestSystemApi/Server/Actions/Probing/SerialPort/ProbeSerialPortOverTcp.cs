@@ -1,7 +1,7 @@
 using MeterTestSystemApi.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MeterTestSystemApi.Actions.Probing;
+namespace MeterTestSystemApi.Actions.Probing.SerialPort;
 
 /// <summary>
 /// Run probe request against a serial port connection 

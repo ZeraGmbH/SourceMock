@@ -1,7 +1,8 @@
+using MeterTestSystemApi.Actions.Probing.TcpIp;
 using MeterTestSystemApi.Services;
 using WatchDogApi.Models;
 
-namespace MeterTestSystemApi.Actions.Probing;
+namespace MeterTestSystemApi.Actions.Probing.WatchDog;
 
 /// <summary>
 /// 

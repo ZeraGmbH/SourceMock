@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 
-namespace MeterTestSystemApi.Actions.Probing;
+namespace MeterTestSystemApi.Actions.Probing.SerialPort;
 
 /// <summary>
 /// Default class to create serial ports for probing.

@@ -1,7 +1,10 @@
 using ErrorCalculatorApi.Actions.Device;
-using MeterTestSystemApi.Actions;
 using MeterTestSystemApi.Actions.Device;
-using MeterTestSystemApi.Actions.Probing;
+using MeterTestSystemApi.Actions.Probing.HTTP;
+using MeterTestSystemApi.Actions.Probing.MTS;
+using MeterTestSystemApi.Actions.Probing.SerialPort;
+using MeterTestSystemApi.Actions.Probing.TcpIp;
+using MeterTestSystemApi.Actions.Probing.WatchDog;
 using MeterTestSystemApi.Controllers;
 using MeterTestSystemApi.Models;
 using MeterTestSystemApi.Models.Configuration;

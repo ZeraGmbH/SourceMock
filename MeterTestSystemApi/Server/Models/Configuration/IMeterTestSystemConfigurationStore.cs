@@ -1,3 +1,5 @@
+using ZERA.WebSam.Shared.Models;
+
 namespace MeterTestSystemApi.Models.Configuration;
 
 /// <summary>
@@ -17,6 +19,19 @@ public interface IMeterTestSystemConfigurationStore
     /// <param name="config">New configuration.</param>
     /// <returns>New configuration as stored in the database.</returns>
     public Task<MeterTestSystemConfiguration> WriteAsync(MeterTestSystemConfiguration config);
+
+    /// <summary>
+    /// Get the history.
+    /// </summary>
+    /// <returns>History informnation of the item sorted by version descending - i.e. newest first.</returns>
+    Task<IEnumerable<HistoryInfo>> GetHistoryAsync();
+
+    /// <summary>
+    /// Retrieve a specific version.
+    /// </summary>
+    /// <param name="version">The version number to look up - starting with 1.</param>
+    /// <returns>The item in the indicated version</returns>
+    Task<MeterTestSystemConfiguration> GetHistoryItemAsync(long version);
 
     /// <summary>
     /// Startt probing mode.

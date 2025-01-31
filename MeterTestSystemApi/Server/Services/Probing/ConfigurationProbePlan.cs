@@ -1,6 +1,8 @@
+using BarcodeApi.Actions;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace MeterTestSystemApi.Services.Probing;
@@ -35,13 +37,15 @@ public partial class ConfigurationProbePlan : IConfigurationProbePlan
     /// <param name="logger"></param>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
-    public ConfigurationProbePlan(IProbingOperationStore store, ILogger<ConfigurationProbePlan> logger, IServiceProvider services, IConfiguration configuration)
+    public ConfigurationProbePlan(
+        IProbingOperationStore store, ILogger<ConfigurationProbePlan> logger, IServiceProvider services, IConfiguration configuration)
     {
         _useLocalhost = configuration.GetValue<bool>("UseLocalhostForIPProbing");
 
         _handlers = new() {
             { typeof(SerialProbe), p => ProbeSerialAsync((SerialProbe)p) },
             { typeof(IPProbe), p => ProbeTcpIpAsync((IPProbe)p) },
+            { typeof(HIDProbe), p => ProbeHidAsync((HIDProbe)p) },
         };
 
         _logger = logger;

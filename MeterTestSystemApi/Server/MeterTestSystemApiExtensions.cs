@@ -1,11 +1,15 @@
 using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Actions.Device;
+using MeterTestSystemApi.Actions.Probing.Barcode;
+using MeterTestSystemApi.Actions.Probing.ESxB;
+using MeterTestSystemApi.Actions.Probing.HID;
 using MeterTestSystemApi.Actions.Probing.HTTP;
 using MeterTestSystemApi.Actions.Probing.KoaLa;
 using MeterTestSystemApi.Actions.Probing.MTS;
 using MeterTestSystemApi.Actions.Probing.SerialPort;
 using MeterTestSystemApi.Actions.Probing.TcpIp;
 using MeterTestSystemApi.Actions.Probing.WatchDog;
+using MeterTestSystemApi.Actions.Probing.ZIF;
 using MeterTestSystemApi.Controllers;
 using MeterTestSystemApi.Models;
 using MeterTestSystemApi.Models.Configuration;
@@ -151,6 +155,9 @@ public static class MeterTestSystemApiConfiguration
         services.AddKeyedScoped<IProbeExecutor, ProbeIP>(typeof(IPProbe));
         services.AddKeyedScoped<IIPProbeExecutor, STMv1IPProbe>(IPProbeProtocols.MADServer1);
         services.AddKeyedScoped<IIPProbeExecutor, WatchDogIPProbe>(IPProbeProtocols.IPWatchdog);
+
+        services.AddKeyedScoped<IProbeExecutor, ProbeHID>(typeof(HIDProbe));
+        services.AddKeyedScoped<IHidProbeExecutor, HIDBarcodeProbing>(HIDProbeProtocols.Barcode);
 
         if (configuration.GetValue<bool>("UseMeterTestSystemRestMock") == true)
             services.AddKeyedSingleton<IMeterTestSystem, FallbackMeteringSystem>(MeterTestSystemRestController.MockKey);

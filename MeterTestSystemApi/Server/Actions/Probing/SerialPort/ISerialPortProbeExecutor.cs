@@ -3,7 +3,7 @@ using SerialPortProxy;
 namespace MeterTestSystemApi.Actions.Probing.SerialPort;
 
 /// <summary>
-/// Interface fo rprobing over a serial port.
+/// Interface for probing over a serial port.
 /// </summary>
 public interface ISerialPortProbeExecutor
 {
@@ -21,7 +21,7 @@ public interface ISerialPortProbeExecutor
     /// <summary>
     /// Run a single probing algorithm.
     /// </summary>
-    /// <param name="connection">Connectiojn to use.</param>
+    /// <param name="connection">Connection to use.</param>
     /// <returns>Error message or empty.</returns>
     Task<ProbeInfo> ExecuteAsync(ISerialPortConnection connection);
 }

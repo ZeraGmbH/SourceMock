@@ -1,5 +1,7 @@
+using MeterTestSystemApi.Actions.Probing.ESxB;
 using MeterTestSystemApi.Actions.Probing.MTS;
 using MeterTestSystemApi.Actions.Probing.SerialPort;
+using MeterTestSystemApi.Actions.Probing.ZIF;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using MeterTestSystemApi.Services;

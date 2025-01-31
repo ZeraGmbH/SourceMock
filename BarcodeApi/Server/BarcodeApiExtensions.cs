@@ -29,7 +29,7 @@ public static class BarcodeApiConfiguration
     /// <param name="configuration">Current web server configuration.</param>
     public static void UseBarcodeApi(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddTransient<IInputDeviceManager, InputDeviceManager>();
+        services.AddScoped<IInputDeviceManager, InputDeviceManager>();
 
         services.AddTransient<BarcodeReaderMock, BarcodeReaderMock>();
 

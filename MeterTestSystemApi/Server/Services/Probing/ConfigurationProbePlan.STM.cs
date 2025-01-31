@@ -6,7 +6,7 @@ namespace MeterTestSystemApi.Services.Probing;
 
 partial class ConfigurationProbePlan
 {
-    private static readonly ServerTypes[] STMServerTypes = [ServerTypes.STM4000, ServerTypes.STM6000];
+    private static readonly ServerTypes[] STMServerTypes = [ServerTypes.STM6000, ServerTypes.STM4000];
 
     private static readonly IPProbeProtocols[] MADVersions = [IPProbeProtocols.MADServer2, IPProbeProtocols.MADServer1];
     private void AddStmProbes()

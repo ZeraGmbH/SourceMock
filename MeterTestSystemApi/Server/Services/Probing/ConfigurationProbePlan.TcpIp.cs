@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using System.Security.AccessControl;
 using ErrorCalculatorApi.Models;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
@@ -87,6 +87,14 @@ partial class ConfigurationProbePlan
                 return;
             }
 
+            /* Global services. */
+            switch (probe.Protocol)
+            {
+                case IPProbeProtocols.IPWatchdog:
+                    _result.Configuration.EnableIPWatchDog = true;
+                    break;
+            }
+
             /* Not attached to a position. */
             var pos = (int)(probe.TestPosition ?? 0);
 
@@ -97,10 +105,25 @@ partial class ConfigurationProbePlan
 
             while (positions.Count <= pos) positions.Add(new());
 
+            /* STM needs some special considerations. */
+            if (probe.ServerType.HasValue)
+                foreach (var other in _probes)
+                    if (other is IPProbe otherIp && otherIp.TestPosition == probe.TestPosition && otherIp.Result == ProbeResult.Planned)
+                        if (otherIp.ServerType.HasValue && otherIp.ServerType != probe.ServerType)
+                            otherIp.Result = ProbeResult.Skipped;
+
+            /* MAD needs some special considerations. */
+            if (probe.Protocol == IPProbeProtocols.MADServer1 || probe.Protocol == IPProbeProtocols.MADServer2)
+                foreach (var other in _probes)
+                    if (other is IPProbe otherIp && otherIp.TestPosition == probe.TestPosition && otherIp.Result == ProbeResult.Planned)
+                        if (otherIp.Protocol != probe.Protocol)
+                            otherIp.Result = ProbeResult.Skipped;
+
             /* Register the probing result. */
             switch (probe.Protocol)
             {
                 case IPProbeProtocols.MADServer1:
+                case IPProbeProtocols.MADServer2:
                     positions[pos].EnableMAD = true;
                     positions[pos].MadProtocol = ErrorCalculatorProtocols.MAD_1;
                     positions[pos].STMServer = probe.ServerType ?? ServerTypes.STM6000;

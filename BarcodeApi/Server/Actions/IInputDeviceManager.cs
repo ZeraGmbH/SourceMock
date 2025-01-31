@@ -11,7 +11,7 @@ public interface IInputDeviceManager
     /// <summary>
     /// Ask system for current list of input devices.
     /// </summary>    /// <returns></returns>
-    Task<List<IInputDevice>> LoadAsync();
+    Task<List<IInputDevice>> GetAsync();
 }
 
 /// <summary>
@@ -68,9 +68,9 @@ public static class IInputDeviceManagerExtensions
     /// </summary>
     /// <param name="manager">Device manager to use.</param>
     /// <returns>Any device looking like a keyboard.</returns>
-    public static async Task<List<IInputDevice>> LoadKeyboardHIDDevices(this IInputDeviceManager manager)
+    public static async Task<List<IInputDevice>> GetKeyboardHIDDevices(this IInputDeviceManager manager)
     {
-        var all = await manager.LoadAsync();
+        var all = await manager.GetAsync();
 
         return [..all.Where(a => {
             var handlers = a.GetList("Handlers");
@@ -88,9 +88,9 @@ public static class IInputDeviceManagerExtensions
     /// <param name="manager">Device manager to use.</param>
     /// <param name="firstEvent">First event to check for.</param>
     /// <returns>Any device looking like a barcode keyboard.</returns>
-    public static async Task<List<IInputDevice>> LoadHIDBarcodeCandidateDevices(this IInputDeviceManager manager, int firstEvent)
+    public static async Task<List<IInputDevice>> GetHIDBarcodeCandidateDevices(this IInputDeviceManager manager, int firstEvent)
     {
-        var all = await manager.LoadKeyboardHIDDevices();
+        var all = await manager.GetKeyboardHIDDevices();
 
         return [..all.Where(a => {
             /* Only respect connected devivces .*/

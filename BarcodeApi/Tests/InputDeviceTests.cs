@@ -45,7 +45,7 @@ public class InputDeviceTests
     [Test]
     public async Task Can_Read_All_Devices_Async()
     {
-        var list = await Devices.LoadAsync();
+        var list = await Devices.GetAsync();
 
         Assert.That(list, Has.Count.EqualTo(27));
     }
@@ -53,7 +53,7 @@ public class InputDeviceTests
     [Test]
     public async Task Can_Read_All_Keyboard_HID_Devices_Async()
     {
-        var list = await Devices.LoadKeyboardHIDDevices();
+        var list = await Devices.GetKeyboardHIDDevices();
 
         Assert.That(list, Has.Count.EqualTo(15));
     }
@@ -61,7 +61,7 @@ public class InputDeviceTests
     [Test]
     public async Task Can_Read_All_Barcode_Candidate_Devices_Async()
     {
-        var list = await Devices.LoadHIDBarcodeCandidateDevices(20);
+        var list = await Devices.GetHIDBarcodeCandidateDevices(20);
 
         Assert.That(list, Has.Count.EqualTo(2));
 

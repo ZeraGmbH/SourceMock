@@ -112,8 +112,18 @@ public class InputDeviceManager(ILogger<InputDeviceManager> logger, InputDeviceM
         public ulong[]? GetBits(string key) => _Binaries.TryGetValue(key, out var value) ? [.. value] : null;
     }
 
+    private readonly object _sync = new();
+
+    private Task<List<IInputDevice>>? _loader;
+
     /// <inheritdoc/>
-    public async Task<List<IInputDevice>> LoadAsync()
+    public Task<List<IInputDevice>> GetAsync()
+    {
+        lock (_sync)
+            return _loader ??= LoadAsync();
+    }
+
+    private async Task<List<IInputDevice>> LoadAsync()
     {
         var devices = new List<IInputDevice>();
 

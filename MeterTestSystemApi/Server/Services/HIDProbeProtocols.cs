@@ -10,7 +10,7 @@ namespace MeterTestSystemApi.Services;
 public enum HIDProbeProtocols
 {
     /// <summary>
-    /// Keyboard, e.g. used for a barcode reader.
+    /// Barcode reader.
     /// </summary>
-    Keyboard = 0,
+    Barcode = 0,
 }

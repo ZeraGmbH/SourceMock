@@ -10,15 +10,18 @@ namespace MeterTestSystemApi.Actions.Probing.WatchDog;
 public class WatchDogIPProbe(IWatchDogExecuter executor) : IIPProbeExecutor
 {
     /// <inheritdoc/>
-    public Task<ProbeInfo> ExecuteAsync(IPProbe probe)
+    public async Task<ProbeInfo> ExecuteAsync(IPProbe probe)
     {
         try
         {
-            throw new NotImplementedException("will eventually be implemented");
+            var uri = $"http://{probe.EndPoint}/cgi-bin/refreshpage1.asp";
+            var avail = await executor.QueryWatchDogAsync(uri);
+
+            return new() { Succeeded = avail, Message = avail ? "WatchDog available" : "Bad Response from WatchDog" };
         }
         catch (Exception e)
         {
-            return Task.FromResult(new ProbeInfo { Succeeded = false, Message = e.Message });
+            return new ProbeInfo { Succeeded = false, Message = e.Message };
         }
     }
 }

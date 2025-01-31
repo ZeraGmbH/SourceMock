@@ -455,12 +455,8 @@ public class ProbeTests
         await StartProbeAsync(new ProbeConfigurationRequest()
         {
             Configuration = { BarcodeReader = 0 },
-            HIDEvents = {
-                false,
-                true,
-                false,
-                true
-            }
+            HIDEventCount = 2,
+            MinHIDEvent = 7,
         });
 
         Assert.That(LatestResult.Log, Has.Count.EqualTo(2));

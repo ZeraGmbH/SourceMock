@@ -1,3 +1,4 @@
+using BarcodeApi.Actions;
 using BarcodeApi.Actions.Device;
 using BarcodeApi.Models;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +29,8 @@ public static class BarcodeApiConfiguration
     /// <param name="configuration">Current web server configuration.</param>
     public static void UseBarcodeApi(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddTransient<IInputDeviceManager, InputDeviceManager>();
+
         services.AddTransient<BarcodeReaderMock, BarcodeReaderMock>();
 
         services.AddSingleton<IBarcodeReaderFactory>((di) =>

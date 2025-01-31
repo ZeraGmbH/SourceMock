@@ -1,19 +1,24 @@
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+
 namespace MeterTestSystemApi.Services;
 
 /// <summary>
 /// Describe a HID probing.
 /// </summary>
-internal class HIDProbe : Probe
+public class HIDProbe : Probe
 {
     /// <summary>
     /// Protocol to use.
     /// </summary>
-    public required HIDProbeProtocols Protocol { get; set; }
+    [NotNull, Required]
+    public HIDProbeProtocols Protocol { get; set; }
 
     /// <summary>
     /// Device to use.
     /// </summary>
-    public required uint Index { get; set; }
+    [NotNull, Required]
+    public uint Index { get; set; }
 
     /// <summary>
     /// Create a description for the probe.

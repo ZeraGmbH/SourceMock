@@ -22,10 +22,16 @@ public class ProbeConfigurationRequest
     public List<List<SerialPortTypes>> SerialPorts { get; set; } = [];
 
     /// <summary>
-    /// HID events to scan.
+    /// Minimum index of HID event devices to respect.
     /// </summary>
     [NotNull, Required]
-    public List<bool> HIDEvents { get; set; } = [];
+    public uint MinHIDEvent { get; set; }
+
+    /// <summary>
+    /// Number of HID event devices to respect.
+    /// </summary>
+    [NotNull, Required]
+    public uint HIDEventCount { get; set; }
 
     /// <summary>
     /// If set the system configuration will not be modified.

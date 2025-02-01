@@ -1,8 +1,6 @@
-using BarcodeApi.Actions;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace MeterTestSystemApi.Services.Probing;
@@ -79,10 +77,12 @@ public partial class ConfigurationProbePlan : IConfigurationProbePlan
     });
 
     /// <inheritdoc/>
-    public async Task FinishProbeAsync(CancellationToken cancel)
+    public async Task<ProbingOperation> FinishProbeAsync(CancellationToken cancel)
     {
         foreach (var probe in _probes)
         {
+            cancel.ThrowIfCancellationRequested();
+
             if (_handlers.TryGetValue(probe.GetType(), out var handlerAsync))
                 await handlerAsync(probe);
 
@@ -91,6 +91,6 @@ public partial class ConfigurationProbePlan : IConfigurationProbePlan
 
         _operation.Finished = DateTime.UtcNow;
 
-        await _store.UpdateAsync(_operation);
+        return await _store.UpdateAsync(_operation);
     }
 }

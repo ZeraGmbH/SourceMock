@@ -11,7 +11,7 @@ public interface IMeterTestSystemConfigurationStore
     /// Read the current configuration.
     /// </summary>
     /// <returns>Current configuration.</returns>
-    public Task<MeterTestSystemConfiguration> ReadAsync();
+    public Task<MeterTestSystemConfiguration> ReadAsync(bool ignoreProbing = false);
 
     /// <summary>
     /// Write a new configuration.

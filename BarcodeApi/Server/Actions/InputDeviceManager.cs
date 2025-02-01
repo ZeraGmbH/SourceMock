@@ -1,6 +1,4 @@
 using System.Text.RegularExpressions;
-using Castle.Core.Logging;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Logging;
 
 namespace BarcodeApi.Actions;

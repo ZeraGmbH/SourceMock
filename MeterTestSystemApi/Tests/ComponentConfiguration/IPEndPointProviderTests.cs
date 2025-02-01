@@ -1,4 +1,3 @@
-using System.Net;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using MeterTestSystemApi.Services;
 

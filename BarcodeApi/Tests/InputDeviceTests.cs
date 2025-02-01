@@ -2,7 +2,6 @@ using System.Reflection;
 using BarcodeApi.Actions;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using NUnit.Framework.Constraints;
 
 namespace BarcodeApiTests;
 

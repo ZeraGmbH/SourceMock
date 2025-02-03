@@ -65,12 +65,11 @@ public class CustomSerialPortFactory(IServiceProvider services, ILogger<CustomSe
                     try
                     {
                         var log = services.GetRequiredService<ILogger<SerialPortConnection>>();
-                        var cancel = services.GetService<ICancellationService>();
 
                         var port = config.ConfigurationType switch
                         {
-                            SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, log, cancel: cancel),
-                            SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint!, log, cancel: cancel),
+                            SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, log),
+                            SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint!, log),
                             _ => throw new NotSupportedException($"Unknown serial port configuration type {config.ConfigurationType}"),
                         };
 

@@ -16,8 +16,7 @@ namespace ErrorCalculatorApi.Actions.Device.MAD;
 /// MAD communication using a TCP channel.
 /// </summary>
 /// <param name="logger">Logging helper.</param>
-/// <param name="cancel"></param>
-public class MadTcpConnection(ILogger<MadTcpConnection> logger, ICancellationService? cancel = null) : IMadConnection
+public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
 {
     /// <summary>
     /// Convert endpoint from string to server name and port.
@@ -231,7 +230,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger, ICancellationSer
                             if (DateTime.UtcNow >= end)
                                 throw new TimeoutException("no reply from error calculator");
                             else
-                                cancel?.ThrowIfCancellationRequested();
+                                logger.Cancellation?.ThrowIfCancellationRequested();
 
                     response = _response;
                 }

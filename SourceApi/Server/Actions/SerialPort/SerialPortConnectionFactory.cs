@@ -22,7 +22,7 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
         class Executor : ISerialPortConnectionExecutor
         {
             public Task<string[]>[] ExecuteAsync(IInterfaceLogger logger, params SerialPortRequest[] requests) =>
-                requests.Select(r => Task.FromException<string[]>(new NotSupportedException())).ToArray();
+                [.. requests.Select(r => Task.FromException<string[]>(new NotSupportedException()))];
 
             public Task<T> RawExecuteAsync<T>(IInterfaceLogger logger, Func<ISerialPort, IInterfaceConnection, ICancellationService?, T> algorithm)
                 => Task.FromException<T>(new NotSupportedException());
@@ -79,10 +79,10 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
                         switch (settings.ConfigurationType)
                         {
                             case SerialPortConfigurationTypes.Network:
-                                _connection = SerialPortConnection.FromNetwork(settings.Endpoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>(), cancel: services.GetService<ICancellationService>());
+                                _connection = SerialPortConnection.FromNetwork(settings.Endpoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
                                 break;
                             case SerialPortConfigurationTypes.Device:
-                                _connection = SerialPortConnection.FromSerialPort(settings.Endpoint!, settings.SerialPortOptions, services.GetRequiredService<ILogger<ISerialPortConnection>>(), cancel: services.GetService<ICancellationService>());
+                                _connection = SerialPortConnection.FromSerialPort(settings.Endpoint!, settings.SerialPortOptions, services.GetRequiredService<ILogger<ISerialPortConnection>>());
                                 break;
                         }
                     else if (type == MeterTestSystemTypes.MT786 || type == MeterTestSystemTypes.FG30x)
@@ -92,18 +92,18 @@ public class SerialPortConnectionFactory(IServiceProvider services, ILogger<Seri
                                 switch (type)
                                 {
                                     case MeterTestSystemTypes.FG30x:
-                                        _connection = SerialPortConnection.FromMock<SerialPortFGMock>(services.GetRequiredService<ILogger<ISerialPortConnection>>(), cancel: services.GetService<ICancellationService>());
+                                        _connection = SerialPortConnection.FromMock<SerialPortFGMock>(services.GetRequiredService<ILogger<ISerialPortConnection>>());
                                         break;
                                     case MeterTestSystemTypes.MT786:
-                                        _connection = SerialPortConnection.FromMock<SerialPortMTMock>(services.GetRequiredService<ILogger<ISerialPortConnection>>(), cancel: services.GetService<ICancellationService>());
+                                        _connection = SerialPortConnection.FromMock<SerialPortMTMock>(services.GetRequiredService<ILogger<ISerialPortConnection>>());
                                         break;
                                 }
                                 break;
                             case SerialPortConfigurationTypes.Network:
-                                _connection = SerialPortConnection.FromNetwork(settings.Endpoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>(), cancel: services.GetService<ICancellationService>());
+                                _connection = SerialPortConnection.FromNetwork(settings.Endpoint!, services.GetRequiredService<ILogger<ISerialPortConnection>>());
                                 break;
                             case SerialPortConfigurationTypes.Device:
-                                _connection = SerialPortConnection.FromSerialPort(settings.Endpoint!, settings.SerialPortOptions, services.GetRequiredService<ILogger<ISerialPortConnection>>(), cancel: services.GetService<ICancellationService>());
+                                _connection = SerialPortConnection.FromSerialPort(settings.Endpoint!, settings.SerialPortOptions, services.GetRequiredService<ILogger<ISerialPortConnection>>());
                                 break;
                         }
             }

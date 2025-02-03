@@ -38,7 +38,7 @@ public partial class SerialPortConnection
         }
     }
 
-    private Task<T> ExecuteAsync<T>(IInterfaceConnection connection, Func<ISerialPort, IInterfaceConnection, ICancellationService?, T> algorithm)
+    private Task<T> ExecuteAsync<T>(IInterfaceConnection connection, ICancellationService? cancel, Func<ISerialPort, IInterfaceConnection, ICancellationService?, T> algorithm)
     {
         ArgumentNullException.ThrowIfNull(algorithm, nameof(algorithm));
 
@@ -46,7 +46,7 @@ public partial class SerialPortConnection
         lock (_queue)
         {
             /* Queue is locked, we have exclusive access and can now safely add the entry. */
-            var item = new ExclusiveAccessItem<T>(algorithm, _cancel, connection);
+            var item = new ExclusiveAccessItem<T>(algorithm, cancel, connection);
 
             _queue.Enqueue(item);
 

@@ -2,7 +2,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using SourceApi.Model.Configuration;
-using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZIFApi.Models;
 
@@ -102,7 +101,6 @@ public class ZIFDevicesFactory(IServiceProvider services, ILogger<ZIFDevicesFact
                             var config = socket.SerialPort!;
 
                             var log = services.GetRequiredService<ILogger<SerialPortConnection>>();
-                            var cancel = services.GetService<ICancellationService>();
 
                             var protocol = services.GetRequiredKeyedService<IZIFProtocol>(socket.Type);
 
@@ -111,9 +109,9 @@ public class ZIFDevicesFactory(IServiceProvider services, ILogger<ZIFDevicesFact
 
                             var port = config.ConfigurationType switch
                             {
-                                SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, log, false, cancel: cancel),
-                                SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint!, log, false, cancel: cancel),
-                                SerialPortConfigurationTypes.Mock => SerialPortConnection.FromMockedPortInstance(services.GetRequiredKeyedService<ISerialPort>(socket.Type), log, false, cancel: cancel),
+                                SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, log, false),
+                                SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint!, log, false),
+                                SerialPortConfigurationTypes.Mock => SerialPortConnection.FromMockedPortInstance(services.GetRequiredKeyedService<ISerialPort>(socket.Type), log, false),
                                 _ => throw new NotSupportedException($"Unknown serial port configuration type {config.ConfigurationType}"),
                             };
 

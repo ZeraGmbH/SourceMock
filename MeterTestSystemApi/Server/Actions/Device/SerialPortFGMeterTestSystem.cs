@@ -368,13 +368,12 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
                     if (config == null) break;
 
                     var portLogger = _services.GetRequiredService<ILogger<SerialPortConnection>>();
-                    var cancel = _services.GetService<ICancellationService>();
 
                     var connection = config.ConfigurationType switch
                     {
-                        SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, portLogger, cancel: cancel),
-                        SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint!, portLogger, cancel: cancel),
-                        SerialPortConfigurationTypes.Mock => SerialPortConnection.FromMock<SerialPortMTMock>(portLogger, cancel: cancel),
+                        SerialPortConfigurationTypes.Device => SerialPortConnection.FromSerialPort(config.Endpoint!, config.SerialPortOptions, portLogger),
+                        SerialPortConfigurationTypes.Network => SerialPortConnection.FromNetwork(config.Endpoint!, portLogger),
+                        SerialPortConfigurationTypes.Mock => SerialPortConnection.FromMock<SerialPortMTMock>(portLogger),
                         _ => throw new NotSupportedException($"Unknown serial port configuration type {config.ConfigurationType}"),
                     };
 

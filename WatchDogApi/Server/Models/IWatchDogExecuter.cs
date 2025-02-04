@@ -10,6 +10,14 @@ namespace WatchDogApi.Models
         /// </summary>
         /// <param name="endpoint">full http endpoint of watchdog</param>
         /// <returns>success</returns>
-        Task<bool> QueryWatchDogAsync(string endpoint);
+        Task<bool> QueryWatchDogSingleEndpointAsync(string endpoint);
+
+        /// <summary>
+        /// Get the list of endpoints to be queried for a specific ip
+        /// </summary>
+        /// <param name="ip">IP Address of watchDog</param>
+        /// <param name="channelCount">Amount of channels to request</param>
+        /// <returns>List of endpoints</returns>
+        List<string> BuildHttpEndpointList(string ip, int channelCount);
     }
 }

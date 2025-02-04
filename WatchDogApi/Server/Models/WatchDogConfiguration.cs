@@ -20,4 +20,11 @@ public class WatchDogConfiguration
     [BsonElement("interval")]
     [Range(1000, 3600 * 1000)]
     public int? Interval { get; set; }
+
+    /// <summary>
+    /// Channel count of watchDog
+    /// </summary>
+    [BsonElement("channelCount")]
+    [Range(1, 10)]
+    public int? ChannelCount { get; set; }
 }

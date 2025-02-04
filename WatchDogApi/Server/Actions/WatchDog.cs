@@ -94,12 +94,17 @@ public class WatchDog : IWatchDog
 
             try
             {
-                sendInfo.Payload = "URL: " + config.EndPoint;
+                sendInfo.Payload = "IP: " + config.EndPoint;
 
                 sendEntry.Finish(sendInfo);
 
-                if (!await _watchdogExecuter.QueryWatchDogAsync(config.EndPoint!))
-                    throw new InvalidOperationException("Site reachable, but is not WatchDog!");
+                List<string> endpointAddresses = _watchdogExecuter.BuildHttpEndpointList(config.EndPoint!, config.ChannelCount ?? 2);
+
+                foreach (var endpoint in endpointAddresses)
+                {
+                    if (!await _watchdogExecuter.QueryWatchDogSingleEndpointAsync(endpoint))
+                        throw new InvalidOperationException("Site reachable, but is not WatchDog! URL: " + endpoint);
+                }
 
                 receiveInfo.Payload = "WatchDog Polled.";
             }

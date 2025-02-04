@@ -14,8 +14,8 @@ public class WatchDogIPProbe(IWatchDogExecuter executor) : IIPProbeExecutor
     {
         try
         {
-            var uri = $"http://{probe.EndPoint.Server}:{probe.EndPoint.Port}/cgi-bin/refreshpage1.asp";
-            var avail = await executor.QueryWatchDogAsync(uri);
+            var uri = executor.BuildHttpEndpointList($"{probe.EndPoint.Server}:{probe.EndPoint.Port}", 2)[0];
+            var avail = await executor.QueryWatchDogSingleEndpointAsync(uri);
 
             return new() { Succeeded = avail, Message = avail ? "WatchDog available" : "Bad Response from WatchDog" };
         }

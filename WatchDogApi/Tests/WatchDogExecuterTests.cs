@@ -66,14 +66,14 @@ public class WatchDogExecuterTests
     [Test]
     public async Task Fails_On_Querying_Wrong_Address()
     {
-        var result = await _watchdog.QueryWatchDogAsync("/foo");
+        var result = await _watchdog.QueryWatchDogSingleEndpointAsync("/foo");
 
         Assert.That(!result);
     }
     [Test]
     public async Task Fails_On_Querying_Wrong_Response()
     {
-        var result = await _watchdog.QueryWatchDogAsync("/not-a-watchdog.asp");
+        var result = await _watchdog.QueryWatchDogSingleEndpointAsync("/not-a-watchdog.asp");
 
         Assert.That(!result);
     }
@@ -81,7 +81,7 @@ public class WatchDogExecuterTests
     [Test]
     public async Task Can_Successfully_Query_Server()
     {
-        var result = await _watchdog.QueryWatchDogAsync("/watchdogTest.asp");
+        var result = await _watchdog.QueryWatchDogSingleEndpointAsync("/watchdogTest.asp");
 
         Assert.That(result);
     }
@@ -89,7 +89,18 @@ public class WatchDogExecuterTests
     [Test]
     public void Query_Non_Existant_Server()
     {
-        Assert.ThrowsAsync<HttpRequestException>(async () => await _watchdog.QueryWatchDogAsync("http://localhost:0"));
+        Assert.ThrowsAsync<HttpRequestException>(async () => await _watchdog.QueryWatchDogSingleEndpointAsync("http://localhost:0"));
+    }
+
+    [Test]
+    public void Can_Build_Endpoint_List()
+    {
+        var result = _watchdog.BuildHttpEndpointList("127.0.0.1", 2);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0], Is.EqualTo("http://127.0.0.1/cgi-bin/refreshpage1.asp"));
+            Assert.That(result[1], Is.EqualTo("http://127.0.0.1/cgi-bin/refreshpage2.asp"));
+        });
     }
 }
 

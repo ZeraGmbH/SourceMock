@@ -37,12 +37,17 @@ public class WatchDogTests
         {
             app.Run(async context =>
             {
-                if (context.Request.Path == "/watchdogTest.asp")
+                if (context.Request.Path == "/cgi-bin/refreshpage1.asp")
                 {
                     context.Response.ContentType = "text/html";
                     await context.Response.WriteAsync("<HTML><HEAD><TITLE>IP-WatchDog: ResetPage</TITLE></HEAD><BODY><B>ResetPage[3]</B><br>Page for method: OutgoingHTML page<br>Reset timer for IP addr: 192.168.32.16<br>Your IP address: 192.168.32.1<br></BODY></HTML>");
                 }
-                else if (context.Request.Path == "/not-a-watchdog.asp")
+                else if (context.Request.Path == "/cgi-bin/refreshpage2.asp")
+                {
+                    context.Response.ContentType = "text/html";
+                    await context.Response.WriteAsync("<HTML><HEAD><TITLE>IP-WatchDog: ResetPage</TITLE></HEAD><BODY><B>ResetPage[3]</B><br>Page for method: OutgoingHTML page<br>Reset timer for IP addr: 192.168.32.16<br>Your IP address: 192.168.32.1<br></BODY></HTML>");
+                }
+                else if (context.Request.Path == "/not-a-watchdog/cgi-bin/refreshpage1.asp")
                 {
                     context.Response.ContentType = "text/html";
                     await context.Response.WriteAsync("<html>You shall not pass!</html>");
@@ -94,7 +99,7 @@ public class WatchDogTests
     [Test, MaxTime(5000)]
     public async Task Can_Query_watchdog()
     {
-        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "/watchdogTest.asp" });
+        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "127.0.0.1" });
 
         _watchdog = _services.GetRequiredService<IWatchDogFactory>().WatchDog!;
 
@@ -110,7 +115,7 @@ public class WatchDogTests
     [Test, MaxTime(5000)]
     public async Task Fail_On_Connection_Refused()
     {
-        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "http://localhost:0" });
+        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "127.0.0.1:0" });
 
         _watchdog = _services.GetRequiredService<IWatchDogFactory>().WatchDog!;
 
@@ -126,7 +131,7 @@ public class WatchDogTests
     [Test, MaxTime(5000)]
     public async Task Fail_On_404()
     {
-        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "/foo" });
+        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "127.0.0.1/foo" });
 
         _watchdog = _services.GetRequiredService<IWatchDogFactory>().WatchDog!;
 
@@ -142,7 +147,7 @@ public class WatchDogTests
     [Test, MaxTime(5000)]
     public async Task Fail_On_Wrong_Path()
     {
-        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "/not-a-watchdog.asp" });
+        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "127.0.0.1/not-a-watchdog" });
 
         _watchdog = _services.GetRequiredService<IWatchDogFactory>().WatchDog!;
 
@@ -158,7 +163,7 @@ public class WatchDogTests
     [Test, MaxTime(10000)]
     public async Task Can_Change_Config_Endpoint_During_Runtime()
     {
-        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "/not-a-watchdog.asp" });
+        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "127.0.0.1/not-a-watchdog" });
 
         _watchdog = _services.GetRequiredService<IWatchDogFactory>().WatchDog!;
 
@@ -173,7 +178,7 @@ public class WatchDogTests
         _payloads.Clear();
         _accessCounter = new TaskCompletionSource();
 
-        _watchdog.SetConfig(new WatchDogConfiguration { EndPoint = "/watchdogTest.asp" });
+        _watchdog.SetConfig(new WatchDogConfiguration { EndPoint = "127.0.0.1" });
 
         await _accessCounter.Task;
 
@@ -187,7 +192,7 @@ public class WatchDogTests
     [Test, MaxTime(11000)]
     public async Task Can_Silence_Watchdog()
     {
-        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "/not-a-watchdog.asp", Interval = 1500 });
+        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "127.0.0.1/not-a-watchdog", Interval = 1500 });
 
         _watchdog = _services.GetRequiredService<IWatchDogFactory>().WatchDog!;
 
@@ -208,7 +213,7 @@ public class WatchDogTests
 
         Assert.That(_payloads.Count == 0);
 
-        _watchdog.SetConfig(new WatchDogConfiguration { EndPoint = "/watchdogTest.asp" });
+        _watchdog.SetConfig(new WatchDogConfiguration { EndPoint = "127.0.0.1" });
 
         await _accessCounter.Task;
 
@@ -222,7 +227,7 @@ public class WatchDogTests
     [Test, MaxTime(15000)]
     public async Task Can_Configure_Interval()
     {
-        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "/not-a-watchdog.asp" });
+        _services.GetRequiredService<IWatchDogFactory>().Initialize(new WatchDogConfiguration { EndPoint = "127.0.0.1/not-a-watchdog" });
 
         _watchdog = _services.GetRequiredService<IWatchDogFactory>().WatchDog!;
 
@@ -237,7 +242,7 @@ public class WatchDogTests
         _payloads.Clear();
         _accessCounter = new TaskCompletionSource();
 
-        _watchdog.SetConfig(new WatchDogConfiguration { EndPoint = "/watchdogTest.asp", Interval = 1500 });
+        _watchdog.SetConfig(new WatchDogConfiguration { EndPoint = "127.0.0.1", Interval = 1500 });
 
         await _accessCounter.Task;
 

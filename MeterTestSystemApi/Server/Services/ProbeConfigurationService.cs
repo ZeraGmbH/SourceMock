@@ -286,7 +286,7 @@ public class ProbeConfigurationService(IServerLifetime lifetime, IActiveOperatio
             {
                 var ip = IPProtocolProvider.GetIPWatchDogEndpoint();
 
-                interfaces.WatchDog.EndPoint = $"http://{ip.Server}:{ip.Port}/cgi-bin/refreshpage1.asp";
+                interfaces.WatchDog.EndPoint = $"{ip.Server}:{ip.Port}";
             }
         }
 

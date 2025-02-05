@@ -1,11 +1,11 @@
-using MeterTestSystemApi.Actions.Device;
-using MeterTestSystemApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using SerialPortProxy;
 using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZERA.WebSam.Shared.Models.MeterTestSystem;
+using ZERA.WebSam.Shared.Provider;
 
 namespace MeterTestSystemApi.Controllers;
 

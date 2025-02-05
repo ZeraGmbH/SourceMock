@@ -4,14 +4,15 @@ using MeterTestSystemApi.Actions.Device;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
-using RefMeterApi.Models;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
-using SourceApi.Model;
+using ZERA.WebSam.Shared.Models.Source;
+using ZERA.WebSam.Shared.Models.ReferenceMeter;
+using ZERA.WebSam.Shared.Provider;
 
 namespace MeterTestSystemApiTests;
 

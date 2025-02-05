@@ -23,6 +23,7 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.Models;
+using ZERA.WebSam.Shared.Models.MeterTestSystem;
 
 namespace MeterTestSystemApi;
 

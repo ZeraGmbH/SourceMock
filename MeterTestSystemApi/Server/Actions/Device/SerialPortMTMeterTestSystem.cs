@@ -1,6 +1,5 @@
 using System.Text.RegularExpressions;
 using ErrorCalculatorApi.Actions.Device;
-using MeterTestSystemApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions.Device;
@@ -9,6 +8,7 @@ using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions;
 using ZERA.WebSam.Shared.Provider;
+using ZERA.WebSam.Shared.Models.MeterTestSystem;
 
 namespace MeterTestSystemApi.Actions.Device;
 
@@ -80,6 +80,19 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem, ISerialPortOwner
 
         /* Register out-of-band processing of error conditions. */
         device.RegisterEvent(_smRegEx, reply => ErrorConditionsChanged?.Invoke(ErrorConditionParser.Parse(reply.Groups[1].Value, true)));
+    }
+
+    event Action<ErrorConditions> IMeterTestSystem.ErrorConditionsChanged
+    {
+        add
+        {
+            throw new NotImplementedException();
+        }
+
+        remove
+        {
+            throw new NotImplementedException();
+        }
     }
 
     /// <summary>

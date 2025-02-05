@@ -1,5 +1,5 @@
 using MeterTestSystemApi.Actions.Device;
-using MeterTestSystemApi.Models;
+using ZERA.WebSam.Shared.Models.MeterTestSystem;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;

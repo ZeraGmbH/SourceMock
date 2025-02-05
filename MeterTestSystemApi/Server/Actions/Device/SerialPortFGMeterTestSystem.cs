@@ -1,7 +1,6 @@
 using ErrorCalculatorApi.Actions;
 using ErrorCalculatorApi.Actions.Device;
 using ErrorCalculatorApi.Models;
-using MeterTestSystemApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions;
@@ -12,10 +11,12 @@ using SourceApi.Actions;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.SerialPort.MT768;
 using ZERA.WebSam.Shared.Provider;
-using SourceApi.Model;
 using SourceApi.Model.Configuration;
 using System.Text.RegularExpressions;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZERA.WebSam.Shared.Models.MeterTestSystem;
+using ZERA.WebSam.Shared.Models.Source;
+using ZERA.WebSam.Shared.Models.ReferenceMeter;
 
 namespace MeterTestSystemApi.Actions.Device;
 

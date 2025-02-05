@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
-using RefMeterApi.Models;
-using SourceApi.Model;
+using ZERA.WebSam.Shared.Models.ReferenceMeter;
+using ZERA.WebSam.Shared.Models.Source;
 
 namespace MeterTestSystemApi.Actions.Device;
 

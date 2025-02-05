@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using ZERA.WebSam.Shared.Models.MeterTestSystem;
 using MongoDB.Bson.Serialization.Attributes;
 using RefMeterApi.Models;
 using ZERA.WebSam.Shared.Models;

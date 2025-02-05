@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.MeterConstantCalculator;
-using RefMeterApi.Models;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 
 namespace RefMeterApiTests;

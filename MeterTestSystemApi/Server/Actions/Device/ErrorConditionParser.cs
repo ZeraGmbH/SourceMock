@@ -1,5 +1,5 @@
 using System.Globalization;
-using MeterTestSystemApi.Models;
+using ZERA.WebSam.Shared.Models.MeterTestSystem;
 
 namespace MeterTestSystemApi.Actions.Device;
 

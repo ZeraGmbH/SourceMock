@@ -2,7 +2,6 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Actions.MeterConstantCalculator;
 using RefMeterApi.Exceptions;
-using RefMeterApi.Models;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.DomainSpecific;

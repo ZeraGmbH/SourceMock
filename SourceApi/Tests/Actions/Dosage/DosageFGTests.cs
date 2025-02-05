@@ -8,6 +8,7 @@ using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.Source;
 using SourceApi.Tests.Actions.Dosage.PortMocks;
 using ZERA.WebSam.Shared.Provider;
+using ZERA.WebSam.Shared.Models.Source;
 
 namespace SourceApi.Tests.Actions.Dosage;
 
@@ -27,7 +28,7 @@ public class DosageFGTests
     {
         var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromMockedPortInstance(new FixedReplyMock(replies), _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        await device.SetAmplifiersAsync(new NoopInterfaceLogger(), Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
+        await device.SetAmplifiersAsync(new NoopInterfaceLogger(), VoltageAmplifiers.V210, CurrentAmplifiers.V200, VoltageAuxiliaries.V210, CurrentAuxiliaries.V200);
 
         return device;
     }
@@ -93,7 +94,7 @@ public class DosageFGTests
 
         var device = new SerialPortFGSource(_deviceLogger, SerialPortConnection.FromMockedPortInstance(mock, _portLogger), new CapabilitiesMap(), new SourceCapabilityValidator());
 
-        await device.SetAmplifiersAsync(new NoopInterfaceLogger(), Model.VoltageAmplifiers.V210, Model.CurrentAmplifiers.V200, Model.VoltageAuxiliaries.V210, Model.CurrentAuxiliaries.V200);
+        await device.SetAmplifiersAsync(new NoopInterfaceLogger(), VoltageAmplifiers.V210, CurrentAmplifiers.V200, VoltageAuxiliaries.V210, CurrentAuxiliaries.V200);
 
         await device.SetDosageEnergyAsync(new NoopInterfaceLogger(), new(energy), new(1d));
 

@@ -1,4 +1,5 @@
 using MeterTestSystemApi.Models.Configuration;
+using ZERA.WebSam.Shared.Provider;
 
 namespace MeterTestSystemApi.Actions.Device;
 

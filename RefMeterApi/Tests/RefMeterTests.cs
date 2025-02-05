@@ -1,7 +1,6 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
-using RefMeterApi.Models;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;

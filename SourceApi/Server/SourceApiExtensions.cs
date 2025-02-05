@@ -17,6 +17,7 @@ using SourceApi.Actions.RestSource;
 using SourceApi.Actions.SimulatedSource;
 using SourceApi.Actions;
 using SourceApi.Controllers;
+using ZERA.WebSam.Shared.Provider;
 
 namespace SourceApi;
 

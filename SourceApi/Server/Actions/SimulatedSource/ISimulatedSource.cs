@@ -1,3 +1,4 @@
+using ZERA.WebSam.Shared.Provider;
 using SourceApi.Model;
 
 namespace SourceApi.Actions.Source

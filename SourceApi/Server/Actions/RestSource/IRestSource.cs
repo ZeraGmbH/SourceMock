@@ -1,5 +1,5 @@
 using ZERA.WebSam.Shared.Models;
-using SourceApi.Actions.Source;
+using ZERA.WebSam.Shared.Provider;
 
 namespace SourceApi.Actions.RestSource;
 

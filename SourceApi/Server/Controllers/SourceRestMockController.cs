@@ -8,6 +8,7 @@ using SourceApi.Actions.Source;
 using ZERA.WebSam.Shared.Models.Source;
 using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZERA.WebSam.Shared.Provider;
 
 namespace SourceApi.Controllers;
 

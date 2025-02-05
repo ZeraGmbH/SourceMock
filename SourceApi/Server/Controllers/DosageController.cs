@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SerialPortProxy;
-using SourceApi.Actions.Source;
+using ZERA.WebSam.Shared.Provider;
 using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.DomainSpecific;

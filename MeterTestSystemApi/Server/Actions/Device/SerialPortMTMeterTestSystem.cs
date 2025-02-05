@@ -7,8 +7,8 @@ using RefMeterApi.Actions.Device;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.SerialPort.MT768;
-using SourceApi.Actions.Source;
 using SourceApi.Actions;
+using ZERA.WebSam.Shared.Provider;
 
 namespace MeterTestSystemApi.Actions.Device;
 

@@ -6,6 +6,7 @@ using SourceApi.Actions.Source;
 using SourceApi.Exceptions;
 using SourceApi.Model;
 using ZERA.WebSam.Shared.Models.Source;
+using ZERA.WebSam.Shared.Provider;
 
 namespace SourceApi.Actions.SerialPort.FG30x;
 

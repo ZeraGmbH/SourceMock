@@ -11,7 +11,7 @@ using SerialPortProxy;
 using SourceApi.Actions;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.SerialPort.MT768;
-using SourceApi.Actions.Source;
+using ZERA.WebSam.Shared.Provider;
 using SourceApi.Model;
 using SourceApi.Model.Configuration;
 using System.Text.RegularExpressions;

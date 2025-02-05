@@ -7,6 +7,7 @@ using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.Source;
 using SourceApi.Tests.Actions.Dosage.PortMocks;
+using ZERA.WebSam.Shared.Provider;
 
 namespace SourceApi.Tests.Actions.Dosage;
 

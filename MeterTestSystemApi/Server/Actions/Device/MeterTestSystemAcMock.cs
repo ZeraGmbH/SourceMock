@@ -5,6 +5,7 @@ using RefMeterApi.Actions.Device;
 using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.Source;
 using SourceApi.Actions;
+using ZERA.WebSam.Shared.Provider;
 
 namespace MeterTestSystemApi;
 

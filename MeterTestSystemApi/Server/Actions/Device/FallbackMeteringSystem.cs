@@ -3,7 +3,7 @@ using MeterTestSystemApi.Models;
 using RefMeterApi.Actions;
 using RefMeterApi.Actions.Device;
 using SourceApi.Actions;
-using SourceApi.Actions.Source;
+using ZERA.WebSam.Shared.Provider;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace MeterTestSystemApi.Actions.Device;

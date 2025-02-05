@@ -11,6 +11,7 @@ using ZERA.WebSam.Shared.Actions.User;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
+using ZERA.WebSam.Shared.Provider;
 
 namespace BurdenApiTests;
 

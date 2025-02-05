@@ -1,3 +1,5 @@
+using ZERA.WebSam.Shared.Provider;
+
 namespace SourceApi.Actions.Source
 {
     public static partial class SourceResultExtension

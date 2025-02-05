@@ -3,6 +3,7 @@ using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.Source;
 using ZERA.WebSam.Shared.Models.Dosage;
+using ZERA.WebSam.Shared.Provider;
 
 namespace SourceApi.Actions.SimulatedSource;
 

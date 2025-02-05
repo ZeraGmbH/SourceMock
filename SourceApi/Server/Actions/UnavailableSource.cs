@@ -5,6 +5,7 @@ using SourceApi.Exceptions;
 using SourceApi.Actions.SimulatedSource;
 using ZERA.WebSam.Shared.Models.Source;
 using ZERA.WebSam.Shared.Models.Dosage;
+using ZERA.WebSam.Shared.Provider;
 
 namespace SourceApi.Actions;
 

@@ -1,64 +1,63 @@
 
 using ZERA.WebSam.Shared.Models.Source;
 
-namespace SourceApi.Tests.Actions.Source
+namespace SourceApi.Tests.Actions.Source;
+
+public static class TestLoadpoints
 {
-    public static class TestLoadpoints
+    public static TargetLoadpoint GetDcLoadpoint()
     {
-        public static TargetLoadpoint GetDcLoadpoint()
+        return new()
         {
-            return new()
-            {
-                Phases = new List<TargetLoadpointPhase>(){
-                    new TargetLoadpointPhase(){
-                        Current = new () { On = true, DcComponent = new(10) },
-                        Voltage = new () { On = true, DcComponent = new(210) }
-                    },
-                }
-            };
-        }
+            Phases = new List<TargetLoadpointPhase>(){
+                new TargetLoadpointPhase(){
+                    Current = new () { On = true, DcComponent = new(10) },
+                    Voltage = new () { On = true, DcComponent = new(210) }
+                },
+            }
+        };
+    }
 
-        public static TargetLoadpoint GetTooHighVoltageDcLoadpoint()
+    public static TargetLoadpoint GetTooHighVoltageDcLoadpoint()
+    {
+        return new()
         {
-            return new()
-            {
-                Phases = new List<TargetLoadpointPhase>(){
-                    new TargetLoadpointPhase(){
-                        Current = new () { On = true, DcComponent = new(10) },
-                        Voltage = new () { On = true, DcComponent = new(310) }
-                    },
-                }
-            };
-        }
+            Phases = new List<TargetLoadpointPhase>(){
+                new TargetLoadpointPhase(){
+                    Current = new () { On = true, DcComponent = new(10) },
+                    Voltage = new () { On = true, DcComponent = new(310) }
+                },
+            }
+        };
+    }
 
-        public static TargetLoadpoint GetTooHighCurrentDcLoadpoint()
+    public static TargetLoadpoint GetTooHighCurrentDcLoadpoint()
+    {
+        return new()
         {
-            return new()
-            {
-                Phases = new List<TargetLoadpointPhase>(){
-                    new TargetLoadpointPhase(){
-                        Current = new () { On = true, DcComponent = new(70 )},
-                        Voltage = new () { On = true, DcComponent = new(210) }
-                    },
-                }
-            };
-        }
-        public static TargetLoadpoint GetACLoadpoint()
+            Phases = new List<TargetLoadpointPhase>(){
+                new TargetLoadpointPhase(){
+                    Current = new () { On = true, DcComponent = new(70 )},
+                    Voltage = new () { On = true, DcComponent = new(210) }
+                },
+            }
+        };
+    }
+    public static TargetLoadpoint GetACLoadpoint()
+    {
+        return new()
         {
-            return new()
-            {
-                Phases = new List<TargetLoadpointPhase>(){
-                    new TargetLoadpointPhase(){
-                        Current = new () { On = true, AcComponent = new() {Angle = new(0), Rms = new(10),} },
-                        Voltage = new () { On = true, AcComponent = new() {Angle = new(0), Rms = new(210)} }
-                    },
-                }
-            };
-        }
-        public static TargetLoadpoint GetNullLoadpoint()
-        {
-            return new()
-            { };
-        }
+            Phases = new List<TargetLoadpointPhase>(){
+                new TargetLoadpointPhase(){
+                    Current = new () { On = true, AcComponent = new() {Angle = new(0), Rms = new(10),} },
+                    Voltage = new () { On = true, AcComponent = new() {Angle = new(0), Rms = new(210)} }
+                },
+            }
+        };
+    }
+    public static TargetLoadpoint GetNullLoadpoint()
+    {
+        return new()
+        { };
     }
 }

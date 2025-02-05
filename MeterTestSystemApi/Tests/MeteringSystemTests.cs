@@ -6,13 +6,13 @@ using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;
-using SourceApi.Actions.SerialPort;
-using SourceApi.Actions.SerialPort.FG30x;
-using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
 using ZERA.WebSam.Shared.Models.Source;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.Provider;
+using ZeraDevices.Source.FG30x;
+using ZeraDevices.Source;
+using ZeraDevices.Source.MT768;
 
 namespace MeterTestSystemApiTests;
 

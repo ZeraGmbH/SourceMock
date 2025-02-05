@@ -8,14 +8,14 @@ using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SerialPortProxy;
 using SourceApi.Actions;
-using SourceApi.Actions.SerialPort.FG30x;
-using SourceApi.Actions.SerialPort.MT768;
 using ZERA.WebSam.Shared.Provider;
 using System.Text.RegularExpressions;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Models.MeterTestSystem;
 using ZERA.WebSam.Shared.Models.Source;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
+using ZeraDevices.Source.FG30x;
+using ZeraDevices.Source.MT768;
 
 namespace MeterTestSystemApi.Actions.Device;
 

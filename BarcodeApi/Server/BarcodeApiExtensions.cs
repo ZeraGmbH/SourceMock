@@ -3,7 +3,6 @@ using BarcodeApi.Actions.Device;
 using BarcodeApi.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace BarcodeApi;

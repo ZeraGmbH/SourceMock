@@ -5,10 +5,10 @@ using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions.Device;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
-using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions;
 using ZERA.WebSam.Shared.Provider;
 using ZERA.WebSam.Shared.Models.MeterTestSystem;
+using ZeraDevices.Source.MT768;
 
 namespace MeterTestSystemApi.Actions.Device;
 
@@ -82,18 +82,7 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem, ISerialPortOwner
         device.RegisterEvent(_smRegEx, reply => ErrorConditionsChanged?.Invoke(ErrorConditionParser.Parse(reply.Groups[1].Value, true)));
     }
 
-    event Action<ErrorConditions> IMeterTestSystem.ErrorConditionsChanged
-    {
-        add
-        {
-            throw new NotImplementedException();
-        }
-
-        remove
-        {
-            throw new NotImplementedException();
-        }
-    }
+    event Action<ErrorConditions> IMeterTestSystem.ErrorConditionsChanged { add { } remove { } }
 
     /// <summary>
     /// Disable source.

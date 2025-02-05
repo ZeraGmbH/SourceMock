@@ -1,7 +1,6 @@
 using System.Text.RegularExpressions;
 using BurdenApi.Models;
 using SerialPortProxy;
-using SourceApi.Actions.SerialPort;
 
 namespace BurdenApi.Actions.Device;
 

@@ -11,7 +11,6 @@ using SourceApi.Actions;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.SerialPort.MT768;
 using ZERA.WebSam.Shared.Provider;
-using SourceApi.Model.Configuration;
 using System.Text.RegularExpressions;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Models.MeterTestSystem;

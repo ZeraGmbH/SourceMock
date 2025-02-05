@@ -6,7 +6,6 @@ using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.SerialPort.MT768;
-using SourceApi.Model.Configuration;
 
 namespace SourceApi.Actions.SerialPort;
 

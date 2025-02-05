@@ -1,4 +1,4 @@
-using SourceApi.Model.Configuration;
+using SerialPortProxy;
 
 namespace MeterTestSystemApi.Models.ConfigurationNG.Source;
 

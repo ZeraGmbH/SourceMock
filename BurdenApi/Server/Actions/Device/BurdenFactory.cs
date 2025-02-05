@@ -2,7 +2,6 @@ using BurdenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
-using SourceApi.Model.Configuration;
 
 namespace BurdenApi.Actions.Device;
 

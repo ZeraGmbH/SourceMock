@@ -1,5 +1,5 @@
 using MongoDB.Bson.Serialization.Attributes;
-using SourceApi.Model.Configuration;
+using SerialPortProxy;
 
 namespace MeterTestSystemApi.Models.Configuration;
 

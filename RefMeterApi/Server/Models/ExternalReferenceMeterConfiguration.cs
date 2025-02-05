@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using SourceApi.Model.Configuration;
+using SerialPortProxy;
 
 namespace RefMeterApi.Models;
 

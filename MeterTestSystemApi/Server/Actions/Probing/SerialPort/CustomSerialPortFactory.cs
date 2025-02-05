@@ -4,7 +4,6 @@ using MeterTestSystemApi.Models.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
-using SourceApi.Model.Configuration;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace MeterTestSystemApi.Actions.Probing.SerialPort;

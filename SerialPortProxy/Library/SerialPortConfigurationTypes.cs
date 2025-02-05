@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace SourceApi.Model.Configuration;
+namespace SerialPortProxy;
 
 /// <summary>
 /// Supported types of a serial port connection.

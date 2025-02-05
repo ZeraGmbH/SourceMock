@@ -4,7 +4,7 @@ using BarcodeApi.Models;
 using BurdenApi.Models;
 using ErrorCalculatorApi.Models;
 using MongoDB.Bson.Serialization.Attributes;
-using SourceApi.Model.Configuration;
+using SerialPortProxy;
 using WatchDogApi.Models;
 using ZERA.WebSam.Shared.Models;
 using ZIFApi.Models;

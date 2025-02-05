@@ -2,7 +2,7 @@ using MeterTestSystemApi.Models.ConfigurationNG.Dosage;
 using MeterTestSystemApi.Models.ConfigurationNG.MeterTestSystem;
 using MeterTestSystemApi.Models.ConfigurationNG.ReferenceMeter;
 using MeterTestSystemApi.Models.ConfigurationNG.Source;
-using SourceApi.Model.Configuration;
+using SerialPortProxy;
 
 namespace MeterTestSystemApi.Models.ConfigurationNG;
 

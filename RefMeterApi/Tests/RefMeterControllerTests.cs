@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Controllers;
-using RefMeterApi.Models;
+using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using RefMeterApiTests.PortMocks;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;

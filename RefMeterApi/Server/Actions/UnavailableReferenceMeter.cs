@@ -1,6 +1,7 @@
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Exceptions;
 using RefMeterApi.Models;
+using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 

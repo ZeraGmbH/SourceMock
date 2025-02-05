@@ -8,6 +8,7 @@ using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared.Security;
+using ZERA.WebSam.Shared.Models.ReferenceMeter;
 
 namespace RefMeterApi.Controllers;
 

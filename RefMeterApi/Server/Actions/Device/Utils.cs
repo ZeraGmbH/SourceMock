@@ -1,4 +1,4 @@
-using RefMeterApi.Models;
+using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared;
 
 namespace RefMeterApi.Actions.Device;
@@ -31,7 +31,8 @@ public static class Utils
         {
             phase.Voltage.AcComponent!.Angle = (-phase.Voltage.AcComponent!.Angle).Normalize();
             phase.Current.AcComponent!.Angle = (-phase.Current.AcComponent!.Angle).Normalize();
-        };
+        }
+        ;
 
         // All current phases are off
         if (firstPhaseAngle < 0)

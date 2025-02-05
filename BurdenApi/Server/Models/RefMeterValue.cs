@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using RefMeterApi.Models;
+using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace BurdenApi.Models;

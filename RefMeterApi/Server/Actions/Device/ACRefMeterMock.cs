@@ -5,6 +5,7 @@ using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.Source;
 using ZERA.WebSam.Shared.Models.Source;
+using ZERA.WebSam.Shared.Models.ReferenceMeter;
 
 namespace RefMeterApi.Actions.Device;
 

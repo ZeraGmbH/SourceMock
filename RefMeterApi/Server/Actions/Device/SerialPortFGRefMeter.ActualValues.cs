@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using RefMeterApi.Models;
+using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using SerialPortProxy;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.DomainSpecific;

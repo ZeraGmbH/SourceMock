@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Models;
+using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace RefMeterApi.Actions.MeterConstantCalculator;

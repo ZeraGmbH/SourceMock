@@ -1,6 +1,6 @@
 using ZERA.WebSam.Shared.Models.Logging;
-using SourceApi.Model;
 using System.Security.Claims;
+using ZERA.WebSam.Shared.Models.Source;
 
 namespace SourceApi.Actions.Source;
 

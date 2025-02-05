@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using SourceApi.Model;
+using ZERA.WebSam.Shared.Models.Source;
 using ZERA.WebSam.Shared.Actions.User;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;

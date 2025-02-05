@@ -1,3 +1,4 @@
+using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.DomainSpecific;
 
 namespace SourceApi.Model;

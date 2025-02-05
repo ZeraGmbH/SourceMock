@@ -1,5 +1,4 @@
 using MeterTestSystemApi.Models.Configuration;
-using MeterTestSystemApi.Models.ConfigurationProviders;
 
 namespace MeterTestSystemApi.Services.Probing;
 

@@ -7,6 +7,7 @@ using SourceApi.Model;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Security;
 using ZERA.WebSam.Shared;
+using ZERA.WebSam.Shared.Models.Source;
 
 namespace SourceApi.Controllers;
 

@@ -6,6 +6,7 @@ using SourceApi.Model;
 using Microsoft.Extensions.DependencyInjection;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.Models.Source;
 
 namespace RefMeterApiTests;
 

@@ -5,6 +5,7 @@ using ZERA.WebSam.Shared.Actions;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
 using SourceApi.Tests.Actions.LoadpointValidator;
+using ZERA.WebSam.Shared.Models.Source;
 
 namespace SourceApi.Tests.Actions.Source;
 internal class SimulatedSourceTests

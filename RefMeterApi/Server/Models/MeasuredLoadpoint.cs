@@ -1,7 +1,7 @@
 
 
 using ZERA.WebSam.Shared.DomainSpecific;
-using SourceApi.Model;
+using ZERA.WebSam.Shared.Models;
 
 namespace RefMeterApi.Models;
 

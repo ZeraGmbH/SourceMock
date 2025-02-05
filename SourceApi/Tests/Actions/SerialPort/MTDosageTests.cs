@@ -3,7 +3,7 @@ using SerialPortProxy;
 using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.MT768;
 using SourceApi.Actions.Source;
-using SourceApi.Model;
+using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models.Logging;
 

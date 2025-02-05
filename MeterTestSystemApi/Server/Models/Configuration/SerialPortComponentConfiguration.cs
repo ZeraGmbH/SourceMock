@@ -1,8 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using System.Resources;
 using MeterTestSystemApi.Services;
-using MongoDB.Driver;
 using SerialPortProxy;
 using SourceApi.Model.Configuration;
 

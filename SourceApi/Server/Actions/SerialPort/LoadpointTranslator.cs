@@ -2,7 +2,8 @@ using System.Text;
 using SerialPortProxy;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.DomainSpecific;
-using SourceApi.Model;
+using ZERA.WebSam.Shared.Models.Source;
+using ZERA.WebSam.Shared.Models;
 
 namespace SourceApi.Actions.SerialPort;
 
@@ -187,7 +188,8 @@ public abstract class LoadpointTranslator : ILoadpointTranslator
         {
             phase.Voltage.AcComponent!.Angle = (-phase.Voltage.AcComponent.Angle).Normalize();
             phase.Current.AcComponent!.Angle = (-phase.Current.AcComponent.Angle).Normalize();
-        };
+        }
+        ;
 
         if (firstActiveVoltagePhase < 0) return;
 

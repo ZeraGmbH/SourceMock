@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using SourceApi.Actions.Source;
+using ZERA.WebSam.Shared.Models.Source;
 using SourceApi.Model;
 using System.Net;
 using System.Net.Http.Headers;

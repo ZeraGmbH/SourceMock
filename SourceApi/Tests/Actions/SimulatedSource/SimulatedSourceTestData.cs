@@ -1,3 +1,4 @@
+using ZERA.WebSam.Shared.Models;
 using SourceApi.Model;
 
 namespace SourceApi.Tests.Actions.Source

@@ -1,4 +1,5 @@
-using SourceApi.Model;
+using ZERA.WebSam.Shared.Models;
+using ZERA.WebSam.Shared.Models.Source;
 
 namespace SourceApi.Tests.Actions.LoadpointValidator
 {

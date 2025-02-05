@@ -5,6 +5,8 @@ using SourceApi.Actions.SerialPort;
 using SourceApi.Actions.SerialPort.FG30x;
 using SourceApi.Actions.Source;
 using SourceApi.Model;
+using ZERA.WebSam.Shared.Models;
+using ZERA.WebSam.Shared.Models.Source;
 
 namespace SourceApiTests.Actions.SerialPort;
 

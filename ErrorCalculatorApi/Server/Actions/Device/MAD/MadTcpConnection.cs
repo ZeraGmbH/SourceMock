@@ -7,7 +7,6 @@ using ErrorCalculatorApi.Exceptions;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging;
 using ZERA.WebSam.Shared;
-using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;

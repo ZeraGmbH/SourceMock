@@ -4,6 +4,7 @@ using SourceApi.Actions.Source;
 using SourceApi.Exceptions;
 using SourceApi.Model;
 using SourceApi.Actions.SimulatedSource;
+using ZERA.WebSam.Shared.Models.Source;
 
 namespace SourceApi.Actions;
 

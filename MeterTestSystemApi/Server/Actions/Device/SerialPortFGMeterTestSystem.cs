@@ -15,7 +15,6 @@ using SourceApi.Actions.Source;
 using SourceApi.Model;
 using SourceApi.Model.Configuration;
 using System.Text.RegularExpressions;
-using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace MeterTestSystemApi.Actions.Device;

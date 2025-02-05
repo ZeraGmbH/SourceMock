@@ -1,4 +1,4 @@
-using SourceApi.Model;
+using ZERA.WebSam.Shared.Models.Source;
 
 namespace SourceApiTests.Actions.DomainSpecificQuantitites;
 

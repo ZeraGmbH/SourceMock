@@ -7,7 +7,6 @@ using RefMeterApi.Models;
 using SourceApi.Actions.Source;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Source;
-using SourceApi.Model;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Actions.User;
 using ZERA.WebSam.Shared.DomainSpecific;

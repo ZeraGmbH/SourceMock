@@ -1,5 +1,5 @@
 using ZERA.WebSam.Shared.Models;
-using SourceApi.Model;
+using ZERA.WebSam.Shared.Models.Source;
 
 namespace SourceApi.Tests.Actions.Source
 {

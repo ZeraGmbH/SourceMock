@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
-using SourceApi.Model;
+using ZERA.WebSam.Shared.Models.Dosage;
 
 namespace SourceApi.Actions.SerialPort.FG30x;
 

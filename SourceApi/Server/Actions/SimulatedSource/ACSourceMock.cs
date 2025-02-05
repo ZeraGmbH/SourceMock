@@ -1,8 +1,9 @@
 using Microsoft.Extensions.Logging;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
-using SourceApi.Model;
 using ZERA.WebSam.Shared.Models;
+using ZERA.WebSam.Shared.Models.Dosage;
+using ZERA.WebSam.Shared.Models.Source;
 
 namespace SourceApi.Actions.Source;
 

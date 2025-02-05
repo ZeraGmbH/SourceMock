@@ -1,5 +1,4 @@
 using SourceApi.Actions.Source;
-using SourceApi.Model;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
@@ -7,6 +6,7 @@ using System.Text.Json;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models;
+using ZERA.WebSam.Shared.Models.Dosage;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace SourceApi.Actions.RestSource;

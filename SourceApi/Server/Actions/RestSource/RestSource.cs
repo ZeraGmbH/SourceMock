@@ -1,13 +1,13 @@
 using Microsoft.Extensions.Logging;
 using SourceApi.Actions.Source;
 using ZERA.WebSam.Shared.Models.Source;
-using SourceApi.Model;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZERA.WebSam.Shared.Models.Dosage;
 
 namespace SourceApi.Actions.RestSource;
 

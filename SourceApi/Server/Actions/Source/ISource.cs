@@ -1,5 +1,4 @@
 using ZERA.WebSam.Shared.Models.Logging;
-using SourceApi.Model;
 using ZERA.WebSam.Shared.Models.Source;
 
 namespace SourceApi.Actions.Source;

@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using SerialPortProxy;
 using SourceApi.Actions.Source;
-using SourceApi.Model;
 using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.DomainSpecific;
+using ZERA.WebSam.Shared.Models.Dosage;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace SourceApi.Controllers;

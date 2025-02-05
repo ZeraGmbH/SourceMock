@@ -2,7 +2,6 @@
 
 using SourceApi.Actions.Source;
 using ZERA.WebSam.Shared.Models.Source;
-using SourceApi.Model;
 
 namespace SourceApi.Tests.Actions.Source
 {

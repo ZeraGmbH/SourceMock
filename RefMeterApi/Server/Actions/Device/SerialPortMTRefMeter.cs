@@ -5,6 +5,7 @@ using SerialPortProxy;
 using System.Text.RegularExpressions;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZERA.WebSam.Shared.Provider;
 
 namespace RefMeterApi.Actions.Device;
 

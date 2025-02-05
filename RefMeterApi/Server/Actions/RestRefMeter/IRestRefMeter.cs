@@ -1,4 +1,4 @@
-using RefMeterApi.Actions.Device;
+using ZERA.WebSam.Shared.Provider;
 using ZERA.WebSam.Shared.Models;
 
 namespace RefMeterApi.Actions.RestSource;

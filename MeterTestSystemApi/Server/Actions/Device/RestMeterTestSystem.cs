@@ -5,7 +5,6 @@ using MeterTestSystemApi.Models.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RefMeterApi.Actions;
-using RefMeterApi.Actions.Device;
 using RefMeterApi.Actions.RestSource;
 using SourceApi.Actions;
 using SourceApi.Actions.RestSource;

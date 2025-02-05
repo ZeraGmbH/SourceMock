@@ -1,3 +1,4 @@
+using ZERA.WebSam.Shared.Provider;
 using ErrorCalculatorApi.Models;
 
 namespace ErrorCalculatorApi.Actions.Device;

@@ -1,4 +1,3 @@
-using ErrorCalculatorApi.Actions.Device;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SerialPortProxy;
@@ -8,6 +7,7 @@ using ZERA.WebSam.Shared.Models.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared.Security;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
+using ZERA.WebSam.Shared.Provider;
 
 namespace ErrorCalculatorApi.Controllers;
 

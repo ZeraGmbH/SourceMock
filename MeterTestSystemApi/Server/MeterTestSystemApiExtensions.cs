@@ -1,4 +1,4 @@
-using ErrorCalculatorApi.Actions.Device;
+using ZERA.WebSam.Shared.Provider;
 using MeterTestSystemApi.Actions.Device;
 using MeterTestSystemApi.Actions.Probing.Barcode;
 using MeterTestSystemApi.Actions.Probing.ESxB;

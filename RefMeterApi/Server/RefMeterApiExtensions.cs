@@ -11,6 +11,7 @@ using ZERA.WebSam.Shared;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using RefMeterApi.Actions;
 using RefMeterApi.Controllers;
+using ZERA.WebSam.Shared.Provider;
 
 namespace RefMeterApi;
 

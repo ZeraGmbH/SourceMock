@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZERA.WebSam.Shared.Provider;
 
 namespace ErrorCalculatorApi.Actions.Device;
 

@@ -1,5 +1,6 @@
 using ErrorCalculatorApi.Actions;
 using ErrorCalculatorApi.Actions.Device;
+using ZERA.WebSam.Shared.Provider;
 using ErrorCalculatorApi.Actions.Device.MAD;
 using ErrorCalculatorApi.Actions.Device.REST;
 using ErrorCalculatorApi.Controllers;

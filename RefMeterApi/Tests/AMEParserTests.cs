@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
+using ZERA.WebSam.Shared.Provider;
 using RefMeterApiTests.PortMocks;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;

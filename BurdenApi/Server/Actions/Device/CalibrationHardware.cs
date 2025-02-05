@@ -1,5 +1,4 @@
 using BurdenApi.Models;
-using RefMeterApi.Actions.Device;
 using SourceApi.Actions.Source;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Source;

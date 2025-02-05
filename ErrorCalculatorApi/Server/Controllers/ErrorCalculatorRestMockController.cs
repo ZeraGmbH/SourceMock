@@ -1,4 +1,3 @@
-using ErrorCalculatorApi.Actions.Device;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +7,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZERA.WebSam.Shared.Provider;
 
 namespace ErrorCalculatorApi.Controllers;
 

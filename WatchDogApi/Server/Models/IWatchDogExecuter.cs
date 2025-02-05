@@ -9,8 +9,9 @@ namespace WatchDogApi.Models
         /// Send out GET request to http watchdog endpoint
         /// </summary>
         /// <param name="endpoint">full http endpoint of watchdog</param>
+        /// <param name="timeout">Optional timeout to wait for response.</param>
         /// <returns>success</returns>
-        Task<bool> QueryWatchDogSingleEndpointAsync(string endpoint);
+        Task<bool> QueryWatchDogSingleEndpointAsync(string endpoint, TimeSpan? timeout = null);
 
         /// <summary>
         /// Get the list of endpoints to be queried for a specific ip

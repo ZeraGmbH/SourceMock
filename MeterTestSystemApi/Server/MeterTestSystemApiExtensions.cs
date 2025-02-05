@@ -150,7 +150,6 @@ public static class MeterTestSystemApiConfiguration
 
         services.AddKeyedScoped<IProbeExecutor, ProbeHttp>(typeof(HttpProbe));
         services.AddKeyedScoped<IHttpProbeExecutor, STMv1RestProbe>(IPProbeProtocols.MADServer1);
-        services.AddKeyedScoped<IHttpProbeExecutor, WatchDogHttpProbe>(IPProbeProtocols.IPWatchdog);
 
         services.AddKeyedScoped<IProbeExecutor, ProbeIP>(typeof(IPProbe));
         services.AddKeyedScoped<IIPProbeExecutor, STMv1IPProbe>(IPProbeProtocols.MADServer1);

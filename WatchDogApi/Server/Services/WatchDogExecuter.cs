@@ -19,9 +19,11 @@ public class WatchDogExecuter(IHttpClientFactory http) : IWatchDogExecuter
     }
 
     ///<inheritdoc/>
-    public async Task<bool> QueryWatchDogSingleEndpointAsync(string endpoint)
+    public async Task<bool> QueryWatchDogSingleEndpointAsync(string endpoint, TimeSpan? timeout)
     {
         var httpClient = http.CreateClient();
+
+        // if (timeout.HasValue) httpClient.Timeout = timeout.Value;
 
         var response = await httpClient.GetStringAsync(endpoint);
 

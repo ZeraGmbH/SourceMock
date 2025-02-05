@@ -102,7 +102,7 @@ public class WatchDog : IWatchDog
 
                 foreach (var endpoint in endpointAddresses)
                 {
-                    if (!await _watchdogExecuter.QueryWatchDogSingleEndpointAsync(endpoint))
+                    if (!await _watchdogExecuter.QueryWatchDogSingleEndpointAsync(endpoint, TimeSpan.FromSeconds(10)))
                         throw new InvalidOperationException("Site reachable, but is not WatchDog! URL: " + endpoint);
                 }
 

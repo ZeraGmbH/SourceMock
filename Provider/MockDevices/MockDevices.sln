@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockDevices", "Server\MockDevices.csproj", "{390E6B08-9F98-249E-6496-D34FA9636370}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockDeviceTests", "Tests\MockDeviceTests.csproj", "{A32EA861-E48A-8E21-3D25-A8F3F1EDDFD9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{390E6B08-9F98-249E-6496-D34FA9636370}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{390E6B08-9F98-249E-6496-D34FA9636370}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{390E6B08-9F98-249E-6496-D34FA9636370}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{390E6B08-9F98-249E-6496-D34FA9636370}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A32EA861-E48A-8E21-3D25-A8F3F1EDDFD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A32EA861-E48A-8E21-3D25-A8F3F1EDDFD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A32EA861-E48A-8E21-3D25-A8F3F1EDDFD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A32EA861-E48A-8E21-3D25-A8F3F1EDDFD9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2F7D5AB0-CD1A-4047-8ACE-A2BF4E4EE9E4}
+	EndGlobalSection
+EndGlobal

@@ -1,5 +1,5 @@
 using System.Text.Json;
-using ErrorCalculatorApi.Models;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using MeterTestSystemApi.Actions.Probing.HTTP;
 using MeterTestSystemApi.Services;
 using ZERA.WebSam.Shared;

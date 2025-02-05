@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Actions.Device;
-using RefMeterApi.Models;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using SerialPortProxy;
 using Swashbuckle.AspNetCore.Annotations;

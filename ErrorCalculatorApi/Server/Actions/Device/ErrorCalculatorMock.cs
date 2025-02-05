@@ -1,9 +1,9 @@
-using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using SourceApi.Actions.Source;
 using RefMeterApi.Actions.Device;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 
 namespace ErrorCalculatorApi.Actions.Device;
 

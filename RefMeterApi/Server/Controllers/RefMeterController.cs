@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Exceptions;
-using RefMeterApi.Models;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;

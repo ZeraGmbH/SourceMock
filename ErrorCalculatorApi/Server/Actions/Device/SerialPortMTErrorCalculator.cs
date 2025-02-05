@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using ErrorCalculatorApi.Models;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SerialPortProxy;

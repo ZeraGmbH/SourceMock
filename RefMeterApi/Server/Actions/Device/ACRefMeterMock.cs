@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using RefMeterApi.Models;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;

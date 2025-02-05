@@ -3,7 +3,6 @@ using BurdenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using RefMeterApi.Actions.Device;
-using RefMeterApi.Models;
 using SourceApi.Actions.Source;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Source;

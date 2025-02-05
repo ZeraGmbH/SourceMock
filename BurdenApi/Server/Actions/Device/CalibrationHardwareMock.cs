@@ -1,6 +1,5 @@
 using BurdenApi.Models;
 using RefMeterApi.Actions.Device;
-using RefMeterApi.Models;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;

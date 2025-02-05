@@ -1,15 +1,13 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-using Swashbuckle.AspNetCore.Annotations;
-
-using SourceApi.Actions.Source;
 using SerialPortProxy;
-using ZERA.WebSam.Shared.Models.Logging;
-using ZERA.WebSam.Shared.DomainSpecific;
+using SourceApi.Actions.Source;
+using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared;
-using ZERA.WebSam.Shared.Security;
+using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Dosage;
+using ZERA.WebSam.Shared.Models.Logging;
+using ZERA.WebSam.Shared.Security;
 
 namespace SourceApi.Controllers;
 

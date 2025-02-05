@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using ErrorCalculatorApi.Models;
 using SerialPortProxy;
 using ErrorCalculatorApi.Actions.Device;
 using Moq;
 using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 
 namespace ErrorCalculatorApiTests;
 

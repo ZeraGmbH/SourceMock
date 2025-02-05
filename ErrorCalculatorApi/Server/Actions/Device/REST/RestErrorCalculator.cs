@@ -1,4 +1,5 @@
 using ErrorCalculatorApi.Models;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Headers;
 using System.Text;

@@ -1,5 +1,5 @@
 using ErrorCalculatorApi.Actions.Device;
-using ErrorCalculatorApi.Models;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;

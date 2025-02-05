@@ -1,4 +1,4 @@
-using ErrorCalculatorApi.Models;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZERA.WebSam.Shared.Models.Logging;
 
 namespace ErrorCalculatorApi.Actions.Device.MAD;

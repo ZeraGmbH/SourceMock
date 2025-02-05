@@ -1,6 +1,6 @@
 using ErrorCalculatorApi.Actions.Device;
 using ErrorCalculatorApi.Exceptions;
-using ErrorCalculatorApi.Models;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 

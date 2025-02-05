@@ -67,7 +67,7 @@ builder.Services.AddCors(options =>
 #pragma warning restore IDE0053
 
 builder.Services.UseSharedLibrary(builder.Configuration);
-builder.Services.UseSourceApi(builder.Configuration, false);
+builder.Services.UseSourceApi(builder.Configuration);
 
 builder.Services.AddScoped<IInterfaceLogger, NoopInterfaceLogger>();
 

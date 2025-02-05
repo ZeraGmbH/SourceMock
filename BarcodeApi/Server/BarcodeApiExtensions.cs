@@ -33,15 +33,7 @@ public static class BarcodeApiConfiguration
 
         services.AddTransient<BarcodeReaderMock, BarcodeReaderMock>();
 
-        services.AddSingleton<IBarcodeReaderFactory>((di) =>
-        {
-            var factory = new BarcodeReaderFactory(di, di.GetRequiredService<ILogger<BarcodeReaderFactory>>());
-
-            if (configuration["UseDatabaseConfiguration"] != "yes")
-                factory.Initialize(new() { DevicePath = configuration["BarcodeReader:Device"] });
-
-            return factory;
-        });
+        services.AddSingleton<IBarcodeReaderFactory, BarcodeReaderFactory>();
 
         /* Access barcode reader singleton through the factory. */
         services.AddSingleton((ctx) => ctx.GetRequiredService<IBarcodeReaderFactory>().BarcodeReader);

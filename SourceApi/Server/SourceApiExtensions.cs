@@ -54,7 +54,7 @@ public static class SourceApiConfiguration
     /// <summary>
     /// 
     /// </summary>
-    public static void UseSourceApi(this IServiceCollection services, IConfiguration configuration, bool integrated)
+    public static void UseSourceApi(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSingleton<ICapabilitiesMap, CapabilitiesMap>();
 
@@ -71,68 +71,9 @@ public static class SourceApiConfiguration
         services.AddScoped<ISourceHealthUtils, SourceHealthUtils>();
 
         /* Legacy configuration from setting files. */
-        var useDatabase = configuration["UseDatabaseConfiguration"] == "yes";
         var deviceType = configuration["SerialPort:DeviceType"];
 
-        if (!useDatabase)
-            switch (configuration["SourceType"])
-            {
-                case "simulated":
-                    if (integrated) break;
-
-                    services.AddSingleton<ISource, SimulatedSource>();
-                    services.AddSingleton<ISourceCapabilityValidator, SourceCapabilityValidator>();
-
-                    return;
-                case "vein":
-                    if (integrated)
-                        throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
-
-                    services.AddSingleton(new VeinClient(new(), "localhost", 8080));
-                    services.AddSingleton<VeinSource>();
-                    services.AddSingleton<ISource>(x => x.GetRequiredService<VeinSource>());
-
-                    return;
-                case "serial":
-                    if (deviceType != "MT" && deviceType != "FG" && deviceType != "DeviceMock")
-                        throw new NotImplementedException($"Unknown DeviceType: {deviceType}");
-
-                    if (!integrated)
-                        services.AddSingleton<ISource>(ctx => ctx.GetRequiredService<ISerialPortMTSource>());
-
-                    break;
-                default:
-                    throw new NotImplementedException($"Unknown SourceType: {configuration["SourceType"]}");
-            }
-
-        services.AddKeyedSingleton<ISerialPortConnectionFactory>("MeterTestSystem", (ctx, key) =>
-        {
-            var factory = new SerialPortConnectionFactory(ctx, ctx.GetRequiredService<ILogger<SerialPortConnectionFactory>>());
-
-            if (useDatabase) return factory;
-
-            var portName = configuration["SerialPort:PortName"];
-
-            var meterSystemType = deviceType == "FG"
-                ? MeterTestSystemTypes.FG30x
-                : deviceType == "MT"
-                ? MeterTestSystemTypes.MT786
-                : MeterTestSystemTypes.ACMock;
-
-            var configurationType = configuration["SerialPort:UsePortMock"] == "yes"
-                                    ? SerialPortConfigurationTypes.Mock
-                                    : portName?.Contains(':') == true
-                                    ? SerialPortConfigurationTypes.Network
-                                    : SerialPortConfigurationTypes.Device;
-
-            factory.Initialize(meterSystemType, meterSystemType == MeterTestSystemTypes.ACMock ? null : new()
-            {
-                ConfigurationType = configurationType,
-                Endpoint = portName!
-            });
-
-            return factory;
-        });
+        services.AddKeyedSingleton<ISerialPortConnectionFactory, SerialPortConnectionFactory>("MeterTestSystem");
 
         services.AddKeyedTransient(KeyedService.AnyKey, (ctx, key) => ctx.GetRequiredKeyedService<ISerialPortConnectionFactory>(key).Connection);
 

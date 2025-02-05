@@ -88,27 +88,7 @@ public static class MeterTestSystemApiConfiguration
         /* Configure the factory. */
         services.AddTransient<MeterTestSystemFactory>();
 
-        services.AddSingleton<IMeterTestSystemFactory>((ctx) =>
-        {
-            var factory = ctx.GetRequiredService<MeterTestSystemFactory>();
-
-            if (configuration["UseDatabaseConfiguration"] == "yes") return factory;
-
-            switch (configuration["SerialPort:DeviceType"])
-            {
-                case "FG":
-                    factory.Initialize(new() { MeterTestSystemType = MeterTestSystemTypes.FG30x });
-                    break;
-                case "MT":
-                    factory.Initialize(new() { MeterTestSystemType = MeterTestSystemTypes.MT786 });
-                    break;
-                default:
-                    factory.Initialize(new() { MeterTestSystemType = MeterTestSystemTypes.ACMock });
-                    break;
-            }
-
-            return factory;
-        });
+        services.AddSingleton<IMeterTestSystemFactory, MeterTestSystemFactory>();
 
         /* Access meter test system singleton through the factory. */
         services.AddTransient((ctx) => ctx.GetRequiredService<IMeterTestSystemFactory>().MeterTestSystem);

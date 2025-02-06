@@ -1,4 +1,4 @@
-namespace ErrorCalculatorApi.Exceptions;
+namespace ZeraDevices.ErrorCalculator.STM.Exceptions;
 
 /// <summary>
 /// Unable to connect to the error calculator.

@@ -1,6 +1,6 @@
 using ZERA.WebSam.Shared.Models.Logging;
 
-namespace ErrorCalculatorApi.Actions.Device.MAD;
+namespace ZeraDevices.ErrorCalculator.STM;
 
 partial class Mad1ErrorCalculator
 {
@@ -16,7 +16,6 @@ partial class Mad1ErrorCalculator
     </kmaContainer>
     </KMA_XML_0_01>
   ";
-
 
   /// <inheritdoc/>
   public Task AbortErrorMeasurementAsync(IInterfaceLogger logger)

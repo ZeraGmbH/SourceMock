@@ -1,4 +1,4 @@
-namespace ErrorCalculatorApi.Exceptions;
+namespace ZeraDevices.ErrorCalculator.STM.Exceptions;
 
 /// <summary>
 /// Error calculator command failed to execute..

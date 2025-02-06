@@ -1,11 +1,10 @@
 using System.Globalization;
 using System.Xml;
-using ErrorCalculatorApi.Actions.Device.MAD;
-using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using ZERA.WebSam.Shared.Actions;
+using ZeraDevices.ErrorCalculator.STM;
 
-namespace ErrorCalculatorApiTests;
+namespace ZeraDeviceTests.KoaLa;
 
 [TestFixture]
 public class MadConnectionTests
@@ -35,12 +34,7 @@ public class MadConnectionTests
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
 
-        await cut.InitializeAsync("0", new()
-        {
-            Connection = ErrorCalculatorConnectionTypes.TCP,
-            Protocol = ErrorCalculatorProtocols.MAD_1,
-            Endpoint = $"{MADServer}:14207"
-        });
+        await cut.InitializeAsync("0", $"{MADServer}:14207");
 
         var res = await cut.ExecuteAsync(new NoopInterfaceLogger(), LoadXmlFromString(
             @"<?xml version=""1.0"" encoding=""UTF-8""?>
@@ -90,12 +84,7 @@ public class MadConnectionTests
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
 
-        await cut.InitializeAsync("0", new()
-        {
-            Connection = ErrorCalculatorConnectionTypes.TCP,
-            Protocol = ErrorCalculatorProtocols.MAD_1,
-            Endpoint = $"{MADServer}:14207"
-        });
+        await cut.InitializeAsync("0", $"{MADServer}:14207");
 
         var req = LoadXmlFromString(
             @"<?xml version=""1.0"" encoding=""UTF-8""?>
@@ -147,12 +136,7 @@ public class MadConnectionTests
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
 
-        await cut.InitializeAsync("0", new()
-        {
-            Connection = ErrorCalculatorConnectionTypes.TCP,
-            Protocol = ErrorCalculatorProtocols.MAD_1,
-            Endpoint = $"{MADServer}:14207"
-        });
+        await cut.InitializeAsync("0", $"{MADServer}:14207");
 
         var req = LoadXmlFromString(
             @"<?xml version=""1.0"" encoding=""UTF-8""?>
@@ -212,12 +196,7 @@ public class MadConnectionTests
     {
         using var cut = new MadTcpConnection(new NullLogger<MadTcpConnection>());
 
-        await cut.InitializeAsync("0", new()
-        {
-            Connection = ErrorCalculatorConnectionTypes.TCP,
-            Protocol = ErrorCalculatorProtocols.MAD_1,
-            Endpoint = $"{MADServer}:14207"
-        });
+        await cut.InitializeAsync("0", $"{MADServer}:14207");
 
         var req = LoadXmlFromString(
             @"<?xml version=""1.0"" encoding=""UTF-8""?>

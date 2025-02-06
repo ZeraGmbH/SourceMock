@@ -1,6 +1,6 @@
-using ErrorCalculatorApi.Models;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
+using ZeraDevices.ErrorCalculator.STM;
 
 namespace MeterTestSystemApi.Services.Probing;
 

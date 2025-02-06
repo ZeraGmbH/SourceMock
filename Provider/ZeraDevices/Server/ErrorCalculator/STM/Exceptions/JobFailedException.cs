@@ -1,4 +1,4 @@
-namespace ErrorCalculatorApi.Exceptions;
+namespace ZeraDevices.ErrorCalculator.STM.Exceptions;
 
 /// <summary>
 /// Error calculator job reports an error.

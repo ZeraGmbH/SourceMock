@@ -1,6 +1,6 @@
 using ZERA.WebSam.Shared.Models.Logging;
 
-namespace ErrorCalculatorApi.Actions.Device.MAD;
+namespace ZeraDevices.ErrorCalculator.STM;
 
 partial class Mad1ErrorCalculator
 {

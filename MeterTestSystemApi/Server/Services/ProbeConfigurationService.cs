@@ -1,4 +1,3 @@
-using ErrorCalculatorApi.Models;
 using MeterTestSystemApi.Actions.Probing;
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
@@ -8,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System.Reflection;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZeraDevices.ErrorCalculator.STM;
 using ZIFApi.Models;
 
 namespace MeterTestSystemApi.Services;

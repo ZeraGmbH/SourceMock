@@ -17,6 +17,7 @@ using ZeraDevices.Mocks;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.FG30x;
+using ZeraDevices.ErrorCalculator.STM;
 
 namespace MeterTestSystemApi.Actions.Device;
 
@@ -69,7 +70,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
     private List<IErrorCalculator> _errorCalculators = [new UnavailableErrorCalculator()];
 
     /// <inheritdoc/>
-    public IErrorCalculator[] ErrorCalculators => _errorCalculators.ToArray();
+    public IErrorCalculator[] ErrorCalculators => [.. _errorCalculators];
 
     /// <inheritdoc/>
     public event Action<ErrorConditions> ErrorConditionsChanged = null!;
@@ -331,7 +332,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
         if (config.Count < 1) return;
 
         /* Error calculators. */
-        var errorCalculators = new List<IErrorCalculatorInternal>();
+        var errorCalculators = new List<IErrorCalculator>();
 
         try
         {
@@ -342,7 +343,13 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
         catch (Exception)
         {
             /* Release anything we have configured so far. */
-            errorCalculators.ForEach(ec => ec.Destroy());
+            errorCalculators.ForEach(ec =>
+            {
+                if (ec is IErrorCalculatorInternalLegacy ec1)
+                    ec1.Destroy();
+                else if (ec is IErrorCalculatorInternal ec2)
+                    ec2.Destroy();
+            });
 
             throw;
         }

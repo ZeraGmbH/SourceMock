@@ -1,11 +1,30 @@
 using System.Xml;
-using ErrorCalculatorApi.Models;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using Microsoft.Extensions.DependencyInjection;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZERA.WebSam.Shared.Provider;
 
-namespace ErrorCalculatorApi.Actions.Device.MAD;
+namespace ZeraDevices.ErrorCalculator.STM;
+
+/// <summary>
+/// Configuration interface for an error calculator.
+/// </summary>
+public interface IErrorCalculatorInternal : IErrorCalculator
+{
+    /// <summary>
+    /// Configure a brand new error calculator.
+    /// </summary>
+    /// <param name="position">Position of the test system.</param>
+    /// <param name="endpoint">Endpoint to connect to.</param>
+    /// <param name="services">Dependency injection.</param>
+    Task InitializeAsync(int position, string endpoint, IServiceProvider services);
+
+    /// <summary>
+    /// Release all resources.
+    /// </summary>
+    void Destroy();
+}
 
 /// <summary>
 /// Using MAD 1.04 XML communication with an error calculator.
@@ -44,14 +63,14 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public Task InitializeAsync(int position, ErrorCalculatorConfiguration configuration, IServiceProvider services)
+    public Task InitializeAsync(int position, string endpoint, IServiceProvider services)
     {
         _position = position;
 
         /* Create connection implementation. */
         _connection = services.GetRequiredKeyedService<IMadConnection>(ErrorCalculatorConnectionTypes.TCP);
 
-        return _connection.InitializeAsync($"{position}", configuration);
+        return _connection.InitializeAsync($"{position}", endpoint);
     }
 
     /// <inheritdoc/>

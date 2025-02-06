@@ -14,6 +14,7 @@ using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Models.MeterTestSystem;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
+using ZeraDevices.ErrorCalculator.STM;
 
 namespace MeterTestSystemApi.Actions.Device;
 
@@ -152,7 +153,7 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
         refMeter.Initialize(config.ReferenceMeter);
 
         /* Error calculators. */
-        var errorCalculators = new List<IErrorCalculatorInternal>();
+        var errorCalculators = new List<IErrorCalculator>();
 
         try
         {
@@ -163,7 +164,13 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
         catch (Exception e)
         {
             /* Release anything we have configured so far. */
-            errorCalculators.ForEach(ec => ec.Destroy());
+            errorCalculators.ForEach(ec =>
+            {
+                if (ec is IErrorCalculatorInternalLegacy ec1)
+                    ec1.Destroy();
+                else if (ec is IErrorCalculatorInternal ec2)
+                    ec2.Destroy();
+            });
 
             /* Repot but start to allow correction of configuration. */
             logger.LogCritical("unable to attach error calculators: {Exception}", e.Message);

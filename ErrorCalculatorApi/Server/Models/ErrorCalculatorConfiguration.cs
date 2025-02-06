@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using MongoDB.Bson.Serialization.Attributes;
+using ZeraDevices.ErrorCalculator.STM;
 
 namespace ErrorCalculatorApi.Models;
 

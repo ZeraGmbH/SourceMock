@@ -1,10 +1,8 @@
 using ErrorCalculatorApi.Actions.Device;
 using ZERA.WebSam.Shared.Provider;
-using ErrorCalculatorApi.Actions.Device.MAD;
 using ErrorCalculatorApi.Actions.Device.REST;
 using ErrorCalculatorApi.Controllers;
 using ErrorCalculatorApi.Exceptions;
-using ErrorCalculatorApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
@@ -58,10 +56,7 @@ public static class ErrorCalculatorApiConfiguration
         services.AddTransient<IErrorCalculatorMock, ErrorCalculatorMock>();
 
         services.AddTransient<IErrorCalculatorFactory, ErrorCalculatorFactory>();
-        services.AddKeyedTransient<IErrorCalculatorInternal, Mad1ErrorCalculator>(ErrorCalculatorProtocols.MAD_1);
-        services.AddKeyedTransient<IErrorCalculatorInternal, RestErrorCalculator>(ErrorCalculatorProtocols.HTTP);
-
-        services.AddKeyedTransient<IMadConnection, MadTcpConnection>(ErrorCalculatorConnectionTypes.TCP);
+        services.AddKeyedTransient<IErrorCalculatorInternalLegacy, RestErrorCalculator>(ZeraDevices.ErrorCalculator.STM.ErrorCalculatorProtocols.HTTP);
 
         if (configuration.GetValue<bool>("UseErrorCalculatorRestMock") == true)
             services.AddKeyedSingleton<IErrorCalculator, ErrorCalculatorMock>(ErrorCalculatorRestMockController.MockKey);

@@ -1,4 +1,5 @@
 using ErrorCalculatorApi.Models;
+using ZERA.WebSam.Shared.Provider;
 
 namespace ErrorCalculatorApi.Actions.Device;
 
@@ -13,5 +14,5 @@ public interface IErrorCalculatorFactory
     /// <param name="position">Position of the test system.</param>
     /// <param name="configuration">Configuration to use.</param>
     /// <returns>Error calculator configured as requested.</returns>
-    Task<IErrorCalculatorInternal> CreateAsync(int position, ErrorCalculatorConfiguration configuration);
+    Task<IErrorCalculator> CreateAsync(int position, ErrorCalculatorConfiguration configuration);
 }

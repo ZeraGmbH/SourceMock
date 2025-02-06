@@ -1,4 +1,4 @@
-namespace ErrorCalculatorApi.Exceptions;
+namespace ZeraDevices.ErrorCalculator.STM.Exceptions;
 
 /// <summary>
 /// Failed when writing data to the error calculator.

@@ -8,6 +8,7 @@ using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZeraDevices.ErrorCalculator.STM;
 
 namespace ErrorCalculatorApi.Actions.Device.REST;
 
@@ -15,7 +16,7 @@ namespace ErrorCalculatorApi.Actions.Device.REST;
 /// Error calculator interface for external implementations
 /// based on a REST interface.
 /// </summary>
-public class RestErrorCalculator(ILoggingHttpClient errorCalculator, ILogger<RestErrorCalculator> logger) : IErrorCalculatorInternal
+public class RestErrorCalculator(ILoggingHttpClient errorCalculator, ILogger<RestErrorCalculator> logger) : IErrorCalculatorInternalLegacy
 {
     private bool _initialized = false;
 

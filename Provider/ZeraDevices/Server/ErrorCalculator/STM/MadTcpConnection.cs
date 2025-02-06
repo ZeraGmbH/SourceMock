@@ -3,13 +3,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using ErrorCalculatorApi.Exceptions;
-using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.Logging;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZeraDevices.ErrorCalculator.STM.Exceptions;
 
-namespace ErrorCalculatorApi.Actions.Device.MAD;
+namespace ZeraDevices.ErrorCalculator.STM;
 
 /// <summary>
 /// MAD communication using a TCP channel.
@@ -266,7 +265,7 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
     private InterfaceLogEntryConnection? _connectionInfo;
 
     /// <inheritdoc/>
-    public Task InitializeAsync(string webSamId, ErrorCalculatorConfiguration config, int? readTimeout = null, int? writeTimeout = null)
+    public Task InitializeAsync(string webSamId, string endpoint, int? readTimeout = null, int? writeTimeout = null)
     {
         /* Apply timeouts. */
         using (client)
@@ -279,14 +278,14 @@ public class MadTcpConnection(ILogger<MadTcpConnection> logger) : IMadConnection
         /* Prepare logging. */
         _connectionInfo = new()
         {
-            Endpoint = config.Endpoint,
+            Endpoint = endpoint,
             Protocol = InterfaceLogProtocolTypes.Tcp,
             WebSamType = InterfaceLogSourceTypes.ErrorCalculator,
             WebSamId = webSamId
         };
 
         /* Test endpoint. */
-        var match = parseEndpoint.Match(config.Endpoint ?? string.Empty);
+        var match = parseEndpoint.Match(endpoint ?? string.Empty);
 
         if (match == null) throw new ArgumentException("invalid endpoint");
 

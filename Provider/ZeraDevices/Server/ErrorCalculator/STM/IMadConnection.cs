@@ -1,8 +1,7 @@
 using System.Xml;
-using ErrorCalculatorApi.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
-namespace ErrorCalculatorApi.Actions.Device.MAD;
+namespace ZeraDevices.ErrorCalculator.STM;
 
 /// <summary>
 /// Implementation for MAD XML communication.
@@ -18,10 +17,10 @@ public interface IMadConnection : IDisposable
     /// Configure the connection.
     /// </summary>
     /// <param name="webSamId">Unique identifier inside WebSam.</param>
-    /// <param name="config">Configuration to use.</param>
+    /// <param name="endpoint">Endpoint to connect to.</param>
     /// <param name="readTimeout">Timeout while receiving data - in milliseconds.</param>
     /// <param name="writeTimeout">Timeout while sending data - in milliseconds.</param>
-    public Task InitializeAsync(string webSamId, ErrorCalculatorConfiguration config, int? readTimeout = null, int? writeTimeout = null);
+    public Task InitializeAsync(string webSamId, string endpoint, int? readTimeout = null, int? writeTimeout = null);
 
     /// <summary>
     /// Execute a single XML request.

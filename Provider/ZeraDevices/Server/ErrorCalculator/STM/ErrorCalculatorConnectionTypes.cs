@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace ErrorCalculatorApi.Models;
+namespace ZeraDevices.ErrorCalculator.STM;
 
 /// <summary>
 /// Hot to connect to the error calculator.

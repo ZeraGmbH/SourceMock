@@ -8,7 +8,7 @@ using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 
-namespace RefMeterApi.Actions.RestSource;
+namespace RestDevices.ReferenceMeter;
 
 /// <summary>
 /// Reference meter connected to a HTTP/REST web service.

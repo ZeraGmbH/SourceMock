@@ -1,7 +1,7 @@
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Provider;
 
-namespace SourceApi.Actions.RestSource;
+namespace RestDevices.Dosage;
 
 /// <summary>
 /// Dosage algorithm which can by configured using a HTTP/REST connection.

@@ -78,8 +78,6 @@ public static class MeterTestSystemApiConfiguration
     {
         /* All available implementations by type. */
         services.AddTransient<FallbackMeteringSystem>();
-        services.AddTransient<MeterTestSystemAcMock>();
-        services.AddTransient<MeterTestSystemDcMock>();
         services.AddTransient<RestMeterTestSystem>();
 
         /* Configure the factory. */

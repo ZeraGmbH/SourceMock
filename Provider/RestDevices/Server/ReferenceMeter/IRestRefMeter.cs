@@ -1,7 +1,7 @@
 using ZERA.WebSam.Shared.Provider;
 using ZERA.WebSam.Shared.Models;
 
-namespace RefMeterApi.Actions.RestSource;
+namespace RestDevices.ReferenceMeter;
 
 /// <summary>
 /// Reference meter which can by configured using a HTTP/REST connection.

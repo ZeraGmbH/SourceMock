@@ -1,15 +1,15 @@
-using MockDevices.Source;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using MockDevices.Source;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Dosage;
 using ZERA.WebSam.Shared.Models.Logging;
 
-namespace SourceApi.Actions.RestSource;
+namespace RestDevices.Dosage;
 
 /// <summary>
 /// Dosage algorithm connected to a HTTP/REST web service.
@@ -35,6 +35,7 @@ public class RestDosage(ILoggingHttpClient httpDosage) : IRestDosage, IDosageMoc
     public Task<bool> CurrentSwitchedOffForDosageAsync(IInterfaceLogger logger)
         => httpDosage.GetAsync<bool>(logger, new Uri(_dosageUri, "IsDosageCurrentOff"));
 
+    /// <inheritdoc/>
     public void Dispose() => _disposed = true;
 
     /// <inheritdoc/>

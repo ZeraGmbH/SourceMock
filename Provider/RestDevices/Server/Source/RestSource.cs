@@ -9,7 +9,7 @@ using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Models.Dosage;
 using ZERA.WebSam.Shared.Provider;
 
-namespace SourceApi.Actions.RestSource;
+namespace RestDevices.Source;
 
 /// <summary>
 /// Source connected to a HTTP/REST web service.

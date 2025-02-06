@@ -338,7 +338,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
         catch (Exception)
         {
             /* Release anything we have configured so far. */
-            errorCalculators.ForEach(ec => ((IErrorCalculatorInternal)ec).Destroy());
+            errorCalculators.ForEach(ec => ((IErrorCalculatorSetup)ec).Destroy());
 
             throw;
         }

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RefMeterApi.Actions.RestSource;
 using RefMeterApi.Exceptions;
 using ZERA.WebSam.Shared;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -44,9 +43,6 @@ public static class RefMeterApiConfiguration
     /// <param name="configuration">Configuration of the web server.</param>
     public static void UseRefMeterApi(this IServiceCollection services, IConfiguration configuration)
     {
-        /* The concrete implementations are transient and the lifetime is controlled by the corresponding meter test system. */
-        services.AddTransient<IRestRefMeter, RestRefMeter>();
-
         var restMock = configuration.GetValue<string>("UseReferenceMeterRestMock");
 
         if (restMock == "AC")

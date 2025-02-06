@@ -1,6 +1,5 @@
 using ErrorCalculatorApi.Actions.Device;
 using ZERA.WebSam.Shared.Provider;
-using ErrorCalculatorApi.Actions.Device.REST;
 using ErrorCalculatorApi.Controllers;
 using ErrorCalculatorApi.Exceptions;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
-using ZeraDevices.ErrorCalculator.STM;
 using MockDevices.ErrorCalculator;
 
 namespace ErrorCalculatorApi;
@@ -54,11 +52,7 @@ public static class ErrorCalculatorApiConfiguration
     /// <param name="configuration">Current web server configuration.</param>
     public static void UseErrorCalculatorApi(this IServiceCollection services, IConfiguration configuration)
     {
-        /* Make all implementations transient since lifetime is controlled by a meter test system. */
-        services.AddTransient<IErrorCalculatorMock, ErrorCalculatorMock>();
-
         services.AddTransient<IErrorCalculatorFactory, ErrorCalculatorFactory>();
-        services.AddKeyedTransient<IErrorCalculatorInternal, RestErrorCalculator>(ErrorCalculatorProtocols.HTTP);
 
         if (configuration.GetValue<bool>("UseErrorCalculatorRestMock") == true)
             services.AddKeyedSingleton<IErrorCalculator, ErrorCalculatorMock>(ErrorCalculatorRestMockController.MockKey);

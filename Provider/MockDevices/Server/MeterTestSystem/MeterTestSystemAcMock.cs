@@ -5,7 +5,7 @@ using MockDevices.Source;
 using MockDevices.ReferenceMeter;
 using MockDevices.ErrorCalculator;
 
-namespace MeterTestSystemApi;
+namespace MockDevices.MeterTestSystem;
 
 /// <summary>
 /// 

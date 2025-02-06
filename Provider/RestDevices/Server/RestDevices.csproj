@@ -15,4 +15,9 @@
     <PackageReference Include="ZERA.WebSam.Shared" Version="0.20.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\MockDevices\Server\MockDevices.csproj" />
+    <ProjectReference Include="..\..\ZeraDevices\Server\ZeraDevices.csproj" />
+  </ItemGroup>
+
 </Project>

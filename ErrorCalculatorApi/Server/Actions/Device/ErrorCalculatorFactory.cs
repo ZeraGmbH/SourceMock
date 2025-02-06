@@ -15,7 +15,7 @@ public class ErrorCalculatorFactory(IServiceProvider services) : IErrorCalculato
     public async Task<IErrorCalculator> CreateAsync(int position, ErrorCalculatorConfiguration configuration)
     {
         /* Create the implementation. */
-        var ec = services.GetRequiredKeyedService<IErrorCalculatorInternal>(configuration.Protocol);
+        var ec = services.GetRequiredKeyedService<IErrorCalculatorSetup>(configuration.Protocol);
 
         /* Configure it. */
         try

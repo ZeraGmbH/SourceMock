@@ -1,11 +1,6 @@
-using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Models.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using RefMeterApi.Actions.RestSource;
-using SourceApi.Actions;
-using SourceApi.Actions.RestSource;
-using SourceApi.Actions.Source;
 using ZERA.WebSam.Shared.Provider;
 using System.Net.Http.Headers;
 using System.Text;
@@ -14,8 +9,11 @@ using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Models.MeterTestSystem;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
-using ZeraDevices.ErrorCalculator.STM;
 using MockDevices.Source;
+using RestDevices.Dosage;
+using RestDevices.Source;
+using RestDevices.ReferenceMeter;
+using ZeraDevices.ErrorCalculator.STM;
 
 namespace MeterTestSystemApi.Actions.Device;
 
@@ -165,7 +163,7 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
         catch (Exception e)
         {
             /* Release anything we have configured so far. */
-            errorCalculators.ForEach(ec => ((IErrorCalculatorInternal)ec).Destroy());
+            errorCalculators.ForEach(ec => ((IErrorCalculatorSetup)ec).Destroy());
 
             /* Repot but start to allow correction of configuration. */
             logger.LogCritical("unable to attach error calculators: {Exception}", e.Message);

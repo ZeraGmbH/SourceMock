@@ -54,7 +54,7 @@ public static class ZeraDevicesConfiguration
         services.AddTransient<ISerialPortMTErrorCalculator, SerialPortMTErrorCalculator>();
         services.AddTransient<SerialPortMTMeterTestSystem>();
 
-        services.AddKeyedTransient<IErrorCalculatorInternal, Mad1ErrorCalculator>(ErrorCalculatorProtocols.MAD_1);
+        services.AddKeyedTransient<IErrorCalculatorSetup, Mad1ErrorCalculator>(ErrorCalculatorProtocols.MAD_1);
         services.AddKeyedTransient<IMadConnection, MadTcpConnection>(ErrorCalculatorConnectionTypes.TCP);
 
         services.AddKeyedSingleton<ISerialPortConnectionFactory, SerialPortConnectionFactory>("ZERASerial");

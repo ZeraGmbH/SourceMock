@@ -6,8 +6,11 @@ using ZERA.WebSam.Shared.Models.Dosage;
 using ZERA.WebSam.Shared.Models.Source;
 using ZERA.WebSam.Shared.Provider;
 
-namespace SourceApi.Actions.Source;
+namespace MockDevices.Source;
 
+/// <summary>
+/// 
+/// </summary>
 public interface IACSourceMock : ISource
 {
 }
@@ -44,6 +47,7 @@ public class ACSourceMock(ILogger<ACSourceMock> logger, SourceCapabilities sourc
     }, validator)
     { }
 
+    /// <inheritdoc/>
     public override Task<DosageProgress> GetDosageProgressAsync(IInterfaceLogger logger, MeterConstant meterConstant)
     {
         var power = ActivePower.Zero;
@@ -70,6 +74,7 @@ public class ACSourceMock(ILogger<ACSourceMock> logger, SourceCapabilities sourc
         });
     }
 
+    /// <inheritdoc/>
     public override async Task NoSourceAsync(IInterfaceLogger logger)
     {
         await base.NoSourceAsync(logger);
@@ -94,6 +99,7 @@ public class ACSourceMock(ILogger<ACSourceMock> logger, SourceCapabilities sourc
         };
     }
 
+    /// <inheritdoc/>
     public override Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger)
     {
         var power = ActivePower.Zero;

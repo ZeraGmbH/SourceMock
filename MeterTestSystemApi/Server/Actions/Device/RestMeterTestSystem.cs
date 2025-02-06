@@ -15,6 +15,7 @@ using ZERA.WebSam.Shared.Models.MeterTestSystem;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZeraDevices.ErrorCalculator.STM;
+using MockDevices.Source;
 
 namespace MeterTestSystemApi.Actions.Device;
 

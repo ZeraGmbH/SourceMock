@@ -7,12 +7,11 @@ using ZERA.WebSam.Shared;
 using SourceApi.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using SourceApi.Actions.RestSource;
-using SourceApi.Actions.SimulatedSource;
-using SourceApi.Actions;
 using SourceApi.Controllers;
 using ZERA.WebSam.Shared.Provider;
 using ZeraDevices.Source;
 using SerialPortProxy;
+using MockDevices.Source;
 
 namespace SourceApi;
 
@@ -52,11 +51,8 @@ public static class SourceApiConfiguration
     /// </summary>
     public static void UseSourceApi(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddTransient<IACSourceMock, ACSourceMock>();
-        services.AddTransient<IDCSourceMock, DCSourceMock>();
         services.AddTransient<IRestDosage, RestDosage>();
         services.AddTransient<IRestSource, RestSource>();
-        services.AddTransient<ISimulatedSource, SimulatedSource>();
         services.AddTransient<ISourceCapabilityValidator, SourceCapabilityValidator>();
 
         services.AddSingleton<SourceHealthUtils.State>();

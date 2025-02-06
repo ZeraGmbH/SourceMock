@@ -1,11 +1,10 @@
 using Microsoft.Extensions.Logging;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
-using SourceApi.Actions.Source;
 using ZERA.WebSam.Shared.Models.Dosage;
 using ZERA.WebSam.Shared.Provider;
 
-namespace SourceApi.Actions.SimulatedSource;
+namespace MockDevices.Source;
 
 /// <summary>
 /// 
@@ -17,14 +16,12 @@ public interface IDCSourceMock : ISource
 /// <summary>
 /// 
 /// </summary>
-/// <remarks>
-/// 
-/// </remarks>
 /// <param name="logger"></param>
 /// <param name="validator"></param>
 public class DCSourceMock(ILogger<DCSourceMock> logger, ISourceCapabilityValidator validator) :
     SourceMock(logger, new() { Phases = [new() { DcVoltage = new(new(10), new(300), new(0.01)), DcCurrent = new(new(0), new(60), new(0.01)) }] }, validator), IDCSourceMock
 {
+    /// <inheritdoc/>
     public override Task<DosageProgress> GetDosageProgressAsync(IInterfaceLogger logger, MeterConstant meterConstant)
     {
         var power = (_loadpoint!.Phases[0].Voltage.DcComponent ?? Voltage.Zero) * (_loadpoint!.Phases[0].Current.DcComponent ?? Current.Zero);
@@ -46,6 +43,7 @@ public class DCSourceMock(ILogger<DCSourceMock> logger, ISourceCapabilityValidat
         });
     }
 
+    /// <inheritdoc/>
     public override async Task NoSourceAsync(IInterfaceLogger logger)
     {
         await base.NoSourceAsync(logger);
@@ -61,6 +59,7 @@ public class DCSourceMock(ILogger<DCSourceMock> logger, ISourceCapabilityValidat
         };
     }
 
+    /// <inheritdoc/>
     public override Task<ActiveEnergy> GetEnergyAsync(IInterfaceLogger logger)
     {
         var power = (_loadpoint!.Phases[0].Voltage.DcComponent ?? Voltage.Zero) * (_loadpoint!.Phases[0].Current.DcComponent ?? Current.Zero);

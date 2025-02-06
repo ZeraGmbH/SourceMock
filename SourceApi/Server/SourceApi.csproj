@@ -17,5 +17,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\SerialPortProxy\Library\SerialPortProxy.csproj" />
     <ProjectReference Include="..\..\Provider\ZeraDevices\Server\ZeraDevices.csproj" />
+    <ProjectReference Include="..\..\Provider\MockDevices\Server\MockDevices.csproj" />
   </ItemGroup>
 </Project>

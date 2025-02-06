@@ -1,8 +1,6 @@
-using SourceApi.Actions.Source;
-using SourceApi.Actions.SimulatedSource;
 using ZERA.WebSam.Shared.Provider;
 
-namespace SourceApi.Actions;
+namespace MockDevices.Source;
 
 /// <summary>
 /// Implementation of a source which is not configured and can therefore not be used.

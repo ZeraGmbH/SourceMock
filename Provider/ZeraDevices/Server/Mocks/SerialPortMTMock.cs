@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 using SerialPortProxy;
 
-namespace ZeraDevices.Source.MT768;
+namespace ZeraDevices.Mocks;
 
 /// <summary>
 /// 

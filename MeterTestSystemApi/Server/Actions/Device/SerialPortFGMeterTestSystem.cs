@@ -15,7 +15,7 @@ using ZERA.WebSam.Shared.Models.MeterTestSystem;
 using ZERA.WebSam.Shared.Models.Source;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZeraDevices.Source.FG30x;
-using ZeraDevices.Source.MT768;
+using ZeraDevices.Mocks;
 
 namespace MeterTestSystemApi.Actions.Device;
 

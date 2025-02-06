@@ -8,6 +8,7 @@ using ZERA.WebSam.Shared.Provider;
 using ZeraDevices.Source.MT768;
 using ZeraDevices.Source;
 using Moq;
+using ZeraDevices.Mocks;
 
 namespace ZeraDeviceTests;
 

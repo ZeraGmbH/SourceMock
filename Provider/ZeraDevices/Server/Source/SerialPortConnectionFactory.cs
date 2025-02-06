@@ -4,8 +4,7 @@ using Microsoft.Extensions.Logging;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
-using ZeraDevices.Source.FG30x;
-using ZeraDevices.Source.MT768;
+using ZeraDevices.Mocks;
 
 namespace ZeraDevices.Source;
 

@@ -1,4 +1,4 @@
-namespace ZeraDevices.Source;
+namespace ZeraDevices.Mocks;
 
 /// <summary>
 /// Represents a single reply from the device.

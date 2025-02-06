@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
 
 namespace ZeraDeviceTests;
 
@@ -18,3 +19,5 @@ public class DeviceLogger<T> : ILogger<T>
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) =>
         throw new ArgumentException(formatter(state, exception));
 }
+
+public class DeviceLogger : DeviceLogger<SerialPortMTRefMeter> { }

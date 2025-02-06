@@ -1,6 +1,5 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
-using RefMeterApi.Actions.MeterConstantCalculator;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.DomainSpecific;
@@ -8,7 +7,7 @@ using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Provider;
 using ZERA.WebSam.Shared.ExceptionHandling;
 
-namespace RefMeterApi.Actions.Device;
+namespace ZeraDevices.ReferenceMeter.MeterConstantCalculator.FG30x;
 
 /// <summary>
 /// Configuration interface for a reference meter connected to

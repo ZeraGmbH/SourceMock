@@ -1,11 +1,11 @@
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging.Abstractions;
-using RefMeterApi.Actions.Device;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
+using ZeraDevices.ReferenceMeter.MeterConstantCalculator.FG30x;
 
-namespace RefMeterApiTests;
+namespace ZeraDeviceTests;
 
 [TestFixture]
 public class RefMeterTests

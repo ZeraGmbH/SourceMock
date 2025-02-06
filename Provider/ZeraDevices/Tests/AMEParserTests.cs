@@ -1,11 +1,11 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using RefMeterApi.Actions.Device;
-using RefMeterApiTests.PortMocks;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Provider;
+using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
+using ZeraDeviceTests.PortMocks;
 
-namespace RefMeterApiTests;
+namespace ZeraDeviceTests;
 
 [TestFixture]
 public class AMEParserTests

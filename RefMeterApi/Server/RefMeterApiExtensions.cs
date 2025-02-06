@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RefMeterApi.Actions.Device;
-using RefMeterApi.Actions.MeterConstantCalculator;
 using RefMeterApi.Actions.RestSource;
 using RefMeterApi.Exceptions;
 using ZERA.WebSam.Shared;
@@ -45,14 +44,10 @@ public static class RefMeterApiConfiguration
     /// <param name="configuration">Configuration of the web server.</param>
     public static void UseRefMeterApi(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddTransient<IMeterConstantCalculator, MeterConstantCalculator>();
-
         /* The concrete implementations are transient and the lifetime is controlled by the corresponding meter test system. */
         services.AddTransient<IMockRefMeter, ACRefMeterMock>();
         services.AddTransient<IDCRefMeterMock, DCRefMeterMock>();
         services.AddTransient<IRestRefMeter, RestRefMeter>();
-        services.AddTransient<ISerialPortFGRefMeter, SerialPortFGRefMeter>();
-        services.AddTransient<ISerialPortMTRefMeter, SerialPortMTRefMeter>();
 
         var restMock = configuration.GetValue<string>("UseReferenceMeterRestMock");
 

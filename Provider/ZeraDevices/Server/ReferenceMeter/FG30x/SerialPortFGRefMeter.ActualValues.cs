@@ -5,7 +5,7 @@ using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 
-namespace RefMeterApi.Actions.Device;
+namespace ZeraDevices.ReferenceMeter.MeterConstantCalculator.FG30x;
 
 partial class SerialPortFGRefMeter
 {

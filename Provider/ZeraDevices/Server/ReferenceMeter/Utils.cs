@@ -1,7 +1,7 @@
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared;
 
-namespace RefMeterApi.Actions.Device;
+namespace ZeraDevices.ReferenceMeter;
 
 /// <summary>
 /// Helper functions

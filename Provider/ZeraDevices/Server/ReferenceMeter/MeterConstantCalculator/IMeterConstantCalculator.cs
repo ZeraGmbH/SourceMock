@@ -1,7 +1,7 @@
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.DomainSpecific;
 
-namespace RefMeterApi.Actions.MeterConstantCalculator;
+namespace ZeraDevices.ReferenceMeter.MeterConstantCalculator;
 
 /// <summary>
 /// Interface to calculate meter constants for various reference 

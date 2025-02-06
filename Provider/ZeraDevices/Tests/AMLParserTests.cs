@@ -1,18 +1,16 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using RefMeterApi.Actions.Device;
-using RefMeterApiTests.PortMocks;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
+using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
+using ZeraDeviceTests.PortMocks;
 
-namespace RefMeterApiTests;
+namespace ZeraDeviceTests;
 
 [TestFixture]
 public class AMLParserTests
 {
     private readonly NullLogger<ISerialPortConnection> _portLogger = new();
-
-    private readonly DeviceLogger _deviceLogger = new();
 
     [TestCase("2WA", MeasurementModes.TwoWireActivePower)]
     [TestCase("3WA", MeasurementModes.ThreeWireActivePower)]

@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using RefMeterApi.Actions.MeterConstantCalculator;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
+using ZeraDevices.ReferenceMeter.MeterConstantCalculator;
 
-namespace RefMeterApiTests;
+namespace ZeraDeviceTests;
 
 [TestFixture]
 public class MeterConstantCalculatorTests

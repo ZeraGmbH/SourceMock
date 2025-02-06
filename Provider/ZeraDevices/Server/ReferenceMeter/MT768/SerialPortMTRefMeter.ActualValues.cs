@@ -5,7 +5,7 @@ using SerialPortProxy;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.Models.Logging;
 
-namespace RefMeterApi.Actions.Device;
+namespace ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
 
 partial class SerialPortMTRefMeter
 {

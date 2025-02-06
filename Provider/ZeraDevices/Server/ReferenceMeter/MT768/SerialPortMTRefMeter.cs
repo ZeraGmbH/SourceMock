@@ -7,7 +7,7 @@ using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Provider;
 
-namespace RefMeterApi.Actions.Device;
+namespace ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
 
 /// <summary>
 /// Interface to configure a reference meter connected to 

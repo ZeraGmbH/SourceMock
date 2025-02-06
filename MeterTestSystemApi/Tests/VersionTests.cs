@@ -1,4 +1,3 @@
-using MeterTestSystemApi.Actions.Device;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
 using SourceApi.Actions.Source;

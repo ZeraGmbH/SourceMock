@@ -1,7 +1,6 @@
 using MeterTestSystemApi.Models.Configuration;
 using MeterTestSystemApi.Models.ConfigurationProviders;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
-using ZeraDevices.ErrorCalculator.STM;
 
 namespace MeterTestSystemApi.Services.Probing;
 

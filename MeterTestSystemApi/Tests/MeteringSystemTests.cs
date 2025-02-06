@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using MeterTestSystemApi.Actions.Device;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;

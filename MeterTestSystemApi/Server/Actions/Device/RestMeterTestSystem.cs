@@ -13,7 +13,6 @@ using MockDevices.Source;
 using RestDevices.Dosage;
 using RestDevices.Source;
 using RestDevices.ReferenceMeter;
-using ZeraDevices.ErrorCalculator.STM;
 
 namespace MeterTestSystemApi.Actions.Device;
 

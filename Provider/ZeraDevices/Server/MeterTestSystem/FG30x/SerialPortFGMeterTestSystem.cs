@@ -12,7 +12,6 @@ using ZeraDevices.Mocks;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.FG30x;
-using ZeraDevices.ErrorCalculator.STM;
 
 namespace ZeraDevices.MeterTestSystem.FG30x;
 

@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZERA.WebSam.Shared.Provider;
-using ZeraDevices.ErrorCalculator.STM;
 
 namespace ErrorCalculatorApi.Actions.Device;
 

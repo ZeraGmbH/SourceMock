@@ -3,7 +3,6 @@ using MeterTestSystemApi.Models.ConfigurationProviders;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
-using ZeraDevices.ErrorCalculator.STM;
 
 namespace MeterTestSystemApi.Services.Probing;
 

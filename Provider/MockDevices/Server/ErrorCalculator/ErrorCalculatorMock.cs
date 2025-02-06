@@ -4,12 +4,13 @@ using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZERA.WebSam.Shared.Provider;
 
-namespace ErrorCalculatorApi.Actions.Device;
+namespace MockDevices.ErrorCalculator;
 
 /// <summary>
 /// Tag interface
 /// </summary>
 public interface IErrorCalculatorMock : IErrorCalculator { }
+
 /// <summary>
 /// Need SimulatedSource to mock the energy
 /// </summary>

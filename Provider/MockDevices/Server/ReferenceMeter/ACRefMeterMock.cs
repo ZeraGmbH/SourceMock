@@ -6,7 +6,7 @@ using ZERA.WebSam.Shared.Models.Source;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.Provider;
 
-namespace RefMeterApi.Actions.Device;
+namespace MockDevices.ReferenceMeter;
 
 /// <summary>
 /// This is a tag interface which simply identifies specific 

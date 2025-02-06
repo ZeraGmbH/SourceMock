@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MockDevices.ReferenceMeter;
 using MockDevices.Source;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using ZERA.WebSam.Shared.Provider;
@@ -33,6 +34,9 @@ public static class MockDevicesConfiguration
     public static void UseMockDevices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddTransient<IACSourceMock, ACSourceMock>();
+        services.AddTransient<IMockRefMeter, ACRefMeterMock>();
+
         services.AddTransient<IDCSourceMock, DCSourceMock>();
+        services.AddTransient<IDCRefMeterMock, DCRefMeterMock>();
     }
 }

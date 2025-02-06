@@ -1,7 +1,7 @@
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models;
 
-namespace ErrorCalculatorApi.Actions.Device;
+namespace MockDevices.ErrorCalculator;
 
 /// <summary>
 /// Helper class for calculating currents

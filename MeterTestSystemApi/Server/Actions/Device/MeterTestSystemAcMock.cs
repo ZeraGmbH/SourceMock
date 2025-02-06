@@ -1,9 +1,9 @@
-using ErrorCalculatorApi.Actions.Device;
-using RefMeterApi.Actions.Device;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Provider;
 using ZERA.WebSam.Shared.Models.MeterTestSystem;
 using MockDevices.Source;
+using MockDevices.ReferenceMeter;
+using MockDevices.ErrorCalculator;
 
 namespace MeterTestSystemApi;
 

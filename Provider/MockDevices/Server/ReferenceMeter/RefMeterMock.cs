@@ -3,7 +3,7 @@ using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Models.Source;
 
-namespace RefMeterApi.Actions.Device;
+namespace MockDevices.ReferenceMeter;
 
 /// <summary>
 /// 
@@ -86,7 +86,7 @@ public abstract class RefMeterMock : IMockRefMeter
         var maximum = value + deviation;
         var minimum = value - deviation;
 
-        var diced = (Random.Shared.NextDouble() * (maximum - minimum)) + minimum;
+        var diced = Random.Shared.NextDouble() * (maximum - minimum) + minimum;
 
         if (min.HasValue && diced < min.Value)
             return min.Value;

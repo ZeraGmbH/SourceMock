@@ -1,6 +1,6 @@
 using ZERA.WebSam.Shared.Models.Source;
 
-namespace MockTest.CurrentCalculationTest;
+namespace MockDeviceTests.ErrorCalculator;
 
 public static class TestLoadpoints
 {

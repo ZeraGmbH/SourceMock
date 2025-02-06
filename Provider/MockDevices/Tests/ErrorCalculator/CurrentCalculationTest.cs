@@ -1,6 +1,6 @@
-using ErrorCalculatorApi.Actions.Device;
+using MockDevices.ErrorCalculator;
 
-namespace MockTest.CurrentCalculationTest;
+namespace MockDeviceTests.ErrorCalculator;
 
 public class CurrentCalculationTest
 {

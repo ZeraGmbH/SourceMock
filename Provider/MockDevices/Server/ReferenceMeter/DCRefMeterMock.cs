@@ -6,7 +6,7 @@ using ZERA.WebSam.Shared.Models.Source;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.Provider;
 
-namespace RefMeterApi.Actions.Device;
+namespace MockDevices.ReferenceMeter;
 
 /// <summary>
 /// 
@@ -35,7 +35,7 @@ public class DCRefMeterMock(IServiceProvider di) : RefMeterMock, IDCRefMeterMock
         var current = lp.Phases[0].Current.On ? lp.Phases[0].Current.DcComponent : Current.Zero;
         var voltage = lp.Phases[0].Voltage.On ? lp.Phases[0].Voltage.DcComponent : Voltage.Zero;
 
-        var activePower = (current != null && voltage != null)
+        var activePower = current != null && voltage != null
             ? (current.Value * voltage.Value).GetActivePower(Angle.Zero)
             : ActivePower.Zero;
 
@@ -117,7 +117,7 @@ public class DCRefMeterMock(IServiceProvider di) : RefMeterMock, IDCRefMeterMock
     {
         var voltage = mo.Phases[0].Voltage.DcComponent;
         var current = mo.Phases[0].Current.DcComponent;
-        var activePower = (current != null && voltage != null) ? (current.Value * voltage.Value).GetActivePower(new Angle()) : new();
+        var activePower = current != null && voltage != null ? (current.Value * voltage.Value).GetActivePower(new Angle()) : new();
 
 
         if (voltage != null)

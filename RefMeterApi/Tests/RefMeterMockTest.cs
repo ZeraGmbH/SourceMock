@@ -1,4 +1,3 @@
-using RefMeterApi.Actions.Device;
 using Moq;
 using Microsoft.Extensions.DependencyInjection;
 using ZERA.WebSam.Shared.Provider;
@@ -6,6 +5,7 @@ using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models.Source;
+using MockDevices.ReferenceMeter;
 
 namespace RefMeterApiTests;
 

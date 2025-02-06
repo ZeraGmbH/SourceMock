@@ -2,9 +2,12 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZeraDevices.ErrorCalculator.STM;
+using ZeraDevices.MeterTestSystem.FG30x;
+using ZeraDevices.MeterTestSystem.MT768;
 using ZeraDevices.ReferenceMeter.ErrorCalculator.MT768;
-using ZeraDevices.ReferenceMeter.MeterConstantCalculator;
+using ZeraDevices.ReferenceMeter.FG30x;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.FG30x;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
 using ZeraDevices.Source;
@@ -44,10 +47,12 @@ public static class ZeraDevicesConfiguration
 
         services.AddTransient<ISerialPortFGSource, SerialPortFGSource>();
         services.AddTransient<ISerialPortFGRefMeter, SerialPortFGRefMeter>();
+        services.AddTransient<SerialPortFGMeterTestSystem>();
 
         services.AddTransient<ISerialPortMTSource, SerialPortMTSource>();
         services.AddTransient<ISerialPortMTRefMeter, SerialPortMTRefMeter>();
         services.AddTransient<ISerialPortMTErrorCalculator, SerialPortMTErrorCalculator>();
+        services.AddTransient<SerialPortMTMeterTestSystem>();
 
         services.AddKeyedTransient<IErrorCalculatorInternal, Mad1ErrorCalculator>(ErrorCalculatorProtocols.MAD_1);
         services.AddKeyedTransient<IMadConnection, MadTcpConnection>(ErrorCalculatorConnectionTypes.TCP);

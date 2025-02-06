@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models.MeterTestSystem;
+using ZeraDevices.MeterTestSystem;
+using ZeraDevices.MeterTestSystem.FG30x;
+using ZeraDevices.MeterTestSystem.MT768;
 
 namespace MeterTestSystemApiTests;
 

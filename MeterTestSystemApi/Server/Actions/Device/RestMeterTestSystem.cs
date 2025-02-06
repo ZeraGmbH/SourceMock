@@ -164,13 +164,7 @@ public class RestMeterTestSystem(ILoggingHttpClient httpClient, IErrorCalculator
         catch (Exception e)
         {
             /* Release anything we have configured so far. */
-            errorCalculators.ForEach(ec =>
-            {
-                if (ec is IErrorCalculatorInternalLegacy ec1)
-                    ec1.Destroy();
-                else if (ec is IErrorCalculatorInternal ec2)
-                    ec2.Destroy();
-            });
+            errorCalculators.ForEach(ec => ((IErrorCalculatorInternal)ec).Destroy());
 
             /* Repot but start to allow correction of configuration. */
             logger.LogCritical("unable to attach error calculators: {Exception}", e.Message);

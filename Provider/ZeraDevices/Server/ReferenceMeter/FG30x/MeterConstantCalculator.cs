@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.DomainSpecific;
 
-namespace ZeraDevices.ReferenceMeter.MeterConstantCalculator;
+namespace ZeraDevices.ReferenceMeter.FG30x;
 
 /// <summary>
 /// Calculate meter constants.

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using ZeraDevices.ErrorCalculator.STM;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 
 namespace MeterTestSystemApi.Models.Configuration;
 

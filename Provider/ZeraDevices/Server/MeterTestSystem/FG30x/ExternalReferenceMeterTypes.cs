@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace RefMeterApi.Models;
+namespace ZeraDevices.MeterTestSystem.FG30x;
 
 /// <summary>
 /// All external reference meters.

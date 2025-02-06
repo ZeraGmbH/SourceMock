@@ -1,6 +1,7 @@
 using MeterTestSystemApi.Actions.Probing.TcpIp;
 using MeterTestSystemApi.Services;
 using Microsoft.Extensions.DependencyInjection;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZeraDevices.ErrorCalculator.STM;
 

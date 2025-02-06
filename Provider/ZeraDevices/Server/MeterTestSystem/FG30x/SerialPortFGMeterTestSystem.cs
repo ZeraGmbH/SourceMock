@@ -1,11 +1,6 @@
-using ErrorCalculatorApi.Actions.Device;
-using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using RefMeterApi.Actions.Device;
-using RefMeterApi.Models;
 using SerialPortProxy;
-using SourceApi.Actions;
 using ZERA.WebSam.Shared.Provider;
 using System.Text.RegularExpressions;
 using ZERA.WebSam.Shared.Models.Logging;
@@ -19,7 +14,7 @@ using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.FG30x;
 using ZeraDevices.ErrorCalculator.STM;
 
-namespace MeterTestSystemApi.Actions.Device;
+namespace ZeraDevices.MeterTestSystem.FG30x;
 
 /// <summary>
 /// Implementation of a meter test system implementation using the
@@ -67,7 +62,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
     /// <inheritdoc/>
     public IRefMeter RefMeter { get; private set; } = new UnavailableReferenceMeter();
 
-    private List<IErrorCalculator> _errorCalculators = [new UnavailableErrorCalculator()];
+    private readonly List<IErrorCalculator> _errorCalculators = [new UnavailableErrorCalculator()];
 
     /// <inheritdoc/>
     public IErrorCalculator[] ErrorCalculators => [.. _errorCalculators];
@@ -343,13 +338,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
         catch (Exception)
         {
             /* Release anything we have configured so far. */
-            errorCalculators.ForEach(ec =>
-            {
-                if (ec is IErrorCalculatorInternalLegacy ec1)
-                    ec1.Destroy();
-                else if (ec is IErrorCalculatorInternal ec2)
-                    ec2.Destroy();
-            });
+            errorCalculators.ForEach(ec => ((IErrorCalculatorInternal)ec).Destroy());
 
             throw;
         }

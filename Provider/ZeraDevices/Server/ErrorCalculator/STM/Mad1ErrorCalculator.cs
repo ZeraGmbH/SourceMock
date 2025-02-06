@@ -16,9 +16,9 @@ public interface IErrorCalculatorInternal : IErrorCalculator
     /// Configure a brand new error calculator.
     /// </summary>
     /// <param name="position">Position of the test system.</param>
-    /// <param name="endpoint">Endpoint to connect to.</param>
+    /// <param name="configuration">Endpoint to connect to.</param>
     /// <param name="services">Dependency injection.</param>
-    Task InitializeAsync(int position, string endpoint, IServiceProvider services);
+    Task InitializeAsync(int position, ErrorCalculatorConfiguration configuration, IServiceProvider services);
 
     /// <summary>
     /// Release all resources.
@@ -63,14 +63,14 @@ public partial class Mad1ErrorCalculator : IErrorCalculatorInternal
     }
 
     /// <inheritdoc/>
-    public Task InitializeAsync(int position, string endpoint, IServiceProvider services)
+    public Task InitializeAsync(int position, ErrorCalculatorConfiguration configuration, IServiceProvider services)
     {
         _position = position;
 
         /* Create connection implementation. */
-        _connection = services.GetRequiredKeyedService<IMadConnection>(ErrorCalculatorConnectionTypes.TCP);
+        _connection = services.GetRequiredKeyedService<IMadConnection>(configuration.Connection);
 
-        return _connection.InitializeAsync($"{position}", endpoint);
+        return _connection.InitializeAsync($"{position}", configuration.Endpoint);
     }
 
     /// <inheritdoc/>

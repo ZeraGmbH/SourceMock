@@ -1,7 +1,7 @@
 using System.Globalization;
 using ZERA.WebSam.Shared.Models.MeterTestSystem;
 
-namespace MeterTestSystemApi.Actions.Device;
+namespace ZeraDevices.MeterTestSystem;
 
 /// <summary>
 /// Provide an error condition model instance based on some reply 
@@ -50,7 +50,7 @@ public static class ErrorConditionParser
         /// <param name="index">Character index to test.</param>
         /// <param name="mask">Bit mask to test.</param>
         /// <returns>Set if the related bit is set or null if the requested character index is not available.</returns>
-        public bool? GetOptionalFlag(int index, byte mask) => (index < _flags.Length) ? (_flags[index] & mask) == mask : null;
+        public bool? GetOptionalFlag(int index, byte mask) => index < _flags.Length ? (_flags[index] & mask) == mask : null;
     }
 
     /// <summary>

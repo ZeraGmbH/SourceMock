@@ -1,19 +1,16 @@
 using System.Text.RegularExpressions;
-using ErrorCalculatorApi.Actions.Device;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using RefMeterApi.Actions.Device;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
-using SourceApi.Actions;
 using ZERA.WebSam.Shared.Provider;
 using ZERA.WebSam.Shared.Models.MeterTestSystem;
 using ZeraDevices.Source.MT768;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
-using ZeraDevices.ReferenceMeter.ErrorCalculator;
 using ZeraDevices.ReferenceMeter.ErrorCalculator.MT768;
+using ZERA.WebSam.Shared.Models.Source;
 
-namespace MeterTestSystemApi.Actions.Device;
+namespace ZeraDevices.MeterTestSystem.MT768;
 
 /// <summary>
 /// Representation of a movable meter test system connected through a serial port line.

@@ -2,11 +2,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using BarcodeApi.Models;
 using BurdenApi.Models;
-using ErrorCalculatorApi.Models;
 using MongoDB.Bson.Serialization.Attributes;
 using SerialPortProxy;
 using WatchDogApi.Models;
 using ZERA.WebSam.Shared.Models;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZIFApi.Models;
 
 namespace MeterTestSystemApi.Models.Configuration;

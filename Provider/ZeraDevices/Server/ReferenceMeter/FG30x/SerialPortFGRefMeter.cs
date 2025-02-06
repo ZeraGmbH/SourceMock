@@ -6,6 +6,7 @@ using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Provider;
 using ZERA.WebSam.Shared.ExceptionHandling;
+using ZeraDevices.ReferenceMeter.FG30x;
 
 namespace ZeraDevices.ReferenceMeter.MeterConstantCalculator.FG30x;
 

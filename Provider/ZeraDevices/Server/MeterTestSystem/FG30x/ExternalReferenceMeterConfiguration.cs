@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using SerialPortProxy;
 
-namespace RefMeterApi.Models;
+namespace ZeraDevices.MeterTestSystem.FG30x;
 
 /// <summary>
 /// 

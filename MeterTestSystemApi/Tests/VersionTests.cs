@@ -7,6 +7,7 @@ using ZeraDevices.Source;
 using ZERA.WebSam.Shared.Actions;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
 using ZeraDevices.ReferenceMeter.ErrorCalculator.MT768;
+using ZeraDevices.MeterTestSystem.MT768;
 
 namespace MeterTestSystemApiTests;
 

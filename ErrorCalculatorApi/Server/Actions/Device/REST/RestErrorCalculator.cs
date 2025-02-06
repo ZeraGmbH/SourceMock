@@ -1,4 +1,3 @@
-using ErrorCalculatorApi.Models;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Headers;
@@ -16,7 +15,7 @@ namespace ErrorCalculatorApi.Actions.Device.REST;
 /// Error calculator interface for external implementations
 /// based on a REST interface.
 /// </summary>
-public class RestErrorCalculator(ILoggingHttpClient errorCalculator, ILogger<RestErrorCalculator> logger) : IErrorCalculatorInternalLegacy
+public class RestErrorCalculator(ILoggingHttpClient errorCalculator, ILogger<RestErrorCalculator> logger) : IErrorCalculatorInternal
 {
     private bool _initialized = false;
 

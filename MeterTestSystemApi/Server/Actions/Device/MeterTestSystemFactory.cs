@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Provider;
+using ZeraDevices.MeterTestSystem.FG30x;
+using ZeraDevices.MeterTestSystem.MT768;
 
 namespace MeterTestSystemApi.Actions.Device;
 

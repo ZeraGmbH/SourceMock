@@ -81,8 +81,6 @@ public static class MeterTestSystemApiConfiguration
         services.AddTransient<MeterTestSystemAcMock>();
         services.AddTransient<MeterTestSystemDcMock>();
         services.AddTransient<RestMeterTestSystem>();
-        services.AddTransient<SerialPortFGMeterTestSystem>();
-        services.AddTransient<SerialPortMTMeterTestSystem>();
 
         /* Configure the factory. */
         services.AddTransient<MeterTestSystemFactory>();

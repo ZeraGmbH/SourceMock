@@ -14,6 +14,8 @@ using ZERA.WebSam.Shared.Provider;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.FG30x;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
 using ZeraDevices.ReferenceMeter.ErrorCalculator.MT768;
+using ZeraDevices.MeterTestSystem.MT768;
+using ZeraDevices.MeterTestSystem.FG30x;
 
 namespace MeterTestSystemApiTests;
 

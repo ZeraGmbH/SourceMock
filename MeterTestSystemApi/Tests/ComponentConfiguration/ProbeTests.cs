@@ -8,8 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZERA.WebSam.Shared.Models.Logging;
-using ZeraDevices.ErrorCalculator.STM;
 
 namespace MeterTestSystemApiTests.ComponentConfiguration;
 

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
-using ZeraDevices.ReferenceMeter.MeterConstantCalculator;
+using ZeraDevices.ReferenceMeter.FG30x;
 
 namespace ZeraDeviceTests.ReferenceMeter;
 

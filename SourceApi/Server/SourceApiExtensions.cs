@@ -2,9 +2,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using SourceApi.Actions.Source;
 using ZERA.WebSam.Shared;
-using SourceApi.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using SourceApi.Controllers;
 using ZERA.WebSam.Shared.Provider;
@@ -42,7 +40,6 @@ public static class SourceApiConfiguration
     /// </summary>
     public static void UseSourceApi(this MvcOptions options)
     {
-        options.Filters.Add<SourceApiExceptionFilter>();
     }
 
     /// <summary>
@@ -50,11 +47,6 @@ public static class SourceApiConfiguration
     /// </summary>
     public static void UseSourceApi(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddTransient<ISourceCapabilityValidator, SourceCapabilityValidator>();
-
-        services.AddSingleton<SourceHealthUtils.State>();
-        services.AddScoped<ISourceHealthUtils, SourceHealthUtils>();
-
         services.AddKeyedTransient(KeyedService.AnyKey, (ctx, key) => ctx.GetRequiredKeyedService<ISerialPortConnectionFactory>(key).Connection);
 
         var restMock = configuration.GetValue<string>("UseSourceRestMock");

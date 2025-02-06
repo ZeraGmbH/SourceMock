@@ -1,12 +1,12 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
-using SourceApi.Actions.Source;
 using ZeraDevices.Source.MT768;
 using ZeraDevices.Source;
 using ZERA.WebSam.Shared.Actions;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
 using ZeraDevices.ReferenceMeter.ErrorCalculator.MT768;
 using ZeraDevices.MeterTestSystem.MT768;
+using ZERA.WebSam.Shared.Provider;
 
 namespace MeterTestSystemApiTests;
 

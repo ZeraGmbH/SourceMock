@@ -2,7 +2,6 @@ using BurdenApi.Actions.Device;
 using BurdenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using SourceApi.Actions.Source;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Actions.User;
 using ZERA.WebSam.Shared.DomainSpecific;
@@ -35,6 +34,10 @@ public class BurdenHardwareTests
 
     protected MeasurementModes? MeasurementMode;
 
+    protected Mock<ISourceHealthUtils> SourceHealthUtils = null!;
+
+    protected Mock<ISource> Source = null!;
+
     [SetUp]
     public void Setup()
     {
@@ -42,20 +45,19 @@ public class BurdenHardwareTests
 
         services.AddTransient<ICalibrationHardware, CalibrationHardware>();
         services.AddTransient<IInterfaceLogger, NoopInterfaceLogger>();
-        services.AddTransient<ISourceHealthUtils, SourceHealthUtils>();
         services.AddTransient<IActiveOperations, ActiveOperations>();
 
-        var source = new Mock<ISource>();
+        Source = new Mock<ISource>();
 
         TargetLoadpoint? lp = null;
 
-        source.Setup(s => s.GetCurrentLoadpointAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(
+        Source.Setup(s => s.GetCurrentLoadpointAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(
             (IInterfaceLogger logger) => lp);
 
-        source.Setup(s => s.SetLoadpointAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<TargetLoadpoint>())).ReturnsAsync(
+        Source.Setup(s => s.SetLoadpointAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<TargetLoadpoint>())).ReturnsAsync(
             (IInterfaceLogger logger, TargetLoadpoint loadpoint) => { lp = loadpoint; return SourceApiErrorCodes.SUCCESS; });
 
-        source.Setup(s => s.GetCapabilitiesAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(
+        Source.Setup(s => s.GetCapabilitiesAsync(It.IsAny<IInterfaceLogger>())).ReturnsAsync(
             new SourceCapabilities
             {
                 Phases = { new() {
@@ -64,7 +66,7 @@ public class BurdenHardwareTests
                 } }
             });
 
-        services.AddSingleton(source.Object);
+        services.AddSingleton(Source.Object);
 
         var refMeter = new Mock<IRefMeter>();
 
@@ -145,9 +147,12 @@ public class BurdenHardwareTests
 
         services.AddSingleton<IBurden>(burden.Object);
 
-        var sourceHealthState = new Mock<SourceHealthUtils.State>();
+        SourceHealthUtils = new Mock<ISourceHealthUtils>();
 
-        services.AddSingleton(sourceHealthState.Object);
+        SourceHealthUtils.Setup(u => u.SetLoadpointAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<TargetLoadpoint>())).Returns(
+             (IInterfaceLogger logger, TargetLoadpoint loadpoint) => Source.Object.SetLoadpointAsync(logger, loadpoint));
+
+        services.AddSingleton(SourceHealthUtils.Object);
 
         Services = services.BuildServiceProvider();
 
@@ -399,8 +404,6 @@ public class BurdenHardwareTests
     [Test]
     public async Task Problem_With_Current_Burden_Async()
     {
-        var source = new Mock<ISource>();
-
         var capabilities = new SourceCapabilities
         {
             Phases = [
@@ -428,11 +431,11 @@ public class BurdenHardwareTests
                 ]
         };
 
-        source
+        Source
             .Setup(s => s.GetCapabilitiesAsync(It.IsAny<IInterfaceLogger>()))
             .ReturnsAsync(capabilities);
 
-        source
+        Source
             .Setup(s => s.SetLoadpointAsync(It.IsAny<IInterfaceLogger>(), It.IsAny<TargetLoadpoint>()))
             .ReturnsAsync((IInterfaceLogger logger, TargetLoadpoint loadpoint) =>
             {
@@ -450,8 +453,8 @@ public class BurdenHardwareTests
         var user = new Mock<ICurrentUser>();
 
         var hardware = new CalibrationHardware(
-            source.Object,
-            new SourceHealthUtils(source.Object, user.Object, new(), new ActiveOperations()),
+            Source.Object,
+            Services.GetRequiredService<ISourceHealthUtils>(),
             refMeter.Object,
             burden.Object,
             new NoopInterfaceLogger()

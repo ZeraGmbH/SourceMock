@@ -2,7 +2,6 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
-using SourceApi.Actions.Source;
 using ZeraDevices.Source.FG30x;
 using ZeraDevices.Source;
 using ZeraDevices.Source.MT768;

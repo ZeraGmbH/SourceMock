@@ -1,9 +1,7 @@
-using ErrorCalculatorApi.Actions;
 using ErrorCalculatorApi.Actions.Device;
 using ErrorCalculatorApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using RefMeterApi.Actions;
 using RefMeterApi.Actions.Device;
 using RefMeterApi.Models;
 using SerialPortProxy;
@@ -16,6 +14,7 @@ using ZERA.WebSam.Shared.Models.Source;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZeraDevices.Source.FG30x;
 using ZeraDevices.Mocks;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 
 namespace MeterTestSystemApi.Actions.Device;
 

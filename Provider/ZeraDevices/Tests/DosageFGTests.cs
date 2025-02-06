@@ -2,14 +2,14 @@
 using Microsoft.Extensions.Logging.Abstractions;
 
 using SerialPortProxy;
-using ZERA.WebSam.Shared.Actions;
-using ZERA.WebSam.Shared.Provider;
-using ZERA.WebSam.Shared.Models.Source;
 using ZeraDevices.Source.FG30x;
 using ZeraDevices.Source;
 using ZeraDeviceTests;
 using ZeraDeviceTests.PortMocks;
 using Moq;
+using ZERA.WebSam.Shared.Provider;
+using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.Models.Source;
 
 namespace SourceApi.Tests.Actions.Dosage;
 

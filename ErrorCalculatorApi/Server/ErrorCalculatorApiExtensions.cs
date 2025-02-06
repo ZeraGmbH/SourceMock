@@ -1,4 +1,3 @@
-using ErrorCalculatorApi.Actions;
 using ErrorCalculatorApi.Actions.Device;
 using ZERA.WebSam.Shared.Provider;
 using ErrorCalculatorApi.Actions.Device.MAD;
@@ -12,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using ZERA.WebSam.Shared;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 
 namespace ErrorCalculatorApi;
 

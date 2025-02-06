@@ -3,10 +3,10 @@ using MeterTestSystemApi.Actions.Device;
 using Microsoft.Extensions.Logging.Abstractions;
 using RefMeterApi.Actions.Device;
 using SerialPortProxy;
-using ZERA.WebSam.Shared.Actions;
 using SourceApi.Actions.Source;
 using ZeraDevices.Source.MT768;
 using ZeraDevices.Source;
+using ZERA.WebSam.Shared.Actions;
 
 namespace MeterTestSystemApiTests;
 

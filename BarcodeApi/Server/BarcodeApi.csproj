@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
-    <PackageReference Include="ZERA.WebSam.Shared" Version="0.18.11" />
+    <PackageReference Include="ZERA.WebSam.Shared" Version="0.18.13" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 </Project>

@@ -6,12 +6,11 @@ using RefMeterApi.Actions.Device;
 using RefMeterApi.Actions.MeterConstantCalculator;
 using RefMeterApi.Actions.RestSource;
 using RefMeterApi.Exceptions;
-using RefMeterApi.Models;
 using ZERA.WebSam.Shared;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using RefMeterApi.Actions;
 using RefMeterApi.Controllers;
 using ZERA.WebSam.Shared.Provider;
+using ZERA.WebSam.Shared.Models.ReferenceMeter;
 
 namespace RefMeterApi;
 

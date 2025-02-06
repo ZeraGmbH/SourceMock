@@ -1,14 +1,14 @@
 
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
-using ZERA.WebSam.Shared.Models;
-using ZERA.WebSam.Shared.Models.Source;
-using ZERA.WebSam.Shared.Actions;
-using ZERA.WebSam.Shared.Provider;
 using ZeraDevices.Source.MT768;
 using ZeraDevices.Source;
 using Moq;
 using ZeraDevices.Mocks;
+using ZERA.WebSam.Shared.Provider;
+using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.Models.Source;
+using ZERA.WebSam.Shared.Models;
 
 namespace ZeraDeviceTests;
 

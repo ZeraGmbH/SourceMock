@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
-using RefMeterApi.Models;
 using ZERA.WebSam.Shared.ExceptionHandling;
+using ZERA.WebSam.Shared.Provider;
 
 namespace RefMeterApi.Exceptions;
 

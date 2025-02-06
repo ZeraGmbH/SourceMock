@@ -2,14 +2,14 @@ using Microsoft.OpenApi.Models;
 
 using SerialPortProxy;
 
+using SourceApi;
+
+using System.Globalization;
+
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.ExceptionHandling;
 using ZERA.WebSam.Shared.Models.Logging;
-
-using SourceApi;
-
-using System.Globalization;
 
 CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo(string.Empty);
 

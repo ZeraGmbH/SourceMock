@@ -2,9 +2,9 @@ using ErrorCalculatorApi.Actions.Device;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Models.Source;
-using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZERA.WebSam.Shared.Provider;
 
 namespace ErrorCalculatorApiTests;

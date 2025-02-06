@@ -1,8 +1,8 @@
 using MeterTestSystemApi.Actions.Device;
-using ZERA.WebSam.Shared.Models.MeterTestSystem;
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Actions;
+using ZERA.WebSam.Shared.Models.MeterTestSystem;
 
 namespace MeterTestSystemApiTests;
 
@@ -12,14 +12,9 @@ public class ErrorConditionTests
     /// <summary>
     /// General mock for validating command reply interpretation.
     /// </summary>
-    class PortMock : ISerialPort
+    class PortMock(string reply) : ISerialPort
     {
-        private readonly string _reply;
-
-        public PortMock(string reply)
-        {
-            _reply = reply;
-        }
+        private readonly string _reply = reply;
 
         private readonly Queue<string> _replies = new();
 

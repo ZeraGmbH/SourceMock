@@ -1,11 +1,11 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
-using ErrorCalculatorApi.Actions.Device;
 using Moq;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
+using ZeraDevices.ReferenceMeter.ErrorCalculator;
 
-namespace ErrorCalculatorApiTests;
+namespace ZeraDeviceTests.ErrorCalculator;
 
 [TestFixture]
 public class ErrorMeasurementTests

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using ZeraDevices.ReferenceMeter.ErrorCalculator;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.FG30x;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
@@ -45,6 +46,7 @@ public static class ZeraDevicesConfiguration
 
         services.AddTransient<ISerialPortMTSource, SerialPortMTSource>();
         services.AddTransient<ISerialPortMTRefMeter, SerialPortMTRefMeter>();
+        services.AddTransient<ISerialPortMTErrorCalculator, SerialPortMTErrorCalculator>();
 
         services.AddKeyedSingleton<ISerialPortConnectionFactory, SerialPortConnectionFactory>("MeterTestSystem");
     }

@@ -9,7 +9,7 @@ using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Models;
 
-namespace ZeraDeviceTests;
+namespace ZeraDeviceTests.Dosage;
 
 [TestFixture]
 public class MTDosageTests

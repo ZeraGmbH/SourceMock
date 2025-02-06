@@ -5,7 +5,7 @@ using ZERA.WebSam.Shared.Provider;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
 using ZeraDeviceTests.PortMocks;
 
-namespace ZeraDeviceTests;
+namespace ZeraDeviceTests.ReferenceMeter;
 
 [TestFixture]
 public class AMEParserTests

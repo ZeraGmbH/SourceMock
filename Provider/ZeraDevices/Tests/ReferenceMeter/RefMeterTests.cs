@@ -5,7 +5,7 @@ using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.FG30x;
 
-namespace ZeraDeviceTests;
+namespace ZeraDeviceTests.ReferenceMeter;
 
 [TestFixture]
 public class RefMeterTests

@@ -4,13 +4,12 @@ using Microsoft.Extensions.Logging.Abstractions;
 using SerialPortProxy;
 using ZeraDevices.Source.MT768;
 using ZeraDevices.Source;
-using ZeraDeviceTests;
 using ZeraDeviceTests.PortMocks;
 using Moq;
 using ZERA.WebSam.Shared.Provider;
 using ZERA.WebSam.Shared.Actions;
 
-namespace SourceApi.Tests.Actions.Dosage;
+namespace ZeraDeviceTests.Dosage;
 
 [TestFixture]
 public class DosageTests

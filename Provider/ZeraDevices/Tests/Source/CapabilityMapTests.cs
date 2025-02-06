@@ -1,6 +1,6 @@
 using ZeraDevices.Source;
 
-namespace ZeraDeviceTests;
+namespace ZeraDeviceTests.Source;
 
 [TestFixture]
 public class CapabilitiesMapTests

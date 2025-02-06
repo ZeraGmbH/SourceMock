@@ -10,7 +10,7 @@ using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models.Source;
 using ZERA.WebSam.Shared.Models;
 
-namespace ZeraDeviceTests;
+namespace ZeraDeviceTests.Source;
 
 [TestFixture]
 public class MTSourceTests

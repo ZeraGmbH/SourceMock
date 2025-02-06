@@ -6,7 +6,7 @@ using SerialPortProxy;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Provider;
 
-namespace ZeraDevices.ReferenceMeter.ErrorCalculator;
+namespace ZeraDevices.ReferenceMeter.ErrorCalculator.MT768;
 
 /// <summary>
 /// Interface to configure an error calculator.
@@ -23,7 +23,7 @@ public interface ISerialPortMTErrorCalculator : IErrorCalculator
 /// </remarks>
 /// <param name="device">Service to access the current serial port.</param>
 /// <param name="logger">Logging service for this device type.</param>
-public partial class SerialPortMTErrorCalculator([FromKeyedServices("MeterTestSystem")] ISerialPortConnection device, ILogger<SerialPortMTErrorCalculator> logger) : ISerialPortMTErrorCalculator
+public partial class SerialPortMTErrorCalculator([FromKeyedServices("ZERASerial")] ISerialPortConnection device, ILogger<SerialPortMTErrorCalculator> logger) : ISerialPortMTErrorCalculator
 {
     /// <summary>
     /// Detect model name and version number.

@@ -80,7 +80,7 @@ public class SerialPortFGMeterTestSystem : IMeterTestSystem, ISerialPortOwner
     /// <param name="device">Service to access the current serial port.</param>
     /// <param name="logger">Logging service for this device type.</param>
     /// <param name="services">Dependency injection system.</param>
-    public SerialPortFGMeterTestSystem([FromKeyedServices("MeterTestSystem")] ISerialPortConnection device, ILogger<SerialPortFGMeterTestSystem> logger, IServiceProvider services)
+    public SerialPortFGMeterTestSystem([FromKeyedServices("ZERASerial")] ISerialPortConnection device, ILogger<SerialPortFGMeterTestSystem> logger, IServiceProvider services)
     {
         _device = device.CreateExecutor(InterfaceLogSourceTypes.MeterTestSystem);
         _logger = logger;

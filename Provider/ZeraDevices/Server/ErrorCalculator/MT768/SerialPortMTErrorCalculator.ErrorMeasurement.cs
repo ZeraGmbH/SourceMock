@@ -5,7 +5,7 @@ using SerialPortProxy;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 
-namespace ZeraDevices.ReferenceMeter.ErrorCalculator;
+namespace ZeraDevices.ReferenceMeter.ErrorCalculator.MT768;
 
 partial class SerialPortMTErrorCalculator
 {

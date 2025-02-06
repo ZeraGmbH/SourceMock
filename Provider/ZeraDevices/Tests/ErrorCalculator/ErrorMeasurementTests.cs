@@ -3,7 +3,7 @@ using SerialPortProxy;
 using Moq;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
-using ZeraDevices.ReferenceMeter.ErrorCalculator;
+using ZeraDevices.ReferenceMeter.ErrorCalculator.MT768;
 
 namespace ZeraDeviceTests.ErrorCalculator;
 

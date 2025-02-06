@@ -1,9 +1,7 @@
 using System.Text.RegularExpressions;
-using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Actions.Device;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using RefMeterApi.Actions.Device;
 using SerialPortProxy;
 using SourceApi.Actions.Source;
 using ZeraDevices.Source.FG30x;
@@ -15,7 +13,7 @@ using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Provider;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.FG30x;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
-using ZeraDevices.ReferenceMeter.ErrorCalculator;
+using ZeraDevices.ReferenceMeter.ErrorCalculator.MT768;
 
 namespace MeterTestSystemApiTests;
 

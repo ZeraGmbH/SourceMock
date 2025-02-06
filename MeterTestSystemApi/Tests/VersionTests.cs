@@ -1,29 +1,21 @@
-using ErrorCalculatorApi.Actions.Device;
 using MeterTestSystemApi.Actions.Device;
 using Microsoft.Extensions.Logging.Abstractions;
-using RefMeterApi.Actions.Device;
 using SerialPortProxy;
 using SourceApi.Actions.Source;
 using ZeraDevices.Source.MT768;
 using ZeraDevices.Source;
 using ZERA.WebSam.Shared.Actions;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
-using ZeraDevices.ReferenceMeter.ErrorCalculator;
+using ZeraDevices.ReferenceMeter.ErrorCalculator.MT768;
 
 namespace MeterTestSystemApiTests;
 
 /// <summary>
 /// General mock for validating command reply interpretation.
 /// </summary>
-abstract class PortMock : ISerialPort
+abstract class PortMock(string reply) : ISerialPort
 {
-    private readonly string _reply;
-
-    protected PortMock(string reply)
-    {
-        _reply = reply;
-    }
-
+    private readonly string _reply = reply;
     private readonly Queue<string> _replies = new();
 
     public void Dispose()

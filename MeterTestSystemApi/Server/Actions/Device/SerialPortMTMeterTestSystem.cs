@@ -11,6 +11,7 @@ using ZERA.WebSam.Shared.Models.MeterTestSystem;
 using ZeraDevices.Source.MT768;
 using ZeraDevices.ReferenceMeter.MeterConstantCalculator.MT768;
 using ZeraDevices.ReferenceMeter.ErrorCalculator;
+using ZeraDevices.ReferenceMeter.ErrorCalculator.MT768;
 
 namespace MeterTestSystemApi.Actions.Device;
 
@@ -70,7 +71,7 @@ public class SerialPortMTMeterTestSystem : IMeterTestSystem, ISerialPortOwner
     /// <param name="errorCalculator">The error calculator of this metering system.</param>
     /// <param name="logger">Logging service for this device type.</param>
     /// <param name="source">Source to use to access the metering system.</param>
-    public SerialPortMTMeterTestSystem([FromKeyedServices("MeterTestSystem")] ISerialPortConnection device, ISerialPortMTRefMeter refMeter, ISerialPortMTErrorCalculator errorCalculator, ILogger<SerialPortMTMeterTestSystem> logger, ISerialPortMTSource source)
+    public SerialPortMTMeterTestSystem([FromKeyedServices("ZERASerial")] ISerialPortConnection device, ISerialPortMTRefMeter refMeter, ISerialPortMTErrorCalculator errorCalculator, ILogger<SerialPortMTMeterTestSystem> logger, ISerialPortMTSource source)
     {
         RefMeter = refMeter;
         Source = source;

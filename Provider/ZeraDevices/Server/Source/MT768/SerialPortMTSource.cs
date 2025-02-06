@@ -18,21 +18,14 @@ public interface ISerialPortMTSource : ISource
 /// A ISource implenmentation to access a (potentially mocked) device. This
 /// should be a singleton because it manages the loadpoint.
 /// </summary>
-public partial class SerialPortMTSource : CommonSource<MTLoadpointTranslator>, ISerialPortMTSource
+/// <param name="logger">Logger to use.</param>
+/// <param name="device">Access to the serial port.</param>
+/// <param name="capabilities">Static capabilities lookup table.</param>
+/// <param name="validator">Validate loadpoint against device capabilities.</param>
+public partial class SerialPortMTSource(ILogger<SerialPortMTSource> logger, [FromKeyedServices("ZERASerial")] ISerialPortConnection device, ICapabilitiesMap capabilities, ISourceCapabilityValidator validator) : CommonSource<MTLoadpointTranslator>(logger, device, capabilities, validator), ISerialPortMTSource
 {
     /// <inheritdoc/>
     public override Task<bool> GetAvailableAsync(IInterfaceLogger interfaceLogger) => Task.FromResult(true);
-
-    /// <summary>
-    /// Initialize a new source implementation.
-    /// </summary>
-    /// <param name="logger">Logger to use.</param>
-    /// <param name="device">Access to the serial port.</param>
-    /// <param name="capabilities">Static capabilities lookup table.</param>
-    /// <param name="validator">Validate loadpoint against device capabilities.</param>
-    public SerialPortMTSource(ILogger<SerialPortMTSource> logger, [FromKeyedServices("MeterTestSystem")] ISerialPortConnection device, ICapabilitiesMap capabilities, ISourceCapabilityValidator validator) : base(logger, device, capabilities, validator)
-    {
-    }
 
     /// <inheritdoc/>
     public override Task<SourceCapabilities> GetCapabilitiesAsync(IInterfaceLogger interfaceLogger)

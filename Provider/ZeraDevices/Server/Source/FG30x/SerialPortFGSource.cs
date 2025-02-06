@@ -32,7 +32,7 @@ public interface ISerialPortFGSource : ISource
 /// <param name="device"></param>
 /// <param name="capabilities"></param>
 /// <param name="validator"></param>
-public partial class SerialPortFGSource(ILogger<SerialPortFGSource> logger, [FromKeyedServices("MeterTestSystem")] ISerialPortConnection device, ICapabilitiesMap capabilities, ISourceCapabilityValidator validator) : CommonSource<FGLoadpointTranslator>(logger, device, capabilities, validator), ISerialPortFGSource
+public partial class SerialPortFGSource(ILogger<SerialPortFGSource> logger, [FromKeyedServices("ZERASerial")] ISerialPortConnection device, ICapabilitiesMap capabilities, ISourceCapabilityValidator validator) : CommonSource<FGLoadpointTranslator>(logger, device, capabilities, validator), ISerialPortFGSource
 {
     private VoltageAmplifiers? VoltageAmplifier;
 

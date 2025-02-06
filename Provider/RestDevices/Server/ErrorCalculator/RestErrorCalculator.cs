@@ -7,7 +7,7 @@ using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models;
 using ZERA.WebSam.Shared.Models.Logging;
-using ZeraDevices.ErrorCalculator.STM;
+using ZERA.WebSam.Shared.Provider;
 
 namespace RestDevices.ErrorCalculator;
 

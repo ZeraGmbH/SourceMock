@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
+using ZERA.WebSam.Shared.Provider;
 using ZeraDevices.ErrorCalculator.STM;
 using ZeraDevices.MeterTestSystem.FG30x;
 using ZeraDevices.MeterTestSystem.MT768;

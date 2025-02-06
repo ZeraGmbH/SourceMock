@@ -9,7 +9,7 @@
     <WarningsAsErrors>1591;1570;1587</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ZERA.WebSam.Shared" Version="0.20.6" />
+    <PackageReference Include="ZERA.WebSam.Shared" Version="0.20.7" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\SerialPortProxy\Library\SerialPortProxy.csproj" />

@@ -7,7 +7,7 @@ using RestDevices.ReferenceMeter;
 using RestDevices.Source;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
-using ZeraDevices.ErrorCalculator.STM;
+using ZERA.WebSam.Shared.Provider;
 
 namespace RestDevices;
 

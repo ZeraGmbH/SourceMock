@@ -3,6 +3,7 @@ using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using Microsoft.Extensions.DependencyInjection;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
+using ZERA.WebSam.Shared.Provider;
 
 namespace ZeraDevices.ErrorCalculator.STM;
 

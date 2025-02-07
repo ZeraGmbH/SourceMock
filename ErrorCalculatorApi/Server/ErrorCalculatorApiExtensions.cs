@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
+using ZERA.WebSam.Shared.Provider.Exceptions;
 using MockDevices.ErrorCalculator;
 
 namespace ErrorCalculatorApi;

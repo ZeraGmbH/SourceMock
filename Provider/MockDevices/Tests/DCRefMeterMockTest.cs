@@ -7,7 +7,7 @@ using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.Models.Source;
 using ZERA.WebSam.Shared.Provider;
 
-namespace RefMeterApiTests;
+namespace MockDeviceTests;
 
 public class DCRefMeterMockTest
 {

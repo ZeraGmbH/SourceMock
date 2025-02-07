@@ -6,6 +6,7 @@ using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Models.Source;
 using ZERA.WebSam.Shared.Models.Dosage;
 using ZERA.WebSam.Shared.Provider;
+using ZERA.WebSam.Shared.Provider.Exceptions;
 
 namespace ZeraDevices.Source;
 

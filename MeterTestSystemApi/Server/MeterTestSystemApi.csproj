@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\..\SerialPortProxy\Library\SerialPortProxy.csproj" />
-    <ProjectReference Include="..\..\RefMeterApi\Server\RefMeterApi.csproj" />
     <ProjectReference Include="..\..\ErrorCalculatorApi\Server\ErrorCalculatorApi.csproj" />
     <ProjectReference Include="..\..\BarcodeApi\Server\BarcodeApi.csproj" />
     <ProjectReference Include="..\..\ZIFApi\Server\ZIFApi.csproj" />

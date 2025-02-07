@@ -6,8 +6,9 @@ using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.Actions;
 using ZERA.WebSam.Shared.Models.Source;
 using MockDevices.ReferenceMeter;
+using RefMeterApiTests;
 
-namespace RefMeterApiTests;
+namespace MockDeviceTests;
 
 public class RefMeterMockTest
 {

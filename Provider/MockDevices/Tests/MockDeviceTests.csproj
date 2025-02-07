@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Server\MockDevices.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="appSettings.test.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="TestData/**/*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

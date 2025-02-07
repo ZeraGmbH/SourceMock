@@ -2,13 +2,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using ZERA.WebSam.Shared.Models.ReferenceMeter;
-using SerialPortProxy;
-using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Provider;
+using Swashbuckle.AspNetCore.Annotations;
+using SerialPortProxy;
 
-namespace RefMeterApi.Controllers;
+namespace RestDevices.Controller;
 
 /// <summary>
 /// 

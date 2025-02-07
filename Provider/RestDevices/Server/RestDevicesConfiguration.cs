@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MockDevices.ReferenceMeter;
 using MockDevices.Source;
 using RestDevices.Controller;
 using RestDevices.Dosage;
@@ -9,6 +10,7 @@ using RestDevices.ReferenceMeter;
 using RestDevices.Source;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
+using ZERA.WebSam.Shared.Models.ReferenceMeter;
 using ZERA.WebSam.Shared.Provider;
 
 namespace RestDevices;
@@ -43,14 +45,23 @@ public static class RestDevicesConfiguration
         services.AddTransient<IRestRefMeter, RestRefMeter>();
         services.AddKeyedTransient<IErrorCalculatorSetup, RestErrorCalculator>(ErrorCalculatorProtocols.HTTP);
 
-        var restMock = configuration.GetValue<string>("UseSourceRestMock");
+        var sourceRestMock = configuration.GetValue<string>("UseSourceRestMock");
 
-        if (restMock == "AC")
+        if (sourceRestMock == "AC")
             services.AddKeyedSingleton<ISource, ACSourceMock>(SourceRestMockController.MockKey);
-        else if (restMock == "DC")
+        else if (sourceRestMock == "DC")
             services.AddKeyedSingleton<ISource, DCSourceMock>(SourceRestMockController.MockKey);
         else
             services.AddKeyedSingleton<ISource, UnavailableSource>(SourceRestMockController.MockKey);
+
+        var refMeterRestMock = configuration.GetValue<string>("UseReferenceMeterRestMock");
+
+        if (refMeterRestMock == "AC")
+            services.AddKeyedSingleton<IRefMeter, ACRefMeterMock>(RefMeterRestMockController.MockKey);
+        else if (refMeterRestMock == "DC")
+            services.AddKeyedSingleton<IRefMeter, DCRefMeterMock>(RefMeterRestMockController.MockKey);
+        else
+            services.AddKeyedSingleton<IRefMeter, UnavailableReferenceMeter>(RefMeterRestMockController.MockKey);
 
         services.AddKeyedTransient<IDosage>(DosageRestMockController.MockKey, (ctx, key) => ctx.GetRequiredKeyedService<ISource>(SourceRestMockController.MockKey));
     }

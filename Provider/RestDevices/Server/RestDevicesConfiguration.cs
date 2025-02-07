@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MockDevices.ErrorCalculator;
 using MockDevices.ReferenceMeter;
 using MockDevices.Source;
 using RestDevices.Controller;
@@ -45,23 +46,42 @@ public static class RestDevicesConfiguration
         services.AddTransient<IRestRefMeter, RestRefMeter>();
         services.AddKeyedTransient<IErrorCalculatorSetup, RestErrorCalculator>(ErrorCalculatorProtocols.HTTP);
 
-        var sourceRestMock = configuration.GetValue<string>("UseSourceRestMock");
+        switch (configuration.GetValue<string>("UseSourceRestMock"))
+        {
 
-        if (sourceRestMock == "AC")
-            services.AddKeyedSingleton<ISource, ACSourceMock>(SourceRestMockController.MockKey);
-        else if (sourceRestMock == "DC")
-            services.AddKeyedSingleton<ISource, DCSourceMock>(SourceRestMockController.MockKey);
-        else
-            services.AddKeyedSingleton<ISource, UnavailableSource>(SourceRestMockController.MockKey);
+            case "AC":
+                services.AddKeyedSingleton<ISource, ACSourceMock>(SourceRestMockController.MockKey);
+                break;
+            case "DC":
+                services.AddKeyedSingleton<ISource, DCSourceMock>(SourceRestMockController.MockKey);
+                break;
+            default:
+                services.AddKeyedSingleton<ISource, UnavailableSource>(SourceRestMockController.MockKey);
+                break;
+        }
 
-        var refMeterRestMock = configuration.GetValue<string>("UseReferenceMeterRestMock");
+        switch (configuration.GetValue<string>("UseReferenceMeterRestMock"))
+        {
+            case "AC":
+                services.AddKeyedSingleton<IRefMeter, ACRefMeterMock>(RefMeterRestMockController.MockKey);
+                break;
+            case "DC":
+                services.AddKeyedSingleton<IRefMeter, DCRefMeterMock>(RefMeterRestMockController.MockKey);
+                break;
+            default:
+                services.AddKeyedSingleton<IRefMeter, UnavailableReferenceMeter>(RefMeterRestMockController.MockKey);
+                break;
+        }
 
-        if (refMeterRestMock == "AC")
-            services.AddKeyedSingleton<IRefMeter, ACRefMeterMock>(RefMeterRestMockController.MockKey);
-        else if (refMeterRestMock == "DC")
-            services.AddKeyedSingleton<IRefMeter, DCRefMeterMock>(RefMeterRestMockController.MockKey);
-        else
-            services.AddKeyedSingleton<IRefMeter, UnavailableReferenceMeter>(RefMeterRestMockController.MockKey);
+        switch (configuration.GetValue<bool>("UseErrorCalculatorRestMock"))
+        {
+            case true:
+                services.AddKeyedSingleton<IErrorCalculator, ErrorCalculatorMock>(ErrorCalculatorRestMockController.MockKey);
+                break;
+            default:
+                services.AddKeyedSingleton<IErrorCalculator, UnavailableErrorCalculator>(ErrorCalculatorRestMockController.MockKey);
+                break; ;
+        }
 
         services.AddKeyedTransient<IDosage>(DosageRestMockController.MockKey, (ctx, key) => ctx.GetRequiredKeyedService<ISource>(SourceRestMockController.MockKey));
     }

@@ -6,6 +6,7 @@ using MockDevices.MeterTestSystem;
 using MockDevices.ReferenceMeter;
 using MockDevices.Source;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
 
 namespace MockDevices;
 

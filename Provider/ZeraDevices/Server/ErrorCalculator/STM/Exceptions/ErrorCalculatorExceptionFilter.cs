@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using ZERA.WebSam.Shared.ExceptionHandling;
-using ZERA.WebSam.Shared.Provider;
 using ZERA.WebSam.Shared.Provider.Exceptions;
-using ZeraDevices.ErrorCalculator.STM.Exceptions;
 
-namespace ErrorCalculatorApi.Exceptions;
+namespace ZeraDevices.ErrorCalculator.STM.Exceptions;
 
 /// <summary>
 /// Handles all exception that are thrown by the ErrorCalculatorApi

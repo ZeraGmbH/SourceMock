@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ErrorCalculatorApi", "ErrorCalculatorApi", "{B273FAEA-5F32-4F28-8FBD-D3BA21484E75}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorCalculatorApi", "ErrorCalculatorApi\Server\ErrorCalculatorApi.csproj", "{9086033B-236D-49FB-BB76-B43518B515F6}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MeterTestSystemApi", "MeterTestSystemApi", "{93B4138A-9BF0-426E-944A-B7F029F48DF0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeterTestSystemApi", "MeterTestSystemApi\Server\MeterTestSystemApi.csproj", "{A5812304-6852-4F9E-B901-D35A53A90261}"
@@ -90,10 +86,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9086033B-236D-49FB-BB76-B43518B515F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9086033B-236D-49FB-BB76-B43518B515F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9086033B-236D-49FB-BB76-B43518B515F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9086033B-236D-49FB-BB76-B43518B515F6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A5812304-6852-4F9E-B901-D35A53A90261}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A5812304-6852-4F9E-B901-D35A53A90261}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5812304-6852-4F9E-B901-D35A53A90261}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -192,7 +184,6 @@ Global
 		{48158300-4701-4694-A242-7D3FFB31A1AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{9086033B-236D-49FB-BB76-B43518B515F6} = {B273FAEA-5F32-4F28-8FBD-D3BA21484E75}
 		{A5812304-6852-4F9E-B901-D35A53A90261} = {93B4138A-9BF0-426E-944A-B7F029F48DF0}
 		{CE75C10E-DF6C-4BF5-8DAA-BBB5E569FFAD} = {93B4138A-9BF0-426E-944A-B7F029F48DF0}
 		{E80A72D3-95A1-432B-9660-93A365B82390} = {887D53BD-56A3-406A-BC5E-39291E5BFB53}

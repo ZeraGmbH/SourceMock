@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,6 +7,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZERA.WebSam.Shared.Provider;
 using ZeraDevices.ErrorCalculator.STM;
+using ZeraDevices.ErrorCalculator.STM.Exceptions;
 using ZeraDevices.MeterTestSystem.FG30x;
 using ZeraDevices.MeterTestSystem.MT768;
 using ZeraDevices.ReferenceMeter.ErrorCalculator.MT768;
@@ -37,6 +39,15 @@ public static class ZeraDevicesConfiguration
     /// </summary>
     public static void UseZeraDevices(this IEndpointRouteBuilder app)
     {
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="options"></param>
+    public static void UseZeraDevices(this MvcOptions options)
+    {
+        options.Filters.Add<ErrorCalculatorExceptionFilter>();
     }
 
     /// <summary>

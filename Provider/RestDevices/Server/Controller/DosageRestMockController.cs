@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using SerialPortProxy;
 using ZERA.WebSam.Shared.Provider;
-using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared;
 using ZERA.WebSam.Shared.DomainSpecific;
 using ZERA.WebSam.Shared.Models.Dosage;
 using ZERA.WebSam.Shared.Models.Logging;
 using MockDevices.Source;
+using Swashbuckle.AspNetCore.Annotations;
 
-namespace SourceApi.Controllers;
+namespace RestDevices.Controller;
 
 /// <summary>
 /// Execute dosage functions on source.
@@ -85,6 +85,9 @@ public class DosageRestMockController([FromKeyedServices(DosageRestMockControlle
     public Task<ActionResult<bool>> IsDosageCurrentOffAsync() =>
         ActionResultMapper.SafeExecuteSerialPortCommandAsync(() => device.CurrentSwitchedOffForDosageAsync(interfaceLogger));
 
+    /// <summary>
+    /// 
+    /// </summary>
     [HttpPost("NoSource"), AllowAnonymous]
     [SwaggerOperation(OperationId = "NoSource")]
     public async Task<ActionResult> NoSourceAsync()

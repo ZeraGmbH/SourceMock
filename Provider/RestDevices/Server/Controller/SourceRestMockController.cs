@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ZERA.WebSam.Shared.Models.Source;
-using Swashbuckle.AspNetCore.Annotations;
 using ZERA.WebSam.Shared.Models.Logging;
 using ZERA.WebSam.Shared.Provider;
+using Swashbuckle.AspNetCore.Annotations;
 
-namespace SourceApi.Controllers;
+namespace RestDevices.Controller;
 
 /// <summary>
 /// Controls a source.
@@ -23,7 +23,7 @@ namespace SourceApi.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/srcrestmock")]
-public class SourceRestMockController([FromKeyedServices(SourceRestMockController.MockKey)] ISource source, ILogger<SourceController> logger, IInterfaceLogger interfaceLogger) : Controller
+public class SourceRestMockController([FromKeyedServices(SourceRestMockController.MockKey)] ISource source, ILogger<SourceRestMockController> logger, IInterfaceLogger interfaceLogger) : ControllerBase
 {
     /// <summary>
     /// 

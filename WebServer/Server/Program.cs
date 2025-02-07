@@ -2,8 +2,6 @@ using Microsoft.OpenApi.Models;
 
 using SerialPortProxy;
 
-using SourceApi;
-
 using System.Globalization;
 
 using ZERA.WebSam.Shared;
@@ -42,7 +40,6 @@ builder.Services.AddSwaggerGen(options =>
 
     options.UseSerialPortProxy();
     options.UseSharedLibrary();
-    options.UseSourceApi();
 });
 
 builder.Services.AddApiVersioning();
@@ -67,13 +64,10 @@ builder.Services.AddCors(options =>
 #pragma warning restore IDE0053
 
 builder.Services.UseSharedLibrary(builder.Configuration);
-builder.Services.UseSourceApi(builder.Configuration);
 
 builder.Services.AddScoped<IInterfaceLogger, NoopInterfaceLogger>();
 
 var app = builder.Build();
-
-app.UseSourceApi();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

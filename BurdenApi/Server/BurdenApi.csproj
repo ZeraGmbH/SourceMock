@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <ProjectReference Include="..\..\SourceApi\Server\SourceApi.csproj" />
     <ProjectReference Include="..\..\RefMeterApi\Server\RefMeterApi.csproj" />
   </ItemGroup>
   <ItemGroup>

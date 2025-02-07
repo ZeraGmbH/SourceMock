@@ -10,9 +10,6 @@
     <NoWarn>AD0001;NU1902;NU1903;NU1904</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SourceApi\Server\SourceApi.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
@@ -20,5 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\SerialPortProxy\Library\SerialPortProxy.csproj" />
+    <ProjectReference Include="..\..\Provider\MockDevices\Server\MockDevices.csproj" />
   </ItemGroup>
 </Project>

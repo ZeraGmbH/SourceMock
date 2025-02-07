@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\SerialPortProxy\Library\SerialPortProxy.csproj" />
-    <ProjectReference Include="..\..\SourceApi\Server\SourceApi.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -19,5 +18,9 @@
 
   <ItemGroup>
     <Content Include="Actions/**/*.json" CopyToOutputDirectory="PreserveNewest" TargetPath="%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
   </ItemGroup>
 </Project>

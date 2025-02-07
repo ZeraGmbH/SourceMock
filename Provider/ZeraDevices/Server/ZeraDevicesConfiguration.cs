@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SerialPortProxy;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using ZERA.WebSam.Shared.Models.ErrorCalculator;
 using ZERA.WebSam.Shared.Provider;
@@ -28,6 +29,7 @@ public static class ZeraDevicesConfiguration
     public static void UseZeraDevices(this SwaggerGenOptions options)
     {
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(ZeraDevicesConfiguration).Assembly.GetName().Name}.xml"), true);
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(PhysicalPortProxy).Assembly.GetName().Name}.xml"), true);
     }
 
     /// <summary>
@@ -59,5 +61,7 @@ public static class ZeraDevicesConfiguration
         services.AddKeyedTransient<IMadConnection, MadTcpConnection>(ErrorCalculatorConnectionTypes.TCP);
 
         services.AddKeyedSingleton<ISerialPortConnectionFactory, SerialPortConnectionFactory>("ZERASerial");
+
+        services.AddKeyedTransient(KeyedService.AnyKey, (ctx, key) => ctx.GetRequiredKeyedService<ISerialPortConnectionFactory>(key).Connection);
     }
 }

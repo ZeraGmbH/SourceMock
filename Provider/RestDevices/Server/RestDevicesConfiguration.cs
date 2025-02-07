@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MockDevices.Source;
+using RestDevices.Controller;
 using RestDevices.Dosage;
 using RestDevices.ErrorCalculator;
 using RestDevices.ReferenceMeter;
@@ -40,5 +42,16 @@ public static class RestDevicesConfiguration
         services.AddTransient<IRestSource, RestSource>();
         services.AddTransient<IRestRefMeter, RestRefMeter>();
         services.AddKeyedTransient<IErrorCalculatorSetup, RestErrorCalculator>(ErrorCalculatorProtocols.HTTP);
+
+        var restMock = configuration.GetValue<string>("UseSourceRestMock");
+
+        if (restMock == "AC")
+            services.AddKeyedSingleton<ISource, ACSourceMock>(SourceRestMockController.MockKey);
+        else if (restMock == "DC")
+            services.AddKeyedSingleton<ISource, DCSourceMock>(SourceRestMockController.MockKey);
+        else
+            services.AddKeyedSingleton<ISource, UnavailableSource>(SourceRestMockController.MockKey);
+
+        services.AddKeyedTransient<IDosage>(DosageRestMockController.MockKey, (ctx, key) => ctx.GetRequiredKeyedService<ISource>(SourceRestMockController.MockKey));
     }
 }
